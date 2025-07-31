@@ -173,7 +173,7 @@ export default function PMDashboard() {
         
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-3 bg-transparent border border-magnoos-dark backdrop-blur-md">
+            <TabsList className="grid w-full grid-cols-3 bg-slate-900 border border-slate-700 backdrop-blur-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="approvals">Pending Approvals</TabsTrigger>
               <TabsTrigger value="analytics">Project Analytics</TabsTrigger>

@@ -9,7 +9,7 @@
   --muted-foreground: hsl(235, 10%, 65%);
   --popover: hsl(235, 20%, 12%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(220, 30%, 18%);
+  --card: hsl(220, 50%, 8%);
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(220, 35%, 20%);
   --input: hsl(235, 15%, 18%);
@@ -43,7 +43,7 @@
   --muted-foreground: hsl(235, 10%, 65%);
   --popover: hsl(235, 20%, 12%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(220, 30%, 18%);
+  --card: hsl(220, 50%, 8%);
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(220, 35%, 20%);
   --input: hsl(235, 15%, 18%);
