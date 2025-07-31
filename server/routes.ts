@@ -57,21 +57,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/zoho/users', isAuthenticated, async (req: any, res) => {
     try {
       const zohoUsers = await zohoService.getUsers();
-      // Transform to expected format for frontend
-      const transformedUsers = zohoUsers.map(user => ({
-        id: user.id,
-        name: `${user.firstName} ${user.lastName}`.trim(),
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        department: user.department,
-        status: user.status
-      }));
-      res.json(transformedUsers);
+      
+      if (zohoUsers.length > 0) {
+        // Transform Zoho users to expected format
+        const transformedUsers = zohoUsers.map(user => ({
+          id: user.id,
+          name: `${user.firstName} ${user.lastName}`.trim(),
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          department: user.department,
+          status: user.status
+        }));
+        res.json(transformedUsers);
+      } else {
+        // Fallback: Try to get users from our local database
+        console.log("No Zoho users found, falling back to local users");
+        const localUsers = await storage.getAllUsers();
+        const transformedLocalUsers = localUsers.map(user => ({
+          id: user.id,
+          name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'Unknown User',
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          status: 'Active'
+        }));
+        res.json(transformedLocalUsers);
+      }
     } catch (error) {
-      console.error("Error fetching Zoho users:", error);
-      res.status(500).json({ message: "Failed to fetch users from Zoho" });
+      console.error("Error fetching users:", error);
+      // Final fallback: return current user
+      try {
+        const currentUser = await storage.getUser(req.user.claims.sub);
+        if (currentUser) {
+          res.json([{
+            id: currentUser.id,
+            name: `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Current User',
+            email: currentUser.email,
+            firstName: currentUser.firstName,
+            lastName: currentUser.lastName,
+            role: currentUser.role,
+            status: 'Active'
+          }]);
+        } else {
+          res.json([]);
+        }
+      } catch (fallbackError) {
+        console.error("Fallback user fetch failed:", fallbackError);
+        res.status(500).json({ message: "Failed to fetch any user data" });
+      }
     }
   });
 

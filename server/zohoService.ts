@@ -33,7 +33,14 @@ class ZohoService {
       return this.accessToken;
     }
 
-    const tokenUrl = `https://accounts.${process.env.ZOHO_API_DOMAIN}/oauth/v2/token`;
+    // Extract domain from ZOHO_API_DOMAIN if it's a full URL
+    let apiDomain = process.env.ZOHO_API_DOMAIN!;
+    if (apiDomain.includes('://')) {
+      const url = new URL(apiDomain);
+      apiDomain = url.hostname.split('.').slice(-2).join('.'); // Get zoho.com part
+    }
+
+    const tokenUrl = `https://accounts.${apiDomain}/oauth/v2/token`;
     const params = new URLSearchParams({
       refresh_token: process.env.ZOHO_REFRESH_TOKEN!,
       client_id: process.env.ZOHO_CLIENT_ID!,
@@ -68,7 +75,15 @@ class ZohoService {
   async getUsers(): Promise<ZohoUser[]> {
     try {
       const accessToken = await this.getAccessToken();
-      const apiUrl = `https://people.${process.env.ZOHO_API_DOMAIN}/people/api/forms/employee/getRecords`;
+      
+      // Extract domain from ZOHO_API_DOMAIN if it's a full URL
+      let apiDomain = process.env.ZOHO_API_DOMAIN!;
+      if (apiDomain.includes('://')) {
+        const url = new URL(apiDomain);
+        apiDomain = url.hostname.split('.').slice(-2).join('.'); // Get zoho.com part
+      }
+
+      const apiUrl = `https://people.${apiDomain}/people/api/forms/employee/getRecords`;
 
       const response = await fetch(apiUrl, {
         method: 'GET',
