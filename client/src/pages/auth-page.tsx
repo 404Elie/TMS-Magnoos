@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plane, ArrowRight, Building } from "lucide-react";
+import { Plane, ArrowRight, Building, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Redirect } from "wouter";
 
@@ -42,6 +42,9 @@ export default function AuthPage() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("login");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Redirect if already authenticated
   if (user) {
@@ -220,12 +223,21 @@ export default function AuthPage() {
                           <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Enter your password" 
-                                type="password"
-                                className="text-black"
-                                {...field} 
-                              />
+                              <div className="relative">
+                                <Input 
+                                  placeholder="Enter your password" 
+                                  type={showLoginPassword ? "text" : "password"}
+                                  className="text-black pr-10"
+                                  {...field} 
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                                >
+                                  {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -298,12 +310,21 @@ export default function AuthPage() {
                           <FormItem>
                             <FormLabel>Password</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Create a password" 
-                                type="password"
-                                className="text-black"
-                                {...field} 
-                              />
+                              <div className="relative">
+                                <Input 
+                                  placeholder="Create a password" 
+                                  type={showRegisterPassword ? "text" : "password"}
+                                  className="text-black pr-10"
+                                  {...field} 
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                  onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                                >
+                                  {showRegisterPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -316,12 +337,21 @@ export default function AuthPage() {
                           <FormItem>
                             <FormLabel>Confirm Password</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Confirm your password" 
-                                type="password"
-                                className="text-black"
-                                {...field} 
-                              />
+                              <div className="relative">
+                                <Input 
+                                  placeholder="Confirm your password" 
+                                  type={showConfirmPassword ? "text" : "password"}
+                                  className="text-black pr-10"
+                                  {...field} 
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
