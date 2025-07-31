@@ -181,7 +181,7 @@ export default function ManagerDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["manager"]}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="manager" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -195,12 +195,12 @@ export default function ManagerDashboard() {
             <TabsContent value="dashboard" className="space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Total Requests</p>
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-sm font-medium text-gray-400">Total Requests</p>
+                        <p className="text-2xl font-bold text-white">
                           {statsLoading ? "..." : stats?.totalRequests || 0}
                         </p>
                       </div>
@@ -211,11 +211,11 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Pending Approval</p>
+                        <p className="text-sm font-medium text-gray-400">Pending Approval</p>
                         <p className="text-2xl font-bold text-yellow-600">
                           {statsLoading ? "..." : stats?.pendingRequests || 0}
                         </p>
@@ -227,11 +227,11 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Approved</p>
+                        <p className="text-sm font-medium text-gray-400">Approved</p>
                         <p className="text-2xl font-bold text-green-600">
                           {statsLoading ? "..." : stats?.approvedRequests || 0}
                         </p>
@@ -243,11 +243,11 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Completed</p>
+                        <p className="text-sm font-medium text-gray-400">Completed</p>
                         <p className="text-2xl font-bold text-magnoos-blue">
                           {statsLoading ? "..." : stats?.completedRequests || 0}
                         </p>
@@ -261,34 +261,34 @@ export default function ManagerDashboard() {
               </div>
 
               {/* Recent Requests */}
-              <Card>
+              <Card className="bg-magnoos-surface border-magnoos-primary/20">
                 <CardHeader>
-                  <CardTitle>My Travel Requests</CardTitle>
+                  <CardTitle className="text-white">My Travel Requests</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {requestsLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-600">Loading requests...</p>
+                      <p className="text-gray-400">Loading requests...</p>
                     </div>
                   ) : requests && requests.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Route
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Status
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Est. Cost
                             </th>
                           </tr>
@@ -299,21 +299,21 @@ export default function ManagerDashboard() {
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex items-center">
                                   <MapPin className="w-4 h-4 text-gray-400 mr-2" />
-                                  <span className="text-sm font-medium text-gray-900">
+                                  <span className="text-sm font-medium text-white">
                                     {request.origin} → {request.destination}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                 {request.project?.name}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 {getStatusBadge(request.status)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                 {formatCurrency(
                                   (parseFloat(request.estimatedFlightCost || "0") +
                                    parseFloat(request.estimatedHotelCost || "0") +
@@ -328,7 +328,7 @@ export default function ManagerDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <Plane className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">No travel requests yet</p>
+                      <p className="text-gray-400">No travel requests yet</p>
                       <Button 
                         onClick={() => setActiveTab("submit")}
                         className="mt-4 bg-magnoos-blue hover:bg-magnoos-dark-blue"
@@ -343,9 +343,9 @@ export default function ManagerDashboard() {
 
             <TabsContent value="submit" className="space-y-8">
               <div className="max-w-4xl mx-auto">
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardHeader>
-                    <CardTitle>Submit Travel Request</CardTitle>
+                    <CardTitle className="text-white">Submit Travel Request</CardTitle>
                     <CardDescription>
                       Fill out the form below to submit a new travel request
                     </CardDescription>

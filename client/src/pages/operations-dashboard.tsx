@@ -260,7 +260,7 @@ export default function OperationsDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="operations" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -275,81 +275,81 @@ export default function OperationsDashboard() {
             <TabsContent value="dashboard" className="space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Active Bookings</p>
-                        <p className="text-2xl font-bold text-magnoos-blue">
+                        <p className="text-sm font-medium text-gray-400">Active Bookings</p>
+                        <p className="text-2xl font-bold text-magnoos-primary">
                           {statsLoading ? "..." : stats?.activeBookings || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-magnoos-blue" />
+                      <div className="w-12 h-12 bg-magnoos-primary/20 rounded-lg flex items-center justify-center">
+                        <Calendar className="w-6 h-6 text-magnoos-primary" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-secondary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Monthly Spend</p>
-                        <p className="text-2xl font-bold text-gray-900">
+                        <p className="text-sm font-medium text-gray-400">Monthly Spend</p>
+                        <p className="text-2xl font-bold text-white">
                           {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <DollarSign className="w-6 h-6 text-green-600" />
+                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <DollarSign className="w-6 h-6 text-green-400" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-accent/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Budget Remaining</p>
-                        <p className="text-2xl font-bold text-yellow-600">
+                        <p className="text-sm font-medium text-gray-400">Budget Remaining</p>
+                        <p className="text-2xl font-bold text-yellow-400">
                           {statsLoading ? "..." : formatCurrency(stats?.budgetRemaining || 0)}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <PiggyBank className="w-6 h-6 text-yellow-600" />
+                      <div className="w-12 h-12 bg-yellow-400/20 rounded-lg flex items-center justify-center">
+                        <PiggyBank className="w-6 h-6 text-yellow-400" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-red-500/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Pending Tasks</p>
-                        <p className="text-2xl font-bold text-red-600">
+                        <p className="text-sm font-medium text-gray-400">Pending Tasks</p>
+                        <p className="text-2xl font-bold text-red-400">
                           {statsLoading ? "..." : stats?.pendingTasks || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <CheckSquare className="w-6 h-6 text-red-600" />
+                      <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
+                        <CheckSquare className="w-6 h-6 text-red-400" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-green-500/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Cost Savings</p>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-sm font-medium text-gray-400">Cost Savings</p>
+                        <p className="text-2xl font-bold text-green-400">
                           {statsLoading ? "..." : formatCurrency(stats?.costSavings || 0)}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <TrendingUp className="w-6 h-6 text-green-600" />
+                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <TrendingUp className="w-6 h-6 text-green-400" />
                       </div>
                     </div>
                   </CardContent>
@@ -358,30 +358,30 @@ export default function OperationsDashboard() {
 
               {/* Budget Charts Placeholder */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardHeader>
-                    <CardTitle>Monthly Budget Trend</CardTitle>
+                    <CardTitle className="text-white">Monthly Budget Trend</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-500">Monthly Budget Chart</p>
+                        <BarChart3 className="w-12 h-12 text-magnoos-primary mx-auto mb-2" />
+                        <p className="text-white">Monthly Budget Chart</p>
                         <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-secondary/20">
                   <CardHeader>
-                    <CardTitle>Expense Breakdown</CardTitle>
+                    <CardTitle className="text-white">Expense Breakdown</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-500">Expense Breakdown Chart</p>
+                        <BarChart3 className="w-12 h-12 text-magnoos-secondary mx-auto mb-2" />
+                        <p className="text-white">Expense Breakdown Chart</p>
                         <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
@@ -390,9 +390,9 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Recent Activity */}
-              <Card>
+              <Card className="bg-magnoos-surface border-magnoos-accent/20">
                 <CardHeader>
-                  <CardTitle>Recent Booking Activities</CardTitle>
+                  <CardTitle className="text-white">Recent Booking Activities</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {bookingsLoading ? (
@@ -413,10 +413,10 @@ export default function OperationsDashboard() {
                             )}
                           </div>
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">
+                            <p className="font-medium text-white">
                               {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)} booking
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-400">
                               {booking.provider} • {formatCurrency(booking.cost)} • {booking.bookingReference}
                             </p>
                           </div>
@@ -426,8 +426,8 @@ export default function OperationsDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">No recent booking activities</p>
+                      <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-400">No recent booking activities</p>
                     </div>
                   )}
                 </CardContent>
@@ -435,10 +435,10 @@ export default function OperationsDashboard() {
             </TabsContent>
 
             <TabsContent value="bookings" className="space-y-8">
-              <Card>
+              <Card className="bg-magnoos-surface border-magnoos-primary/20">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Active Travel Bookings</CardTitle>
+                    <CardTitle className="text-white">Active Travel Bookings</CardTitle>
                     <CardDescription>Manage bookings for approved travel requests</CardDescription>
                   </div>
                   <Dialog>
@@ -550,32 +550,32 @@ export default function OperationsDashboard() {
                   {requestsLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-600">Loading travel requests...</p>
+                      <p className="text-gray-400">Loading travel requests...</p>
                     </div>
                   ) : operationsRequests.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Traveler
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Destination
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Total Cost
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Status
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Actions
                             </th>
                           </tr>
@@ -599,21 +599,21 @@ export default function OperationsDashboard() {
                                         {getInitials(request.traveler.firstName, request.traveler.lastName)}
                                       </AvatarFallback>
                                     </Avatar>
-                                    <span className="text-sm font-medium text-gray-900">
+                                    <span className="text-sm font-medium text-white">
                                       {request.traveler.firstName} {request.traveler.lastName}
                                     </span>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                   {request.destination}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                   {request.project?.name}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                   {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                   {actualCost > 0 ? formatCurrency(actualCost) : formatCurrency(totalEstimated)}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -646,7 +646,7 @@ export default function OperationsDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">No travel requests to process</p>
+                      <p className="text-gray-400">No travel requests to process</p>
                       <p className="text-sm text-gray-400 mt-2">Approved requests will appear here for booking</p>
                     </div>
                   )}
@@ -656,16 +656,16 @@ export default function OperationsDashboard() {
 
             <TabsContent value="budget-person" className="space-y-8">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Budget Tracking by Person</h2>
-                <p className="text-gray-600">Monitor individual travel expenses and budget allocations</p>
+                <h2 className="text-2xl font-bold text-white">Budget Tracking by Person</h2>
+                <p className="text-gray-400">Monitor individual travel expenses and budget allocations</p>
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Summary Cards */}
                 <div className="lg:col-span-1 space-y-6">
-                  <Card>
+                  <Card className="bg-magnoos-surface border-magnoos-primary/20">
                     <CardHeader>
-                      <CardTitle>Top Spenders</CardTitle>
+                      <CardTitle className="text-white">Top Spenders</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {userBudgetSummaries.length > 0 ? (
@@ -686,21 +686,21 @@ export default function OperationsDashboard() {
                                   {user.firstName} {user.lastName}
                                 </span>
                               </div>
-                              <span className="text-sm font-bold text-gray-900">
+                              <span className="text-sm font-bold text-white">
                                 {formatCurrency(user.totalSpent)}
                               </span>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-center py-4">No spending data available</p>
+                        <p className="text-gray-400 text-center py-4">No spending data available</p>
                       )}
                     </CardContent>
                   </Card>
                   
-                  <Card>
+                  <Card className="bg-magnoos-surface border-magnoos-primary/20">
                     <CardHeader>
-                      <CardTitle>Budget Alerts</CardTitle>
+                      <CardTitle className="text-white">Budget Alerts</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
@@ -725,7 +725,7 @@ export default function OperationsDashboard() {
                           </div>
                         ))}
                         {userBudgetSummaries.filter(user => user.utilization > 80).length === 0 && (
-                          <p className="text-gray-500 text-center py-4">No budget alerts</p>
+                          <p className="text-gray-400 text-center py-4">No budget alerts</p>
                         )}
                       </div>
                     </CardContent>
@@ -734,9 +734,9 @@ export default function OperationsDashboard() {
                 
                 {/* Budget Table */}
                 <div className="lg:col-span-2">
-                  <Card>
+                  <Card className="bg-magnoos-surface border-magnoos-primary/20">
                     <CardHeader>
-                      <CardTitle>Individual Budget Overview</CardTitle>
+                      <CardTitle className="text-white">Individual Budget Overview</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {userBudgetSummaries.length > 0 ? (
@@ -744,22 +744,22 @@ export default function OperationsDashboard() {
                           <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                               <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                                   Employee
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                                   Annual Budget
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                                   Spent
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                                   Remaining
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                                   Utilization
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                                   Trips
                                 </th>
                               </tr>
@@ -775,18 +775,18 @@ export default function OperationsDashboard() {
                                           {getInitials(user.firstName, user.lastName)}
                                         </AvatarFallback>
                                       </Avatar>
-                                      <span className="text-sm font-medium text-gray-900">
+                                      <span className="text-sm font-medium text-white">
                                         {user.firstName} {user.lastName}
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                     {formatCurrency(user.annualBudget)}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                     {formatCurrency(user.totalSpent)}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                     {formatCurrency(user.remaining)}
                                   </td>
                                   <td className="px-6 py-4 whitespace-nowrap">
@@ -800,12 +800,12 @@ export default function OperationsDashboard() {
                                           style={{ width: `${Math.min(user.utilization, 100)}%` }}
                                         ></div>
                                       </div>
-                                      <span className="text-sm text-gray-600">
+                                      <span className="text-sm text-gray-400">
                                         {Math.round(user.utilization)}%
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                     {user.tripCount}
                                   </td>
                                 </tr>
@@ -816,7 +816,7 @@ export default function OperationsDashboard() {
                       ) : (
                         <div className="text-center py-8">
                           <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                          <p className="text-gray-500">No budget data available</p>
+                          <p className="text-gray-400">No budget data available</p>
                           <p className="text-sm text-gray-400 mt-2">Budget information will appear once travel requests are processed</p>
                         </div>
                       )}
@@ -828,21 +828,21 @@ export default function OperationsDashboard() {
 
             <TabsContent value="budget-project" className="space-y-8">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Budget Tracking by Project</h2>
-                <p className="text-gray-600">Monitor project-based travel expenses and allocations</p>
+                <h2 className="text-2xl font-bold text-white">Budget Tracking by Project</h2>
+                <p className="text-gray-400">Monitor project-based travel expenses and allocations</p>
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 {/* Project Budget Chart Placeholder */}
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardHeader>
-                    <CardTitle>Project Budget Distribution</CardTitle>
+                    <CardTitle className="text-white">Project Budget Distribution</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-500">Project Budget Chart</p>
+                        <p className="text-gray-400">Project Budget Chart</p>
                         <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
@@ -850,15 +850,15 @@ export default function OperationsDashboard() {
                 </Card>
                 
                 {/* Budget vs Actual Placeholder */}
-                <Card>
+                <Card className="bg-magnoos-surface border-magnoos-primary/20">
                   <CardHeader>
-                    <CardTitle>Budget vs Actual Spending</CardTitle>
+                    <CardTitle className="text-white">Budget vs Actual Spending</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-500">Budget vs Actual Chart</p>
+                        <p className="text-gray-400">Budget vs Actual Chart</p>
                         <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
@@ -867,9 +867,9 @@ export default function OperationsDashboard() {
               </div>
               
               {/* Project Budget Table */}
-              <Card>
+              <Card className="bg-magnoos-surface border-magnoos-primary/20">
                 <CardHeader>
-                  <CardTitle>Project Budget Overview</CardTitle>
+                  <CardTitle className="text-white">Project Budget Overview</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {projectBudgetSummaries.length > 0 ? (
@@ -877,25 +877,25 @@ export default function OperationsDashboard() {
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Allocated Budget
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Spent
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Remaining
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Utilization
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Total Trips
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                               Avg Cost/Trip
                             </th>
                           </tr>
@@ -904,16 +904,16 @@ export default function OperationsDashboard() {
                           {projectBudgetSummaries.map((project) => (
                             <tr key={project.id}>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-900">{project.name}</div>
-                                <div className="text-sm text-gray-500">{project.description}</div>
+                                <div className="text-sm font-medium text-white">{project.name}</div>
+                                <div className="text-sm text-gray-400">{project.description}</div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                 {formatCurrency(project.allocatedBudget)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                 {formatCurrency(project.totalSpent)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                 {formatCurrency(project.remaining)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
@@ -927,15 +927,15 @@ export default function OperationsDashboard() {
                                       style={{ width: `${Math.min(project.utilization, 100)}%` }}
                                     ></div>
                                   </div>
-                                  <span className="text-sm text-gray-600">
+                                  <span className="text-sm text-gray-400">
                                     {Math.round(project.utilization)}%
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                 {project.tripCount}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                 {formatCurrency(project.avgCostPerTrip)}
                               </td>
                             </tr>
@@ -946,7 +946,7 @@ export default function OperationsDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500">No project budget data available</p>
+                      <p className="text-gray-400">No project budget data available</p>
                       <p className="text-sm text-gray-400 mt-2">Budget information will appear once travel requests are processed</p>
                     </div>
                   )}
