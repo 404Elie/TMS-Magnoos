@@ -47,7 +47,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
   const typedUser = user as User | undefined;
 
   return (
-    <header className="bg-background dark:bg-magnoos-header border-b border-border shadow-lg backdrop-blur-md">
+    <header className="border-b border-border shadow-lg backdrop-blur-md" style={{ backgroundColor: 'hsl(var(--card))' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
@@ -72,7 +72,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
             <div className="flex items-center space-x-3">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={userImage || typedUser?.profileImageUrl} alt="User Avatar" />
-                <AvatarFallback className="magnoos-gradient text-white text-sm">
+                <AvatarFallback className="text-white text-sm" style={{ background: 'linear-gradient(135deg, hsl(var(--magnoos-electric-blue)), hsl(var(--magnoos-vivid-teal)))' }}>
                   {typedUser ? getInitials(`${typedUser.firstName || ''} ${typedUser.lastName || ''}`.trim() || typedUser.email || 'U') : 'U'}
                 </AvatarFallback>
               </Avatar>

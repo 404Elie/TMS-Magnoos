@@ -3,71 +3,85 @@
 @tailwind utilities;
 
 :root {
-  /* Light theme colors */
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(222.2, 84%, 4.9%);
-  --muted: hsl(210, 40%, 96%);
-  --muted-foreground: hsl(215.4, 16.3%, 46.9%);
+  /* Light theme colors - Magnoos Company Palette */
+  --background: hsl(0, 0%, 100%); /* Magnoos White */
+  --foreground: hsl(218, 100%, 11%); /* Magnoos Dark Blue */
+  --muted: hsl(207, 13%, 85%); /* Magnoos Light Gray */
+  --muted-foreground: hsl(214, 16%, 40%); /* Magnoos Dark Gray */
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(222.2, 84%, 4.9%);
+  --popover-foreground: hsl(218, 100%, 11%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(222.2, 84%, 4.9%);
-  --border: hsl(214.3, 31.8%, 91.4%);
-  --input: hsl(214.3, 31.8%, 91.4%);
-  --primary: hsl(220, 100%, 50%);
-  --primary-foreground: hsl(0, 0%, 98%);
-  --secondary: hsl(210, 40%, 96%);
-  --secondary-foreground: hsl(222.2, 84%, 4.9%);
-  --accent: hsl(260, 100%, 60%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(210, 40%, 98%);
-  --ring: hsl(220, 100%, 50%);
+  --card-foreground: hsl(218, 100%, 11%);
+  --border: hsl(207, 13%, 85%);
+  --input: hsl(207, 13%, 90%);
+  --primary: hsl(236, 100%, 58%); /* Magnoos Electric Blue */
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(207, 13%, 95%);
+  --secondary-foreground: hsl(218, 100%, 11%);
+  --accent: hsl(175, 39%, 55%); /* Teal/Turquoise */
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(16, 100%, 66%); /* Coral/Peach for errors */
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(236, 100%, 58%);
   --radius: 0.75rem;
   
   /* Magnoos Brand Colors - Light theme */
-  --magnoos-primary: hsl(220, 100%, 50%);
-  --magnoos-secondary: hsl(260, 100%, 60%);
-  --magnoos-accent: hsl(220, 100%, 50%);
-  --magnoos-light: hsl(0, 0%, 100%);
-  --magnoos-light-surface: hsl(210, 40%, 98%);
-  --magnoos-header-light: hsl(210, 40%, 95%);
-  --magnoos-gradient-start: hsl(220, 100%, 50%);
-  --magnoos-gradient-end: hsl(260, 100%, 60%);
+  --magnoos-electric-blue: hsl(236, 100%, 58%); /* #0032FF */
+  --magnoos-black: hsl(0, 0%, 0%); /* #000000 */
+  --magnoos-dark-blue: hsl(218, 100%, 11%); /* #000037 */
+  --magnoos-dark-gray: hsl(214, 16%, 40%); /* #464646 */
+  --magnoos-light-gray: hsl(207, 13%, 85%); /* #DADADA */
+  --magnoos-white: hsl(0, 0%, 100%); /* #FFFFFF */
+  --magnoos-orange: hsl(16, 100%, 66%); /* #FF6F00 */
+  --magnoos-coral: hsl(3, 100%, 69%); /* #FF6F61 */
+  --magnoos-teal: hsl(175, 39%, 55%); /* #1ABC3C */
+  --magnoos-vivid-teal: hsl(175, 100%, 42%); /* #00D9C0 */
+  --magnoos-lime: hsl(75, 69%, 61%); /* #A3E635 */
+  --magnoos-lime-mint: hsl(75, 69%, 69%); /* #A6E05A */
+  --magnoos-yellow: hsl(47, 84%, 68%); /* #F8C94E */
+  --magnoos-sunny-yellow: hsl(51, 100%, 62%); /* #FFD700 */
+  --magnoos-purple: hsl(266, 66%, 58%); /* #8A2BE2 */
 }
 
 .dark {
-  /* Dark theme colors */
-  --background: hsl(220, 45%, 10%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(220, 35%, 15%);
-  --muted-foreground: hsl(0, 0%, 70%);
-  --popover: hsl(220, 35%, 12%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(220, 35%, 12%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(220, 35%, 20%);
-  --input: hsl(220, 35%, 15%);
-  --primary: hsl(220, 100%, 50%);
-  --primary-foreground: hsl(0, 0%, 98%);
-  --secondary: hsl(220, 35%, 20%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(260, 100%, 60%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(220, 100%, 50%);
+  /* Dark theme colors - Magnoos Company Palette */
+  --background: hsl(0, 0%, 0%); /* Magnoos Black */
+  --foreground: hsl(0, 0%, 100%); /* Magnoos White */
+  --muted: hsl(218, 100%, 11%); /* Magnoos Dark Blue */
+  --muted-foreground: hsl(207, 13%, 85%); /* Magnoos Light Gray */
+  --popover: hsl(218, 100%, 11%);
+  --popover-foreground: hsl(0, 0%, 100%);
+  --card: hsl(218, 100%, 11%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --border: hsl(214, 16%, 40%);
+  --input: hsl(218, 100%, 11%);
+  --primary: hsl(236, 100%, 58%); /* Magnoos Electric Blue */
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(214, 16%, 40%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --accent: hsl(175, 100%, 42%); /* Vivid Teal */
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(3, 100%, 69%); /* Coral */
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(236, 100%, 58%);
   --radius: 0.75rem;
 
-  /* Magnoos Dark Theme Colors */
-  --magnoos-primary: hsl(220, 100%, 50%);
-  --magnoos-secondary: hsl(260, 100%, 60%);
-  --magnoos-accent: hsl(220, 100%, 50%);
-  --magnoos-dark: hsl(220, 45%, 10%);
-  --magnoos-dark-surface: hsl(220, 35%, 12%);
-  --magnoos-header-dark: hsl(220, 45%, 8%);
-  --magnoos-gradient-start: hsl(220, 100%, 40%);
-  --magnoos-gradient-end: hsl(260, 100%, 50%);
+  /* Magnoos Dark Theme Brand Colors */
+  --magnoos-electric-blue: hsl(236, 100%, 58%); /* #0032FF */
+  --magnoos-black: hsl(0, 0%, 0%); /* #000000 */
+  --magnoos-dark-blue: hsl(218, 100%, 11%); /* #000037 */
+  --magnoos-dark-gray: hsl(214, 16%, 40%); /* #464646 */
+  --magnoos-light-gray: hsl(207, 13%, 85%); /* #DADADA */
+  --magnoos-white: hsl(0, 0%, 100%); /* #FFFFFF */
+  --magnoos-orange: hsl(16, 100%, 66%); /* #FF6F00 */
+  --magnoos-coral: hsl(3, 100%, 69%); /* #FF6F61 */
+  --magnoos-teal: hsl(175, 39%, 55%); /* #1ABC3C */
+  --magnoos-vivid-teal: hsl(175, 100%, 42%); /* #00D9C0 */
+  --magnoos-lime: hsl(75, 69%, 61%); /* #A3E635 */
+  --magnoos-lime-mint: hsl(75, 69%, 69%); /* #A6E05A */
+  --magnoos-yellow: hsl(47, 84%, 68%); /* #F8C94E */
+  --magnoos-sunny-yellow: hsl(51, 100%, 62%); /* #FFD700 */
+  --magnoos-purple: hsl(266, 66%, 58%); /* #8A2BE2 */
 }
 
 @layer base {
@@ -140,7 +154,31 @@
   }
   
   .magnoos-bg-gradient {
-    background: var(--magnoos-bg-gradient);
+    background: linear-gradient(135deg, 
+      hsl(var(--magnoos-electric-blue)), 
+      hsl(var(--magnoos-purple))
+    );
+  }
+  
+  /* Status color utilities using company palette */
+  .status-pending {
+    color: hsl(var(--magnoos-yellow));
+    background-color: hsl(var(--magnoos-yellow) / 0.1);
+  }
+  
+  .status-approved {
+    color: hsl(var(--magnoos-lime));
+    background-color: hsl(var(--magnoos-lime) / 0.1);
+  }
+  
+  .status-completed {
+    color: hsl(var(--magnoos-teal));
+    background-color: hsl(var(--magnoos-teal) / 0.1);
+  }
+  
+  .status-rejected {
+    color: hsl(var(--magnoos-coral));
+    background-color: hsl(var(--magnoos-coral) / 0.1);
   }
   
   /* Custom clean tab styling - Light theme */

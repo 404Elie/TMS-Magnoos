@@ -155,19 +155,87 @@ export default function ManagerDashboard() {
   };
 
   const getStatusBadge = (status: string) => {
+    const baseClasses = "inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border";
+    
     switch (status) {
       case "submitted":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending PM Approval</Badge>;
+        return (
+          <span 
+            className={baseClasses}
+            style={{ 
+              color: 'hsl(var(--magnoos-yellow))', 
+              backgroundColor: 'hsl(var(--magnoos-yellow) / 0.15)',
+              borderColor: 'hsl(var(--magnoos-yellow) / 0.3)'
+            }}
+          >
+            Pending PM Approval
+          </span>
+        );
       case "pm_approved":
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Approved</Badge>;
+        return (
+          <span 
+            className={baseClasses}
+            style={{ 
+              color: 'hsl(var(--magnoos-lime))', 
+              backgroundColor: 'hsl(var(--magnoos-lime) / 0.15)',
+              borderColor: 'hsl(var(--magnoos-lime) / 0.3)'
+            }}
+          >
+            Approved
+          </span>
+        );
       case "pm_rejected":
-        return <Badge variant="destructive">Rejected</Badge>;
+        return (
+          <span 
+            className={baseClasses}
+            style={{ 
+              color: 'hsl(var(--magnoos-coral))', 
+              backgroundColor: 'hsl(var(--magnoos-coral) / 0.15)',
+              borderColor: 'hsl(var(--magnoos-coral) / 0.3)'
+            }}
+          >
+            Rejected
+          </span>
+        );
       case "operations_completed":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Completed</Badge>;
+        return (
+          <span 
+            className={baseClasses}
+            style={{ 
+              color: 'hsl(var(--magnoos-teal))', 
+              backgroundColor: 'hsl(var(--magnoos-teal) / 0.15)',
+              borderColor: 'hsl(var(--magnoos-teal) / 0.3)'
+            }}
+          >
+            Completed
+          </span>
+        );
       case "cancelled":
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return (
+          <span 
+            className={baseClasses}
+            style={{ 
+              color: 'hsl(var(--magnoos-coral))', 
+              backgroundColor: 'hsl(var(--magnoos-coral) / 0.15)',
+              borderColor: 'hsl(var(--magnoos-coral) / 0.3)'
+            }}
+          >
+            Cancelled
+          </span>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return (
+          <span 
+            className={baseClasses}
+            style={{ 
+              color: 'hsl(var(--magnoos-dark-gray))', 
+              backgroundColor: 'hsl(var(--magnoos-light-gray) / 0.15)',
+              borderColor: 'hsl(var(--magnoos-dark-gray) / 0.3)'
+            }}
+          >
+            {status}
+          </span>
+        );
     }
   };
 
@@ -205,65 +273,65 @@ export default function ManagerDashboard() {
             <TabsContent value="dashboard" className="bg-background space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-slate-800 border-slate-700 shadow-lg">
+                <Card className="bg-card border-border shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Total Requests</p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-sm font-medium text-muted-foreground">Total Requests</p>
+                        <p className="text-2xl font-bold text-foreground">
                           {statsLoading ? "..." : stats?.totalRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <Plane className="w-6 h-6 text-blue-400" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-electric-blue) / 0.2)' }}>
+                        <Plane className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-electric-blue))' }} />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700 shadow-lg">
+                <Card className="bg-card border-border shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Pending Approval</p>
-                        <p className="text-2xl font-bold text-yellow-400">
+                        <p className="text-sm font-medium text-muted-foreground">Pending Approval</p>
+                        <p className="text-2xl font-bold" style={{ color: 'hsl(var(--magnoos-yellow))' }}>
                           {statsLoading ? "..." : stats?.pendingRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-yellow-400" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-yellow) / 0.2)' }}>
+                        <Clock className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-yellow))' }} />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700 shadow-lg">
+                <Card className="bg-card border-border shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Approved</p>
-                        <p className="text-2xl font-bold text-green-400">
+                        <p className="text-sm font-medium text-muted-foreground">Approved</p>
+                        <p className="text-2xl font-bold" style={{ color: 'hsl(var(--magnoos-lime))' }}>
                           {statsLoading ? "..." : stats?.approvedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                        <Check className="w-6 h-6 text-green-400" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-lime) / 0.2)' }}>
+                        <Check className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-lime))' }} />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700 shadow-lg">
+                <Card className="bg-card border-border shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Completed</p>
-                        <p className="text-2xl font-bold text-blue-400">
+                        <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                        <p className="text-2xl font-bold" style={{ color: 'hsl(var(--magnoos-teal))' }}>
                           {statsLoading ? "..." : stats?.completedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <Flag className="w-6 h-6 text-blue-400" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-teal) / 0.2)' }}>
+                        <Flag className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-teal))' }} />
                       </div>
                     </div>
                   </CardContent>
@@ -271,59 +339,59 @@ export default function ManagerDashboard() {
               </div>
 
               {/* Recent Requests */}
-              <Card className="bg-slate-800 border-slate-700 shadow-lg">
+              <Card className="bg-card border-border shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-white">My Travel Requests</CardTitle>
+                  <CardTitle className="text-foreground">My Travel Requests</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {requestsLoading ? (
                     <div className="text-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-300">Loading requests...</p>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style={{ borderBottomColor: 'hsl(var(--magnoos-electric-blue))' }}></div>
+                      <p className="text-muted-foreground">Loading requests...</p>
                     </div>
                   ) : requests && requests.length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                      <table className="min-w-full divide-y divide-border">
+                        <thead className="bg-muted">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               Route
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               Status
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               Est. Cost
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-background divide-y divide-border">
                           {requests.map((request) => (
-                            <tr key={request.id}>
+                            <tr key={request.id} className="hover:bg-muted/50 transition-colors">
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex items-center">
-                                  <MapPin className="w-4 h-4 text-gray-300 mr-2" />
-                                  <span className="text-sm font-medium text-white">
+                                  <MapPin className="w-4 h-4 text-muted-foreground mr-2" />
+                                  <span className="text-sm font-medium text-foreground">
                                     {request.origin} → {request.destination}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                                 {request.project?.name}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 {getStatusBadge(request.status)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                                 {formatCurrency(
                                   (parseFloat(request.estimatedFlightCost || "0") +
                                    parseFloat(request.estimatedHotelCost || "0") +
@@ -337,11 +405,12 @@ export default function ManagerDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <Plane className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-300">No travel requests yet</p>
+                      <Plane className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">No travel requests yet</p>
                       <Button 
                         onClick={() => setActiveTab("submit")}
-                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+                        className="mt-4 text-white"
+                        style={{ backgroundColor: 'hsl(var(--magnoos-electric-blue))', borderColor: 'hsl(var(--magnoos-electric-blue))' }}
                       >
                         Submit Your First Request
                       </Button>
@@ -656,17 +725,19 @@ export default function ManagerDashboard() {
 
 
                         {/* Actions */}
-                        <div className="flex justify-end space-x-4 pt-6 border-t border-slate-700">
+                        <div className="flex justify-end space-x-4 pt-6 border-t border-border">
                           <Button 
                             type="button" 
-                            className="bg-[#737475] hover:bg-blue-700 text-white"
+                            variant="outline"
+                            className="text-muted-foreground border-border hover:bg-muted"
                             onClick={() => form.reset()}
                           >
                             Clear Form
                           </Button>
                           <Button 
                             type="submit" 
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="text-white"
+                            style={{ backgroundColor: 'hsl(var(--magnoos-electric-blue))', borderColor: 'hsl(var(--magnoos-electric-blue))' }}
                             disabled={submitRequestMutation.isPending}
                           >
                             {submitRequestMutation.isPending ? "Submitting..." : "Submit Request"}
