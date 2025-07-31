@@ -181,6 +181,28 @@
     background-color: hsl(var(--magnoos-coral) / 0.1);
   }
   
+  /* Auth page specific styling */
+  .auth-page label {
+    color: hsl(var(--magnoos-dark-blue)) !important;
+    font-weight: 500;
+  }
+  
+  .auth-page input {
+    background-color: hsl(var(--magnoos-white)) !important;
+    border-color: hsl(var(--magnoos-light-gray)) !important;
+    color: hsl(var(--magnoos-dark-blue)) !important;
+  }
+  
+  .auth-page input::placeholder {
+    color: hsl(var(--magnoos-dark-gray) / 0.6) !important;
+  }
+  
+  .auth-page select {
+    background-color: hsl(var(--magnoos-white)) !important;
+    border-color: hsl(var(--magnoos-light-gray)) !important;
+    color: hsl(var(--magnoos-dark-blue)) !important;
+  }
+  
   /* Custom clean tab styling - Light theme */
   .custom-tab {
     background: transparent !important;

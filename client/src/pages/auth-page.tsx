@@ -125,7 +125,12 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen magnoos-gradient-radial flex items-center justify-center p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ 
+        background: 'linear-gradient(135deg, hsl(var(--magnoos-electric-blue)), hsl(var(--magnoos-purple)))'
+      }}
+    >
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Left side - Hero section */}
         <div className="text-center lg:text-left space-y-6">
@@ -171,25 +176,50 @@ export default function AuthPage() {
 
         {/* Right side - Auth forms */}
         <div className="w-full max-w-md mx-auto">
-          <Card className="shadow-2xl border border-white/20 bg-white/10 backdrop-blur-md">
+          <Card 
+            className="auth-page shadow-2xl border-2 backdrop-blur-md"
+            style={{ 
+              backgroundColor: 'hsl(var(--magnoos-white))',
+              borderColor: 'hsl(var(--magnoos-orange))',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+          >
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-2xl">Welcome</CardTitle>
-              <CardDescription>
+              <CardTitle 
+                className="text-2xl font-bold"
+                style={{ color: 'hsl(var(--magnoos-dark-blue))' }}
+              >
+                Welcome
+              </CardTitle>
+              <CardDescription style={{ color: 'hsl(var(--magnoos-dark-gray))' }}>
                 Sign in to your account or create a new one
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-black/20 p-1 rounded-lg">
+                <TabsList 
+                  className="grid w-full grid-cols-2 p-1 rounded-lg"
+                  style={{ backgroundColor: 'hsl(var(--magnoos-light-gray) / 0.3)' }}
+                >
                   <TabsTrigger 
                     value="login" 
-                    className="data-[state=active]:bg-white data-[state=active]:text-purple-900 data-[state=active]:shadow-lg transition-all font-medium"
+                    className="transition-all font-medium"
+                    style={{
+                      color: 'hsl(var(--magnoos-dark-gray))',
+                      backgroundColor: activeTab === 'login' ? 'hsl(var(--magnoos-orange))' : 'transparent',
+                      ...(activeTab === 'login' && { color: 'white' })
+                    }}
                   >
                     Sign In
                   </TabsTrigger>
                   <TabsTrigger 
                     value="register"
-                    className="data-[state=active]:bg-white data-[state=active]:text-purple-900 data-[state=active]:shadow-lg transition-all font-medium"
+                    className="transition-all font-medium"
+                    style={{
+                      color: 'hsl(var(--magnoos-dark-gray))',
+                      backgroundColor: activeTab === 'register' ? 'hsl(var(--magnoos-orange))' : 'transparent',
+                      ...(activeTab === 'register' && { color: 'white' })
+                    }}
                   >
                     Sign Up
                   </TabsTrigger>
@@ -245,7 +275,11 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-purple-700 hover:bg-purple-800 text-white border-0"
+                        className="w-full text-white border-0"
+                        style={{
+                          backgroundColor: 'hsl(var(--magnoos-electric-blue))',
+                          borderColor: 'hsl(var(--magnoos-electric-blue))'
+                        }}
                         disabled={loginMutation.isPending}
                       >
                         {loginMutation.isPending ? "Signing in..." : "Sign In"}
@@ -381,7 +415,11 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-purple-700 hover:bg-purple-800 text-white border-0"
+                        className="w-full text-white border-0"
+                        style={{
+                          backgroundColor: 'hsl(var(--magnoos-electric-blue))',
+                          borderColor: 'hsl(var(--magnoos-electric-blue))'
+                        }}
                         disabled={registerMutation.isPending}
                       >
                         {registerMutation.isPending ? "Creating account..." : "Create Account"}
