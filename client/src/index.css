@@ -24,16 +24,15 @@
   --ring: hsl(260, 100%, 65%);
   --radius: 0.75rem;
   
-  /* Magnoos Brand Colors - Futuristic theme */
+  /* Magnoos Brand Colors - Clean deep blue theme */
   --magnoos-primary: hsl(245, 100%, 65%);
   --magnoos-secondary: hsl(270, 100%, 70%);
   --magnoos-accent: hsl(200, 100%, 65%);
-  --magnoos-dark: hsl(235, 50%, 15%);
-  --magnoos-dark-surface: hsl(235, 40%, 20%);
-  --magnoos-header-dark: hsl(235, 60%, 8%);
+  --magnoos-dark: hsl(235, 45%, 12%);
+  --magnoos-dark-surface: hsl(235, 35%, 8%);
+  --magnoos-header-dark: hsl(235, 50%, 6%);
   --magnoos-gradient-start: hsl(245, 100%, 65%);
   --magnoos-gradient-end: hsl(270, 100%, 70%);
-  --magnoos-bg-gradient: linear-gradient(135deg, hsl(235, 50%, 15%), hsl(270, 50%, 25%));
 }
 
 .dark {
@@ -68,19 +67,19 @@
   body {
     @apply font-sans antialiased;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, hsl(235, 50%, 15%), hsl(270, 50%, 25%)) !important;
+    background: hsl(235, 45%, 12%) !important;
     color: hsl(0, 0%, 98%) !important;
     min-height: 100vh;
   }
   
   html {
-    background: linear-gradient(135deg, hsl(235, 50%, 15%), hsl(270, 50%, 25%)) !important;
+    background: hsl(235, 45%, 12%) !important;
     min-height: 100vh;
   }
   
-  /* Force futuristic gradient theme globally */
+  /* Force deep blue futuristic theme globally */
   #root {
-    background: linear-gradient(135deg, hsl(235, 50%, 15%), hsl(270, 50%, 25%)) !important;
+    background: hsl(235, 45%, 12%) !important;
     color: hsl(0, 0%, 98%) !important;
     min-height: 100vh;
   }
@@ -91,24 +90,9 @@
     background: linear-gradient(135deg, var(--magnoos-gradient-start), var(--magnoos-gradient-end));
   }
   
-  /* Enhanced background gradient animation */
+  /* Clean deep blue background */
   .magnoos-bg-gradient {
-    background: linear-gradient(135deg, hsl(235, 50%, 15%), hsl(270, 50%, 25%));
-    position: relative;
-  }
-  
-  .magnoos-bg-gradient::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(120, 119, 198, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(138, 43, 226, 0.05) 0%, transparent 50%);
-    pointer-events: none;
+    background: var(--magnoos-dark);
   }
   
   .magnoos-gradient-vertical {
@@ -133,6 +117,7 @@
   
   .bg-magnoos-surface {
     background-color: var(--magnoos-dark-surface);
+    border: 1px solid rgba(245, 101, 255, 0.1);
   }
   
   .bg-magnoos-header {
@@ -147,18 +132,20 @@
   .futuristic-tabs [data-state="active"] {
     background: linear-gradient(135deg, var(--magnoos-primary), var(--magnoos-secondary));
     border: 1px solid var(--magnoos-primary);
-    box-shadow: 0 0 20px var(--magnoos-primary)/30;
+    color: white;
+    font-weight: 600;
   }
   
   .futuristic-tabs [data-state="inactive"] {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    background: var(--magnoos-dark-surface);
+    border: 1px solid rgba(245, 101, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
   }
   
   .futuristic-tabs [data-state="inactive"]:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--magnoos-primary)/50;
+    background: rgba(245, 101, 255, 0.1);
+    border: 1px solid rgba(245, 101, 255, 0.4);
+    color: white;
   }
   
   .text-magnoos-dark-blue {

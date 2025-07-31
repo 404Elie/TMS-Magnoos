@@ -181,7 +181,7 @@ export default function ManagerDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["manager"]}>
-      <div className="min-h-screen magnoos-bg-gradient">
+      <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="manager" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

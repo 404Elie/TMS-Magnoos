@@ -260,7 +260,7 @@ export default function OperationsDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
-      <div className="min-h-screen magnoos-bg-gradient">
+      <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="operations" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -363,7 +363,7 @@ export default function OperationsDashboard() {
                     <CardTitle className="text-white">Monthly Budget Trend</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark-surface rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-magnoos-primary mx-auto mb-2" />
                         <p className="text-white">Monthly Budget Chart</p>
@@ -378,7 +378,7 @@ export default function OperationsDashboard() {
                     <CardTitle className="text-white">Expense Breakdown</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark-surface rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-magnoos-secondary mx-auto mb-2" />
                         <p className="text-white">Expense Breakdown Chart</p>
@@ -839,7 +839,7 @@ export default function OperationsDashboard() {
                     <CardTitle className="text-white">Project Budget Distribution</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark-surface rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                         <p className="text-gray-400">Project Budget Chart</p>
@@ -855,7 +855,7 @@ export default function OperationsDashboard() {
                     <CardTitle className="text-white">Budget vs Actual Spending</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-magnoos-dark/50 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-magnoos-dark-surface rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                         <p className="text-gray-400">Budget vs Actual Chart</p>

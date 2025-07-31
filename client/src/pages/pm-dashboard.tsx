@@ -168,7 +168,7 @@ export default function PMDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["pm"]}>
-      <div className="min-h-screen magnoos-bg-gradient">
+      <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="pm" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
