@@ -42,6 +42,7 @@ export default function ManagerDashboard() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [travelerSearchOpen, setTravelerSearchOpen] = useState(false);
+  const [projectSearchOpen, setProjectSearchOpen] = useState(false);
 
   const form = useForm<TravelRequestForm>({
     resolver: zodResolver(travelRequestFormSchema),
@@ -415,22 +416,68 @@ export default function ManagerDashboard() {
                             control={form.control}
                             name="projectId"
                             render={({ field }) => (
-                              <FormItem>
+                              <FormItem className="flex flex-col">
                                 <FormLabel>Project</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select project..." />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {projects?.map((project) => (
-                                      <SelectItem key={project.id} value={project.id}>
-                                        {project.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                <Popover open={projectSearchOpen} onOpenChange={setProjectSearchOpen}>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={projectSearchOpen}
+                                        className={cn(
+                                          "w-full justify-between",
+                                          !field.value && "text-muted-foreground"
+                                        )}
+                                      >
+                                        {field.value
+                                          ? (() => {
+                                              const selectedProject = projects?.find((project) => project.id === field.value);
+                                              return selectedProject?.name || "Select project...";
+                                            })()
+                                          : "Select project..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-full p-0" align="start">
+                                    <Command>
+                                      <CommandInput placeholder="Search projects..." className="h-9" />
+                                      <CommandList>
+                                        <CommandEmpty>No project found.</CommandEmpty>
+                                        <CommandGroup>
+                                          {projects?.map((project) => (
+                                            <CommandItem
+                                              key={project.id}
+                                              value={project.name}
+                                              onSelect={() => {
+                                                field.onChange(project.id);
+                                                setProjectSearchOpen(false);
+                                              }}
+                                            >
+                                              <div className="flex flex-col">
+                                                <span className="font-medium">
+                                                  {project.name}
+                                                </span>
+                                                {project.description && (
+                                                  <span className="text-sm text-muted-foreground">
+                                                    {project.description}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <Check
+                                                className={cn(
+                                                  "ml-auto h-4 w-4",
+                                                  field.value === project.id ? "opacity-100" : "opacity-0"
+                                                )}
+                                              />
+                                            </CommandItem>
+                                          ))}
+                                        </CommandGroup>
+                                      </CommandList>
+                                    </Command>
+                                  </PopoverContent>
+                                </Popover>
                                 <FormMessage />
                               </FormItem>
                             )}
