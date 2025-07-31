@@ -150,12 +150,12 @@ class ZohoService {
       while (true) {
         const accessToken = await this.getAccessToken();
         const headers = {
-          'Authorization': `Bearer ${accessToken}`, // Use Bearer token as per your working code
+          'Authorization': `Zoho-oauthtoken ${accessToken}`, // Use same auth format as users
           'Accept': 'application/json'
         };
         
-        // Use the correct endpoint format from your working code
-        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/maaloomatiia/projects/?page=${page}`;
+        // Try different API endpoint formats to match working configuration
+        const apiUrl = `https://projectsapi.zoho.com/api/v3/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=200`;
         console.log(`Fetching projects from: ${apiUrl} (Page: ${page})`);
 
         const response = await fetch(apiUrl, { headers });
