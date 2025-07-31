@@ -195,7 +195,7 @@ export default function ManagerDashboard() {
             <TabsContent value="dashboard" className="space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-magnoos-surface border-magnoos-primary/20">
+                <Card className="bg-magnoos-dark border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -211,7 +211,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-surface border-magnoos-primary/20">
+                <Card className="bg-magnoos-dark border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -227,7 +227,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-surface border-magnoos-primary/20">
+                <Card className="bg-magnoos-dark border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -243,7 +243,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-surface border-magnoos-primary/20">
+                <Card className="bg-magnoos-dark border-magnoos-primary/20">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -261,7 +261,7 @@ export default function ManagerDashboard() {
               </div>
 
               {/* Recent Requests */}
-              <Card className="bg-magnoos-surface border-magnoos-primary/20">
+              <Card className="bg-magnoos-dark border-magnoos-primary/20">
                 <CardHeader>
                   <CardTitle className="text-white">My Travel Requests</CardTitle>
                 </CardHeader>
@@ -343,7 +343,7 @@ export default function ManagerDashboard() {
 
             <TabsContent value="submit" className="space-y-8">
               <div className="max-w-4xl mx-auto">
-                <Card className="bg-magnoos-surface border-magnoos-primary/20">
+                <Card className="bg-magnoos-dark border-magnoos-primary/20">
                   <CardHeader>
                     <CardTitle className="text-white">Submit Travel Request</CardTitle>
                     <CardDescription>

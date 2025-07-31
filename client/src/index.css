@@ -29,7 +29,7 @@
   --magnoos-secondary: hsl(270, 100%, 70%);
   --magnoos-accent: hsl(200, 100%, 65%);
   --magnoos-dark: hsl(235, 45%, 12%);
-  --magnoos-dark-surface: hsl(235, 35%, 8%);
+  --magnoos-dark-surface: hsl(235, 45%, 12%);
   --magnoos-header-dark: hsl(235, 50%, 6%);
   --magnoos-gradient-start: hsl(245, 100%, 65%);
   --magnoos-gradient-end: hsl(270, 100%, 70%);
@@ -118,6 +118,11 @@
   .bg-magnoos-surface {
     background-color: var(--magnoos-dark-surface);
     border: 1px solid rgba(245, 101, 255, 0.1);
+  }
+  
+  /* Override any purple background bleeding through */
+  .bg-magnoos-dark {
+    background-color: hsl(235, 45%, 12%) !important;
   }
   
   .bg-magnoos-header {
