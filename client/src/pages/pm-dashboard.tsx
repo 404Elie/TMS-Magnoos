@@ -173,7 +173,7 @@ export default function PMDashboard() {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-magnoos-dark">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-3 bg-transparent border border-gray-800 backdrop-blur-md">
+            <TabsList className="grid w-full grid-cols-3 bg-transparent border border-magnoos-dark backdrop-blur-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="approvals">Pending Approvals</TabsTrigger>
               <TabsTrigger value="analytics">Project Analytics</TabsTrigger>
@@ -182,7 +182,7 @@ export default function PMDashboard() {
             <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -198,7 +198,7 @@ export default function PMDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -214,7 +214,7 @@ export default function PMDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -230,7 +230,7 @@ export default function PMDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -249,7 +249,7 @@ export default function PMDashboard() {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Recent Requests Needing Approval</CardTitle>
                   </CardHeader>
@@ -287,7 +287,7 @@ export default function PMDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Project Travel Summary</CardTitle>
                   </CardHeader>
@@ -309,7 +309,7 @@ export default function PMDashboard() {
             </TabsContent>
 
             <TabsContent value="approvals" className="bg-magnoos-dark space-y-8">
-              <Card className="bg-magnoos-dark border-gray-800">
+              <Card className="bg-magnoos-dark border-magnoos-dark">
                 <CardHeader>
                   <CardTitle className="text-white">Pending Travel Request Approvals</CardTitle>
                 </CardHeader>
@@ -454,7 +454,7 @@ export default function PMDashboard() {
             <TabsContent value="analytics" className="bg-magnoos-dark space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Travel Requests by Project Chart Placeholder */}
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Travel Requests by Project</CardTitle>
                   </CardHeader>
@@ -470,7 +470,7 @@ export default function PMDashboard() {
                 </Card>
                 
                 {/* Approval Timeline Placeholder */}
-                <Card className="bg-magnoos-dark border-gray-800">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Approval Timeline Trends</CardTitle>
                   </CardHeader>
@@ -487,7 +487,7 @@ export default function PMDashboard() {
               </div>
               
               {/* Project Details Table */}
-              <Card className="bg-magnoos-dark border-gray-800">
+              <Card className="bg-magnoos-dark border-magnoos-dark">
                 <CardHeader>
                   <CardTitle className="text-white">Project Travel Details</CardTitle>
                 </CardHeader>

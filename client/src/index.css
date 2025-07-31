@@ -117,7 +117,7 @@
   
   .bg-magnoos-surface {
     background-color: var(--magnoos-dark-surface);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid hsl(235, 45%, 12%);
   }
   
   /* Override any purple background bleeding through */
@@ -143,13 +143,13 @@
   
   .futuristic-tabs [data-state="inactive"] {
     background: var(--magnoos-dark-surface);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid hsl(235, 45%, 12%);
     color: rgba(255, 255, 255, 0.8);
   }
   
   .futuristic-tabs [data-state="inactive"]:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: hsl(235, 45%, 15%);
+    border: 1px solid hsl(235, 45%, 12%);
     color: white;
   }
   
@@ -183,5 +183,9 @@
   
   .hover\:text-magnoos-dark-blue:hover {
     color: var(--magnoos-dark-blue);
+  }
+  
+  .border-magnoos-dark {
+    border-color: hsl(235, 45%, 12%);
   }
 }
