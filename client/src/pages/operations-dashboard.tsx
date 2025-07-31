@@ -263,7 +263,7 @@ export default function OperationsDashboard() {
       <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="operations" />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-magnoos-dark">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-4 bg-transparent border border-magnoos-dark backdrop-blur-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -274,7 +274,7 @@ export default function OperationsDashboard() {
 
             <TabsContent value="dashboard" className="bg-[#120d40] space-y-8">
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-6">
                 <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
@@ -357,7 +357,7 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Budget Charts Placeholder */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
                 <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Monthly Budget Trend</CardTitle>

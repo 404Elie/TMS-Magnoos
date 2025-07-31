@@ -184,7 +184,7 @@ export default function ManagerDashboard() {
       <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="manager" />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-magnoos-dark">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-2 bg-transparent border border-magnoos-dark backdrop-blur-md">
