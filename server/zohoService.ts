@@ -154,8 +154,8 @@ class ZohoService {
           'Accept': 'application/json'
         };
         
-        // Try different API endpoint formats to match working configuration
-        const apiUrl = `https://projectsapi.zoho.com/api/v3/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=200`;
+        // Use same endpoint format as users API
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=200`;
         console.log(`Fetching projects from: ${apiUrl} (Page: ${page})`);
 
         const response = await fetch(apiUrl, { headers });

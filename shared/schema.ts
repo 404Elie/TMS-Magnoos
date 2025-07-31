@@ -78,9 +78,10 @@ export const travelRequests = pgTable("travel_requests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   requesterId: varchar("requester_id").notNull().references(() => users.id),
   travelerId: varchar("traveler_id").notNull().references(() => users.id),
-  projectId: varchar("project_id").notNull().references(() => projects.id),
+  projectId: varchar("project_id").references(() => projects.id), // Optional, only required for delivery purpose
   destination: varchar("destination").notNull(),
   purpose: varchar("purpose").notNull(),
+  customPurpose: varchar("custom_purpose"), // For when purpose is "other"
   departureDate: timestamp("departure_date").notNull(),
   returnDate: timestamp("return_date").notNull(),
   estimatedFlightCost: decimal("estimated_flight_cost", { precision: 8, scale: 2 }),

@@ -26,12 +26,26 @@ import type { TravelRequestWithDetails, Project, User } from "@shared/schema";
 
 const travelRequestFormSchema = z.object({
   travelerId: z.string().min(1, "Please select a traveler"),
-  projectId: z.string().min(1, "Please select a project"),
+  projectId: z.string().optional(),
   destination: z.string().min(1, "Destination is required"),
   purpose: z.string().min(1, "Purpose is required"),
+  customPurpose: z.string().optional(),
   departureDate: z.string().min(1, "Departure date is required"),
   returnDate: z.string().min(1, "Return date is required"),
   notes: z.string().optional(),
+}).refine((data) => {
+  // Require project when purpose is delivery
+  if (data.purpose === "delivery" && (!data.projectId || data.projectId === "")) {
+    return false;
+  }
+  // Require custom purpose when purpose is other
+  if (data.purpose === "other" && (!data.customPurpose || data.customPurpose.trim() === "")) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Please complete all required fields for the selected purpose",
+  path: ["purpose"], // This will show the error on the purpose field
 });
 
 type TravelRequestForm = z.infer<typeof travelRequestFormSchema>;
@@ -43,6 +57,8 @@ export default function ManagerDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [travelerSearchOpen, setTravelerSearchOpen] = useState(false);
   const [projectSearchOpen, setProjectSearchOpen] = useState(false);
+  const [purposeValue, setPurposeValue] = useState("");
+  const [showCustomPurpose, setShowCustomPurpose] = useState(false);
 
   const form = useForm<TravelRequestForm>({
     resolver: zodResolver(travelRequestFormSchema),
@@ -51,6 +67,7 @@ export default function ManagerDashboard() {
       projectId: "",
       destination: "",
       purpose: "",
+      customPurpose: "",
       departureDate: "",
       returnDate: "",
       notes: "",
@@ -332,8 +349,8 @@ export default function ManagerDashboard() {
                   <CardContent>
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        {/* Traveler and Project Selection */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Traveler Selection */}
+                        <div className="grid grid-cols-1 gap-6">
                           <FormField
                             control={form.control}
                             name="travelerId"
@@ -372,103 +389,32 @@ export default function ManagerDashboard() {
                                       <CommandList>
                                         <CommandEmpty>No traveler found.</CommandEmpty>
                                         <CommandGroup>
-                                          {users?.map((user) => (
+                                          {users?.map((travelerUser) => (
                                             <CommandItem
-                                              key={user.id}
-                                              value={`${user.firstName || ''} ${user.lastName || ''} ${user.email || ''}`}
+                                              key={travelerUser.id}
+                                              value={`${travelerUser.firstName || ''} ${travelerUser.lastName || ''} ${travelerUser.email || ''}`}
                                               onSelect={() => {
-                                                field.onChange(user.id);
+                                                field.onChange(travelerUser.id);
                                                 setTravelerSearchOpen(false);
                                               }}
                                             >
                                               <div className="flex flex-col">
                                                 <span className="font-medium">
-                                                  {user.firstName && user.lastName 
-                                                    ? `${user.firstName} ${user.lastName}` 
-                                                    : user.email || 'Unknown User'}
-                                                  {user.id === user?.id && " (Me)"}
+                                                  {travelerUser.firstName && travelerUser.lastName 
+                                                    ? `${travelerUser.firstName} ${travelerUser.lastName}` 
+                                                    : travelerUser.email || 'Unknown User'}
+                                                  {travelerUser.id === user?.id && " (Me)"}
                                                 </span>
-                                                {user.firstName && user.lastName && user.email && (
+                                                {travelerUser.firstName && travelerUser.lastName && travelerUser.email && (
                                                   <span className="text-sm text-muted-foreground">
-                                                    {user.email}
+                                                    {travelerUser.email}
                                                   </span>
                                                 )}
                                               </div>
                                               <Check
                                                 className={cn(
                                                   "ml-auto h-4 w-4",
-                                                  field.value === user.id ? "opacity-100" : "opacity-0"
-                                                )}
-                                              />
-                                            </CommandItem>
-                                          ))}
-                                        </CommandGroup>
-                                      </CommandList>
-                                    </Command>
-                                  </PopoverContent>
-                                </Popover>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="projectId"
-                            render={({ field }) => (
-                              <FormItem className="flex flex-col">
-                                <FormLabel>Project</FormLabel>
-                                <Popover open={projectSearchOpen} onOpenChange={setProjectSearchOpen}>
-                                  <PopoverTrigger asChild>
-                                    <FormControl>
-                                      <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        aria-expanded={projectSearchOpen}
-                                        className={cn(
-                                          "w-full justify-between",
-                                          !field.value && "text-muted-foreground"
-                                        )}
-                                      >
-                                        {field.value
-                                          ? (() => {
-                                              const selectedProject = projects?.find((project) => project.id === field.value);
-                                              return selectedProject?.name || "Select project...";
-                                            })()
-                                          : "Select project..."}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                      </Button>
-                                    </FormControl>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="w-full p-0" align="start">
-                                    <Command>
-                                      <CommandInput placeholder="Search projects..." className="h-9" />
-                                      <CommandList>
-                                        <CommandEmpty>No project found.</CommandEmpty>
-                                        <CommandGroup>
-                                          {projects?.map((project) => (
-                                            <CommandItem
-                                              key={project.id}
-                                              value={project.name}
-                                              onSelect={() => {
-                                                field.onChange(project.id);
-                                                setProjectSearchOpen(false);
-                                              }}
-                                            >
-                                              <div className="flex flex-col">
-                                                <span className="font-medium">
-                                                  {project.name}
-                                                </span>
-                                                {project.description && (
-                                                  <span className="text-sm text-muted-foreground">
-                                                    {project.description}
-                                                  </span>
-                                                )}
-                                              </div>
-                                              <Check
-                                                className={cn(
-                                                  "ml-auto h-4 w-4",
-                                                  field.value === project.id ? "opacity-100" : "opacity-0"
+                                                  field.value === travelerUser.id ? "opacity-100" : "opacity-0"
                                                 )}
                                               />
                                             </CommandItem>
@@ -483,6 +429,82 @@ export default function ManagerDashboard() {
                             )}
                           />
                         </div>
+
+                        {/* Project Selection - Only shown when purpose is "Delivery" */}
+                        {purposeValue === "delivery" && (
+                          <div className="grid grid-cols-1 gap-6">
+                            <FormField
+                              control={form.control}
+                              name="projectId"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                  <FormLabel>Project</FormLabel>
+                                  <Popover open={projectSearchOpen} onOpenChange={setProjectSearchOpen}>
+                                    <PopoverTrigger asChild>
+                                      <FormControl>
+                                        <Button
+                                          variant="outline"
+                                          role="combobox"
+                                          aria-expanded={projectSearchOpen}
+                                          className={cn(
+                                            "w-full justify-between",
+                                            !field.value && "text-muted-foreground"
+                                          )}
+                                        >
+                                          {field.value
+                                            ? (() => {
+                                                const selectedProject = projects?.find((project) => project.id === field.value);
+                                                return selectedProject?.name || "Select project...";
+                                              })()
+                                            : "Select project..."}
+                                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                      </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0" align="start">
+                                      <Command>
+                                        <CommandInput placeholder="Search projects..." className="h-9" />
+                                        <CommandList>
+                                          <CommandEmpty>No project found.</CommandEmpty>
+                                          <CommandGroup>
+                                            {projects?.map((project) => (
+                                              <CommandItem
+                                                key={project.id}
+                                                value={project.name}
+                                                onSelect={() => {
+                                                  field.onChange(project.id);
+                                                  setProjectSearchOpen(false);
+                                                }}
+                                              >
+                                                <div className="flex flex-col">
+                                                  <span className="font-medium">
+                                                    {project.name}
+                                                  </span>
+                                                  {project.description && (
+                                                    <span className="text-sm text-muted-foreground">
+                                                      {project.description}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                                <Check
+                                                  className={cn(
+                                                    "ml-auto h-4 w-4",
+                                                    field.value === project.id ? "opacity-100" : "opacity-0"
+                                                  )}
+                                                />
+                                              </CommandItem>
+                                            ))}
+                                          </CommandGroup>
+                                        </CommandList>
+                                      </Command>
+                                    </PopoverContent>
+                                  </Popover>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+                        )}
 
                         {/* Travel Details */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -506,23 +528,51 @@ export default function ManagerDashboard() {
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel>Purpose</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select 
+                                  onValueChange={(value) => {
+                                    field.onChange(value);
+                                    setPurposeValue(value);
+                                    setShowCustomPurpose(value === "other");
+                                    if (value !== "delivery") {
+                                      // Clear project selection if purpose is not delivery
+                                      form.setValue("projectId", "");
+                                    }
+                                  }} 
+                                  defaultValue={field.value}
+                                >
                                   <FormControl>
                                     <SelectTrigger>
                                       <SelectValue placeholder="Select purpose..." />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    <SelectItem value="client-meeting">Client Meeting</SelectItem>
-                                    <SelectItem value="conference">Conference</SelectItem>
-                                    <SelectItem value="training">Training</SelectItem>
-                                    <SelectItem value="project-work">Project Work</SelectItem>
+                                    <SelectItem value="delivery">Delivery</SelectItem>
+                                    <SelectItem value="sales">Sales</SelectItem>
+                                    <SelectItem value="event">Event</SelectItem>
+                                    <SelectItem value="other">Other</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
+
+                          {/* Custom Purpose Input - Only shown when "Other" is selected */}
+                          {showCustomPurpose && (
+                            <FormField
+                              control={form.control}
+                              name="customPurpose"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Custom Purpose</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Please specify the purpose..." {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          )}
                         </div>
 
                         {/* Dates */}
