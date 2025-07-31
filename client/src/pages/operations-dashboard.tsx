@@ -260,10 +260,10 @@ export default function OperationsDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
-      <div className="min-h-screen bg-slate-800 operations-dashboard">
+      <div className="min-h-screen bg-blue-950 operations-dashboard">
         <Header currentRole="operations" />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-slate-700">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-blue-950">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-4 bg-transparent border border-magnoos-dark backdrop-blur-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
