@@ -173,6 +173,24 @@
     ring: none !important;
   }
   
+  .custom-tab:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    ring: none !important;
+  }
+  
+  /* Remove any Radix UI focus rings */
+  .custom-tab[data-focus-visible] {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Remove default button focus rings */
+  .custom-tab:focus:not(:focus-visible) {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
   .text-magnoos-dark-blue {
     color: var(--magnoos-dark-blue);
   }
