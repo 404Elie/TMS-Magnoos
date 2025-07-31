@@ -353,7 +353,7 @@ export default function ManagerDashboard() {
 
             <TabsContent value="submit" className="bg-magnoos-dark space-y-8">
               <div className="max-w-4xl mx-auto">
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-slate-800 border-slate-700 shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-white">Submit Travel Request</CardTitle>
                     <CardDescription>
@@ -379,8 +379,8 @@ export default function ManagerDashboard() {
                                         role="combobox"
                                         aria-expanded={travelerSearchOpen}
                                         className={cn(
-                                          "w-full justify-between",
-                                          !field.value && "text-muted-foreground"
+                                          "w-full justify-between bg-slate-800 border-slate-600 text-white hover:bg-slate-700",
+                                          !field.value && "text-gray-400"
                                         )}
                                       >
                                         {field.value
@@ -461,8 +461,8 @@ export default function ManagerDashboard() {
                                           role="combobox"
                                           aria-expanded={projectSearchOpen}
                                           className={cn(
-                                            "w-full justify-between",
-                                            !field.value && "text-muted-foreground"
+                                            "w-full justify-between bg-slate-800 border-slate-600 text-white hover:bg-slate-700",
+                                            !field.value && "text-gray-400"
                                           )}
                                         >
                                           {field.value
@@ -656,17 +656,17 @@ export default function ManagerDashboard() {
 
 
                         {/* Actions */}
-                        <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                        <div className="flex justify-end space-x-4 pt-6 border-t border-slate-700">
                           <Button 
                             type="button" 
-                            variant="outline"
+                            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                             onClick={() => form.reset()}
                           >
                             Clear Form
                           </Button>
                           <Button 
                             type="submit" 
-                            className="bg-magnoos-blue hover:bg-magnoos-dark-blue"
+                            className="bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
                             disabled={submitRequestMutation.isPending}
                           >
                             {submitRequestMutation.isPending ? "Submitting..." : "Submit Request"}
