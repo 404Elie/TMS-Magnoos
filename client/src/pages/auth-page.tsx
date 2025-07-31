@@ -172,9 +172,19 @@ export default function AuthPage() {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="login">Sign In</TabsTrigger>
-                  <TabsTrigger value="register">Sign Up</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 bg-black/20 p-1 rounded-lg">
+                  <TabsTrigger 
+                    value="login" 
+                    className="data-[state=active]:bg-white data-[state=active]:text-purple-900 data-[state=active]:shadow-lg transition-all font-medium"
+                  >
+                    Sign In
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="register"
+                    className="data-[state=active]:bg-white data-[state=active]:text-purple-900 data-[state=active]:shadow-lg transition-all font-medium"
+                  >
+                    Sign Up
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="login" className="space-y-4 mt-6">
