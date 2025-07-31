@@ -188,8 +188,18 @@ export default function ManagerDashboard() {
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-2 bg-slate-900 border border-slate-700 backdrop-blur-md">
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="submit">Submit Request</TabsTrigger>
+              <TabsTrigger 
+                value="dashboard"
+                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
+              >
+                Dashboard
+              </TabsTrigger>
+              <TabsTrigger 
+                value="submit"
+                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
+              >
+                Submit Request
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">

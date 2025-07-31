@@ -268,25 +268,25 @@ export default function OperationsDashboard() {
             <TabsList className="grid w-full grid-cols-4 bg-slate-900 border border-slate-700 backdrop-blur-md">
               <TabsTrigger 
                 value="dashboard" 
-                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
               >
                 Dashboard
               </TabsTrigger>
               <TabsTrigger 
                 value="bookings"
-                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
               >
                 Active Bookings
               </TabsTrigger>
               <TabsTrigger 
                 value="budget-person"
-                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
               >
                 Budget by Person
               </TabsTrigger>
               <TabsTrigger 
                 value="budget-project"
-                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
               >
                 Budget by Project
               </TabsTrigger>
