@@ -181,13 +181,13 @@ export default function ManagerDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["manager"]}>
-      <div className="min-h-screen bg-magnoos-dark">
+      <div className="min-h-screen magnoos-bg-gradient">
         <Header currentRole="manager" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <AdminRoleSwitcher />
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
+            <TabsList className="grid w-full grid-cols-2 bg-transparent border border-magnoos-primary/20 backdrop-blur-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="submit">Submit Request</TabsTrigger>
             </TabsList>

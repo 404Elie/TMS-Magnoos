@@ -31,7 +31,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
   const typedUser = user as User | undefined;
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
+    <header className="bg-magnoos-header shadow-2xl border-b border-magnoos-primary/20 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
@@ -39,8 +39,8 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
             <div className="flex items-center space-x-3">
               <img src={logoPath} alt="Magnoos Logo" className="w-10 h-10 object-contain" />
               <div>
-                <h1 className="text-xl font-bold text-magnoos-dark">Magnoos</h1>
-                <p className="text-xs text-gray-500">Travel Management</p>
+                <h1 className="text-xl font-bold text-white">Magnoos</h1>
+                <p className="text-xs text-magnoos-primary">Travel Management</p>
               </div>
             </div>
           </div>
@@ -53,15 +53,15 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
             <div className="flex items-center space-x-3">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={userImage || typedUser?.profileImageUrl} alt="User Avatar" />
-                <AvatarFallback className="bg-magnoos-blue text-white text-sm">
+                <AvatarFallback className="magnoos-gradient text-white text-sm">
                   {typedUser ? getInitials(`${typedUser.firstName || ''} ${typedUser.lastName || ''}`.trim() || typedUser.email || 'U') : 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-white">
                   {userName || `${typedUser?.firstName || ''} ${typedUser?.lastName || ''}`.trim() || typedUser?.email || 'User'}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-magnoos-primary">
                   {currentRole ? getRoleDisplayName(currentRole) : getRoleDisplayName(typedUser?.activeRole || typedUser?.role || 'user')}
                 </p>
               </div>
@@ -72,7 +72,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
               variant="outline" 
               size="sm"
               onClick={() => window.location.href = '/api/logout'}
-              className="hidden sm:flex"
+              className="hidden sm:flex border-magnoos-primary/30 text-white hover:bg-magnoos-primary/20 hover:border-magnoos-primary"
             >
               Logout
             </Button>
