@@ -187,7 +187,7 @@ export default function ManagerDashboard() {
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-2 bg-slate-900 border border-slate-700 backdrop-blur-md">
+            <TabsList className="grid w-full grid-cols-2 bg-slate-900 border border-slate-700 backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard"
                 className="custom-tab"
