@@ -114,3 +114,12 @@ Preferred communication style: Simple, everyday language.
 7. **Responsive Design**: Mobile-first approach with accessible components
 
 The system is designed to be scalable, maintainable, and provides a smooth user experience across different roles while maintaining strict access controls and data integrity.
+
+## Recent Changes
+
+### January 31, 2025
+- **Zoho Projects API Integration Complete**: Successfully integrated Zoho Projects API with separate authentication credentials
+- **Fixed Infinite Loop Issue**: Resolved pagination bug that caused endless API calls by implementing proper end-of-data detection  
+- **Real Project Data Loading**: System now loads 100+ real projects from Zoho and displays them in conditional dropdown
+- **Conditional Project Selection**: Projects dropdown only appears when "Delivery" purpose is selected, working as designed
+- **API Performance Optimized**: Added 50-page limit and better retry logic for reliable project data fetching
