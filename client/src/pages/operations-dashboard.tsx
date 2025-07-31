@@ -263,7 +263,7 @@ export default function OperationsDashboard() {
       <div className="min-h-screen bg-magnoos-dark">
         <Header currentRole="operations" />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-magnoos-dark">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-4 bg-transparent border border-magnoos-primary/20 backdrop-blur-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
