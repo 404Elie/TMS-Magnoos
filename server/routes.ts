@@ -105,7 +105,7 @@ export function registerRoutes(app: Express): Server {
       const zohoProjects = await zohoService.getProjects();
       // Transform to expected format for frontend - return only id and name for cleaner dropdown
       const transformedProjects = zohoProjects.map(project => ({
-        id: project.id_string || project.id,
+        id: project.id || project.id_string,
         name: project.name
       }));
       res.json(transformedProjects);
@@ -300,8 +300,8 @@ export function registerRoutes(app: Express): Server {
             requesterName: `${requester.firstName || ''} ${requester.lastName || ''}`.trim() || requester.email || 'Unknown',
             destination: validatedData.destination,
             origin: validatedData.origin || 'Not specified',
-            departureDate: validatedData.departureDate,
-            returnDate: validatedData.returnDate,
+            departureDate: new Date(validatedData.departureDate).toISOString(),
+            returnDate: new Date(validatedData.returnDate).toISOString(),
             purpose: validatedData.purpose,
             projectName: validatedData.projectId ? 'Project specified' : undefined
           };

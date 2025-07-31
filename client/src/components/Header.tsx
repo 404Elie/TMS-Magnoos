@@ -62,7 +62,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
           
           <div className="flex items-center space-x-4">
             {/* Admin Role Switcher */}
-            {typedUser && <AdminRoleSwitcher user={typedUser} />}
+            {typedUser && typedUser.role === 'admin' && <AdminRoleSwitcher />}
             
             {/* User Profile */}
             <div className="flex items-center space-x-3">
