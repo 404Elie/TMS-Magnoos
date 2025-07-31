@@ -183,24 +183,30 @@
   
   /* Auth page specific styling */
   .auth-page label {
-    color: hsl(var(--magnoos-dark-blue)) !important;
+    color: #000037 !important;
     font-weight: 500;
   }
   
   .auth-page input {
-    background-color: hsl(var(--magnoos-white)) !important;
-    border-color: hsl(var(--magnoos-light-gray)) !important;
-    color: hsl(var(--magnoos-dark-blue)) !important;
+    background-color: #FFFFFF !important;
+    border-color: #DADADA !important;
+    color: #000037 !important;
   }
   
   .auth-page input::placeholder {
-    color: hsl(var(--magnoos-dark-gray) / 0.6) !important;
+    color: rgba(70, 70, 70, 0.6) !important;
   }
   
   .auth-page select {
-    background-color: hsl(var(--magnoos-white)) !important;
-    border-color: hsl(var(--magnoos-light-gray)) !important;
-    color: hsl(var(--magnoos-dark-blue)) !important;
+    background-color: #FFFFFF !important;
+    border-color: #DADADA !important;
+    color: #000037 !important;
+  }
+  
+  .auth-page button[type="submit"] {
+    background-color: #0032FF !important;
+    border-color: #0032FF !important;
+    color: white !important;
   }
   
   /* Custom clean tab styling - Light theme */
