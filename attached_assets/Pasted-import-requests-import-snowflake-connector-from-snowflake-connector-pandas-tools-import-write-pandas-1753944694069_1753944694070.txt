@@ -1,0 +1,463 @@
+import requests
+import snowflake.connector
+from snowflake.connector.pandas_tools import write_pandas
+import pandas as pd
+from datetime import datetime, timedelta
+import json # For potential debugging output
+
+if 'data_loader' not in globals():
+    from mage_ai.data_preparation.decorators import data_loader, test
+
+# === Zoho API Configuration ===
+# IMPORTANT: Ensure PORTAL_ID is the numeric ID of your 'maaloomatiia' portal.
+# You can often find this in the URL when navigating deep into your portal,
+# or by checking your Zoho Projects API documentation/settings for your specific portal.
+CLIENT_ID = "1000.9JYW6V02FD3K5O9ZOF9HBGM8HGUWPB" # Updated CLIENT_ID
+CLIENT_SECRET = "b6dc9116c5751e9a03c5724970dea2d3e8f494172e" # Updated CLIENT_SECRET
+REFRESH_TOKEN = "1000.3a4d8df014d9d16702c68cbe831ca844.59d529b05f33402a0c72440b76f7d78e" # Updated REFRESH_TOKEN
+AUTH_URL = "https://accounts.zoho.com/oauth/v2/token"
+PORTAL_ID = "699939546" # Assuming this is the correct numeric ID for 'maaloomatiia'
+API_BASE_URL = f"https://projectsapi.zoho.com/api/v3/portal/{PORTAL_ID}"
+
+# === Global variable to store access token and its expiry for efficiency ===
+current_access_token = None
+token_expiry_time = datetime.min
+
+# ✅ Use shared Snowflake config
+from my_project.utils.snowflake_config import snowflake_connection
+
+SNOWFLAKE_TABLE = 'USERS'
+
+TABLE_SCHEMA = """
+CREATE OR REPLACE TABLE USERS (
+    USER_ID VARCHAR,
+    USER_NAME VARCHAR,
+    USER_EMAIL VARCHAR,
+    ROLE VARCHAR,
+    PROFILE VARCHAR,
+    STATUS VARCHAR,
+    ZUID VARCHAR,
+    ZPEOPLE_EMPLOYEE_ID VARCHAR,
+    TEAM VARCHAR
+);
+"""
+
+def refresh_zoho_access_token():
+    """
+    Refreshes the Zoho access token using the refresh token.
+    Updates the global current_access_token and token_expiry_time.
+    Handles token expiry and retries.
+    """
+    global current_access_token, token_expiry_time
+
+    # If the current access token is still valid, return it to avoid unnecessary API calls
+    if current_access_token and datetime.now() < token_expiry_time:
+        return current_access_token
+
+    print("Refreshing Zoho access token...")
+    payload = {
+        'refresh_token': REFRESH_TOKEN,
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'grant_type': 'refresh_token'
+    }
+    try:
+        response = requests.post(AUTH_URL, data=payload)
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+        token_data = response.json()
+
+        if 'access_token' in token_data:
+            current_access_token = token_data['access_token']
+            expires_in = token_data.get('expires_in', 3600)  # Default to 1 hour if not provided
+            # Set expiry time a bit before actual expiry for a buffer (e.g., 5 minutes)
+            token_expiry_time = datetime.now() + timedelta(seconds=expires_in - 300)
+            print(f"Access token refreshed. Expires at: {token_expiry_time}")
+            return current_access_token
+        else:
+            # If Zoho returns an error in the JSON response (e.g., 'invalid_code')
+            error_message = token_data.get('error', 'Unknown error')
+            raise Exception(f"Failed to get access token: {error_message}. Full response: {token_data}")
+    except requests.exceptions.RequestException as e:
+        # Catch network or HTTP request errors
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Error response content: {e.response.text}")
+        raise Exception(f"Error refreshing Zoho access token: {e}")
+
+def get_all_teams_data():
+    """
+    Fetches all team data from Zoho Projects API.
+    This function handles pagination to retrieve all available teams.
+    Returns a list of team dictionaries.
+    """
+    all_teams_data = []
+    page = 1
+    per_page = 200  # Max per_page allowed by Zoho Projects API
+
+    print("Fetching all teams data...")
+    while True:
+        access_token = refresh_zoho_access_token()
+        headers = {
+            'Authorization': f'Zoho-oauthtoken {access_token}',
+            'Accept': 'application/json'
+        }
+        params = {
+            'page': page,
+            'per_page': per_page
+        }
+        endpoint = f"{API_BASE_URL}/teams"
+        print(f"Fetching teams from: {endpoint} (Page: {page}, Per Page: {per_page})")
+
+        try:
+            response = requests.get(endpoint, headers=headers, params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            teams = data.get('teams', [])
+            if not teams:
+                print("No more teams data found or end of pagination.")
+                break
+
+            all_teams_data.extend(teams)
+
+            if len(teams) < per_page:
+                print("Last page reached.")
+                break
+
+            page += 1
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching Zoho Projects teams data: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                print(f"API response status: {e.response.status_code}")
+                print(f"API response content: {e.response.text}")
+                if e.response.status_code == 401:
+                    print("Authentication failed (401). Access token might be invalid or expired. Forcing refresh and retrying...")
+                    current_access_token = None
+                    token_expiry_time = datetime.min
+                    continue
+            raise
+
+    print(f"Successfully retrieved {len(all_teams_data)} team records.")
+    return all_teams_data
+
+def get_all_users_data():
+    """
+    Fetches all user data from Zoho Projects API.
+    This function handles pagination to retrieve all available users.
+    Returns a list of user dictionaries.
+    """
+    all_users_data = []
+    page = 1
+    per_page = 200 # Max per_page allowed by Zoho Projects API for users
+
+    print("Fetching all users data...")
+    while True:
+        access_token = refresh_zoho_access_token()
+        headers = {'Authorization': f'Zoho-oauthtoken {access_token}'}
+        params = {
+            'page': page,
+            'per_page': per_page
+        }
+        url = f"https://projectsapi.zoho.com/restapi/portal/{PORTAL_ID}/users/"
+        print(f"Fetching users from: {url} (Page: {page}, Per Page: {per_page})")
+
+        try:
+            resp = requests.get(url, headers=headers, params=params)
+            resp.raise_for_status()
+            users = resp.json().get("users", [])
+
+            if not users:
+                print("No more user data found or end of pagination.")
+                break
+
+            all_users_data.extend(users)
+
+            if len(users) < per_page:
+                print("Last page reached.")
+                break
+
+            page += 1
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching Zoho Projects users data: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                print(f"API response status: {e.response.status_code}")
+                print(f"API response content: {e.response.text}")
+                if e.response.status_code == 401:
+                    print("Authentication failed (401). Access token might be invalid or expired. Forcing refresh and retrying...")
+                    current_access_token = None
+                    token_expiry_time = datetime.min
+                    continue
+            raise
+
+    print(f"Successfully retrieved {len(all_users_data)} user records.")
+    return all_users_data
+
+def get_all_team_user_associations(team_ids: list):
+    """
+    Fetches all user-team associations for a given list of team IDs.
+    This function handles pagination for the /teams/users endpoint.
+    Returns a list of dictionaries, each representing a user-team association.
+    """
+    all_team_users = []
+    per_page = 200 # Max per_page for this endpoint
+
+    print(f"Fetching team-user associations for {len(team_ids)} teams...")
+
+    # Zoho's /teams/users endpoint expects team_ids in the payload, not as path params.
+    # It also seems to return users for ALL specified teams in one go.
+    # We need to handle pagination for the results of this query.
+    
+    # Break team_ids into chunks if there are too many for a single request
+    # (Zoho API might have limits on payload size or number of IDs)
+    chunk_size = 50 # Arbitrary chunk size, adjust based on Zoho API limits if errors occur
+    for i in range(0, len(team_ids), chunk_size):
+        current_team_ids_chunk = team_ids[i:i + chunk_size]
+        
+        page = 1
+        while True:
+            access_token = refresh_zoho_access_token()
+            headers = {
+                'Authorization': f'Zoho-oauthtoken {access_token}',
+                'Content-Type': 'application/json',
+            }
+            payload = {
+                "team_ids": current_team_ids_chunk,
+                "page": page,
+                "per_page": per_page,
+            }
+            
+            TEAMS_USERS_URL = f'{API_BASE_URL}/teams/users' # Ensure this uses the correct API_BASE_URL
+            print(f"Fetching team-users from: {TEAMS_USERS_URL} (Page: {page}, Per Page: {per_page}, Teams: {len(current_team_ids_chunk)})")
+            
+            try:
+                # Use json=payload for POST-like body in a GET request (as per your original code)
+                resp = requests.get(TEAMS_USERS_URL, headers=headers, json=payload)
+                resp.raise_for_status()
+                blob = resp.json()
+                team_users_chunk = blob.get("team_users", [])
+
+                if not team_users_chunk:
+                    print("No more team-user associations found for this chunk or end of pagination.")
+                    break
+
+                all_team_users.extend(team_users_chunk)
+
+                if len(team_users_chunk) < per_page:
+                    print("Last page reached for this team ID chunk.")
+                    break
+
+                page += 1
+
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching Zoho Projects team-user associations: {e}")
+                if hasattr(e, 'response') and e.response is not None:
+                    print(f"API response status: {e.response.status_code}")
+                    print(f"API response content: {e.response.text}")
+                    if e.response.status_code == 401:
+                        print("Authentication failed (401). Access token might be invalid or expired. Forcing refresh and retrying...")
+                        current_access_token = None
+                        token_expiry_time = datetime.min
+                        continue # Retry the current page for this chunk
+                raise
+
+    print(f"Successfully retrieved {len(all_team_users)} team-user associations.")
+    return all_team_users
+
+
+@data_loader
+def load_zoho_users_with_teams(*args, **kwargs):
+    """
+    Main data loader function to fetch all users, all teams,
+    and their associations, then combine and load into Snowflake.
+    """
+    # 1. Fetch all teams and create a team_id to team_name map
+    teams_data = get_all_teams_data()
+    team_name_map = {team['id']: team['name'] for team in teams_data if 'id' in team and 'name' in team}
+    print(f"Created team name map with {len(team_name_map)} entries.")
+
+    # Extract all team IDs for fetching associations
+    all_team_ids = list(team_name_map.keys())
+    
+    # 2. Fetch all user-team associations
+    # If no teams found, no associations to fetch
+    team_user_associations_raw = []
+    if all_team_ids:
+        team_user_associations_raw = get_all_team_user_associations(all_team_ids)
+    else:
+        print("No teams found, skipping fetching team-user associations.")
+
+    print("\n--- Sample of raw team-user associations (first 3 records) ---")
+    if team_user_associations_raw:
+        for i, record in enumerate(team_user_associations_raw[:3]):
+            print(json.dumps(record, indent=2))
+        if len(team_user_associations_raw) > 3:
+            print(f"... and {len(team_user_associations_raw) - 3} more records.")
+    else:
+        print("No raw team-user association data.")
+    print("------------------------------------------------------------------")
+
+
+    # Normalize team-user associations to get user_id and team_id
+    # Based on the sample, each entry in team_user_associations_raw is a user object
+    # that has an 'id' (user_id) and a list of 'associted_teams' (team_ids).
+    flattened_associations = []
+    for user_entry in team_user_associations_raw:
+        user_id = user_entry.get('id')
+        # Correctly access the list of associated team IDs
+        associated_teams_list = user_entry.get('associted_teams', []) 
+        
+        if user_id is not None:
+            if associated_teams_list:
+                for team_id in associated_teams_list:
+                    flattened_associations.append({
+                        'user_id': user_id,
+                        'team_id': team_id
+                    })
+            else:
+                # If a user has no associated teams, still include them with a None team_id
+                flattened_associations.append({
+                    'user_id': user_id,
+                    'team_id': None # Or a placeholder like 'No Team ID'
+                })
+        else:
+            print(f"Warning: User entry missing 'id' in association: {user_entry}")
+    
+    # Check if flattened_associations is empty before creating DataFrame
+    if not flattened_associations:
+        print("No valid user-team associations found after flattening. Creating empty DataFrame with expected columns.")
+        team_user_df = pd.DataFrame(columns=['user_id', 'team_id'])
+    else:
+        team_user_df = pd.DataFrame(flattened_associations)
+
+    # Ensure columns are of correct type for merging
+    if 'user_id' in team_user_df.columns:
+        team_user_df['user_id'] = team_user_df['user_id'].astype(str)
+    if 'team_id' in team_user_df.columns:
+        # Convert team_id to string, but handle None values gracefully
+        team_user_df['team_id'] = team_user_df['team_id'].apply(lambda x: str(x) if x is not None else None)
+
+
+    # Add team_name to the associations DataFrame
+    team_user_df['team_name'] = team_user_df['team_id'].map(team_name_map)
+    # Handle cases where a team_id might not be in the map (shouldn't happen if all teams are fetched)
+    team_user_df['team_name'].fillna('Unknown Team', inplace=True)
+    
+    # For users who are in multiple teams, we'll concatenate team names
+    # Group by user_id and aggregate team names
+    if not team_user_df.empty:
+        # Filter out rows where team_id is None before grouping for aggregation,
+        # unless you want to group 'None' as a separate category.
+        # For now, we'll only aggregate actual team names.
+        # If a user is only associated with None team_ids, they won't appear here.
+        # This is fine, as the left merge later will handle 'No Team' for them.
+        valid_team_associations_df = team_user_df.dropna(subset=['team_id'])
+        
+        if not valid_team_associations_df.empty:
+            user_teams_aggregated = valid_team_associations_df.groupby('user_id')['team_name'].apply(lambda x: ', '.join(x.unique())).reset_index()
+            user_teams_aggregated.rename(columns={'team_name': 'TEAM_NAME_COMBINED'}, inplace=True)
+            print(f"Aggregated team names for {len(user_teams_aggregated)} users.")
+        else:
+            user_teams_aggregated = pd.DataFrame(columns=['user_id', 'TEAM_NAME_COMBINED'])
+            print("No valid team-user associations to aggregate after dropping None team_ids.")
+    else:
+        user_teams_aggregated = pd.DataFrame(columns=['user_id', 'TEAM_NAME_COMBINED'])
+        print("No team-user associations to aggregate.")
+
+
+    # 3. Fetch all users
+    all_users_raw = get_all_users_data()
+    
+    # Prepare all_users DataFrame
+    all_users_list = []
+    for u in all_users_raw:
+        all_users_list.append({
+            "USER_ID": str(u.get("id")), # Ensure ID is string for consistent merging
+            "USER_NAME": u.get("name"),
+            "USER_EMAIL": u.get("email"),
+            "ROLE": u.get("role"),
+            "PROFILE": u.get("profile_name"),
+            "STATUS": "Active" if u.get("active") else "Inactive",
+            "ZUID": str(u.get("zpuid")), # Ensure ZUID is string for consistent merging
+            "ZPEOPLE_EMPLOYEE_ID": None, # This field was None in original, keeping it
+            "TEAM": None # Placeholder, will be filled
+        })
+    users_df = pd.DataFrame(all_users_list)
+
+    # --- DEBUGGING PRINTS START ---
+    print("\n--- Debugging: users_df head ---")
+    print(users_df[['USER_ID', 'USER_NAME', 'ZUID']].head(10)) # Include ZUID in debug print
+    print("\n--- Debugging: user_teams_aggregated head ---")
+    print(user_teams_aggregated.head(10))
+    # --- DEBUGGING PRINTS END ---
+
+    # 4. Merge data to enrich users_df with team names
+    # Left join users_df with the aggregated team names
+    # Corrected join: Merge on ZUID from users_df and user_id from user_teams_aggregated
+    final_users_df = pd.merge(
+        users_df,
+        user_teams_aggregated,
+        left_on='ZUID', # Changed from 'USER_ID' to 'ZUID'
+        right_on='user_id',
+        how='left'
+    )
+
+    # --- DEBUGGING PRINTS START ---
+    print("\n--- Debugging: final_users_df head after merge ---")
+    print(final_users_df[['USER_ID', 'USER_NAME', 'ZUID', 'TEAM_NAME_COMBINED']].head(10)) # Include ZUID in debug print
+    # --- DEBUGGING PRINTS END ---
+
+    # Populate the 'TEAM' column with the combined team names
+    final_users_df['TEAM'] = final_users_df['TEAM_NAME_COMBINED'].fillna('No Team')
+
+    # Drop the temporary merge columns
+    final_users_df.drop(columns=['user_id', 'TEAM_NAME_COMBINED'], errors='ignore', inplace=True)
+    
+    # Ensure all columns match the TABLE_SCHEMA for Snowflake
+    # Reorder columns to match the schema explicitly
+    final_users_df = final_users_df[[
+        "USER_ID", "USER_NAME", "USER_EMAIL", "ROLE", "PROFILE",
+        "STATUS", "ZUID", "ZPEOPLE_EMPLOYEE_ID", "TEAM"
+    ]]
+
+    print(f"Final DataFrame prepared with {len(final_users_df)} records.")
+    print("Sample of final DataFrame:")
+    print(final_users_df.head())
+
+    # 5. Connect to Snowflake and load data
+    config = snowflake_connection()
+    conn = snowflake.connector.connect(**config)
+
+    try:
+        with conn.cursor() as cur:
+            cur.execute(f"USE WAREHOUSE {config['warehouse']}")
+            cur.execute(f"USE DATABASE {config['database']}")
+            cur.execute(f"USE SCHEMA {config['schema']}")
+            cur.execute(TABLE_SCHEMA) # Ensure table schema exists or is updated
+
+        success, nchunks, nrows, _ = write_pandas(conn, final_users_df, SNOWFLAKE_TABLE)
+
+        if success:
+            return f"✅ Successfully loaded {nrows} users (with team names) into {SNOWFLAKE_TABLE}."
+        else:
+            raise Exception(f"Failed to load data into Snowflake. nchunks: {nchunks}, nrows: {nrows}")
+
+    finally:
+        conn.close()
+        print("Snowflake connection closed.")
+
+# --- Local Testing Block (Optional) ---
+if _name_ == "_main_":
+    print("--- Running script locally for testing ---")
+    try:
+        # For local testing, you might need to mock snowflake_connection
+        # or provide actual credentials.
+        # Also, ensure you have the necessary libraries installed:
+        # pip install requests pandas snowflake-connector-python
+        
+        # Example of how to run the data loader locally
+        result_message = load_zoho_users_with_teams()
+        print(result_message)
+
+    except Exception as e:
+        print(f"An error occurred during local testing: {e}")

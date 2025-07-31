@@ -2,12 +2,13 @@ import fetch from 'node-fetch';
 
 interface ZohoUser {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
+  profile: string;
+  role: string;
   status: string;
-  role?: string;
-  department?: string;
+  zuid: string;
+  zpuid?: string;
 }
 
 interface ZohoProject {
@@ -26,7 +27,11 @@ interface ZohoTokenResponse {
 
 class ZohoService {
   private accessToken: string | null = null;
-  private tokenExpiry: number = 0;
+  private tokenExpiry: Date = new Date(0);
+  
+  // Zoho API Configuration from your working code
+  private readonly PORTAL_ID = "699939546";
+  private readonly AUTH_URL = "https://accounts.zoho.com/oauth/v2/token";
 
   private async getAccessToken(): Promise<string> {
     if (this.accessToken && Date.now() < this.tokenExpiry) {
@@ -74,52 +79,60 @@ class ZohoService {
 
   async getUsers(): Promise<ZohoUser[]> {
     try {
-      const accessToken = await this.getAccessToken();
+      console.log("Fetching users from Zoho Projects API...");
       
-      // Extract domain from ZOHO_API_DOMAIN if it's a full URL
-      let apiDomain = process.env.ZOHO_API_DOMAIN!;
-      if (apiDomain.includes('://')) {
-        const url = new URL(apiDomain);
-        apiDomain = url.hostname.split('.').slice(-2).join('.'); // Get zoho.com part
-      }
+      const allUsersData: ZohoUser[] = [];
+      let page = 1;
+      const perPage = 200; // Max allowed by Zoho Projects API
 
-      const apiUrl = `https://people.${apiDomain}/people/api/forms/employee/getRecords`;
-
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
+      while (true) {
+        const accessToken = await this.getAccessToken();
+        const headers = {
           'Authorization': `Zoho-oauthtoken ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
+          'Accept': 'application/json'
+        };
+        
+        const params = new URLSearchParams({
+          page: page.toString(),
+          per_page: perPage.toString()
+        });
+        
+        // Use the correct Zoho Projects API endpoint from your working code
+        const url = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/users/?${params}`;
+        console.log(`Fetching users from: ${url} (Page: ${page}, Per Page: ${perPage})`);
 
-      if (!response.ok) {
-        throw new Error(`Zoho API error: ${response.status} ${response.statusText}`);
-      }
+        const response = await fetch(url, { headers });
 
-      const data = await response.json() as any;
-      
-      // Transform Zoho user data to our format
-      const users: ZohoUser[] = [];
-      if (data.response && data.response.result) {
-        for (const record of data.response.result) {
-          const user: ZohoUser = {
-            id: record.EmployeeID || record.Employeeid || record.employeeId || record.id,
-            firstName: record.FirstName || record.firstName || record.first_name || '',
-            lastName: record.LastName || record.lastName || record.last_name || '',
-            email: record.EmailID || record.email || record.Email || '',
-            status: record.EmployeeStatus || record.status || 'Active',
-            role: record.Designation || record.designation || record.role,
-            department: record.Department || record.department
-          };
-          
-          if (user.id && user.email) {
-            users.push(user);
+        if (!response.ok) {
+          if (response.status === 401) {
+            console.log("Authentication failed (401). Access token might be invalid. Forcing refresh...");
+            this.accessToken = null;
+            this.tokenExpiry = new Date(0);
+            continue; // Retry with new token
           }
+          throw new Error(`Zoho API error: ${response.status} ${response.statusText}`);
         }
+
+        const data = await response.json() as any;
+        const users = data.users || [];
+
+        if (!users || users.length === 0) {
+          console.log("No more user data found or end of pagination.");
+          break;
+        }
+
+        allUsersData.push(...users);
+
+        if (users.length < perPage) {
+          console.log("Last page reached.");
+          break;
+        }
+
+        page++;
       }
 
-      return users;
+      console.log(`Successfully retrieved ${allUsersData.length} user records.`);
+      return allUsersData;
     } catch (error) {
       console.error('Error fetching users from Zoho:', error);
       // Return empty array instead of throwing to allow graceful fallback
@@ -129,43 +142,60 @@ class ZohoService {
 
   async getProjects(): Promise<ZohoProject[]> {
     try {
-      const accessToken = await this.getAccessToken();
-      const apiUrl = `https://projects.${process.env.ZOHO_API_DOMAIN}/restapi/portal/[PORTAL_ID]/projects/`;
-
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Zoho-oauthtoken ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json() as any;
+      console.log("Fetching projects from Zoho Projects API...");
       
-      // Transform Zoho project data to our format
-      const projects: ZohoProject[] = [];
-      if (data.projects) {
-        for (const project of data.projects) {
-          const proj: ZohoProject = {
-            id: project.id || project.project_id,
-            name: project.name || project.project_name,
-            description: project.description,
-            status: project.status || 'active',
-            budget: project.budget ? parseFloat(project.budget) : undefined,
-            currency: project.currency_code
-          };
-          
-          if (proj.id && proj.name) {
-            projects.push(proj);
+      const allProjectsData: ZohoProject[] = [];
+      let page = 1;
+      const perPage = 200; // Max allowed by Zoho Projects API
+
+      while (true) {
+        const accessToken = await this.getAccessToken();
+        const headers = {
+          'Authorization': `Zoho-oauthtoken ${accessToken}`,
+          'Accept': 'application/json'
+        };
+        
+        const params = new URLSearchParams({
+          page: page.toString(),
+          per_page: perPage.toString()
+        });
+        
+        // Use the correct Zoho Projects API endpoint from your working code
+        const apiUrl = `https://projectsapi.zoho.com/api/v3/portal/${this.PORTAL_ID}/projects/?${params}`;
+        console.log(`Fetching projects from: ${apiUrl} (Page: ${page}, Per Page: ${perPage})`);
+
+        const response = await fetch(apiUrl, { headers });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            console.log("Authentication failed (401). Access token might be invalid. Forcing refresh...");
+            this.accessToken = null;
+            this.tokenExpiry = new Date(0);
+            continue; // Retry with new token
           }
+          throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
         }
+
+        const data = await response.json() as any;
+        const projects = data.projects || [];
+
+        if (!projects || projects.length === 0) {
+          console.log("No more project data found or end of pagination.");
+          break;
+        }
+
+        allProjectsData.push(...projects);
+
+        if (projects.length < perPage) {
+          console.log("Last page reached.");
+          break;
+        }
+
+        page++;
       }
 
-      return projects;
+      console.log(`Successfully retrieved ${allProjectsData.length} project records.`);
+      return allProjectsData;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
       // Return empty array instead of throwing to allow graceful fallback
