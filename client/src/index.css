@@ -211,4 +211,31 @@
   .bg-violet-400, .bg-purple-400, .bg-violet-500, .bg-purple-500 {
     background-color: hsl(235, 45%, 12%) !important;
   }
+  
+  /* Target the specific Radix UI tabs content that's showing purple */
+  .futuristic-tabs > div[data-orientation="horizontal"] > div[role="tabpanel"] {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
+  
+  /* More specific override for tab content */
+  .futuristic-tabs div[data-state="active"][role="tabpanel"] {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
+  
+  /* Nuclear option - override everything with purple/violet */
+  * {
+    background-color: inherit !important;
+  }
+  
+  /* Restore our desired backgrounds */
+  .bg-magnoos-dark, 
+  body.magnoos-theme,
+  .min-h-screen {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
+  
+  /* Override any computed styles */
+  .futuristic-tabs * {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
 }
