@@ -117,23 +117,23 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-magnoos-light flex items-center justify-center p-4">
+    <div className="min-h-screen magnoos-gradient-radial flex items-center justify-center p-4">
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         {/* Left side - Hero section */}
         <div className="text-center lg:text-left space-y-6">
           <div className="flex items-center justify-center lg:justify-start space-x-3">
-            <div className="w-12 h-12 bg-magnoos-blue rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 magnoos-gradient rounded-lg flex items-center justify-center">
               <Building className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-magnoos-dark">Magnoos Travel</h1>
+            <h1 className="text-3xl font-bold text-white">Magnoos Travel</h1>
           </div>
           
           <div className="space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900">
-              Streamline Your
-              <span className="text-magnoos-blue block">Business Travel</span>
+            <h2 className="text-4xl lg:text-5xl font-bold text-white">
+              Connect Great Minds
+              <span className="text-magnoos-secondary block">Through Travel</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-lg">
+            <p className="text-lg text-gray-200 max-w-lg">
               Manage travel requests, approvals, and bookings all in one place. 
               Built specifically for enterprise teams with role-based workflows.
             </p>
@@ -141,29 +141,29 @@ export default function AuthPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Plane className="w-4 h-4 text-green-600" />
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <Plane className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm text-gray-700">Easy Requests</span>
+              <span className="text-sm text-gray-200">Easy Requests</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <ArrowRight className="w-4 h-4 text-blue-600" />
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <ArrowRight className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm text-gray-700">Quick Approvals</span>
+              <span className="text-sm text-gray-200">Quick Approvals</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <Building className="w-4 h-4 text-purple-600" />
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                <Building className="w-4 h-4 text-white" />
               </div>
-              <span className="text-sm text-gray-700">Smart Budgets</span>
+              <span className="text-sm text-gray-200">Smart Budgets</span>
             </div>
           </div>
         </div>
 
         {/* Right side - Auth forms */}
         <div className="w-full max-w-md mx-auto">
-          <Card className="shadow-2xl border-0">
+          <Card className="shadow-2xl border border-white/20 bg-white/10 backdrop-blur-md">
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl">Welcome</CardTitle>
               <CardDescription>
@@ -216,7 +216,7 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-magnoos-blue hover:bg-magnoos-dark-blue"
+                        className="w-full magnoos-gradient hover:opacity-90 text-white border-0"
                         disabled={loginMutation.isPending}
                       >
                         {loginMutation.isPending ? "Signing in..." : "Sign In"}
@@ -309,7 +309,7 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-magnoos-blue hover:bg-magnoos-dark-blue"
+                        className="w-full magnoos-gradient hover:opacity-90 text-white border-0"
                         disabled={registerMutation.isPending}
                       >
                         {registerMutation.isPending ? "Creating account..." : "Create Account"}

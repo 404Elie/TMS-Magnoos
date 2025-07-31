@@ -3,55 +3,59 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
+  --background: hsl(235, 20%, 8%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(235, 15%, 15%);
+  --muted-foreground: hsl(235, 10%, 65%);
+  --popover: hsl(235, 20%, 12%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(235, 20%, 10%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(235, 15%, 20%);
+  --input: hsl(235, 15%, 18%);
+  --primary: hsl(260, 100%, 65%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(235, 15%, 15%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(270, 100%, 70%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(260, 100%, 65%);
+  --radius: 0.75rem;
   
-  /* Magnoos Brand Colors */
-  --magnoos-blue: hsl(207, 90%, 54%);
-  --magnoos-dark-blue: hsl(225, 83%, 53%);
-  --magnoos-dark: hsl(210, 25%, 20%);
-  --magnoos-bg: hsl(0, 0%, 98%);
+  /* Magnoos Brand Colors - Updated to match website */
+  --magnoos-primary: hsl(245, 100%, 65%);
+  --magnoos-secondary: hsl(270, 100%, 70%);
+  --magnoos-accent: hsl(200, 100%, 65%);
+  --magnoos-dark: hsl(235, 20%, 8%);
+  --magnoos-dark-surface: hsl(235, 20%, 12%);
+  --magnoos-gradient-start: hsl(245, 100%, 65%);
+  --magnoos-gradient-end: hsl(270, 100%, 70%);
 }
 
 .dark {
-  --background: hsl(240, 10%, 3.9%);
+  /* Dark theme uses same colors as root for consistency */
+  --background: hsl(235, 20%, 8%);
   --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
+  --muted: hsl(235, 15%, 15%);
+  --muted-foreground: hsl(235, 10%, 65%);
+  --popover: hsl(235, 20%, 12%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
+  --card: hsl(235, 20%, 10%);
   --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
+  --border: hsl(235, 15%, 20%);
+  --input: hsl(235, 15%, 18%);
+  --primary: hsl(260, 100%, 65%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(235, 15%, 15%);
   --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
+  --accent: hsl(270, 100%, 70%);
   --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive: hsl(0, 84%, 60%);
   --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
+  --ring: hsl(260, 100%, 65%);
+  --radius: 0.75rem;
 }
 
 @layer base {
@@ -67,11 +71,31 @@
 
 @layer utilities {
   .magnoos-gradient {
-    background: linear-gradient(135deg, var(--magnoos-blue), var(--magnoos-dark-blue));
+    background: linear-gradient(135deg, var(--magnoos-gradient-start), var(--magnoos-gradient-end));
   }
   
-  .text-magnoos-blue {
-    color: var(--magnoos-blue);
+  .magnoos-gradient-vertical {
+    background: linear-gradient(180deg, var(--magnoos-gradient-start), var(--magnoos-gradient-end));
+  }
+  
+  .magnoos-gradient-radial {
+    background: radial-gradient(circle at top right, var(--magnoos-gradient-start), var(--magnoos-gradient-end));
+  }
+  
+  .text-magnoos-primary {
+    color: var(--magnoos-primary);
+  }
+  
+  .text-magnoos-secondary {
+    color: var(--magnoos-secondary);
+  }
+  
+  .bg-magnoos-dark {
+    background-color: var(--magnoos-dark);
+  }
+  
+  .bg-magnoos-surface {
+    background-color: var(--magnoos-dark-surface);
   }
   
   .text-magnoos-dark-blue {
