@@ -190,13 +190,13 @@ export default function ManagerDashboard() {
             <TabsList className="grid w-full grid-cols-2 bg-slate-900 border border-slate-700 backdrop-blur-md">
               <TabsTrigger 
                 value="dashboard"
-                className="border border-slate-600 bg-transparent text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:border-blue-600 hover:bg-slate-700"
+                className="custom-tab"
               >
                 Dashboard
               </TabsTrigger>
               <TabsTrigger 
                 value="submit"
-                className="border border-slate-600 bg-transparent text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:border-blue-600 hover:bg-slate-700"
+                className="custom-tab"
               >
                 Submit Request
               </TabsTrigger>

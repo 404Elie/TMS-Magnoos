@@ -138,24 +138,26 @@
     background: var(--magnoos-bg-gradient);
   }
   
-  /* Futuristic tab styling */
-  .futuristic-tabs [data-state="active"] {
-    background: linear-gradient(135deg, var(--magnoos-primary), var(--magnoos-secondary));
-    border: 1px solid var(--magnoos-primary);
-    color: white;
-    font-weight: 600;
+  /* Custom clean tab styling */
+  .custom-tab {
+    background: transparent !important;
+    border: 1px solid rgb(71, 85, 105) !important;
+    color: rgb(156, 163, 175) !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
   }
   
-  .futuristic-tabs [data-state="inactive"] {
-    background: var(--magnoos-dark-surface);
-    border: 1px solid hsl(220, 45%, 10%);
-    color: rgba(255, 255, 255, 0.8);
+  .custom-tab[data-state="active"] {
+    background: rgb(37, 99, 235) !important;
+    border: 1px solid rgb(37, 99, 235) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    box-shadow: 0 0 0 0 transparent !important;
   }
   
-  .futuristic-tabs [data-state="inactive"]:hover {
-    background: hsl(235, 45%, 15%);
-    border: 1px solid hsl(220, 45%, 10%);
-    color: white;
+  .custom-tab:hover:not([data-state="active"]) {
+    background: rgb(51, 65, 85) !important;
+    color: white !important;
   }
   
   .text-magnoos-dark-blue {
