@@ -353,7 +353,7 @@ export default function ManagerDashboard() {
 
             <TabsContent value="submit" className="bg-magnoos-dark space-y-8">
               <div className="max-w-4xl mx-auto">
-                <Card className="bg-slate-800 border-slate-700 shadow-lg">
+                <Card className="bg-slate-800 border-0 shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-white">Submit Travel Request</CardTitle>
                     <CardDescription>
@@ -379,7 +379,7 @@ export default function ManagerDashboard() {
                                         role="combobox"
                                         aria-expanded={travelerSearchOpen}
                                         className={cn(
-                                          "w-full justify-between bg-slate-800 border-0 text-white hover:bg-slate-700",
+                                          "w-full justify-between bg-slate-800 border-slate-600 text-white hover:bg-slate-700",
                                           !field.value && "text-gray-400"
                                         )}
                                       >
@@ -461,7 +461,7 @@ export default function ManagerDashboard() {
                                           role="combobox"
                                           aria-expanded={projectSearchOpen}
                                           className={cn(
-                                            "w-full justify-between bg-slate-800 border-0 text-white hover:bg-slate-700",
+                                            "w-full justify-between bg-slate-800 border-slate-600 text-white hover:bg-slate-700",
                                             !field.value && "text-gray-400"
                                           )}
                                         >
