@@ -71,6 +71,11 @@
     color: hsl(0, 0%, 98%) !important;
     min-height: 100vh;
   }
+
+  /* Force white text in all input fields */
+  input, textarea {
+    color: white !important;
+  }
   
   html {
     background: hsl(220, 45%, 10%) !important;
