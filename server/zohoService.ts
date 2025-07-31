@@ -217,11 +217,19 @@ class ZohoService {
         }
 
         const data = await response.json() as any;
-        const projects = data.projects || [];
-
+        console.log(`API Response structure:`, Object.keys(data));
+        
+        // Try different possible response structures
+        const projects = data.projects || data.data || data;
+        
         if (!projects || projects.length === 0) {
           console.log("No more project data found or end of pagination.");
           break;
+        }
+        
+        console.log(`Found ${projects.length} projects on page ${page}`);
+        if (projects.length > 0) {
+          console.log(`Sample project:`, projects[0]);
         }
 
         allProjectsData.push(...projects);
