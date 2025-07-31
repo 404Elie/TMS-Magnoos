@@ -205,7 +205,7 @@ export default function ManagerDashboard() {
             <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-slate-800 border-slate-700 shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -214,56 +214,56 @@ export default function ManagerDashboard() {
                           {statsLoading ? "..." : stats?.totalRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Plane className="w-6 h-6 text-magnoos-blue" />
+                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <Plane className="w-6 h-6 text-blue-400" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-slate-800 border-slate-700 shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-300">Pending Approval</p>
-                        <p className="text-2xl font-bold text-yellow-600">
+                        <p className="text-2xl font-bold text-yellow-400">
                           {statsLoading ? "..." : stats?.pendingRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-yellow-600" />
+                      <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                        <Clock className="w-6 h-6 text-yellow-400" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-slate-800 border-slate-700 shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-300">Approved</p>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-2xl font-bold text-green-400">
                           {statsLoading ? "..." : stats?.approvedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <Check className="w-6 h-6 text-green-600" />
+                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <Check className="w-6 h-6 text-green-400" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-slate-800 border-slate-700 shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-300">Completed</p>
-                        <p className="text-2xl font-bold text-magnoos-blue">
+                        <p className="text-2xl font-bold text-blue-400">
                           {statsLoading ? "..." : stats?.completedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Flag className="w-6 h-6 text-magnoos-blue" />
+                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <Flag className="w-6 h-6 text-blue-400" />
                       </div>
                     </div>
                   </CardContent>
@@ -271,7 +271,7 @@ export default function ManagerDashboard() {
               </div>
 
               {/* Recent Requests */}
-              <Card className="bg-magnoos-dark border-magnoos-dark">
+              <Card className="bg-slate-800 border-slate-700 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-white">My Travel Requests</CardTitle>
                 </CardHeader>
