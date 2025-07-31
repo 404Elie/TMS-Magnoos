@@ -146,23 +146,17 @@ class ZohoService {
       
       const allProjectsData: ZohoProject[] = [];
       let page = 1;
-      const perPage = 200; // Max allowed by Zoho Projects API
 
       while (true) {
         const accessToken = await this.getAccessToken();
         const headers = {
-          'Authorization': `Zoho-oauthtoken ${accessToken}`,
+          'Authorization': `Bearer ${accessToken}`, // Use Bearer token as per your working code
           'Accept': 'application/json'
         };
         
-        const params = new URLSearchParams({
-          page: page.toString(),
-          per_page: perPage.toString()
-        });
-        
-        // Use the correct Zoho Projects API endpoint from your working code
-        const apiUrl = `https://projectsapi.zoho.com/api/v3/portal/${this.PORTAL_ID}/projects/?${params}`;
-        console.log(`Fetching projects from: ${apiUrl} (Page: ${page}, Per Page: ${perPage})`);
+        // Use the correct endpoint format from your working code
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/maaloomatiia/projects/?page=${page}`;
+        console.log(`Fetching projects from: ${apiUrl} (Page: ${page})`);
 
         const response = await fetch(apiUrl, { headers });
 
@@ -185,12 +179,6 @@ class ZohoService {
         }
 
         allProjectsData.push(...projects);
-
-        if (projects.length < perPage) {
-          console.log("Last page reached.");
-          break;
-        }
-
         page++;
       }
 
