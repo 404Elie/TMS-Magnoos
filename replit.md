@@ -123,3 +123,6 @@ The system is designed to be scalable, maintainable, and provides a smooth user 
 - **Real Project Data Loading**: System now loads 100+ real projects from Zoho and displays them in conditional dropdown
 - **Conditional Project Selection**: Projects dropdown only appears when "Delivery" purpose is selected, working as designed
 - **API Performance Optimized**: Added 50-page limit and better retry logic for reliable project data fetching
+- **UI Theme Improvements**: Fixed CSS color variables, header text visibility, and tab styling for consistent dark blue theme
+- **Tab Navigation Enhanced**: All tabs now remain dark with blue highlights when selected (no more white tabs)
+- **Logout Flow Fixed**: Properly implemented logout routing that clears session and redirects to login page
