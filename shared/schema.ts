@@ -26,7 +26,7 @@ export const sessions = pgTable(
 );
 
 // User roles enum
-export const userRoleEnum = pgEnum("user_role", ["manager", "pm", "operations"]);
+export const userRoleEnum = pgEnum("user_role", ["manager", "pm", "operations", "admin"]);
 
 // Travel request status enum
 export const requestStatusEnum = pgEnum("request_status", [
@@ -53,6 +53,7 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   role: userRoleEnum("role").notNull().default("manager"),
+  activeRole: userRoleEnum("active_role"), // For admin users to switch roles
   zohoUserId: varchar("zoho_user_id"),
   annualTravelBudget: decimal("annual_travel_budget", { precision: 10, scale: 2 }).default("15000"),
   createdAt: timestamp("created_at").defaultNow(),

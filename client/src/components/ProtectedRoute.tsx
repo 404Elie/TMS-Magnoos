@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import type { User } from "@shared/schema";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,6 +11,14 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
+
+  const typedUser = user as User | undefined;
+
+  // Get the current effective role for the user
+  const getCurrentRole = (user: User | undefined) => {
+    if (!user) return null;
+    return user.role === 'admin' ? (user.activeRole || 'admin') : user.role;
+  };
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -24,16 +33,17 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
       return;
     }
 
-    if (!isLoading && isAuthenticated && allowedRoles && user) {
-      if (!allowedRoles.includes(user.role)) {
+    if (!isLoading && isAuthenticated && allowedRoles && typedUser) {
+      const currentRole = getCurrentRole(typedUser);
+      if (currentRole && !allowedRoles.includes(currentRole)) {
         toast({
           title: "Access Denied",
           description: "You don't have permission to access this page.",
           variant: "destructive",
         });
-        // Redirect to appropriate dashboard based on user role
+        // Redirect to appropriate dashboard based on current role
         setTimeout(() => {
-          switch (user.role) {
+          switch (currentRole) {
             case 'manager':
               window.location.href = "/manager";
               break;
@@ -50,7 +60,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
         return;
       }
     }
-  }, [isAuthenticated, isLoading, user, allowedRoles, toast]);
+  }, [isAuthenticated, isLoading, typedUser, allowedRoles, toast]);
 
   if (isLoading) {
     return (
@@ -67,8 +77,11 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     return null; // Will redirect in useEffect
   }
 
-  if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    return null; // Will redirect in useEffect
+  if (allowedRoles && typedUser) {
+    const currentRole = getCurrentRole(typedUser);
+    if (currentRole && !allowedRoles.includes(currentRole)) {
+      return null; // Will redirect in useEffect
+    }
   }
 
   return <>{children}</>;

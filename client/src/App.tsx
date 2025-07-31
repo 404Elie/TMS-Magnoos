@@ -9,9 +9,18 @@ import Landing from "@/pages/landing";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
+import type { User } from "@shared/schema";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
+
+  const typedUser = user as User | undefined;
+
+  // Get the current effective role for the user
+  const getCurrentRole = (user: User | undefined) => {
+    if (!user) return null;
+    return user.role === 'admin' ? (user.activeRole || 'manager') : user.role;
+  };
 
   // Show loading state while authentication is being checked
   if (isLoading) {
@@ -35,27 +44,29 @@ function Router() {
     );
   }
 
+  const currentRole = getCurrentRole(typedUser);
+
   // If authenticated, route based on user role
   return (
     <Switch>
       <Route path="/">
-        {user?.role === 'manager' && <ManagerDashboard />}
-        {user?.role === 'pm' && <PMDashboard />}
-        {user?.role === 'operations' && <OperationsDashboard />}
-        {!user?.role && <NotFound />}
+        {currentRole === 'manager' && <ManagerDashboard />}
+        {currentRole === 'pm' && <PMDashboard />}
+        {currentRole === 'operations' && <OperationsDashboard />}
+        {!currentRole && <NotFound />}
       </Route>
       
-      {/* Role-specific routes with strict access control */}
+      {/* Role-specific routes with admin access control */}
       <Route path="/manager">
-        {user?.role === 'manager' ? <ManagerDashboard /> : <NotFound />}
+        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <ManagerDashboard /> : <NotFound />}
       </Route>
       
       <Route path="/pm">
-        {user?.role === 'pm' ? <PMDashboard /> : <NotFound />}
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
       </Route>
       
       <Route path="/operations">
-        {user?.role === 'operations' ? <OperationsDashboard /> : <NotFound />}
+        {(currentRole === 'operations' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
       </Route>
       
       {/* Fallback to 404 */}

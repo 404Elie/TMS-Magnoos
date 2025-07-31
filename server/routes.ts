@@ -15,11 +15,18 @@ const requireRole = (allowedRoles: string[]) => {
       }
 
       const user = await storage.getUser(userId);
-      if (!user || !allowedRoles.includes(user.role)) {
+      if (!user) {
+        return res.status(403).json({ message: "User not found" });
+      }
+
+      // For admin users, use activeRole if set, otherwise use role
+      const currentRole = user.role === 'admin' ? (user.activeRole || 'admin') : user.role;
+      
+      if (!allowedRoles.includes(currentRole)) {
         return res.status(403).json({ message: "Access denied for this role" });
       }
 
-      req.userRole = user.role;
+      req.userRole = currentRole;
       req.userId = userId;
       next();
     } catch (error) {
@@ -68,6 +75,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching projects:", error);
       res.status(500).json({ message: "Failed to fetch projects" });
+    }
+  });
+
+  // Admin role switching
+  app.post("/api/admin/switch-role", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { role } = req.body;
+      
+      const user = await storage.getUser(userId);
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const validRoles = ['manager', 'pm', 'operations'];
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+      }
+
+      const updatedUser = await storage.updateUserRole(userId, role);
+      res.json({ message: "Role switched successfully", user: updatedUser });
+    } catch (error) {
+      console.error("Error switching role:", error);
+      res.status(500).json({ message: "Failed to switch role" });
     }
   });
 

@@ -1,7 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import logoPath from "@assets/ChatGPT Image May 7, 2025, 03_07_22 PM_1753942249102.png";
+import type { User } from "@shared/schema";
 
 interface HeaderProps {
   currentRole?: string;
@@ -17,6 +19,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
       case 'manager': return 'Manager';
       case 'pm': return 'Project Manager';
       case 'operations': return 'Operations';
+      case 'admin': return 'Admin';
       default: return role;
     }
   };
@@ -24,6 +27,8 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
+
+  const typedUser = user as User | undefined;
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -41,20 +46,23 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
           </div>
           
           <div className="flex items-center space-x-4">
+            {/* Admin Role Switcher */}
+            {typedUser && <AdminRoleSwitcher user={typedUser} />}
+            
             {/* User Profile */}
             <div className="flex items-center space-x-3">
               <Avatar className="w-8 h-8">
-                <AvatarImage src={userImage || user?.profileImageUrl} alt="User Avatar" />
+                <AvatarImage src={userImage || typedUser?.profileImageUrl} alt="User Avatar" />
                 <AvatarFallback className="bg-magnoos-blue text-white text-sm">
-                  {user ? getInitials(`${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'U') : 'U'}
+                  {typedUser ? getInitials(`${typedUser.firstName || ''} ${typedUser.lastName || ''}`.trim() || typedUser.email || 'U') : 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block">
                 <p className="text-sm font-medium text-gray-900">
-                  {userName || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || user?.email || 'User'}
+                  {userName || `${typedUser?.firstName || ''} ${typedUser?.lastName || ''}`.trim() || typedUser?.email || 'User'}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {currentRole ? getRoleDisplayName(currentRole) : getRoleDisplayName(user?.role || 'user')}
+                  {currentRole ? getRoleDisplayName(currentRole) : getRoleDisplayName(typedUser?.activeRole || typedUser?.role || 'user')}
                 </p>
               </div>
             </div>
