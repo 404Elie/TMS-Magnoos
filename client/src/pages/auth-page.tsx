@@ -243,13 +243,7 @@ export default function AuthPage() {
                           </FormItem>
                         )}
                       />
-                      <Button 
-                        type="submit" 
-                        className="w-full magnoos-gradient hover:opacity-90 text-white border-0"
-                        disabled={loginMutation.isPending}
-                      >
-                        {loginMutation.isPending ? "Signing in..." : "Sign In"}
-                      </Button>
+                      
                     </form>
                   </Form>
                 </TabsContent>
