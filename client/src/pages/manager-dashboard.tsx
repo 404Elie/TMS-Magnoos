@@ -27,6 +27,7 @@ import type { TravelRequestWithDetails, Project, User } from "@shared/schema";
 const travelRequestFormSchema = z.object({
   travelerId: z.string().min(1, "Please select a traveler"),
   projectId: z.string().optional(),
+  origin: z.string().min(1, "Origin is required"),
   destination: z.string().min(1, "Destination is required"),
   purpose: z.string().min(1, "Purpose is required"),
   customPurpose: z.string().optional(),
@@ -65,6 +66,7 @@ export default function ManagerDashboard() {
     defaultValues: {
       travelerId: "",
       projectId: "",
+      origin: "",
       destination: "",
       purpose: "",
       customPurpose: "",
@@ -273,7 +275,7 @@ export default function ManagerDashboard() {
                         <thead className="bg-gray-50">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Destination
+                              Route
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Project
@@ -296,7 +298,7 @@ export default function ManagerDashboard() {
                                 <div className="flex items-center">
                                   <MapPin className="w-4 h-4 text-gray-400 mr-2" />
                                   <span className="text-sm font-medium text-gray-900">
-                                    {request.destination}
+                                    {request.origin} → {request.destination}
                                   </span>
                                 </div>
                               </td>
@@ -508,6 +510,20 @@ export default function ManagerDashboard() {
 
                         {/* Travel Details */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <FormField
+                            control={form.control}
+                            name="origin"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Origin</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter departure city" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
                           <FormField
                             control={form.control}
                             name="destination"

@@ -79,7 +79,8 @@ export const travelRequests = pgTable("travel_requests", {
   requesterId: varchar("requester_id").notNull().references(() => users.id),
   travelerId: varchar("traveler_id").notNull().references(() => users.id),
   projectId: varchar("project_id").references(() => projects.id), // Optional, only required for delivery purpose
-  destination: varchar("destination").notNull(),
+  origin: varchar("origin").notNull(), // Where they're traveling from
+  destination: varchar("destination").notNull(), // Where they're traveling to
   purpose: varchar("purpose").notNull(),
   customPurpose: varchar("custom_purpose"), // For when purpose is "other"
   departureDate: timestamp("departure_date").notNull(),
