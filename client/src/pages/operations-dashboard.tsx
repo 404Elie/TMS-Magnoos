@@ -260,7 +260,7 @@ export default function OperationsDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
-      <div className="min-h-screen bg-magnoos-dark">
+      <div className="min-h-screen bg-magnoos-dark operations-dashboard">
         <Header currentRole="operations" />
         
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
