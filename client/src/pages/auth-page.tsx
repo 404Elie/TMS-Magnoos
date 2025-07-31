@@ -205,6 +205,7 @@ export default function AuthPage() {
                               <Input 
                                 placeholder="Enter your email" 
                                 type="email"
+                                className="text-black"
                                 {...field} 
                               />
                             </FormControl>
@@ -222,6 +223,7 @@ export default function AuthPage() {
                               <Input 
                                 placeholder="Enter your password" 
                                 type="password"
+                                className="text-black"
                                 {...field} 
                               />
                             </FormControl>
@@ -251,7 +253,7 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>First Name</FormLabel>
                               <FormControl>
-                                <Input placeholder="First name" {...field} />
+                                <Input placeholder="First name" className="text-black" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -264,7 +266,7 @@ export default function AuthPage() {
                             <FormItem>
                               <FormLabel>Last Name</FormLabel>
                               <FormControl>
-                                <Input placeholder="Last name" {...field} />
+                                <Input placeholder="Last name" className="text-black" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -281,6 +283,7 @@ export default function AuthPage() {
                               <Input 
                                 placeholder="Enter your email" 
                                 type="email"
+                                className="text-black"
                                 {...field} 
                               />
                             </FormControl>
@@ -298,6 +301,7 @@ export default function AuthPage() {
                               <Input 
                                 placeholder="Create a password" 
                                 type="password"
+                                className="text-black"
                                 {...field} 
                               />
                             </FormControl>
@@ -315,6 +319,7 @@ export default function AuthPage() {
                               <Input 
                                 placeholder="Confirm your password" 
                                 type="password"
+                                className="text-black"
                                 {...field} 
                               />
                             </FormControl>
