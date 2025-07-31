@@ -30,6 +30,7 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
   updateUserRole(id: string, activeRole: string): Promise<User>;
+  updateUserPassword(email: string, hashedPassword: string): Promise<User>;
   deleteUser(id: string): Promise<void>;
   
   // Project operations
@@ -125,6 +126,15 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ activeRole: activeRole as any, updatedAt: new Date() })
       .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async updateUserPassword(email: string, hashedPassword: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ password: hashedPassword, updatedAt: new Date() })
+      .where(eq(users.email, email))
       .returning();
     return user;
   }

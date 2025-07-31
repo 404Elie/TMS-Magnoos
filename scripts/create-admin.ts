@@ -12,33 +12,27 @@ async function hashPassword(password: string) {
 
 async function createAdmin() {
   try {
-    const adminEmail = "admin@magnoos.com";
-    const adminPassword = "admin123";
-    
-    // Check if admin already exists
-    const existingAdmin = await storage.getUserByEmail(adminEmail);
-    if (existingAdmin) {
-      console.log("Admin user already exists:", adminEmail);
-      return;
+    // Update passwords for test users
+    const testUsers = [
+      { email: "john.doe@magnoos.com", password: "password123" },
+      { email: "jane.smith@magnoos.com", password: "password123" },
+      { email: "mike.wilson@magnoos.com", password: "password123" },
+      { email: "sarah.jones@magnoos.com", password: "password123" },
+    ];
+
+    for (const testUser of testUsers) {
+      const hashedPassword = await hashPassword(testUser.password);
+      await storage.updateUserPassword(testUser.email, hashedPassword);
+      console.log(`Updated password for ${testUser.email}: ${testUser.password}`);
     }
 
-    // Create admin user
-    const hashedPassword = await hashPassword(adminPassword);
-    const adminUser = await storage.createUser({
-      email: adminEmail,
-      password: hashedPassword,
-      firstName: "Admin",
-      lastName: "User",
-      role: "admin",
-    });
-
-    console.log("Admin user created successfully!");
-    console.log("Email:", adminEmail);
-    console.log("Password:", adminPassword);
-    console.log("User ID:", adminUser.id);
+    console.log("\nAll test user passwords have been set to: password123");
+    console.log("\nAdmin login:");
+    console.log("Email: admin@magnoos.com");
+    console.log("Password: admin123");
     
   } catch (error) {
-    console.error("Error creating admin user:", error);
+    console.error("Error updating user passwords:", error);
   }
 }
 
