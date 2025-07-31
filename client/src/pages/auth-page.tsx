@@ -245,7 +245,7 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-blue-800 hover:bg-blue-900 text-white border-0"
+                        className="w-full bg-purple-700 hover:bg-purple-800 text-white border-0"
                         disabled={loginMutation.isPending}
                       >
                         {loginMutation.isPending ? "Signing in..." : "Sign In"}
@@ -381,7 +381,7 @@ export default function AuthPage() {
                       />
                       <Button 
                         type="submit" 
-                        className="w-full bg-blue-800 hover:bg-blue-900 text-white border-0"
+                        className="w-full bg-purple-700 hover:bg-purple-800 text-white border-0"
                         disabled={registerMutation.isPending}
                       >
                         {registerMutation.isPending ? "Creating account..." : "Create Account"}
