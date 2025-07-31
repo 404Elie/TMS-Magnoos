@@ -28,16 +28,16 @@
   --magnoos-primary: hsl(220, 45%, 10%);
   --magnoos-secondary: hsl(219, 45%, 10%);
   --magnoos-accent: hsl(200, 100%, 65%);
-  --magnoos-dark: hsl(0, 83%, 47%);
-  --magnoos-dark-surface: hsl(219, 45%, 10%);
-  --magnoos-header-dark: hsl(180, 2%, 9%);
+  --magnoos-dark: hsl(220, 60%, 12%);
+  --magnoos-dark-surface: hsl(216, 20%, 95%);
+  --magnoos-header-dark: hsl(220, 50%, 8%);
   --magnoos-gradient-start: hsl(245, 100%, 65%);
   --magnoos-gradient-end: hsl(270, 100%, 70%);
 }
 
 .dark {
   /* Dark theme uses same colors as root for consistency */
-  --background: hsl(220, 50%, 8%);
+  --background: hsl(220, 45%, 12%);
   --foreground: hsl(0, 0%, 98%);
   --muted: hsl(220, 40%, 12%);
   --muted-foreground: hsl(235, 10%, 65%);
