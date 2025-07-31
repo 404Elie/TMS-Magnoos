@@ -341,7 +341,7 @@ export default function ManagerDashboard() {
                       <p className="text-gray-300">No travel requests yet</p>
                       <Button 
                         onClick={() => setActiveTab("submit")}
-                        className="bg-magnoos-dark mt-4 bg-magnoos-blue hover:bg-magnoos-dark-blue"
+                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                       >
                         Submit Your First Request
                       </Button>
