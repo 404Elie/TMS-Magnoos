@@ -1,16 +1,17 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./auth";
 import { insertTravelRequestSchema, insertBookingSchema, insertBudgetTrackingSchema } from "@shared/schema";
 import { zohoService } from "./zohoService";
+import { emailService } from "./emailService";
 import { z } from "zod";
 
 // Middleware to check user role
 const requireRole = (allowedRoles: string[]) => {
   return async (req: any, res: any, next: any) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
@@ -37,21 +38,11 @@ const requireRole = (allowedRoles: string[]) => {
   };
 };
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export function registerRoutes(app: Express): Server {
   // Auth middleware
-  await setupAuth(app);
+  setupAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Auth routes are now handled in setupAuth function
 
   // Zoho integration endpoints
   app.get('/api/zoho/users', isAuthenticated, async (req: any, res) => {
@@ -88,7 +79,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error fetching users:", error);
       // Final fallback: return current user
       try {
-        const currentUser = await storage.getUser(req.user.claims.sub);
+        const currentUser = await storage.getUser(req.user.id);
         if (currentUser) {
           res.json([{
             id: currentUser.id,
@@ -127,7 +118,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin role switching
   app.post("/api/admin/switch-role", isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { role } = req.body;
       
       const user = await storage.getUser(userId);
@@ -148,10 +139,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Management Routes (Admin only)
+  app.get('/api/users', isAuthenticated, requireRole(['admin']), async (req: any, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.post('/api/users', isAuthenticated, requireRole(['admin']), async (req: any, res) => {
+    try {
+      const userSchema = z.object({
+        email: z.string().email(),
+        firstName: z.string().min(1),
+        lastName: z.string().min(1),
+        role: z.enum(['manager', 'pm', 'operations', 'admin']),
+        annualTravelBudget: z.string().optional()
+      });
+
+      const userData = userSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(userData.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User with this email already exists" });
+      }
+
+      const newUser = await storage.createUser(userData);
+      res.status(201).json(newUser);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid user data", errors: error.errors });
+      }
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  app.put('/api/users/:id', isAuthenticated, requireRole(['admin']), async (req: any, res) => {
+    try {
+      const userSchema = z.object({
+        email: z.string().email().optional(),
+        firstName: z.string().min(1).optional(),
+        lastName: z.string().min(1).optional(),
+        role: z.enum(['manager', 'pm', 'operations', 'admin']).optional(),
+        annualTravelBudget: z.string().optional()
+      });
+
+      const updates = userSchema.parse(req.body);
+      const updatedUser = await storage.updateUser(req.params.id, updates);
+      res.json(updatedUser);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid user data", errors: error.errors });
+      }
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.delete('/api/users/:id', isAuthenticated, requireRole(['admin']), async (req: any, res) => {
+    try {
+      const userId = req.params.id;
+      const currentUserId = req.user.id;
+      
+      // Prevent admin from deleting themselves
+      if (userId === currentUserId) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+
+      await storage.deleteUser(userId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   // Travel request routes
   app.get('/api/travel-requests', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const user = await storage.getUser(userId);
       
       let filters: any = {};
@@ -185,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Travel request not found" });
       }
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const user = await storage.getUser(userId);
 
       // Role-based access control
@@ -209,6 +280,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const newRequest = await storage.createTravelRequest(requestData);
+      
+      // Send email notifications
+      try {
+        const requester = await storage.getUser(req.userId);
+        const traveler = await storage.getUser(validatedData.travelerId);
+        
+        // Get notification recipients (PMs and Operations)
+        const allUsers = await storage.getAllUsers();
+        const recipients = allUsers
+          .filter(user => user.role === 'pm' || user.role === 'operations')
+          .filter(user => user.email) // Only users with email addresses
+          .map(user => ({ email: user.email!, role: user.role }));
+
+        if (recipients.length > 0 && requester && traveler) {
+          const emailData = {
+            id: newRequest.id,
+            travelerName: `${traveler.firstName || ''} ${traveler.lastName || ''}`.trim() || traveler.email || 'Unknown',
+            requesterName: `${requester.firstName || ''} ${requester.lastName || ''}`.trim() || requester.email || 'Unknown',
+            destination: validatedData.destination,
+            origin: validatedData.origin || 'Not specified',
+            departureDate: validatedData.departureDate,
+            returnDate: validatedData.returnDate,
+            purpose: validatedData.purpose,
+            projectName: validatedData.projectId ? 'Project specified' : undefined
+          };
+
+          await emailService.sendTravelRequestNotification(emailData, recipients);
+        }
+      } catch (emailError) {
+        console.error("Failed to send email notification:", emailError);
+        // Don't fail the request creation if email fails
+      }
+      
       res.status(201).json(newRequest);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -358,7 +462,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard stats endpoint
   app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const user = await storage.getUser(userId);
       
       if (!user) {

@@ -6,9 +6,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
+import AuthPage from "@/pages/auth-page";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
+import AdminUsers from "@/pages/admin-users";
 import type { User } from "@shared/schema";
 
 function Router() {
@@ -34,12 +36,12 @@ function Router() {
     );
   }
 
-  // If not authenticated, show landing page
+  // If not authenticated, show auth page
   if (!isAuthenticated) {
     return (
       <Switch>
-        <Route path="/" component={Landing} />
-        <Route component={Landing} />
+        <Route path="/" component={AuthPage} />
+        <Route component={AuthPage} />
       </Switch>
     );
   }
@@ -67,6 +69,11 @@ function Router() {
       
       <Route path="/operations">
         {(currentRole === 'operations' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
+      </Route>
+      
+      {/* Admin-only route */}
+      <Route path="/admin/users">
+        {typedUser?.role === 'admin' ? <AdminUsers /> : <NotFound />}
       </Route>
       
       {/* Fallback to 404 */}

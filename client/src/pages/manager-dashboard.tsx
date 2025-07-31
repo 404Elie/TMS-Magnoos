@@ -6,6 +6,7 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -184,6 +185,7 @@ export default function ManagerDashboard() {
         <Header currentRole="manager" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -378,7 +380,7 @@ export default function ManagerDashboard() {
                                               const displayName = selectedUser.firstName && selectedUser.lastName 
                                                 ? `${selectedUser.firstName} ${selectedUser.lastName}` 
                                                 : selectedUser.email || 'Unknown User';
-                                              return `${displayName}${selectedUser.id === user?.id ? " (Me)" : ""}`;
+                                              return `${displayName}${selectedUser.id === (user as any)?.id ? " (Me)" : ""}`;
                                             })()
                                           : "Select traveler..."}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -405,7 +407,7 @@ export default function ManagerDashboard() {
                                                   {travelerUser.firstName && travelerUser.lastName 
                                                     ? `${travelerUser.firstName} ${travelerUser.lastName}` 
                                                     : travelerUser.email || 'Unknown User'}
-                                                  {travelerUser.id === user?.id && " (Me)"}
+                                                  {travelerUser.id === (user as any)?.id && " (Me)"}
                                                 </span>
                                                 {travelerUser.firstName && travelerUser.lastName && travelerUser.email && (
                                                   <span className="text-sm text-muted-foreground">

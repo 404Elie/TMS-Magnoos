@@ -1,130 +1,101 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Users, TrendingUp, Calendar } from "lucide-react";
-import type { User } from "@shared/schema";
+import { Link } from "wouter";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import { Settings, Users, RotateCcw } from "lucide-react";
 
-interface AdminRoleSwitcherProps {
-  user: User;
-}
-
-export default function AdminRoleSwitcher({ user }: AdminRoleSwitcherProps) {
+export default function AdminRoleSwitcher() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isChanging, setIsChanging] = useState(false);
-
-  const currentRole = user.activeRole || user.role;
+  const { user } = useAuth();
+  const [selectedRole, setSelectedRole] = useState<string>("");
 
   const switchRoleMutation = useMutation({
-    mutationFn: async (newRole: string) => {
-      return await apiRequest("POST", "/api/admin/switch-role", { role: newRole });
+    mutationFn: async (role: string) => {
+      return await apiRequest("POST", "/api/admin/switch-role", { role });
     },
     onSuccess: () => {
       toast({
         title: "Role Switched",
-        description: "Successfully switched to new role",
+        description: "Successfully switched to the selected role.",
       });
-      // Invalidate all queries to refresh data for new role
-      queryClient.invalidateQueries();
-      setIsChanging(false);
-      // Refresh the page to reload with new role
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      // Refresh the page to update the UI
       window.location.reload();
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to switch role. Please try again.",
         variant: "destructive",
       });
-      setIsChanging(false);
     },
   });
 
-  const handleRoleChange = (newRole: string) => {
-    if (newRole !== currentRole) {
-      setIsChanging(true);
-      switchRoleMutation.mutate(newRole);
+  const handleRoleSwitch = () => {
+    if (selectedRole) {
+      switchRoleMutation.mutate(selectedRole);
     }
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'manager':
-        return <Users className="w-4 h-4" />;
-      case 'pm':
-        return <TrendingUp className="w-4 h-4" />;
-      case 'operations':
-        return <Calendar className="w-4 h-4" />;
-      default:
-        return <Shield className="w-4 h-4" />;
-    }
-  };
-
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case 'manager':
-        return 'Manager';
-      case 'pm':
-        return 'Project Manager';
-      case 'operations':
-        return 'Operations';
-      default:
-        return role;
-    }
-  };
-
-  // Only show role switcher for admin users
-  if (user.role !== 'admin') {
+  if ((user as any)?.role !== 'admin') {
     return null;
   }
 
+  const currentRole = (user as any)?.activeRole || 'manager';
+
   return (
-    <div className="flex items-center space-x-3">
-      <Badge variant="outline" className="text-xs">
-        <Shield className="w-3 h-3 mr-1" />
-        Admin
-      </Badge>
-      
-      <div className="flex items-center space-x-2">
-        <span className="text-xs text-gray-500">Acting as:</span>
-        <Select
-          value={currentRole}
-          onValueChange={handleRoleChange}
-          disabled={isChanging}
-        >
-          <SelectTrigger className="w-40 h-8 text-xs">
-            <SelectValue>
-              <div className="flex items-center space-x-2">
-                {getRoleIcon(currentRole)}
-                <span>{getRoleLabel(currentRole)}</span>
+    <Card className="mb-6 border-orange-200 bg-orange-50">
+      <CardContent className="p-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Settings className="h-5 w-5 text-orange-600" />
+            <div>
+              <h3 className="font-medium text-orange-900">Admin Mode</h3>
+              <div className="text-sm text-orange-700">
+                Currently viewing as: <Badge variant="outline" className="ml-1">{currentRole.toUpperCase()}</Badge>
               </div>
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="manager">
-              <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4" />
-                <span>Manager</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="pm">
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4" />
-                <span>Project Manager</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="operations">
-              <div className="flex items-center space-x-2">
-                <Calendar className="w-4 h-4" />
-                <span>Operations</span>
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <Link href="/admin/users">
+              <Button variant="outline" size="sm">
+                <Users className="h-4 w-4 mr-2" />
+                Manage Users
+              </Button>
+            </Link>
+            
+            <div className="flex items-center gap-2">
+              <Select value={selectedRole} onValueChange={setSelectedRole}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Switch role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="pm">Project Manager</SelectItem>
+                  <SelectItem value="operations">Operations</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Button 
+                onClick={handleRoleSwitch} 
+                disabled={!selectedRole || switchRoleMutation.isPending}
+                size="sm"
+              >
+                <RotateCcw className="h-4 w-4 mr-2" />
+                {switchRoleMutation.isPending ? "Switching..." : "Switch"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
