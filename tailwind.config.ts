@@ -61,6 +61,13 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        magnoos: {
+          primary: "hsl(var(--magnoos-primary))",
+          secondary: "hsl(var(--magnoos-secondary))",
+          accent: "hsl(var(--magnoos-accent))",
+          dark: "hsl(var(--magnoos-dark))",
+          surface: "hsl(var(--magnoos-dark-surface))",
+        },
       },
       keyframes: {
         "accordion-down": {

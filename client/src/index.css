@@ -64,8 +64,21 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: hsl(235, 20%, 8%) !important;
+    color: hsl(0, 0%, 98%) !important;
+  }
+  
+  html {
+    background: hsl(235, 20%, 8%) !important;
+  }
+  
+  /* Force dark theme globally */
+  #root {
+    background: hsl(235, 20%, 8%) !important;
+    color: hsl(0, 0%, 98%) !important;
+    min-height: 100vh;
   }
 }
 
