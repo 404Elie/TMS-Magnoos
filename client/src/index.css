@@ -188,4 +188,27 @@
   .border-magnoos-dark {
     border-color: hsl(235, 45%, 12%);
   }
+  
+  /* Force override any purple/violet backgrounds from Radix Tabs */
+  [data-radix-tabs-content] {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
+  
+  .futuristic-tabs [data-radix-tabs-content] {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
+  
+  /* Additional overrides for all possible tab content selectors */
+  [role="tabpanel"] {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
+  
+  .futuristic-tabs [role="tabpanel"] {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
+  
+  /* Override any Tailwind violet/purple classes */
+  .bg-violet-400, .bg-purple-400, .bg-violet-500, .bg-purple-500 {
+    background-color: hsl(235, 45%, 12%) !important;
+  }
 }
