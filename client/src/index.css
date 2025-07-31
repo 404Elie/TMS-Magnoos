@@ -25,8 +25,8 @@
   --radius: 0.75rem;
   
   /* Magnoos Brand Colors - Clean deep blue theme */
-  --magnoos-primary: hsl(245, 100%, 65%);
-  --magnoos-secondary: hsl(270, 100%, 70%);
+  --magnoos-primary: hsl(220, 15%, 15%);
+  --magnoos-secondary: hsl(224, 14%, 15%);
   --magnoos-accent: hsl(200, 100%, 65%);
   --magnoos-dark: hsl(220, 15%, 15%);
   --magnoos-dark-surface: hsl(220, 15%, 15%);
