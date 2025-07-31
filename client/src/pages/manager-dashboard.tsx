@@ -199,7 +199,7 @@ export default function ManagerDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Total Requests</p>
+                        <p className="text-sm font-medium text-gray-300">Total Requests</p>
                         <p className="text-2xl font-bold text-white">
                           {statsLoading ? "..." : stats?.totalRequests || 0}
                         </p>
@@ -215,7 +215,7 @@ export default function ManagerDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Pending Approval</p>
+                        <p className="text-sm font-medium text-gray-300">Pending Approval</p>
                         <p className="text-2xl font-bold text-yellow-600">
                           {statsLoading ? "..." : stats?.pendingRequests || 0}
                         </p>
@@ -231,7 +231,7 @@ export default function ManagerDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Approved</p>
+                        <p className="text-sm font-medium text-gray-300">Approved</p>
                         <p className="text-2xl font-bold text-green-600">
                           {statsLoading ? "..." : stats?.approvedRequests || 0}
                         </p>
@@ -247,7 +247,7 @@ export default function ManagerDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Completed</p>
+                        <p className="text-sm font-medium text-gray-300">Completed</p>
                         <p className="text-2xl font-bold text-magnoos-blue">
                           {statsLoading ? "..." : stats?.completedRequests || 0}
                         </p>
@@ -269,26 +269,26 @@ export default function ManagerDashboard() {
                   {requestsLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-400">Loading requests...</p>
+                      <p className="text-gray-300">Loading requests...</p>
                     </div>
                   ) : requests && requests.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Route
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Status
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Est. Cost
                             </th>
                           </tr>
@@ -298,16 +298,16 @@ export default function ManagerDashboard() {
                             <tr key={request.id}>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex items-center">
-                                  <MapPin className="w-4 h-4 text-gray-400 mr-2" />
+                                  <MapPin className="w-4 h-4 text-gray-300 mr-2" />
                                   <span className="text-sm font-medium text-white">
                                     {request.origin} → {request.destination}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {request.project?.name}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
@@ -328,7 +328,7 @@ export default function ManagerDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <Plane className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-400">No travel requests yet</p>
+                      <p className="text-gray-300">No travel requests yet</p>
                       <Button 
                         onClick={() => setActiveTab("submit")}
                         className="bg-magnoos-dark mt-4 bg-magnoos-blue hover:bg-magnoos-dark-blue"

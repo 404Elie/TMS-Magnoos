@@ -275,11 +275,11 @@ export default function OperationsDashboard() {
             <TabsContent value="dashboard" className="space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-6">
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Active Bookings</p>
+                        <p className="text-sm font-medium text-gray-300">Active Bookings</p>
                         <p className="text-2xl font-bold text-magnoos-primary">
                           {statsLoading ? "..." : stats?.activeBookings || 0}
                         </p>
@@ -291,11 +291,11 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Monthly Spend</p>
+                        <p className="text-sm font-medium text-gray-300">Monthly Spend</p>
                         <p className="text-2xl font-bold text-white">
                           {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
                         </p>
@@ -307,11 +307,11 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Budget Remaining</p>
+                        <p className="text-sm font-medium text-gray-300">Budget Remaining</p>
                         <p className="text-2xl font-bold text-yellow-400">
                           {statsLoading ? "..." : formatCurrency(stats?.budgetRemaining || 0)}
                         </p>
@@ -323,11 +323,11 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Pending Tasks</p>
+                        <p className="text-sm font-medium text-gray-300">Pending Tasks</p>
                         <p className="text-2xl font-bold text-red-400">
                           {statsLoading ? "..." : stats?.pendingTasks || 0}
                         </p>
@@ -339,11 +339,11 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Cost Savings</p>
+                        <p className="text-sm font-medium text-gray-300">Cost Savings</p>
                         <p className="text-2xl font-bold text-green-400">
                           {statsLoading ? "..." : formatCurrency(stats?.costSavings || 0)}
                         </p>
@@ -358,7 +358,7 @@ export default function OperationsDashboard() {
 
               {/* Budget Charts Placeholder */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardHeader>
                     <CardTitle className="text-white">Monthly Budget Trend</CardTitle>
                   </CardHeader>
@@ -367,13 +367,13 @@ export default function OperationsDashboard() {
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-magnoos-primary mx-auto mb-2" />
                         <p className="text-white">Monthly Budget Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardHeader>
                     <CardTitle className="text-white">Expense Breakdown</CardTitle>
                   </CardHeader>
@@ -382,7 +382,7 @@ export default function OperationsDashboard() {
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-magnoos-secondary mx-auto mb-2" />
                         <p className="text-white">Expense Breakdown Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
@@ -390,7 +390,7 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Recent Activity */}
-              <Card className="bg-slate-700 border-slate-600">
+              <Card className="bg-slate-800 border-slate-600">
                 <CardHeader>
                   <CardTitle className="text-white">Recent Booking Activities</CardTitle>
                 </CardHeader>
@@ -416,7 +416,7 @@ export default function OperationsDashboard() {
                             <p className="font-medium text-white">
                               {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)} booking
                             </p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-gray-300">
                               {booking.provider} • {formatCurrency(booking.cost)} • {booking.bookingReference}
                             </p>
                           </div>
@@ -426,8 +426,8 @@ export default function OperationsDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-400">No recent booking activities</p>
+                      <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-300">No recent booking activities</p>
                     </div>
                   )}
                 </CardContent>
@@ -435,7 +435,7 @@ export default function OperationsDashboard() {
             </TabsContent>
 
             <TabsContent value="bookings" className="space-y-8">
-              <Card className="bg-slate-700 border-slate-600">
+              <Card className="bg-slate-800 border-slate-600">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-white">Active Travel Bookings</CardTitle>
@@ -550,32 +550,32 @@ export default function OperationsDashboard() {
                   {requestsLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-400">Loading travel requests...</p>
+                      <p className="text-gray-300">Loading travel requests...</p>
                     </div>
                   ) : operationsRequests.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Traveler
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Destination
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Total Cost
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Status
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Actions
                             </th>
                           </tr>
@@ -607,10 +607,10 @@ export default function OperationsDashboard() {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                   {request.destination}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                   {request.project?.name}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                   {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
@@ -646,8 +646,8 @@ export default function OperationsDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-400">No travel requests to process</p>
-                      <p className="text-sm text-gray-400 mt-2">Approved requests will appear here for booking</p>
+                      <p className="text-gray-300">No travel requests to process</p>
+                      <p className="text-sm text-gray-300 mt-2">Approved requests will appear here for booking</p>
                     </div>
                   )}
                 </CardContent>
@@ -657,13 +657,13 @@ export default function OperationsDashboard() {
             <TabsContent value="budget-person" className="space-y-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Person</h2>
-                <p className="text-gray-400">Monitor individual travel expenses and budget allocations</p>
+                <p className="text-gray-300">Monitor individual travel expenses and budget allocations</p>
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Summary Cards */}
                 <div className="lg:col-span-1 space-y-6">
-                  <Card className="bg-slate-700 border-slate-600">
+                  <Card className="bg-slate-800 border-slate-600">
                     <CardHeader>
                       <CardTitle className="text-white">Top Spenders</CardTitle>
                     </CardHeader>
@@ -693,12 +693,12 @@ export default function OperationsDashboard() {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-400 text-center py-4">No spending data available</p>
+                        <p className="text-gray-300 text-center py-4">No spending data available</p>
                       )}
                     </CardContent>
                   </Card>
                   
-                  <Card className="bg-slate-700 border-slate-600">
+                  <Card className="bg-slate-800 border-slate-600">
                     <CardHeader>
                       <CardTitle className="text-white">Budget Alerts</CardTitle>
                     </CardHeader>
@@ -725,7 +725,7 @@ export default function OperationsDashboard() {
                           </div>
                         ))}
                         {userBudgetSummaries.filter(user => user.utilization > 80).length === 0 && (
-                          <p className="text-gray-400 text-center py-4">No budget alerts</p>
+                          <p className="text-gray-300 text-center py-4">No budget alerts</p>
                         )}
                       </div>
                     </CardContent>
@@ -734,7 +734,7 @@ export default function OperationsDashboard() {
                 
                 {/* Budget Table */}
                 <div className="lg:col-span-2">
-                  <Card className="bg-slate-700 border-slate-600">
+                  <Card className="bg-slate-800 border-slate-600">
                     <CardHeader>
                       <CardTitle className="text-white">Individual Budget Overview</CardTitle>
                     </CardHeader>
@@ -744,22 +744,22 @@ export default function OperationsDashboard() {
                           <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                               <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                   Employee
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                   Annual Budget
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                   Spent
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                   Remaining
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                   Utilization
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                   Trips
                                 </th>
                               </tr>
@@ -800,12 +800,12 @@ export default function OperationsDashboard() {
                                           style={{ width: `${Math.min(user.utilization, 100)}%` }}
                                         ></div>
                                       </div>
-                                      <span className="text-sm text-gray-400">
+                                      <span className="text-sm text-gray-300">
                                         {Math.round(user.utilization)}%
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                     {user.tripCount}
                                   </td>
                                 </tr>
@@ -816,8 +816,8 @@ export default function OperationsDashboard() {
                       ) : (
                         <div className="text-center py-8">
                           <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                          <p className="text-gray-400">No budget data available</p>
-                          <p className="text-sm text-gray-400 mt-2">Budget information will appear once travel requests are processed</p>
+                          <p className="text-gray-300">No budget data available</p>
+                          <p className="text-sm text-gray-300 mt-2">Budget information will appear once travel requests are processed</p>
                         </div>
                       )}
                     </CardContent>
@@ -829,37 +829,37 @@ export default function OperationsDashboard() {
             <TabsContent value="budget-project" className="space-y-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Project</h2>
-                <p className="text-gray-400">Monitor project-based travel expenses and allocations</p>
+                <p className="text-gray-300">Monitor project-based travel expenses and allocations</p>
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 {/* Project Budget Chart Placeholder */}
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardHeader>
                     <CardTitle className="text-white">Project Budget Distribution</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-400">Project Budget Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                        <p className="text-gray-300">Project Budget Chart</p>
+                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
                 {/* Budget vs Actual Placeholder */}
-                <Card className="bg-slate-700 border-slate-600">
+                <Card className="bg-slate-800 border-slate-600">
                   <CardHeader>
                     <CardTitle className="text-white">Budget vs Actual Spending</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-400">Budget vs Actual Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                        <p className="text-gray-300">Budget vs Actual Chart</p>
+                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
@@ -867,7 +867,7 @@ export default function OperationsDashboard() {
               </div>
               
               {/* Project Budget Table */}
-              <Card className="bg-slate-700 border-slate-600">
+              <Card className="bg-slate-800 border-slate-600">
                 <CardHeader>
                   <CardTitle className="text-white">Project Budget Overview</CardTitle>
                 </CardHeader>
@@ -877,25 +877,25 @@ export default function OperationsDashboard() {
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Allocated Budget
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Spent
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Remaining
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Utilization
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Total Trips
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Avg Cost/Trip
                             </th>
                           </tr>
@@ -905,7 +905,7 @@ export default function OperationsDashboard() {
                             <tr key={project.id}>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm font-medium text-white">{project.name}</div>
-                                <div className="text-sm text-gray-400">{project.description}</div>
+                                <div className="text-sm text-gray-300">{project.description}</div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                 {formatCurrency(project.allocatedBudget)}
@@ -927,15 +927,15 @@ export default function OperationsDashboard() {
                                       style={{ width: `${Math.min(project.utilization, 100)}%` }}
                                     ></div>
                                   </div>
-                                  <span className="text-sm text-gray-400">
+                                  <span className="text-sm text-gray-300">
                                     {Math.round(project.utilization)}%
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {project.tripCount}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {formatCurrency(project.avgCostPerTrip)}
                               </td>
                             </tr>
@@ -946,8 +946,8 @@ export default function OperationsDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-400">No project budget data available</p>
-                      <p className="text-sm text-gray-400 mt-2">Budget information will appear once travel requests are processed</p>
+                      <p className="text-gray-300">No project budget data available</p>
+                      <p className="text-sm text-gray-300 mt-2">Budget information will appear once travel requests are processed</p>
                     </div>
                   )}
                 </CardContent>

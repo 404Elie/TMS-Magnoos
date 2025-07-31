@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(220, 50%, 8%);
+  --background: hsl(220, 45%, 12%);
   --foreground: hsl(0, 0%, 98%);
   --muted: hsl(220, 40%, 12%);
   --muted-foreground: hsl(235, 10%, 65%);
   --popover: hsl(235, 20%, 12%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(220, 30%, 15%);
+  --card: hsl(220, 30%, 18%);
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(220, 35%, 20%);
   --input: hsl(235, 15%, 18%);
@@ -26,11 +26,11 @@
   
   /* Magnoos Brand Colors - Clean deep blue theme */
   --magnoos-primary: hsl(220, 45%, 10%);
-  --magnoos-secondary: hsl(224, 14%, 15%);
+  --magnoos-secondary: hsl(224, 86%, 19%);
   --magnoos-accent: hsl(200, 100%, 65%);
-  --magnoos-dark: hsl(220, 45%, 10%);
-  --magnoos-dark-surface: hsl(220, 25%, 18%);
-  --magnoos-header-dark: hsl(235, 50%, 6%);
+  --magnoos-dark: hsl(220, 60%, 12%);
+  --magnoos-dark-surface: hsl(216, 20%, 95%);
+  --magnoos-header-dark: hsl(220, 50%, 8%);
   --magnoos-gradient-start: hsl(245, 100%, 65%);
   --magnoos-gradient-end: hsl(270, 100%, 70%);
 }
@@ -43,7 +43,7 @@
   --muted-foreground: hsl(235, 10%, 65%);
   --popover: hsl(235, 20%, 12%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(220, 30%, 15%);
+  --card: hsl(220, 30%, 18%);
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(220, 35%, 20%);
   --input: hsl(235, 15%, 18%);

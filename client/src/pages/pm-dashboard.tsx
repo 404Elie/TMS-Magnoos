@@ -186,7 +186,7 @@ export default function PMDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Pending Approvals</p>
+                        <p className="text-sm font-medium text-gray-300">Pending Approvals</p>
                         <p className="text-2xl font-bold text-yellow-600">
                           {statsLoading ? "..." : stats?.pendingApprovals || 0}
                         </p>
@@ -202,7 +202,7 @@ export default function PMDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Approved This Month</p>
+                        <p className="text-sm font-medium text-gray-300">Approved This Month</p>
                         <p className="text-2xl font-bold text-green-600">
                           {statsLoading ? "..." : stats?.approvedMonth || 0}
                         </p>
@@ -218,7 +218,7 @@ export default function PMDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Active Projects</p>
+                        <p className="text-sm font-medium text-gray-300">Active Projects</p>
                         <p className="text-2xl font-bold text-magnoos-blue">
                           {statsLoading ? "..." : stats?.activeProjects || 0}
                         </p>
@@ -234,13 +234,13 @@ export default function PMDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-400">Avg Approval Time</p>
+                        <p className="text-sm font-medium text-gray-300">Avg Approval Time</p>
                         <p className="text-2xl font-bold text-white">
                           {statsLoading ? "..." : stats?.avgApprovalTime || "N/A"}
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-gray-400" />
+                        <Calendar className="w-6 h-6 text-gray-300" />
                       </div>
                     </div>
                   </CardContent>
@@ -266,7 +266,7 @@ export default function PMDashboard() {
                               <p className="font-medium text-white">
                                 {request.traveler.firstName} {request.traveler.lastName} - {request.destination}
                               </p>
-                              <p className="text-sm text-gray-400">
+                              <p className="text-sm text-gray-300">
                                 {request.project?.name} • {new Date(request.createdAt!).toRelativeTimeString?.() || 'Recently submitted'}
                               </p>
                             </div>
@@ -282,7 +282,7 @@ export default function PMDashboard() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-400 text-center py-4">No pending approvals</p>
+                      <p className="text-gray-300 text-center py-4">No pending approvals</p>
                     )}
                   </CardContent>
                 </Card>
@@ -295,12 +295,12 @@ export default function PMDashboard() {
                     <div className="bg-magnoos-dark space-y-3">
                       {Object.entries(projectAnalytics).slice(0, 3).map(([projectName, data]) => (
                         <div key={projectName} className="flex items-center justify-between">
-                          <span className="text-gray-400">{projectName}</span>
+                          <span className="text-gray-300">{projectName}</span>
                           <span className="font-medium">{data.total} trips</span>
                         </div>
                       ))}
                       {Object.keys(projectAnalytics).length === 0 && (
-                        <p className="text-gray-400 text-center py-4">No travel data yet</p>
+                        <p className="text-gray-300 text-center py-4">No travel data yet</p>
                       )}
                     </div>
                   </CardContent>
@@ -317,29 +317,29 @@ export default function PMDashboard() {
                   {pendingLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-400">Loading pending requests...</p>
+                      <p className="text-gray-300">Loading pending requests...</p>
                     </div>
                   ) : pendingRequests && pendingRequests.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Traveler
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Destination
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Est. Cost
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Actions
                             </th>
                           </tr>
@@ -363,10 +363,10 @@ export default function PMDashboard() {
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                                 {request.destination}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {request.project?.name}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
@@ -443,8 +443,8 @@ export default function PMDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <Check className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                      <p className="text-gray-400">No pending approvals</p>
-                      <p className="text-sm text-gray-400 mt-2">All travel requests have been processed</p>
+                      <p className="text-gray-300">No pending approvals</p>
+                      <p className="text-sm text-gray-300 mt-2">All travel requests have been processed</p>
                     </div>
                   )}
                 </CardContent>
@@ -461,9 +461,9 @@ export default function PMDashboard() {
                   <CardContent>
                     <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-400">Project Analytics Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                        <p className="text-gray-300">Project Analytics Chart</p>
+                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
@@ -477,9 +477,9 @@ export default function PMDashboard() {
                   <CardContent>
                     <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-400">Timeline Analytics Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                        <p className="text-gray-300">Timeline Analytics Chart</p>
+                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
@@ -495,26 +495,26 @@ export default function PMDashboard() {
                   {requestsLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-400">Loading project analytics...</p>
+                      <p className="text-gray-300">Loading project analytics...</p>
                     </div>
                   ) : Object.keys(projectAnalytics).length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Total Requests
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Approved
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Pending
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Completed
                             </th>
                           </tr>
@@ -525,7 +525,7 @@ export default function PMDashboard() {
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                                 {projectName}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {data.total}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
@@ -545,8 +545,8 @@ export default function PMDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-400">No project data available</p>
-                      <p className="text-sm text-gray-400 mt-2">Analytics will appear once travel requests are submitted</p>
+                      <p className="text-gray-300">No project data available</p>
+                      <p className="text-sm text-gray-300 mt-2">Analytics will appear once travel requests are submitted</p>
                     </div>
                   )}
                 </CardContent>
