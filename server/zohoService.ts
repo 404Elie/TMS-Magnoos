@@ -193,47 +193,58 @@ class ZohoService {
       const allProjectsData: ZohoProject[] = [];
       let page = 1;
 
-      while (true) {
+      const maxPages = 50; // Limit to prevent infinite loops
+      let retryCount = 0;
+      
+      while (page <= maxPages) {
         const accessToken = await this.getProjectsAccessToken();
         const headers = {
-          'Authorization': `Zoho-oauthtoken ${accessToken}`, // Use projects-specific auth token
+          'Authorization': `Zoho-oauthtoken ${accessToken}`,
           'Accept': 'application/json'
         };
         
-        // Use same endpoint format as users API
         const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=200`;
-        console.log(`Fetching projects from: ${apiUrl} (Page: ${page})`);
+        console.log(`Fetching projects from: ${apiUrl} (Page: ${page}/${maxPages})`);
 
         const response = await fetch(apiUrl, { headers });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            console.log("Authentication failed (401). Access token might be invalid. Forcing refresh...");
-            this.accessToken = null;
-            this.tokenExpiry = new Date(0);
-            continue; // Retry with new token
+          if (response.status === 401 && retryCount < 3) {
+            console.log("Authentication failed (401). Retrying with new token...");
+            this.projectsAccessToken = null;
+            this.projectsTokenExpiry = new Date(0);
+            retryCount++;
+            continue;
           }
           throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json() as any;
-        console.log(`API Response structure:`, Object.keys(data));
         
-        // Try different possible response structures
-        const projects = data.projects || data.data || data;
-        
-        if (!projects || projects.length === 0) {
-          console.log("No more project data found or end of pagination.");
+        // Check if this is a proper projects response with projects array
+        if (data.projects && Array.isArray(data.projects)) {
+          const projects = data.projects;
+          
+          if (projects.length === 0) {
+            console.log("No more projects found. End of pagination.");
+            break;
+          }
+          
+          console.log(`Found ${projects.length} projects on page ${page}`);
+          allProjectsData.push(...projects);
+          
+          // If we got fewer than 200 projects, this is likely the last page
+          if (projects.length < 200) {
+            console.log("Received fewer than 200 projects, assuming last page.");
+            break;
+          }
+        } else {
+          console.log("Invalid response structure or no projects array found");
           break;
         }
         
-        console.log(`Found ${projects.length} projects on page ${page}`);
-        if (projects.length > 0) {
-          console.log(`Sample project:`, projects[0]);
-        }
-
-        allProjectsData.push(...projects);
         page++;
+        retryCount = 0; // Reset retry count for next page
       }
 
       console.log(`Successfully retrieved ${allProjectsData.length} project records.`);
