@@ -62,12 +62,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Transform Zoho users to expected format
         const transformedUsers = zohoUsers.map(user => ({
           id: user.id,
-          name: `${user.firstName} ${user.lastName}`.trim(),
+          firstName: user.name?.split(' ')[0] || '',
+          lastName: user.name?.split(' ').slice(1).join(' ') || '',
           email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
           role: user.role,
-          department: user.department,
           status: user.status
         }));
         res.json(transformedUsers);

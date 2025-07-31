@@ -354,11 +354,11 @@ export default function ManagerDashboard() {
                                         {field.value
                                           ? (() => {
                                               const selectedUser = users?.find((user) => user.id === field.value);
-                                              return selectedUser
-                                                ? `${selectedUser.name || selectedUser.email}${
-                                                    selectedUser.id === user?.id ? " (Me)" : ""
-                                                  }`
-                                                : "Select traveler...";
+                                              if (!selectedUser) return "Select traveler...";
+                                              const displayName = selectedUser.firstName && selectedUser.lastName 
+                                                ? `${selectedUser.firstName} ${selectedUser.lastName}` 
+                                                : selectedUser.email || 'Unknown User';
+                                              return `${displayName}${selectedUser.id === user?.id ? " (Me)" : ""}`;
                                             })()
                                           : "Select traveler..."}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -374,7 +374,7 @@ export default function ManagerDashboard() {
                                           {users?.map((user) => (
                                             <CommandItem
                                               key={user.id}
-                                              value={`${user.name || user.email} ${user.email}`}
+                                              value={`${user.firstName || ''} ${user.lastName || ''} ${user.email || ''}`}
                                               onSelect={() => {
                                                 field.onChange(user.id);
                                                 setTravelerSearchOpen(false);
@@ -382,10 +382,12 @@ export default function ManagerDashboard() {
                                             >
                                               <div className="flex flex-col">
                                                 <span className="font-medium">
-                                                  {user.name || user.email}
+                                                  {user.firstName && user.lastName 
+                                                    ? `${user.firstName} ${user.lastName}` 
+                                                    : user.email || 'Unknown User'}
                                                   {user.id === user?.id && " (Me)"}
                                                 </span>
-                                                {user.name && user.email && (
+                                                {user.firstName && user.lastName && user.email && (
                                                   <span className="text-sm text-muted-foreground">
                                                     {user.email}
                                                   </span>
