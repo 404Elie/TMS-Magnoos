@@ -112,17 +112,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/zoho/projects', isAuthenticated, async (req: any, res) => {
     try {
       const zohoProjects = await zohoService.getProjects();
-      // Transform to expected format for frontend based on actual API response structure
+      // Transform to expected format for frontend - return only id and name for cleaner dropdown
       const transformedProjects = zohoProjects.map(project => ({
         id: project.id_string || project.id,
-        name: project.name,
-        description: project.description || '',
-        status: project.status,
-        budget: project.budget_value || project.hourly_budget || '0',
-        currency: project.currency || 'USD',
-        key: project.key,
-        owner: project.owner_name,
-        group: project.group_name
+        name: project.name
       }));
       res.json(transformedProjects);
     } catch (error) {
