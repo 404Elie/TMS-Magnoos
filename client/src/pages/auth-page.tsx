@@ -177,11 +177,11 @@ export default function AuthPage() {
         {/* Right side - Auth forms */}
         <div className="w-full max-w-md mx-auto">
           <Card 
-            className="auth-page shadow-2xl border-2 backdrop-blur-md"
+            className="auth-page shadow-2xl border-2 backdrop-blur-lg"
             style={{ 
-              backgroundColor: '#FFFFFF',
+              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85))',
               borderColor: '#FF6F00',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
             }}
           >
             <CardHeader className="text-center pb-4">
@@ -199,15 +199,24 @@ export default function AuthPage() {
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList 
                   className="grid w-full grid-cols-2 p-1 rounded-lg"
-                  style={{ backgroundColor: 'rgba(218, 218, 218, 0.3)' }}
+                  style={{ 
+                    background: 'linear-gradient(135deg, rgba(255, 111, 0, 0.1), rgba(255, 111, 0, 0.05))',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255, 111, 0, 0.2)'
+                  }}
                 >
                   <TabsTrigger 
                     value="login" 
                     className="transition-all font-medium"
                     style={{
-                      color: '#464646',
-                      backgroundColor: activeTab === 'login' ? '#FF6F00' : 'transparent',
-                      ...(activeTab === 'login' && { color: 'white' })
+                      color: activeTab === 'login' ? 'white' : '#000037',
+                      background: activeTab === 'login' 
+                        ? 'linear-gradient(135deg, #FF6F00, #ff8533)' 
+                        : 'transparent',
+                      boxShadow: activeTab === 'login' 
+                        ? '0 2px 8px rgba(255, 111, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                        : 'none',
+                      textShadow: activeTab === 'login' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
                     }}
                   >
                     Sign In
@@ -216,9 +225,14 @@ export default function AuthPage() {
                     value="register"
                     className="transition-all font-medium"
                     style={{
-                      color: '#464646',
-                      backgroundColor: activeTab === 'register' ? '#FF6F00' : 'transparent',
-                      ...(activeTab === 'register' && { color: 'white' })
+                      color: activeTab === 'register' ? 'white' : '#000037',
+                      background: activeTab === 'register' 
+                        ? 'linear-gradient(135deg, #FF6F00, #ff8533)' 
+                        : 'transparent',
+                      boxShadow: activeTab === 'register' 
+                        ? '0 2px 8px rgba(255, 111, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                        : 'none',
+                      textShadow: activeTab === 'register' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
                     }}
                   >
                     Sign Up
