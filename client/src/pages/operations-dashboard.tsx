@@ -272,7 +272,7 @@ export default function OperationsDashboard() {
               <TabsTrigger value="budget-project">Budget by Project</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8">
+            <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8 bg-magnoos-dark"bg-magnoos-dark >
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                 <Card className="bg-magnoos-dark border-magnoos-primary/20">
@@ -400,7 +400,7 @@ export default function OperationsDashboard() {
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
                     </div>
                   ) : bookings && bookings.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="bg-magnoos-dark space-y-4">
                       {bookings.slice(0, 5).map((booking) => (
                         <div key={booking.id} className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg">
                           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -434,7 +434,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="bookings" className="space-y-8">
+            <TabsContent value="bookings" className="bg-magnoos-dark space-y-8"bg-magnoos-dark >
               <Card className="bg-magnoos-dark border-magnoos-primary/20">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
@@ -455,7 +455,7 @@ export default function OperationsDashboard() {
                           Add a new booking for an approved travel request
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="space-y-4">
+                      <div className="bg-magnoos-dark space-y-4">
                         <div>
                           <Label htmlFor="request-select">Travel Request</Label>
                           <Select onValueChange={setSelectedRequestId}>
@@ -654,7 +654,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="budget-person" className="space-y-8">
+            <TabsContent value="budget-person" className="bg-magnoos-dark space-y-8"bg-magnoos-dark >
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Person</h2>
                 <p className="text-gray-400">Monitor individual travel expenses and budget allocations</p>
@@ -669,7 +669,7 @@ export default function OperationsDashboard() {
                     </CardHeader>
                     <CardContent>
                       {userBudgetSummaries.length > 0 ? (
-                        <div className="space-y-3">
+                        <div className="bg-magnoos-dark space-y-3">
                           {userBudgetSummaries
                             .sort((a, b) => b.totalSpent - a.totalSpent)
                             .slice(0, 5)
@@ -703,7 +703,7 @@ export default function OperationsDashboard() {
                       <CardTitle className="text-white">Budget Alerts</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-3">
+                      <div className="bg-magnoos-dark space-y-3">
                         {userBudgetSummaries
                           .filter(user => user.utilization > 80)
                           .map((user) => (
@@ -826,7 +826,7 @@ export default function OperationsDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="budget-project" className="space-y-8">
+            <TabsContent value="budget-project" className="bg-magnoos-dark space-y-8"bg-magnoos-dark >
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Project</h2>
                 <p className="text-gray-400">Monitor project-based travel expenses and allocations</p>

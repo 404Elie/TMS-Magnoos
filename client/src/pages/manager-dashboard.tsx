@@ -192,7 +192,7 @@ export default function ManagerDashboard() {
               <TabsTrigger value="submit">Submit Request</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8">
+            <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="bg-magnoos-dark border-magnoos-primary/20">
@@ -331,7 +331,7 @@ export default function ManagerDashboard() {
                       <p className="text-gray-400">No travel requests yet</p>
                       <Button 
                         onClick={() => setActiveTab("submit")}
-                        className="mt-4 bg-magnoos-blue hover:bg-magnoos-dark-blue"
+                        className="bg-magnoos-dark mt-4 bg-magnoos-blue hover:bg-magnoos-dark-blue"
                       >
                         Submit Your First Request
                       </Button>
@@ -341,7 +341,7 @@ export default function ManagerDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="submit" className="space-y-8">
+            <TabsContent value="submit" className="bg-magnoos-dark space-y-8">
               <div className="max-w-4xl mx-auto">
                 <Card className="bg-magnoos-dark border-magnoos-primary/20">
                   <CardHeader>
@@ -352,7 +352,7 @@ export default function ManagerDashboard() {
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-magnoos-dark space-y-6">
                         {/* Traveler Selection */}
                         <div className="grid grid-cols-1 gap-6">
                           <FormField

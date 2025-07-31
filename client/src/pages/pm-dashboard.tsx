@@ -179,7 +179,7 @@ export default function PMDashboard() {
               <TabsTrigger value="analytics">Project Analytics</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8">
+            <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="bg-magnoos-dark border-magnoos-primary/20">
@@ -259,7 +259,7 @@ export default function PMDashboard() {
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
                       </div>
                     ) : pendingRequests && pendingRequests.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="bg-magnoos-dark space-y-3">
                         {pendingRequests.slice(0, 3).map((request) => (
                           <div key={request.id} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                             <div>
@@ -292,7 +292,7 @@ export default function PMDashboard() {
                     <CardTitle className="text-white">Project Travel Summary</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
+                    <div className="bg-magnoos-dark space-y-3">
                       {Object.entries(projectAnalytics).slice(0, 3).map(([projectName, data]) => (
                         <div key={projectName} className="flex items-center justify-between">
                           <span className="text-gray-400">{projectName}</span>
@@ -308,7 +308,7 @@ export default function PMDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="approvals" className="space-y-8">
+            <TabsContent value="approvals" className="bg-magnoos-dark space-y-8">
               <Card className="bg-magnoos-dark border-magnoos-primary/20">
                 <CardHeader>
                   <CardTitle className="text-white">Pending Travel Request Approvals</CardTitle>
@@ -404,7 +404,7 @@ export default function PMDashboard() {
                                           Please provide a reason for rejecting this travel request.
                                         </DialogDescription>
                                       </DialogHeader>
-                                      <div className="space-y-4">
+                                      <div className="bg-magnoos-dark space-y-4">
                                         <div>
                                           <Label htmlFor="rejection-reason">Rejection Reason</Label>
                                           <Textarea
@@ -451,7 +451,7 @@ export default function PMDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="analytics" className="space-y-8">
+            <TabsContent value="analytics" className="bg-magnoos-dark space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Travel Requests by Project Chart Placeholder */}
                 <Card className="bg-magnoos-dark border-magnoos-primary/20">
