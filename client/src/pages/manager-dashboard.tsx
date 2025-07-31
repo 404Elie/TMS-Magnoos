@@ -28,9 +28,6 @@ const travelRequestFormSchema = z.object({
   purpose: z.string().min(1, "Purpose is required"),
   departureDate: z.string().min(1, "Departure date is required"),
   returnDate: z.string().min(1, "Return date is required"),
-  estimatedFlightCost: z.string().optional(),
-  estimatedHotelCost: z.string().optional(),
-  estimatedOtherCost: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -51,15 +48,17 @@ export default function ManagerDashboard() {
       purpose: "",
       departureDate: "",
       returnDate: "",
-      estimatedFlightCost: "",
-      estimatedHotelCost: "",
-      estimatedOtherCost: "",
       notes: "",
     },
   });
 
   // Fetch dashboard stats
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery<{
+    totalRequests: string;
+    pendingRequests: string;
+    approvedRequests: string;
+    completedRequests: string;
+  }>({
     queryKey: ["/api/dashboard/stats"],
     retry: false,
   });
@@ -89,9 +88,10 @@ export default function ManagerDashboard() {
         ...data,
         departureDate: new Date(data.departureDate).toISOString(),
         returnDate: new Date(data.returnDate).toISOString(),
-        estimatedFlightCost: data.estimatedFlightCost ? parseFloat(data.estimatedFlightCost) : null,
-        estimatedHotelCost: data.estimatedHotelCost ? parseFloat(data.estimatedHotelCost) : null,
-        estimatedOtherCost: data.estimatedOtherCost ? parseFloat(data.estimatedOtherCost) : null,
+        // Cost estimation fields are not provided by managers - operations team will handle
+        estimatedFlightCost: null,
+        estimatedHotelCost: null,
+        estimatedOtherCost: null,
       };
       return await apiRequest("POST", "/api/travel-requests", payload);
     },
@@ -474,50 +474,7 @@ export default function ManagerDashboard() {
                           )}
                         />
 
-                        {/* Estimated Budget */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          <FormField
-                            control={form.control}
-                            name="estimatedFlightCost"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Estimated Flight Cost</FormLabel>
-                                <FormControl>
-                                  <Input type="number" placeholder="0.00" step="0.01" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
 
-                          <FormField
-                            control={form.control}
-                            name="estimatedHotelCost"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Estimated Hotel Cost</FormLabel>
-                                <FormControl>
-                                  <Input type="number" placeholder="0.00" step="0.01" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="estimatedOtherCost"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Other Expenses</FormLabel>
-                                <FormControl>
-                                  <Input type="number" placeholder="0.00" step="0.01" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
 
                         {/* Actions */}
                         <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
