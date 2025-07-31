@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertTravelRequestSchema, insertBookingSchema, insertBudgetTrackingSchema } from "@shared/schema";
+import { zohoService } from "./zohoService";
 import { z } from "zod";
 
 // Middleware to check user role
@@ -52,29 +53,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Zoho integration endpoints (placeholder - would need actual Zoho API)
+  // Zoho integration endpoints
   app.get('/api/zoho/users', isAuthenticated, async (req: any, res) => {
     try {
-      // In real implementation, this would call Zoho API
-      // For now, return users from our database
-      const allUsers = await storage.getUser(req.user.claims.sub);
-      res.json([
-        { id: allUsers?.id, name: `${allUsers?.firstName} ${allUsers?.lastName}`, email: allUsers?.email }
-      ]);
+      const zohoUsers = await zohoService.getUsers();
+      // Transform to expected format for frontend
+      const transformedUsers = zohoUsers.map(user => ({
+        id: user.id,
+        name: `${user.firstName} ${user.lastName}`.trim(),
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        department: user.department,
+        status: user.status
+      }));
+      res.json(transformedUsers);
     } catch (error) {
       console.error("Error fetching Zoho users:", error);
-      res.status(500).json({ message: "Failed to fetch users" });
+      res.status(500).json({ message: "Failed to fetch users from Zoho" });
     }
   });
 
   app.get('/api/zoho/projects', isAuthenticated, async (req: any, res) => {
     try {
-      // In real implementation, this would call Zoho API
-      const projects = await storage.getProjects();
-      res.json(projects);
+      const zohoProjects = await zohoService.getProjects();
+      // Transform to expected format for frontend
+      const transformedProjects = zohoProjects.map(project => ({
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        status: project.status,
+        budget: project.budget,
+        currency: project.currency
+      }));
+      res.json(transformedProjects);
     } catch (error) {
-      console.error("Error fetching projects:", error);
-      res.status(500).json({ message: "Failed to fetch projects" });
+      console.error("Error fetching Zoho projects:", error);
+      res.status(500).json({ message: "Failed to fetch projects from Zoho" });
     }
   });
 
