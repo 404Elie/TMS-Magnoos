@@ -1,0 +1,550 @@
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { isUnauthorizedError } from "@/lib/authUtils";
+import { apiRequest } from "@/lib/queryClient";
+import Header from "@/components/Header";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Plane, Clock, Check, Flag, MapPin, Calendar, DollarSign } from "lucide-react";
+import type { TravelRequestWithDetails, Project, User } from "@shared/schema";
+
+const travelRequestFormSchema = z.object({
+  travelerId: z.string().min(1, "Please select a traveler"),
+  projectId: z.string().min(1, "Please select a project"),
+  destination: z.string().min(1, "Destination is required"),
+  purpose: z.string().min(1, "Purpose is required"),
+  departureDate: z.string().min(1, "Departure date is required"),
+  returnDate: z.string().min(1, "Return date is required"),
+  estimatedFlightCost: z.string().optional(),
+  estimatedHotelCost: z.string().optional(),
+  estimatedOtherCost: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+type TravelRequestForm = z.infer<typeof travelRequestFormSchema>;
+
+export default function ManagerDashboard() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  const form = useForm<TravelRequestForm>({
+    resolver: zodResolver(travelRequestFormSchema),
+    defaultValues: {
+      travelerId: "",
+      projectId: "",
+      destination: "",
+      purpose: "",
+      departureDate: "",
+      returnDate: "",
+      estimatedFlightCost: "",
+      estimatedHotelCost: "",
+      estimatedOtherCost: "",
+      notes: "",
+    },
+  });
+
+  // Fetch dashboard stats
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ["/api/dashboard/stats"],
+    retry: false,
+  });
+
+  // Fetch travel requests
+  const { data: requests, isLoading: requestsLoading } = useQuery<TravelRequestWithDetails[]>({
+    queryKey: ["/api/travel-requests"],
+    retry: false,
+  });
+
+  // Fetch users for selection
+  const { data: users } = useQuery<User[]>({
+    queryKey: ["/api/zoho/users"],
+    retry: false,
+  });
+
+  // Fetch projects for selection
+  const { data: projects } = useQuery<Project[]>({
+    queryKey: ["/api/zoho/projects"],
+    retry: false,
+  });
+
+  // Submit travel request mutation
+  const submitRequestMutation = useMutation({
+    mutationFn: async (data: TravelRequestForm) => {
+      const payload = {
+        ...data,
+        departureDate: new Date(data.departureDate).toISOString(),
+        returnDate: new Date(data.returnDate).toISOString(),
+        estimatedFlightCost: data.estimatedFlightCost ? parseFloat(data.estimatedFlightCost) : null,
+        estimatedHotelCost: data.estimatedHotelCost ? parseFloat(data.estimatedHotelCost) : null,
+        estimatedOtherCost: data.estimatedOtherCost ? parseFloat(data.estimatedOtherCost) : null,
+      };
+      return await apiRequest("POST", "/api/travel-requests", payload);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Travel request submitted successfully!",
+      });
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      setActiveTab("dashboard");
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to submit travel request. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: TravelRequestForm) => {
+    submitRequestMutation.mutate(data);
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "submitted":
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending PM Approval</Badge>;
+      case "pm_approved":
+        return <Badge variant="secondary" className="bg-green-100 text-green-800">Approved</Badge>;
+      case "pm_rejected":
+        return <Badge variant="destructive">Rejected</Badge>;
+      case "operations_completed":
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Completed</Badge>;
+      case "cancelled":
+        return <Badge variant="destructive">Cancelled</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const formatCurrency = (amount: string | number | null) => {
+    if (!amount) return "N/A";
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(typeof amount === "string" ? parseFloat(amount) : amount);
+  };
+
+  return (
+    <ProtectedRoute allowedRoles={["manager"]}>
+      <div className="min-h-screen bg-gray-50">
+        <Header currentRole="manager" />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              <TabsTrigger value="submit">Submit Request</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="dashboard" className="space-y-8">
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Total Requests</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {statsLoading ? "..." : stats?.totalRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <Plane className="w-6 h-6 text-magnoos-blue" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Pending Approval</p>
+                        <p className="text-2xl font-bold text-yellow-600">
+                          {statsLoading ? "..." : stats?.pendingRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <Clock className="w-6 h-6 text-yellow-600" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Approved</p>
+                        <p className="text-2xl font-bold text-green-600">
+                          {statsLoading ? "..." : stats?.approvedRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <Check className="w-6 h-6 text-green-600" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Completed</p>
+                        <p className="text-2xl font-bold text-magnoos-blue">
+                          {statsLoading ? "..." : stats?.completedRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <Flag className="w-6 h-6 text-magnoos-blue" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Recent Requests */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>My Travel Requests</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {requestsLoading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
+                      <p className="text-gray-600">Loading requests...</p>
+                    </div>
+                  ) : requests && requests.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Destination
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Project
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Dates
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Status
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Est. Cost
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {requests.map((request) => (
+                            <tr key={request.id}>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <MapPin className="w-4 h-4 text-gray-400 mr-2" />
+                                  <span className="text-sm font-medium text-gray-900">
+                                    {request.destination}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {request.project?.name}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                {getStatusBadge(request.status)}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {formatCurrency(
+                                  (parseFloat(request.estimatedFlightCost || "0") +
+                                   parseFloat(request.estimatedHotelCost || "0") +
+                                   parseFloat(request.estimatedOtherCost || "0"))
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Plane className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500">No travel requests yet</p>
+                      <Button 
+                        onClick={() => setActiveTab("submit")}
+                        className="mt-4 bg-magnoos-blue hover:bg-magnoos-dark-blue"
+                      >
+                        Submit Your First Request
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="submit" className="space-y-8">
+              <div className="max-w-4xl mx-auto">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Submit Travel Request</CardTitle>
+                    <CardDescription>
+                      Fill out the form below to submit a new travel request
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        {/* Traveler and Project Selection */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <FormField
+                            control={form.control}
+                            name="travelerId"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Traveler</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select traveler..." />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {users?.map((user) => (
+                                      <SelectItem key={user.id} value={user.id}>
+                                        {user.firstName && user.lastName 
+                                          ? `${user.firstName} ${user.lastName}` 
+                                          : user.email}
+                                        {user.id === user?.id && " (Me)"}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="projectId"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Project</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select project..." />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {projects?.map((project) => (
+                                      <SelectItem key={project.id} value={project.id}>
+                                        {project.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Travel Details */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <FormField
+                            control={form.control}
+                            name="destination"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Destination</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter destination city" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="purpose"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Purpose</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select purpose..." />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="client-meeting">Client Meeting</SelectItem>
+                                    <SelectItem value="conference">Conference</SelectItem>
+                                    <SelectItem value="training">Training</SelectItem>
+                                    <SelectItem value="project-work">Project Work</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Dates */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <FormField
+                            control={form.control}
+                            name="departureDate"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Departure Date</FormLabel>
+                                <FormControl>
+                                  <Input type="date" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="returnDate"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Return Date</FormLabel>
+                                <FormControl>
+                                  <Input type="date" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Additional Notes */}
+                        <FormField
+                          control={form.control}
+                          name="notes"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Additional Notes</FormLabel>
+                              <FormControl>
+                                <Textarea 
+                                  placeholder="Any special requirements or additional information..."
+                                  rows={4}
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Estimated Budget */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <FormField
+                            control={form.control}
+                            name="estimatedFlightCost"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Estimated Flight Cost</FormLabel>
+                                <FormControl>
+                                  <Input type="number" placeholder="0.00" step="0.01" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="estimatedHotelCost"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Estimated Hotel Cost</FormLabel>
+                                <FormControl>
+                                  <Input type="number" placeholder="0.00" step="0.01" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="estimatedOtherCost"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Other Expenses</FormLabel>
+                                <FormControl>
+                                  <Input type="number" placeholder="0.00" step="0.01" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                          <Button 
+                            type="button" 
+                            variant="outline"
+                            onClick={() => form.reset()}
+                          >
+                            Clear Form
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            className="bg-magnoos-blue hover:bg-magnoos-dark-blue"
+                            disabled={submitRequestMutation.isPending}
+                          >
+                            {submitRequestMutation.isPending ? "Submitting..." : "Submit Request"}
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
+    </ProtectedRoute>
+  );
+}
