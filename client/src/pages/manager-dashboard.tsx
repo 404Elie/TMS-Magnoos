@@ -659,14 +659,14 @@ export default function ManagerDashboard() {
                         <div className="flex justify-end space-x-4 pt-6 border-t border-slate-700">
                           <Button 
                             type="button" 
-                            className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
                             onClick={() => form.reset()}
                           >
                             Clear Form
                           </Button>
                           <Button 
                             type="submit" 
-                            className="bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
                             disabled={submitRequestMutation.isPending}
                           >
                             {submitRequestMutation.isPending ? "Submitting..." : "Submit Request"}
