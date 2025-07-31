@@ -181,13 +181,13 @@ export default function ManagerDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["manager"]}>
-      <div className="min-h-screen bg-magnoos-dark manager-dashboard">
+      <div className="min-h-screen bg-background manager-dashboard">
         <Header currentRole="manager" />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-background">
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-2 bg-slate-900 border border-slate-700 backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
+            <TabsList className="grid w-full grid-cols-2 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard"
                 className="custom-tab"
@@ -202,7 +202,7 @@ export default function ManagerDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
+            <TabsContent value="dashboard" className="bg-background space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="bg-slate-800 border-slate-700 shadow-lg">
@@ -351,18 +351,18 @@ export default function ManagerDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="submit" className="bg-magnoos-dark space-y-8">
+            <TabsContent value="submit" className="bg-background space-y-8">
               <div className="max-w-4xl mx-auto">
-                <Card className="bg-slate-800 border-0 shadow-lg">
+                <Card className="bg-card border-border shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-white">Submit Travel Request</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-foreground">Submit Travel Request</CardTitle>
+                    <CardDescription className="text-muted-foreground">
                       Fill out the form below to submit a new travel request
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-magnoos-dark space-y-6">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-card space-y-6">
                         {/* Traveler Selection */}
                         <div className="grid grid-cols-1 gap-6">
                           <FormField
@@ -379,8 +379,8 @@ export default function ManagerDashboard() {
                                         role="combobox"
                                         aria-expanded={travelerSearchOpen}
                                         className={cn(
-                                          "w-full justify-between bg-slate-800 border-slate-600 text-white hover:bg-slate-700",
-                                          !field.value && "text-gray-400"
+                                          "w-full justify-between bg-background border-border text-foreground hover:bg-muted",
+                                          !field.value && "text-muted-foreground"
                                         )}
                                       >
                                         {field.value

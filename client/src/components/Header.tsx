@@ -6,6 +6,7 @@ import logoPath from "@assets/ChatGPT Image May 7, 2025, 03_07_22 PM_17539422491
 import type { User } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface HeaderProps {
   currentRole?: string;
@@ -46,7 +47,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
   const typedUser = user as User | undefined;
 
   return (
-    <header className="bg-magnoos-header shadow-2xl border-b border-magnoos-primary/20 backdrop-blur-md">
+    <header className="bg-background dark:bg-magnoos-header border-b border-border shadow-lg backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
@@ -54,8 +55,8 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
             <div className="flex items-center space-x-3">
               <img src={logoPath} alt="Magnoos Logo" className="w-10 h-10 object-contain" />
               <div>
-                <h1 className="text-xl font-bold text-white">Magnoos</h1>
-                <p className="text-xs text-blue-300">Travel Management</p>
+                <h1 className="text-xl font-bold text-foreground">Magnoos</h1>
+                <p className="text-xs text-primary">Travel Management</p>
               </div>
             </div>
           </div>
@@ -63,6 +64,9 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
           <div className="flex items-center space-x-4">
             {/* Admin Role Switcher */}
             {typedUser && typedUser.role === 'admin' && <AdminRoleSwitcher />}
+            
+            {/* Theme Toggle */}
+            <ThemeToggle />
             
             {/* User Profile */}
             <div className="flex items-center space-x-3">
@@ -73,10 +77,10 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-foreground">
                   {userName || `${typedUser?.firstName || ''} ${typedUser?.lastName || ''}`.trim() || typedUser?.email || 'User'}
                 </p>
-                <p className="text-xs text-blue-300">
+                <p className="text-xs text-primary">
                   {currentRole ? getRoleDisplayName(currentRole) : getRoleDisplayName(typedUser?.activeRole || typedUser?.role || 'user')}
                 </p>
               </div>
@@ -87,7 +91,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
               variant="outline" 
               size="sm"
               onClick={handleLogout}
-              className="hidden sm:flex border-magnoos-primary/30 text-white hover:bg-magnoos-primary/20 hover:border-magnoos-primary"
+              className="hidden sm:flex border-border text-foreground hover:bg-muted"
             >
               Logout
             </Button>

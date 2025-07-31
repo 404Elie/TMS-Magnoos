@@ -11,6 +11,7 @@ import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
 import AdminUsers from "@/pages/admin-users";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import type { User } from "@shared/schema";
 
 function Router() {
@@ -84,14 +85,16 @@ function Router() {
 
 function App() {
   return (
-    <div className="min-h-screen bg-magnoos-dark text-white">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <div className="min-h-screen bg-background text-foreground">
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </div>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
