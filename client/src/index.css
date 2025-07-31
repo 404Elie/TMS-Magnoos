@@ -28,8 +28,8 @@
   --magnoos-primary: hsl(245, 100%, 65%);
   --magnoos-secondary: hsl(270, 100%, 70%);
   --magnoos-accent: hsl(200, 100%, 65%);
-  --magnoos-dark: hsl(235, 45%, 12%);
-  --magnoos-dark-surface: hsl(235, 45%, 12%);
+  --magnoos-dark: hsl(220, 15%, 15%);
+  --magnoos-dark-surface: hsl(220, 15%, 15%);
   --magnoos-header-dark: hsl(235, 50%, 6%);
   --magnoos-gradient-start: hsl(245, 100%, 65%);
   --magnoos-gradient-end: hsl(270, 100%, 70%);
@@ -67,19 +67,19 @@
   body {
     @apply font-sans antialiased;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: hsl(235, 45%, 12%) !important;
+    background: hsl(220, 15%, 15%) !important;
     color: hsl(0, 0%, 98%) !important;
     min-height: 100vh;
   }
   
   html {
-    background: hsl(235, 45%, 12%) !important;
+    background: hsl(220, 15%, 15%) !important;
     min-height: 100vh;
   }
   
   /* Force deep blue futuristic theme globally */
   #root {
-    background: hsl(235, 45%, 12%) !important;
+    background: hsl(220, 15%, 15%) !important;
     color: hsl(0, 0%, 98%) !important;
     min-height: 100vh;
   }
@@ -117,12 +117,12 @@
   
   .bg-magnoos-surface {
     background-color: var(--magnoos-dark-surface);
-    border: 1px solid hsl(235, 45%, 12%);
+    border: 1px solid hsl(220, 15%, 15%);
   }
   
   /* Override any purple background bleeding through */
   .bg-magnoos-dark {
-    background-color: hsl(235, 45%, 12%) !important;
+    background-color: hsl(220, 15%, 15%) !important;
   }
   
   .bg-magnoos-header {
@@ -143,13 +143,13 @@
   
   .futuristic-tabs [data-state="inactive"] {
     background: var(--magnoos-dark-surface);
-    border: 1px solid hsl(235, 45%, 12%);
+    border: 1px solid hsl(220, 15%, 15%);
     color: rgba(255, 255, 255, 0.8);
   }
   
   .futuristic-tabs [data-state="inactive"]:hover {
     background: hsl(235, 45%, 15%);
-    border: 1px solid hsl(235, 45%, 12%);
+    border: 1px solid hsl(220, 15%, 15%);
     color: white;
   }
   
@@ -186,14 +186,14 @@
   }
   
   .border-magnoos-dark {
-    border-color: hsl(235, 45%, 12%);
+    border-color: hsl(220, 15%, 15%);
   }
   
   /* ONLY target the specific dashboard tabs purple background issue */
   .operations-dashboard [role="tabpanel"],
   .manager-dashboard [role="tabpanel"],
   .pm-dashboard [role="tabpanel"] {
-    background-color: hsl(235, 45%, 12%) !important;
+    background-color: hsl(220, 15%, 15%) !important;
   }
   
 
