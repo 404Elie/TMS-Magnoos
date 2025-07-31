@@ -40,7 +40,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
               <img src={logoPath} alt="Magnoos Logo" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="text-xl font-bold text-white">Magnoos</h1>
-                <p className="text-xs text-magnoos-primary">Travel Management</p>
+                <p className="text-xs text-blue-300">Travel Management</p>
               </div>
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
                 <p className="text-sm font-medium text-white">
                   {userName || `${typedUser?.firstName || ''} ${typedUser?.lastName || ''}`.trim() || typedUser?.email || 'User'}
                 </p>
-                <p className="text-xs text-magnoos-primary">
+                <p className="text-xs text-blue-300">
                   {currentRole ? getRoleDisplayName(currentRole) : getRoleDisplayName(typedUser?.activeRole || typedUser?.role || 'user')}
                 </p>
               </div>

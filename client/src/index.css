@@ -9,7 +9,7 @@
   --muted-foreground: hsl(235, 10%, 65%);
   --popover: hsl(235, 20%, 12%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(220, 50%, 8%);
+  --card: hsl(220, 35%, 15%);
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(220, 35%, 20%);
   --input: hsl(235, 15%, 18%);
@@ -26,11 +26,11 @@
   
   /* Magnoos Brand Colors - Clean deep blue theme */
   --magnoos-primary: hsl(220, 45%, 10%);
-  --magnoos-secondary: hsl(224, 86%, 19%);
+  --magnoos-secondary: hsl(219, 45%, 10%);
   --magnoos-accent: hsl(200, 100%, 65%);
-  --magnoos-dark: hsl(220, 60%, 12%);
-  --magnoos-dark-surface: hsl(216, 20%, 95%);
-  --magnoos-header-dark: hsl(220, 50%, 8%);
+  --magnoos-dark: hsl(0, 83%, 47%);
+  --magnoos-dark-surface: hsl(219, 45%, 10%);
+  --magnoos-header-dark: hsl(180, 2%, 9%);
   --magnoos-gradient-start: hsl(245, 100%, 65%);
   --magnoos-gradient-end: hsl(270, 100%, 70%);
 }
@@ -43,7 +43,7 @@
   --muted-foreground: hsl(235, 10%, 65%);
   --popover: hsl(235, 20%, 12%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(220, 50%, 8%);
+  --card: hsl(220, 35%, 15%);
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(220, 35%, 20%);
   --input: hsl(235, 15%, 18%);

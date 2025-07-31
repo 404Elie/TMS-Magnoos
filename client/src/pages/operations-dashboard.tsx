@@ -266,10 +266,30 @@ export default function OperationsDashboard() {
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-blue-950">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-4 bg-slate-900 border border-slate-700 backdrop-blur-md">
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="bookings">Active Bookings</TabsTrigger>
-              <TabsTrigger value="budget-person">Budget by Person</TabsTrigger>
-              <TabsTrigger value="budget-project">Budget by Project</TabsTrigger>
+              <TabsTrigger 
+                value="dashboard" 
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+              >
+                Dashboard
+              </TabsTrigger>
+              <TabsTrigger 
+                value="bookings"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+              >
+                Active Bookings
+              </TabsTrigger>
+              <TabsTrigger 
+                value="budget-person"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+              >
+                Budget by Person
+              </TabsTrigger>
+              <TabsTrigger 
+                value="budget-project"
+                className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+              >
+                Budget by Project
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard" className="space-y-8">
