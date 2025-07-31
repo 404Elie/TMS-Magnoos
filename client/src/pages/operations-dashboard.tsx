@@ -263,7 +263,7 @@ export default function OperationsDashboard() {
       <div className="min-h-screen bg-slate-800 operations-dashboard">
         <Header currentRole="operations" />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-blue-900">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-4 bg-transparent border border-magnoos-dark backdrop-blur-md">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
@@ -272,10 +272,10 @@ export default function OperationsDashboard() {
               <TabsTrigger value="budget-project">Budget by Project</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="bg-blue-900 space-y-8">
+            <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-6">
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -291,7 +291,7 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -307,7 +307,7 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -323,7 +323,7 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -339,7 +339,7 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -358,7 +358,7 @@ export default function OperationsDashboard() {
 
               {/* Budget Charts Placeholder */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Monthly Budget Trend</CardTitle>
                   </CardHeader>
@@ -373,7 +373,7 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Expense Breakdown</CardTitle>
                   </CardHeader>
@@ -390,7 +390,7 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Recent Activity */}
-              <Card className="bg-slate-800 border-slate-700">
+              <Card className="bg-magnoos-dark border-magnoos-dark">
                 <CardHeader>
                   <CardTitle className="text-white">Recent Booking Activities</CardTitle>
                 </CardHeader>
@@ -434,8 +434,8 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="bookings" className="bg-blue-900 space-y-8">
-              <Card className="bg-slate-800 border-slate-700">
+            <TabsContent value="bookings" className="bg-magnoos-dark space-y-8">
+              <Card className="bg-magnoos-dark border-magnoos-dark">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-white">Active Travel Bookings</CardTitle>
@@ -654,7 +654,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="budget-person" className="bg-blue-900 space-y-8">
+            <TabsContent value="budget-person" className="bg-magnoos-dark space-y-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Person</h2>
                 <p className="text-gray-400">Monitor individual travel expenses and budget allocations</p>
@@ -663,7 +663,7 @@ export default function OperationsDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Summary Cards */}
                 <div className="lg:col-span-1 space-y-6">
-                  <Card className="bg-slate-800 border-slate-700">
+                  <Card className="bg-magnoos-dark border-magnoos-dark">
                     <CardHeader>
                       <CardTitle className="text-white">Top Spenders</CardTitle>
                     </CardHeader>
@@ -698,7 +698,7 @@ export default function OperationsDashboard() {
                     </CardContent>
                   </Card>
                   
-                  <Card className="bg-slate-800 border-slate-700">
+                  <Card className="bg-magnoos-dark border-magnoos-dark">
                     <CardHeader>
                       <CardTitle className="text-white">Budget Alerts</CardTitle>
                     </CardHeader>
@@ -734,7 +734,7 @@ export default function OperationsDashboard() {
                 
                 {/* Budget Table */}
                 <div className="lg:col-span-2">
-                  <Card className="bg-slate-800 border-slate-700">
+                  <Card className="bg-magnoos-dark border-magnoos-dark">
                     <CardHeader>
                       <CardTitle className="text-white">Individual Budget Overview</CardTitle>
                     </CardHeader>
@@ -826,7 +826,7 @@ export default function OperationsDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="budget-project" className="bg-blue-900 space-y-8">
+            <TabsContent value="budget-project" className="bg-magnoos-dark space-y-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Project</h2>
                 <p className="text-gray-400">Monitor project-based travel expenses and allocations</p>
@@ -834,7 +834,7 @@ export default function OperationsDashboard() {
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 {/* Project Budget Chart Placeholder */}
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Project Budget Distribution</CardTitle>
                   </CardHeader>
@@ -850,7 +850,7 @@ export default function OperationsDashboard() {
                 </Card>
                 
                 {/* Budget vs Actual Placeholder */}
-                <Card className="bg-slate-800 border-slate-700">
+                <Card className="bg-magnoos-dark border-magnoos-dark">
                   <CardHeader>
                     <CardTitle className="text-white">Budget vs Actual Spending</CardTitle>
                   </CardHeader>
@@ -867,7 +867,7 @@ export default function OperationsDashboard() {
               </div>
               
               {/* Project Budget Table */}
-              <Card className="bg-slate-800 border-slate-700">
+              <Card className="bg-magnoos-dark border-magnoos-dark">
                 <CardHeader>
                   <CardTitle className="text-white">Project Budget Overview</CardTitle>
                 </CardHeader>
