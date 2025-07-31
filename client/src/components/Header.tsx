@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import logoPath from "@assets/ChatGPT Image May 7, 2025, 03_07_22 PM_1753942249102.png";
 import type { User } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 
 interface HeaderProps {
   currentRole?: string;
@@ -13,6 +15,19 @@ interface HeaderProps {
 
 export default function Header({ currentRole, userName, userImage }: HeaderProps) {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await apiRequest("POST", "/api/logout");
+      // Clear any cached data and redirect to auth page
+      window.location.href = "/auth";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Even if logout request fails, redirect to auth page
+      window.location.href = "/auth";
+    }
+  };
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
@@ -71,7 +86,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
             <Button 
               variant="outline" 
               size="sm"
-              onClick={() => window.location.href = '/api/logout'}
+              onClick={handleLogout}
               className="hidden sm:flex border-magnoos-primary/30 text-white hover:bg-magnoos-primary/20 hover:border-magnoos-primary"
             >
               Logout
