@@ -272,7 +272,7 @@ export default function OperationsDashboard() {
               <TabsTrigger value="budget-project">Budget by Project</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8" style={{backgroundColor: 'hsl(235, 45%, 12%)'}}>
+            <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-6">
                 <Card className="bg-magnoos-dark border-magnoos-dark">
@@ -434,7 +434,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="bookings" className="space-y-8" style={{backgroundColor: 'hsl(235, 45%, 12%)'}}>
+            <TabsContent value="bookings" className="bg-magnoos-dark space-y-8">
               <Card className="bg-magnoos-dark border-magnoos-dark">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
@@ -654,7 +654,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="budget-person" className="space-y-8" style={{backgroundColor: 'hsl(235, 45%, 12%)'}}>
+            <TabsContent value="budget-person" className="bg-magnoos-dark space-y-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Person</h2>
                 <p className="text-gray-400">Monitor individual travel expenses and budget allocations</p>
@@ -826,7 +826,7 @@ export default function OperationsDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="budget-project" className="space-y-8" style={{backgroundColor: 'hsl(235, 45%, 12%)'}}>
+            <TabsContent value="budget-project" className="bg-magnoos-dark space-y-8">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Budget Tracking by Project</h2>
                 <p className="text-gray-400">Monitor project-based travel expenses and allocations</p>
