@@ -14,11 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plane, Clock, Check, Flag, MapPin, Calendar, DollarSign } from "lucide-react";
+import { Plane, Clock, Check, Flag, MapPin, Calendar, DollarSign, ChevronsUpDown } from "lucide-react";
 import type { TravelRequestWithDetails, Project, User } from "@shared/schema";
 
 const travelRequestFormSchema = z.object({
@@ -38,6 +41,7 @@ export default function ManagerDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [travelerSearchOpen, setTravelerSearchOpen] = useState(false);
 
   const form = useForm<TravelRequestForm>({
     resolver: zodResolver(travelRequestFormSchema),
@@ -333,25 +337,73 @@ export default function ManagerDashboard() {
                             control={form.control}
                             name="travelerId"
                             render={({ field }) => (
-                              <FormItem>
+                              <FormItem className="flex flex-col">
                                 <FormLabel>Traveler</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select traveler..." />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {users?.map((user) => (
-                                      <SelectItem key={user.id} value={user.id}>
-                                        {user.firstName && user.lastName 
-                                          ? `${user.firstName} ${user.lastName}` 
-                                          : user.email}
-                                        {user.id === user?.id && " (Me)"}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                <Popover open={travelerSearchOpen} onOpenChange={setTravelerSearchOpen}>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={travelerSearchOpen}
+                                        className={cn(
+                                          "w-full justify-between",
+                                          !field.value && "text-muted-foreground"
+                                        )}
+                                      >
+                                        {field.value
+                                          ? (() => {
+                                              const selectedUser = users?.find((user) => user.id === field.value);
+                                              return selectedUser
+                                                ? `${selectedUser.name || selectedUser.email}${
+                                                    selectedUser.id === user?.id ? " (Me)" : ""
+                                                  }`
+                                                : "Select traveler...";
+                                            })()
+                                          : "Select traveler..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-full p-0" align="start">
+                                    <Command>
+                                      <CommandInput placeholder="Search travelers..." className="h-9" />
+                                      <CommandList>
+                                        <CommandEmpty>No traveler found.</CommandEmpty>
+                                        <CommandGroup>
+                                          {users?.map((user) => (
+                                            <CommandItem
+                                              key={user.id}
+                                              value={`${user.name || user.email} ${user.email}`}
+                                              onSelect={() => {
+                                                field.onChange(user.id);
+                                                setTravelerSearchOpen(false);
+                                              }}
+                                            >
+                                              <div className="flex flex-col">
+                                                <span className="font-medium">
+                                                  {user.name || user.email}
+                                                  {user.id === user?.id && " (Me)"}
+                                                </span>
+                                                {user.name && user.email && (
+                                                  <span className="text-sm text-muted-foreground">
+                                                    {user.email}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <Check
+                                                className={cn(
+                                                  "ml-auto h-4 w-4",
+                                                  field.value === user.id ? "opacity-100" : "opacity-0"
+                                                )}
+                                              />
+                                            </CommandItem>
+                                          ))}
+                                        </CommandGroup>
+                                      </CommandList>
+                                    </Command>
+                                  </PopoverContent>
+                                </Popover>
                                 <FormMessage />
                               </FormItem>
                             )}
