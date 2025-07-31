@@ -26,16 +26,18 @@ interface ZohoTokenResponse {
 }
 
 class ZohoService {
-  private accessToken: string | null = null;
-  private tokenExpiry: Date = new Date(0);
+  private usersAccessToken: string | null = null;
+  private usersTokenExpiry: Date = new Date(0);
+  private projectsAccessToken: string | null = null;
+  private projectsTokenExpiry: Date = new Date(0);
   
   // Zoho API Configuration from your working code
   private readonly PORTAL_ID = "699939546";
   private readonly AUTH_URL = "https://accounts.zoho.com/oauth/v2/token";
 
-  private async getAccessToken(): Promise<string> {
-    if (this.accessToken && Date.now() < this.tokenExpiry) {
-      return this.accessToken;
+  private async getUsersAccessToken(): Promise<string> {
+    if (this.usersAccessToken && Date.now() < this.usersTokenExpiry) {
+      return this.usersAccessToken;
     }
 
     // Extract domain from ZOHO_API_DOMAIN if it's a full URL
@@ -63,17 +65,61 @@ class ZohoService {
       });
 
       if (!response.ok) {
-        throw new Error(`Token refresh failed: ${response.status} ${response.statusText}`);
+        throw new Error(`Users token refresh failed: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json() as ZohoTokenResponse;
-      this.accessToken = data.access_token;
-      this.tokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 minute early
+      this.usersAccessToken = data.access_token;
+      this.usersTokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 minute early
 
-      return this.accessToken;
+      return this.usersAccessToken;
     } catch (error) {
-      console.error('Error refreshing Zoho access token:', error);
-      throw new Error('Failed to authenticate with Zoho API');
+      console.error('Error refreshing Zoho users access token:', error);
+      throw new Error('Failed to authenticate with Zoho Users API');
+    }
+  }
+
+  private async getProjectsAccessToken(): Promise<string> {
+    if (this.projectsAccessToken && Date.now() < this.projectsTokenExpiry) {
+      return this.projectsAccessToken;
+    }
+
+    // Extract domain from ZOHO_API_DOMAIN if it's a full URL
+    let apiDomain = process.env.ZOHO_API_DOMAIN!;
+    if (apiDomain.includes('://')) {
+      const url = new URL(apiDomain);
+      apiDomain = url.hostname.split('.').slice(-2).join('.'); // Get zoho.com part
+    }
+
+    const tokenUrl = `https://accounts.${apiDomain}/oauth/v2/token`;
+    const params = new URLSearchParams({
+      refresh_token: '1000.2a14d2cbb8d440c298289825557a396e.5099ef57a7a82b8ce5e3a00187209bca',
+      client_id: '1000.EV2XW602GRO71WVSNWY5YV1E4MI8DA',
+      client_secret: '930067a07dbf865dcfd278719fd1f3b32e3f962b9a',
+      grant_type: 'refresh_token'
+    });
+
+    try {
+      const response = await fetch(tokenUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+
+      if (!response.ok) {
+        throw new Error(`Projects token refresh failed: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json() as ZohoTokenResponse;
+      this.projectsAccessToken = data.access_token;
+      this.projectsTokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 minute early
+
+      return this.projectsAccessToken;
+    } catch (error) {
+      console.error('Error refreshing Zoho projects access token:', error);
+      throw new Error('Failed to authenticate with Zoho Projects API');
     }
   }
 
@@ -86,7 +132,7 @@ class ZohoService {
       const perPage = 200; // Max allowed by Zoho Projects API
 
       while (true) {
-        const accessToken = await this.getAccessToken();
+        const accessToken = await this.getUsersAccessToken();
         const headers = {
           'Authorization': `Zoho-oauthtoken ${accessToken}`,
           'Accept': 'application/json'
@@ -148,9 +194,9 @@ class ZohoService {
       let page = 1;
 
       while (true) {
-        const accessToken = await this.getAccessToken();
+        const accessToken = await this.getProjectsAccessToken();
         const headers = {
-          'Authorization': `Zoho-oauthtoken ${accessToken}`, // Use same auth format as users
+          'Authorization': `Zoho-oauthtoken ${accessToken}`, // Use projects-specific auth token
           'Accept': 'application/json'
         };
         
