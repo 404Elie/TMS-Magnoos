@@ -207,30 +207,24 @@ export default function AuthPage() {
                 >
                   <TabsTrigger 
                     value="login" 
-                    className="transition-all font-medium rounded-md"
+                    className="transition-all font-medium rounded-md px-6 py-2"
                     style={{
-                      color: activeTab === 'login' ? 'white' : '#000037',
-                      background: activeTab === 'login' ? '#FF6F00' : 'transparent',
-                      boxShadow: activeTab === 'login' 
-                        ? '0 2px 8px rgba(255, 111, 0, 0.4)' 
-                        : 'none',
-                      textShadow: activeTab === 'login' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none',
-                      fontWeight: activeTab === 'login' ? '600' : '500'
+                      color: activeTab === 'login' ? 'white' : '#464646',
+                      backgroundColor: activeTab === 'login' ? '#FF6F00' : 'transparent',
+                      fontWeight: activeTab === 'login' ? '600' : '500',
+                      border: 'none'
                     }}
                   >
                     Sign In
                   </TabsTrigger>
                   <TabsTrigger 
                     value="register"
-                    className="transition-all font-medium rounded-md"
+                    className="transition-all font-medium rounded-md px-6 py-2"
                     style={{
-                      color: activeTab === 'register' ? 'white' : '#000037',
-                      background: activeTab === 'register' ? '#FF6F00' : 'transparent',
-                      boxShadow: activeTab === 'register' 
-                        ? '0 2px 8px rgba(255, 111, 0, 0.4)' 
-                        : 'none',
-                      textShadow: activeTab === 'register' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none',
-                      fontWeight: activeTab === 'register' ? '600' : '500'
+                      color: activeTab === 'register' ? 'white' : '#464646',
+                      backgroundColor: activeTab === 'register' ? '#FF6F00' : 'transparent',
+                      fontWeight: activeTab === 'register' ? '600' : '500',
+                      border: 'none'
                     }}
                   >
                     Sign Up
