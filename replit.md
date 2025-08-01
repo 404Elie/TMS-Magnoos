@@ -118,6 +118,13 @@ The system is designed to be scalable, maintainable, and provides a smooth user 
 ## Recent Changes
 
 ### August 1, 2025
+- **Role-Based Email Notifications Implemented**: Comprehensive automatic email system where new users receive emails based on their role:
+  - **Manager Role**: Only gets emails for their own travel requests when Operations completes bookings (not all managers get all emails)
+  - **PM Role**: Gets emails when any Manager submits request AND when Operations completes bookings  
+  - **Operations Role**: Gets emails when PM approves requests for booking coordination
+  - System automatically includes all users of relevant roles without manual configuration
+  - Prevents email spam by only sending relevant notifications to appropriate roles
+  - Helper function `getRoleBasedRecipients()` handles all role-based logic centrally
 - **Vibrant Light Mode Enhancement**: Completely redesigned light mode with vibrant company colors while maintaining perfect readability:
   - **Background**: Multi-color gradient using vivid teal, sunny yellow, and pure white for dynamic appearance
   - **Cards**: Gradient backgrounds from white to light vivid teal with enhanced shadows and teal borders
@@ -140,10 +147,13 @@ The system is designed to be scalable, maintainable, and provides a smooth user 
 - **Complete Workflow Verification**: Manager → PM → Operations travel request flow is fully functional and tested
 - **Electric Purple Tab Styling**: Consistent Electric Purple (#8A2BE2) for selected navigation tabs across the application
 - **View Details Button Fixed**: Now opens the completion modal for viewing travel request details instead of being non-functional
-- **Real Email Notification System**: Fully functional email delivery using Resend API:
-  - **Request Created**: Sends professional email notifications to PMs and Operations when new travel requests are submitted
-  - **Request Approved**: Sends approval notifications to requester, traveler, and Operations when PM approves request
-  - **Bookings Completed**: Sends completion notifications with booking details to requester, traveler, and approving PM
+- **Role-Based Email Notification System**: Fully functional automatic email delivery using Resend API:
+  - **Manager Role**: Only receives emails for travel requests they created when Operations completes bookings
+  - **PM Role**: Receives emails when (1) any Manager submits a request and (2) when Operations completes bookings
+  - **Operations Role**: Receives emails when PM approves requests for booking coordination
+  - **Request Created**: Automatically notifies all PMs and Operations when Manager submits travel request
+  - **Request Approved**: Automatically notifies all Operations users when PM approves request
+  - **Bookings Completed**: Automatically notifies only the specific Manager who made request, plus traveler and approving PM
   - Professional email templates with company Electric Blue to Purple gradient branding
   - Clean "Access Travel Management System" login buttons in all emails (no visible URLs)
   - Real email delivery to e.radi@magnoos.com for testing with potential minor delays

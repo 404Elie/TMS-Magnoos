@@ -36,6 +36,59 @@ async function getOrCreateDefaultProject(type: string, name: string, description
   }
 }
 
+// Helper function to get role-based email recipients
+async function getRoleBasedRecipients(eventType: 'request_submitted' | 'request_approved' | 'booking_completed', request?: any): Promise<{email: string, role: string}[]> {
+  const allUsers = await storage.getAllUsers();
+  const recipients: {email: string, role: string}[] = [];
+
+  switch (eventType) {
+    case 'request_submitted':
+      // When Manager submits request: PM and Operations get notified
+      recipients.push(
+        ...allUsers
+          .filter(user => user.role === 'pm' || user.role === 'operations')
+          .filter(user => user.email)
+          .map(user => ({ email: user.email!, role: user.role }))
+      );
+      break;
+
+    case 'request_approved':
+      // When PM approves request: Operations get notified
+      recipients.push(
+        ...allUsers
+          .filter(user => user.role === 'operations')
+          .filter(user => user.email)
+          .map(user => ({ email: user.email!, role: user.role }))
+      );
+      // Also notify the requester and traveler
+      if (request?.requester?.email) {
+        recipients.push({ email: request.requester.email, role: 'requester' });
+      }
+      if (request?.traveler?.email) {
+        recipients.push({ email: request.traveler.email, role: 'traveler' });
+      }
+      break;
+
+    case 'booking_completed':
+      // When Operations completes booking: Only the specific Manager who created request + traveler + PM who approved
+      if (request?.requester?.email) {
+        recipients.push({ email: request.requester.email, role: 'requester' });
+      }
+      if (request?.traveler?.email) {
+        recipients.push({ email: request.traveler.email, role: 'traveler' });
+      }
+      if (request?.pmApprovedBy) {
+        const pmUser = await storage.getUser(request.pmApprovedBy);
+        if (pmUser?.email) {
+          recipients.push({ email: pmUser.email, role: 'pm' });
+        }
+      }
+      break;
+  }
+
+  return recipients.filter(r => r.email); // Remove any without email
+}
+
 // Middleware to check user role
 const requireRole = (allowedRoles: string[]) => {
   return async (req: any, res: any, next: any) => {
@@ -398,12 +451,8 @@ export function registerRoutes(app: Express): Server {
         const requester = await storage.getUser(req.user.id);
         // traveler is already fetched above
         
-        // Get notification recipients - PMs and Operations get notified when Manager submits request
-        const allUsers = await storage.getAllUsers();
-        const recipients = allUsers
-          .filter(user => user.role === 'pm' || user.role === 'operations')
-          .filter(user => user.email) // Only users with email addresses
-          .map(user => ({ email: user.email!, role: user.role }));
+        // Get role-based notification recipients for request submission
+        const recipients = await getRoleBasedRecipients('request_submitted');
 
         if (recipients.length > 0 && requester && traveler) {
           const emailData = {
@@ -458,16 +507,8 @@ export function registerRoutes(app: Express): Server {
         if (request && request.traveler && request.requester) {
           const approver = await storage.getUser(req.userId);
           
-          // Get notification recipients - when PM approves, Operations users get notified
-          const allUsers = await storage.getAllUsers();
-          const recipients = [
-            { email: request.requester.email, role: 'requester' },
-            { email: request.traveler.email, role: 'traveler' },
-            ...allUsers
-              .filter(user => user.role === 'operations')
-              .filter(user => user.email)
-              .map(user => ({ email: user.email!, role: user.role }))
-          ].filter(r => r.email);
+          // Get role-based notification recipients for request approval
+          const recipients = await getRoleBasedRecipients('request_approved', request);
 
           if (recipients.length > 0 && approver) {
             const emailData = {
@@ -589,18 +630,8 @@ export function registerRoutes(app: Express): Server {
             cost: Number(booking.cost || 0)
           }));
           
-          // Get notification recipients (requester, traveler, PM who approved)
-          const recipients = [
-            { email: request.requester.email, role: 'requester' },
-            { email: request.traveler.email, role: 'traveler' }
-          ];
-          
-          if (request.pmApprovedBy) {
-            const pmUser = await storage.getUser(request.pmApprovedBy);
-            if (pmUser?.email) {
-              recipients.push({ email: pmUser.email, role: 'pm' });
-            }
-          }
+          // Get role-based notification recipients for booking completion
+          const recipients = await getRoleBasedRecipients('booking_completed', request);
 
           const validRecipients = recipients.filter(r => r.email);
 
