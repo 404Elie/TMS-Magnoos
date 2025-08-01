@@ -137,33 +137,37 @@
     border: 1px solid rgb(51 65 85) !important;
   }
   
-  /* Clean form styling - remove red highlights */
-  input, select, textarea {
-    border: 1px solid rgb(229 231 235) !important;
-    background-color: white !important;
-    color: rgb(17 24 39) !important;
+  /* Preserve auth page styling - don't override */
+  input:not(.auth-page input), 
+  select:not(.auth-page select), 
+  textarea:not(.auth-page textarea) {
+    border: 1px solid rgb(229 231 235);
+    background-color: white;
+    color: rgb(17 24 39);
   }
   
-  .dark input, 
-  .dark select, 
-  .dark textarea {
-    border: 1px solid rgb(51 65 85) !important;
-    background-color: rgb(15 23 42) !important;
-    color: white !important;
+  .dark input:not(.auth-page input), 
+  .dark select:not(.auth-page select), 
+  .dark textarea:not(.auth-page textarea) {
+    border: 1px solid rgb(51 65 85);
+    background-color: rgb(15 23 42);
+    color: white;
   }
   
-  /* Clean focus states */
-  input:focus, select:focus, textarea:focus {
-    border-color: rgb(59 130 246) !important;
-    outline: none !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  /* Clean focus states - don't override auth page */
+  input:not(.auth-page input):focus, 
+  select:not(.auth-page select):focus, 
+  textarea:not(.auth-page textarea):focus {
+    border-color: rgb(59 130 246);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
   
-  .dark input:focus, 
-  .dark select:focus, 
-  .dark textarea:focus {
-    border-color: rgb(147 197 253) !important;
-    box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1) !important;
+  .dark input:not(.auth-page input):focus, 
+  .dark select:not(.auth-page select):focus, 
+  .dark textarea:not(.auth-page textarea):focus {
+    border-color: rgb(147 197 253);
+    box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1);
   }
   
   /* Vibrant Light Mode Enhancements */
@@ -400,24 +404,21 @@
   }
   
   /* Select dropdown styling with proper hover colors */
-  [data-radix-select-content],
-  .select-content {
+  [data-radix-select-content] {
     background: white !important;
     border: 1px solid #e5e7eb !important;
     color: #111827 !important;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
   }
   
-  .dark [data-radix-select-content],
-  .dark .select-content {
+  .dark [data-radix-select-content] {
     background: rgb(15 23 42) !important;
     border: 1px solid rgb(51 65 85) !important;
     color: white !important;
   }
   
   /* Select item styling with visible hover states */
-  [data-radix-select-item],
-  .select-item {
+  [data-radix-select-item] {
     color: #111827 !important;
     padding: 8px 12px !important;
     cursor: pointer !important;
@@ -426,23 +427,20 @@
   
   [data-radix-select-item]:hover,
   [data-radix-select-item][data-highlighted],
-  [data-radix-select-item][data-state="checked"],
-  .select-item:hover {
+  [data-radix-select-item][data-state="checked"] {
     background-color: #DADADA !important; /* Company Light Gray */
     color: #111827 !important;
     outline: none !important;
   }
   
-  .dark [data-radix-select-item],
-  .dark .select-item {
+  .dark [data-radix-select-item] {
     color: white !important;
     background: transparent !important;
   }
   
   .dark [data-radix-select-item]:hover,
   .dark [data-radix-select-item][data-highlighted],
-  .dark [data-radix-select-item][data-state="checked"],
-  .dark .select-item:hover {
+  .dark [data-radix-select-item][data-state="checked"] {
     background-color: #464646 !important; /* Company Dark Gray */
     color: white !important;
   }
