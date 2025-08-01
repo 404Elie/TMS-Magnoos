@@ -381,6 +381,39 @@ export default function OperationsDashboard() {
       }));
   };
 
+  const prepareProjectBudgetData = () => {
+    if (!projectBudgetSummaries || !projectBudgetSummaries.length) {
+      return [
+        { name: 'No Projects', value: 0, color: '#374151' }
+      ];
+    }
+
+    const colors = ['#0032FF', '#FF6F00', '#1ABC3C', '#8A2BE2', '#FF6F61', '#00D9C0', '#A3E635'];
+    return projectBudgetSummaries
+      .filter(project => project.totalSpent > 0)
+      .slice(0, 7)
+      .map((project, index) => ({
+        name: project.name?.length > 20 ? project.name.substring(0, 20) + '...' : project.name,
+        value: project.totalSpent,
+        color: colors[index % colors.length]
+      }));
+  };
+
+  const prepareProjectSpendingData = () => {
+    if (!projectBudgetSummaries || !projectBudgetSummaries.length) {
+      return [];
+    }
+
+    return projectBudgetSummaries
+      .filter(project => project.totalSpent > 0)
+      .slice(0, 10)
+      .map(project => ({
+        name: project.name?.length > 15 ? project.name.substring(0, 15) + '...' : project.name,
+        spent: project.totalSpent,
+        trips: project.tripCount
+      }));
+  };
+
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
       <div className="min-h-screen bg-blue-950 operations-dashboard">
@@ -979,39 +1012,95 @@ export default function OperationsDashboard() {
 
             <TabsContent value="budget-project" className="space-y-8">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white">Budget Tracking by Project</h2>
-                <p className="text-gray-300">Monitor project-based travel expenses and allocations</p>
+                <h2 className="text-2xl font-bold text-white">Project Expense Tracking</h2>
+                <p className="text-gray-300">Monitor project-based travel expenses and spending patterns</p>
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                {/* Project Budget Chart Placeholder */}
+                {/* Project Expense Distribution Chart */}
                 <Card className="bg-slate-900 border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Project Budget Distribution</CardTitle>
+                    <CardTitle className="text-white">Project Expense Distribution</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                        <p className="text-gray-300">Project Budget Chart</p>
-                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
-                      </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={prepareProjectBudgetData()}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={80}
+                            dataKey="value"
+                            label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
+                          >
+                            {prepareProjectBudgetData().map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: '#1F2937', 
+                              border: '1px solid #374151',
+                              borderRadius: '8px',
+                              color: '#F9FAFB'
+                            }}
+                            formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
+                          />
+                          <Legend 
+                            wrapperStyle={{ color: '#9CA3AF' }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
                 
-                {/* Budget vs Actual Placeholder */}
+                {/* Project Spending Chart */}
                 <Card className="bg-slate-900 border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Budget vs Actual Spending</CardTitle>
+                    <CardTitle className="text-white">Project Spending Overview</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                        <p className="text-gray-300">Budget vs Actual Chart</p>
-                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
-                      </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={prepareProjectSpendingData()}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <XAxis 
+                            dataKey="name" 
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#9CA3AF', fontSize: 11 }}
+                            angle={-45}
+                            textAnchor="end"
+                            height={80}
+                          />
+                          <YAxis 
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                            tickFormatter={(value) => `$${value.toLocaleString()}`}
+                          />
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: '#1F2937', 
+                              border: '1px solid #374151',
+                              borderRadius: '8px',
+                              color: '#F9FAFB'
+                            }}
+                            formatter={(value: any, name: string) => {
+                              if (name === 'spent') return [`$${value.toLocaleString()}`, 'Total Spent'];
+                              if (name === 'trips') return [value, 'Trips'];
+                              return [value, name];
+                            }}
+                          />
+                          <Bar 
+                            dataKey="spent" 
+                            fill="#0032FF" 
+                            radius={[4, 4, 0, 0]}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
@@ -1020,7 +1109,7 @@ export default function OperationsDashboard() {
               {/* Project Budget Table */}
               <Card className="bg-slate-900 border-slate-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Project Budget Overview</CardTitle>
+                  <CardTitle className="text-white">Project Expense Overview</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {projectBudgetSummaries.length > 0 ? (
@@ -1032,16 +1121,7 @@ export default function OperationsDashboard() {
                               Project
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                              Allocated Budget
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                              Spent
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                              Remaining
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                              Utilization
+                              Total Spent
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Total Trips
@@ -1059,29 +1139,7 @@ export default function OperationsDashboard() {
                                 <div className="text-sm text-gray-300">{project.description}</div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                                {formatCurrency(project.allocatedBudget)}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                 {formatCurrency(project.totalSpent)}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
-                                {formatCurrency(project.remaining)}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center">
-                                  <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                                    <div 
-                                      className={`h-2 rounded-full ${
-                                        project.utilization > 90 ? 'bg-red-600' :
-                                        project.utilization > 70 ? 'bg-yellow-600' : 'bg-blue-600'
-                                      }`}
-                                      style={{ width: `${Math.min(project.utilization, 100)}%` }}
-                                    ></div>
-                                  </div>
-                                  <span className="text-sm text-gray-300">
-                                    {Math.round(project.utilization)}%
-                                  </span>
-                                </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {project.tripCount}
@@ -1097,8 +1155,8 @@ export default function OperationsDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-300">No project budget data available</p>
-                      <p className="text-sm text-gray-300 mt-2">Budget information will appear once travel requests are processed</p>
+                      <p className="text-gray-300">No project expense data available</p>
+                      <p className="text-sm text-gray-300 mt-2">Expense information will appear once travel requests are processed</p>
                     </div>
                   )}
                 </CardContent>
