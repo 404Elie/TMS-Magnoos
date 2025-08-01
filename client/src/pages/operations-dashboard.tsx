@@ -30,6 +30,23 @@ import {
   AlertTriangle,
   Plus
 } from "lucide-react";
+import { 
+  LineChart, 
+  Line, 
+  AreaChart, 
+  Area, 
+  BarChart, 
+  Bar, 
+  PieChart, 
+  Pie, 
+  Cell, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer 
+} from "recharts";
 import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget, ProjectWithBudget } from "@shared/schema";
 
 export default function OperationsDashboard() {
@@ -319,6 +336,51 @@ export default function OperationsDashboard() {
     };
   }) || [];
 
+  // Chart data preparation functions
+  const prepareMonthlyTrendData = () => {
+    if (!bookings || !bookings.length) {
+      // Return sample months with zero data for better UX
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+      return months.map(month => ({ month, amount: 0 }));
+    }
+
+    const monthlyData: { [key: string]: number } = {};
+    bookings.forEach(booking => {
+      const date = new Date(booking.createdAt);
+      const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
+      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + booking.cost;
+    });
+
+    return Object.entries(monthlyData)
+      .map(([month, amount]) => ({ month, amount }))
+      .slice(0, 6); // Show last 6 months
+  };
+
+  const prepareExpenseBreakdownData = () => {
+    if (!bookings || !bookings.length) {
+      // Return sample data for better UX
+      return [
+        { name: 'Flights', value: 0, color: '#0032FF' },
+        { name: 'Hotels', value: 0, color: '#FF6F00' },
+        { name: 'Other', value: 0, color: '#1ABC3C' }
+      ];
+    }
+
+    const typeData: { [key: string]: number } = {};
+    bookings.forEach(booking => {
+      const type = booking.type.charAt(0).toUpperCase() + booking.type.slice(1) + 's';
+      typeData[type] = (typeData[type] || 0) + booking.cost;
+    });
+
+    const colors = ['#0032FF', '#FF6F00', '#1ABC3C', '#8A2BE2', '#FF6F61'];
+    return Object.entries(typeData)
+      .map(([name, value], index) => ({ 
+        name, 
+        value, 
+        color: colors[index % colors.length] 
+      }));
+  };
+
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
       <div className="min-h-screen bg-blue-950 operations-dashboard">
@@ -411,19 +473,54 @@ export default function OperationsDashboard() {
                 </Card>
               </div>
 
-              {/* Budget Charts Placeholder */}
+              {/* Working Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
                 <Card className="bg-slate-900 border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Monthly Budget Trend</CardTitle>
+                    <CardTitle className="text-white">Monthly Expense Trend</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-magnoos-primary mx-auto mb-2" />
-                        <p className="text-white">Monthly Budget Chart</p>
-                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
-                      </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={prepareMonthlyTrendData()}>
+                          <defs>
+                            <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#0032FF" stopOpacity={0.8}/>
+                              <stop offset="95%" stopColor="#0032FF" stopOpacity={0.1}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <XAxis 
+                            dataKey="month" 
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                          />
+                          <YAxis 
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                            tickFormatter={(value) => `$${value.toLocaleString()}`}
+                          />
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: '#1F2937', 
+                              border: '1px solid #374151',
+                              borderRadius: '8px',
+                              color: '#F9FAFB'
+                            }}
+                            formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="amount" 
+                            stroke="#0032FF" 
+                            strokeWidth={2}
+                            fillOpacity={1} 
+                            fill="url(#colorAmount)" 
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
@@ -433,12 +530,35 @@ export default function OperationsDashboard() {
                     <CardTitle className="text-white">Expense Breakdown</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-magnoos-secondary mx-auto mb-2" />
-                        <p className="text-white">Expense Breakdown Chart</p>
-                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
-                      </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={prepareExpenseBreakdownData()}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={80}
+                            dataKey="value"
+                            label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
+                          >
+                            {prepareExpenseBreakdownData().map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: '#1F2937', 
+                              border: '1px solid #374151',
+                              borderRadius: '8px',
+                              color: '#F9FAFB'
+                            }}
+                            formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
+                          />
+                          <Legend 
+                            wrapperStyle={{ color: '#9CA3AF' }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
