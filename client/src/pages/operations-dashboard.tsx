@@ -525,7 +525,7 @@ export default function OperationsDashboard() {
               {/* Beautiful Charts with Magnoos Colors */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
                 <Card className="bg-white dark:bg-white border-border shadow-lg">
-                  <CardHeader className="bg-white dark:bg-white">
+                  <CardHeader className="dark:bg-white bg-[#ffffff00]">
                     <CardTitle className="text-gray-800 dark:text-gray-800 flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-[#00D9C0]" />
                       Monthly Expense Trend
