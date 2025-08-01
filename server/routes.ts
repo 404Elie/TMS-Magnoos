@@ -276,14 +276,14 @@ export function registerRoutes(app: Express): Server {
       const validatedData = insertTravelRequestSchema.parse(req.body);
       const requestData = {
         ...validatedData,
-        requesterId: req.userId,
+        requesterId: req.user.id,
       };
 
       const newRequest = await storage.createTravelRequest(requestData);
       
       // Send email notifications
       try {
-        const requester = await storage.getUser(req.userId);
+        const requester = await storage.getUser(req.user.id);
         const traveler = await storage.getUser(validatedData.travelerId);
         
         // Get notification recipients (PMs and Operations)
