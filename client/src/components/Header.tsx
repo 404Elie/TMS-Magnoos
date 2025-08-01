@@ -91,7 +91,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
               variant="outline" 
               size="sm"
               onClick={handleLogout}
-              className="items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border hover:text-accent-foreground h-9 rounded-md px-3 hidden sm:flex border-border hover:bg-muted dark:border-border dark:hover:bg-muted light:border-[hsl(175,100%,85%)] light:hover:bg-[hsl(175,100%,92%)] light:hover:border-[hsl(236,100%,58%)] transition-all duration-300 text-[#001538] bg-[#ffffff]"
+              className="hidden sm:flex logout-button border-border text-foreground transition-all duration-300"
             >
               Logout
             </Button>
