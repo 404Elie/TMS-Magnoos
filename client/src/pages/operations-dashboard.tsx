@@ -1299,7 +1299,7 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Content */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)] bg-white dark:bg-slate-900">
+              <div className="modal-form p-6 overflow-y-auto max-h-[calc(90vh-180px)] bg-white dark:bg-slate-900">
                 <div className="space-y-6">
                   {/* Travel Request Summary */}
                   <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">

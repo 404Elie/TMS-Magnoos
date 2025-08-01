@@ -137,35 +137,35 @@
     border: 1px solid rgb(51 65 85) !important;
   }
   
-  /* Preserve auth page styling - don't override */
-  input:not(.auth-page input), 
-  select:not(.auth-page select), 
-  textarea:not(.auth-page textarea) {
+  /* Clean modal form styling only - don't touch auth page */
+  .modal-form input, 
+  .modal-form select, 
+  .modal-form textarea {
     border: 1px solid rgb(229 231 235);
     background-color: white;
     color: rgb(17 24 39);
   }
   
-  .dark input:not(.auth-page input), 
-  .dark select:not(.auth-page select), 
-  .dark textarea:not(.auth-page textarea) {
+  .dark .modal-form input, 
+  .dark .modal-form select, 
+  .dark .modal-form textarea {
     border: 1px solid rgb(51 65 85);
     background-color: rgb(15 23 42);
     color: white;
   }
   
-  /* Clean focus states - don't override auth page */
-  input:not(.auth-page input):focus, 
-  select:not(.auth-page select):focus, 
-  textarea:not(.auth-page textarea):focus {
+  /* Clean focus states for modal forms only */
+  .modal-form input:focus, 
+  .modal-form select:focus, 
+  .modal-form textarea:focus {
     border-color: rgb(59 130 246);
     outline: none;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
   
-  .dark input:not(.auth-page input):focus, 
-  .dark select:not(.auth-page select):focus, 
-  .dark textarea:not(.auth-page textarea):focus {
+  .dark .modal-form input:focus, 
+  .dark .modal-form select:focus, 
+  .dark .modal-form textarea:focus {
     border-color: rgb(147 197 253);
     box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1);
   }
@@ -479,32 +479,42 @@
     color: white !important;
   }
   
-  /* Target all possible select item variations */
+  /* Target all possible select item variations with maximum specificity */
   [role="option"],
   .ui-select-item,
-  [data-radix-collection-item] {
+  [data-radix-collection-item],
+  [data-radix-select-viewport] [data-radix-select-item] {
     color: #111827 !important;
     background: transparent !important;
   }
   
   [role="option"]:hover,
   [role="option"][data-highlighted],
+  [role="option"][data-state="checked"],
   .ui-select-item:hover,
-  [data-radix-collection-item]:hover {
+  [data-radix-collection-item]:hover,
+  [data-radix-select-viewport] [data-radix-select-item]:hover,
+  [data-radix-select-viewport] [data-radix-select-item][data-highlighted],
+  [data-radix-select-viewport] [data-radix-select-item][data-state="checked"] {
     background-color: #DADADA !important;
     color: #111827 !important;
   }
   
   .dark [role="option"],
   .dark .ui-select-item,
-  .dark [data-radix-collection-item] {
+  .dark [data-radix-collection-item],
+  .dark [data-radix-select-viewport] [data-radix-select-item] {
     color: white !important;
   }
   
   .dark [role="option"]:hover,
   .dark [role="option"][data-highlighted],
+  .dark [role="option"][data-state="checked"],
   .dark .ui-select-item:hover,
-  .dark [data-radix-collection-item]:hover {
+  .dark [data-radix-collection-item]:hover,
+  .dark [data-radix-select-viewport] [data-radix-select-item]:hover,
+  .dark [data-radix-select-viewport] [data-radix-select-item][data-highlighted],
+  .dark [data-radix-select-viewport] [data-radix-select-item][data-state="checked"] {
     background-color: #464646 !important;
     color: white !important;
   }
