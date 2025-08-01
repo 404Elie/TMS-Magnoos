@@ -173,10 +173,10 @@ export default function PMDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["pm"]}>
-      <div className="min-h-screen bg-magnoos-dark pm-dashboard">
+      <div className="min-h-screen dark:bg-magnoos-dark light:bg-transparent pm-dashboard">
         <Header currentRole="pm" />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-magnoos-dark">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-magnoos-dark light:bg-transparent">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-3 bg-slate-900 border border-slate-700 backdrop-blur-md">
               <TabsTrigger 
@@ -199,10 +199,10 @@ export default function PMDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
+            <TabsContent value="dashboard" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] border-[#FF6F00] shadow-lg hover:shadow-xl transition-all duration-200">
+                <Card className="bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] border-[#FF6F00] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -211,14 +211,14 @@ export default function PMDashboard() {
                           {statsLoading ? "..." : stats?.pendingApprovals || 0}
                         </p>
                       </div>
-                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                        <Clock className="w-7 h-7 text-white" />
+                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
+                        <Clock className="w-7 h-7 text-[#FF6F00]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] border-[#1ABC3C] shadow-lg hover:shadow-xl transition-all duration-200">
+                <Card className="bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] border-[#1ABC3C] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -227,14 +227,14 @@ export default function PMDashboard() {
                           {statsLoading ? "..." : stats?.approvedMonth || 0}
                         </p>
                       </div>
-                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                        <Check className="w-7 h-7 text-white" />
+                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
+                        <Check className="w-7 h-7 text-[#1ABC3C]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200">
+                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -243,14 +243,14 @@ export default function PMDashboard() {
                           {statsLoading ? "..." : stats?.activeProjects || 0}
                         </p>
                       </div>
-                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                        <BarChart3 className="w-7 h-7 text-white" />
+                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
+                        <BarChart3 className="w-7 h-7 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#00D9C0] to-[#A3E635] border-[#00D9C0] shadow-lg hover:shadow-xl transition-all duration-200">
+                <Card className="bg-gradient-to-br from-[#00D9C0] to-[#A3E635] border-[#00D9C0] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -259,8 +259,8 @@ export default function PMDashboard() {
                           {statsLoading ? "..." : stats?.avgApprovalTime || "N/A"}
                         </p>
                       </div>
-                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                        <Calendar className="w-7 h-7 text-white" />
+                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
+                        <Calendar className="w-7 h-7 text-[#00D9C0]" />
                       </div>
                     </div>
                   </CardContent>
@@ -328,7 +328,7 @@ export default function PMDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="approvals" className="bg-magnoos-dark space-y-8">
+            <TabsContent value="approvals" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
               <Card className="bg-magnoos-dark border-magnoos-dark">
                 <CardHeader>
                   <CardTitle className="text-white">Pending Travel Request Approvals</CardTitle>
@@ -471,7 +471,7 @@ export default function PMDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="analytics" className="bg-magnoos-dark space-y-8">
+            <TabsContent value="analytics" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Travel Requests by Project Chart Placeholder */}
                 <Card className="bg-magnoos-dark border-magnoos-dark">

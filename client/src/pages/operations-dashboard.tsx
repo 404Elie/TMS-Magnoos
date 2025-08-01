@@ -447,10 +447,10 @@ export default function OperationsDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
-      <div className="min-h-screen bg-background operations-dashboard">
+      <div className="min-h-screen dark:bg-background light:bg-transparent operations-dashboard">
         <Header currentRole="operations" />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-background">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-4 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
@@ -479,11 +479,11 @@ export default function OperationsDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8">
+            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Active Bookings - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -495,15 +495,15 @@ export default function OperationsDashboard() {
                           ) : stats?.activeBookings || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <Calendar className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Calendar className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
                 {/* Monthly Spend - Teal to Lime Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -515,15 +515,15 @@ export default function OperationsDashboard() {
                           ) : formatCurrency(stats?.monthlySpend || 0)}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <DollarSign className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <DollarSign className="w-6 h-6 text-[#1ABC3C] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
                 {/* Pending Tasks - Orange to Coral Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -535,8 +535,8 @@ export default function OperationsDashboard() {
                           ) : stats?.pendingTasks || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <CheckSquare className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <CheckSquare className="w-6 h-6 text-[#FF6F00] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
@@ -688,7 +688,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="bookings" className="space-y-8">
+            <TabsContent value="bookings" className="space-y-8 dark:bg-background light:bg-transparent">
               <Card className="bg-slate-900 border-slate-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
@@ -971,7 +971,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="budget-person" className="space-y-8">
+            <TabsContent value="budget-person" className="space-y-8 dark:bg-background light:bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Travel Expense Tracking by Person</h2>
                 <p className="text-gray-300">Monitor individual travel expenses and spending patterns</p>
@@ -1106,7 +1106,7 @@ export default function OperationsDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="budget-project" className="space-y-8">
+            <TabsContent value="budget-project" className="space-y-8 dark:bg-background light:bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-white">Project Expense Tracking</h2>
                 <p className="text-gray-300">Monitor project-based travel expenses and spending patterns</p>
