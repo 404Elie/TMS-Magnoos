@@ -507,3 +507,27 @@
   html:not(.dark) [data-theme="light"] [data-radix-collection-item] {
     background-color: hsl(0, 0%, 100%) !important;
   }
+  
+  /* More specific targeting for form inputs in light mode */
+  html:not(.dark) form input,
+  html:not(.dark) form textarea,
+  html:not(.dark) form select,
+  html:not(.dark) [data-theme="light"] form input,
+  html:not(.dark) [data-theme="light"] form textarea,
+  html:not(.dark) [data-theme="light"] form select {
+    background-color: hsl(0, 0%, 100%) !important;
+    border-color: hsl(175, 100%, 85%) !important;
+    color: hsl(220, 45%, 20%) !important;
+  }
+  
+  /* Target specific input elements by class names used by shadcn/ui */
+  html:not(.dark) .bg-background input,
+  html:not(.dark) .bg-input,
+  html:not(.dark) input.bg-background,
+  html:not(.dark) [data-theme="light"] .bg-background input,
+  html:not(.dark) [data-theme="light"] .bg-input,
+  html:not(.dark) [data-theme="light"] input.bg-background {
+    background-color: hsl(0, 0%, 100%) !important;
+    border: 2px solid hsl(175, 100%, 85%) !important;
+    color: hsl(220, 45%, 20%) !important;
+  }
