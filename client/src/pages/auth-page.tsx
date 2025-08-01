@@ -292,7 +292,7 @@ export default function AuthPage() {
 
                 <TabsContent value="register" className="space-y-4 mt-6">
                   <Form {...registerForm}>
-                    <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
+                    <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4 bg-[#f2f1fe]">
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
                           control={registerForm.control}
