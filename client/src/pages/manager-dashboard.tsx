@@ -111,8 +111,8 @@ export default function ManagerDashboard() {
     mutationFn: async (data: TravelRequestForm) => {
       const payload = {
         ...data,
-        departureDate: new Date(data.departureDate).toISOString(),
-        returnDate: new Date(data.returnDate).toISOString(),
+        departureDate: data.departureDate,
+        returnDate: data.returnDate,
         // Cost estimation fields are not provided by managers - operations team will handle
         estimatedFlightCost: null,
         estimatedHotelCost: null,

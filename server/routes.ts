@@ -274,11 +274,17 @@ export function registerRoutes(app: Express): Server {
   app.post('/api/travel-requests', isAuthenticated, requireRole(['manager']), async (req: any, res) => {
     try {
       console.log("Received travel request data:", JSON.stringify(req.body, null, 2));
-      const validatedData = insertTravelRequestSchema.parse(req.body);
-      const requestData = {
-        ...validatedData,
+      
+      // Parse and transform the data before validation
+      const transformedData = {
+        ...req.body,
         requesterId: req.user.id,
+        departureDate: new Date(req.body.departureDate),
+        returnDate: new Date(req.body.returnDate),
       };
+      
+      const validatedData = insertTravelRequestSchema.parse(transformedData);
+      const requestData = validatedData;
 
       const newRequest = await storage.createTravelRequest(requestData);
       
