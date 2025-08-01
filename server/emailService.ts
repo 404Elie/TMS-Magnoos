@@ -5,21 +5,37 @@ class EmailService {
   private initialized = true;
 
   constructor() {
-    // Configure for testing with actual email delivery to e.radi@magnoos.com
-    this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER || 'travel@magnoos.com',
-        pass: process.env.EMAIL_PASS || 'app-password-here'
-      },
-      // For testing, we'll override recipients and log to console
-      streamTransport: !process.env.EMAIL_USER,
-      newline: 'unix',
-      logger: false
-    });
-    console.log("Email service initialized - emails will be logged to console and routed to e.radi@magnoos.com for testing");
+    // Use nodemailer test account for development - creates viewable test emails
+    this.setupTestAccount();
+  }
+
+  private async setupTestAccount() {
+    try {
+      // Create a test account with Ethereal Email
+      const testAccount = await nodemailer.createTestAccount();
+      
+      this.transporter = nodemailer.createTransport({
+        host: testAccount.smtp.host,
+        port: testAccount.smtp.port,
+        secure: testAccount.smtp.secure,
+        auth: {
+          user: testAccount.user,
+          pass: testAccount.pass
+        }
+      });
+      
+      console.log("Email service initialized with test account:");
+      console.log(`- User: ${testAccount.user}`);
+      console.log("- Emails will be sent and viewable at: https://ethereal.email");
+    } catch (error) {
+      console.error("Failed to create test email account:", error);
+      // Fallback to console logging
+      this.transporter = nodemailer.createTransport({
+        streamTransport: true,
+        newline: 'unix'
+      });
+      console.log("Email service initialized with console logging fallback");
+    }
   }
 
   async sendTravelRequestNotification(
@@ -55,9 +71,9 @@ class EmailService {
 
       // Send actual email to test address
       const emailContent = {
-        from: 'travel@magnoos.com',
+        from: '"Magnoos Travel System" <noreply@magnoos.com>',
         to: testEmail,
-        subject: `[TEST] New Travel Request: ${request.travelerName} - ${request.destination}`,
+        subject: `New Travel Request: ${request.travelerName} - ${request.destination}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #0032FF;">🧳 New Travel Request Submitted</h2>
@@ -120,9 +136,9 @@ class EmailService {
 
       // Send actual email to test address
       const emailContent = {
-        from: 'travel@magnoos.com',
+        from: '"Magnoos Travel System" <noreply@magnoos.com>',
         to: testEmail,
-        subject: `[TEST] Travel Request Approved: ${request.travelerName} - ${request.destination}`,
+        subject: `Travel Request Approved: ${request.travelerName} - ${request.destination}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1ABC3C;">✅ Travel Request Approved</h2>
@@ -206,9 +222,9 @@ class EmailService {
       `).join('');
 
       const emailContent = {
-        from: 'travel@magnoos.com',
+        from: '"Magnoos Travel System" <noreply@magnoos.com>',
         to: testEmail,
-        subject: `[TEST] Travel Bookings Complete: ${request.travelerName} - ${request.destination}`,
+        subject: `Travel Bookings Complete: ${request.travelerName} - ${request.destination}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #FF6F00;">🎯 Travel Bookings Completed</h2>
