@@ -484,7 +484,15 @@ export function registerRoutes(app: Express): Server {
 
   app.post('/api/bookings', isAuthenticated, requireRole(['operations']), async (req: any, res) => {
     try {
-      const validatedData = insertBookingSchema.parse(req.body);
+      console.log("Booking request body:", JSON.stringify(req.body, null, 2));
+      
+      // Transform cost to string if it's a number for decimal validation
+      const transformedData = {
+        ...req.body,
+        cost: req.body.cost ? String(req.body.cost) : undefined
+      };
+      
+      const validatedData = insertBookingSchema.parse(transformedData);
       const bookingData = {
         ...validatedData,
         bookedBy: req.userId,
@@ -496,6 +504,7 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(newBooking);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log("Booking validation errors:", error.errors);
         return res.status(400).json({ message: "Invalid booking data", errors: error.errors });
       }
       console.error("Error creating booking:", error);
@@ -526,7 +535,7 @@ export function registerRoutes(app: Express): Server {
           // Get all bookings for this request to include in email
           const bookings = await storage.getBookings(id);
           const bookingDetails = bookings.map(booking => 
-            `${booking.type}: ${booking.provider || 'N/A'} - $${booking.cost.toFixed(2)}${booking.bookingReference ? ` (Ref: ${booking.bookingReference})` : ''}`
+            `${booking.type}: ${booking.provider || 'N/A'} - $${Number(booking.cost || 0).toFixed(2)}${booking.bookingReference ? ` (Ref: ${booking.bookingReference})` : ''}`
           );
           
           // Get notification recipients (requester, traveler, PM who approved)

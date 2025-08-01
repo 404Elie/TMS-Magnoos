@@ -140,8 +140,11 @@ export default function OperationsDashboard() {
         if (booking.type && booking.cost) {
           await apiRequest("POST", "/api/bookings", {
             requestId,
-            ...booking,
-            cost: parseFloat(booking.cost)
+            type: booking.type,
+            provider: booking.provider || null,
+            bookingReference: booking.bookingReference || null,
+            cost: booking.cost,
+            details: booking.details || null
           });
         }
       }
