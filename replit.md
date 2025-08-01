@@ -117,6 +117,18 @@ The system is designed to be scalable, maintainable, and provides a smooth user 
 
 ## Recent Changes
 
+### August 1, 2025
+- **Travel Request Submission Fixed**: Completely resolved all validation and foreign key constraint issues for travel request submission
+- **Automatic Zoho Data Sync**: System now automatically creates local database records for Zoho users and projects when needed
+- **Dashboard Stats Bug Fixed**: Corrected pending approvals count to use `activeRole` instead of base `role` for accurate data display
+- **PM Dashboard Visual Enhancement**: Upgraded statistics cards with stunning gradient designs using official Magnoos colors:
+  - Pending Approvals: Orange to Coral gradient (#FF6F00 to #FF6F61)
+  - Approved This Month: Teal to Lime gradient (#1ABC3C to #A6E05A)
+  - Active Projects: Electric Blue to Purple gradient (#0032FF to #8A2BE2)
+  - Avg Approval Time: Vivid Teal to Lime Green gradient (#00D9C0 to #A3E635)
+- **Complete Workflow Verification**: Manager → PM → Operations travel request flow is fully functional and tested
+- **Electric Purple Tab Styling**: Consistent Electric Purple (#8A2BE2) for selected navigation tabs across the application
+
 ### January 31, 2025
 - **Zoho Projects API Integration Complete**: Successfully integrated Zoho Projects API with separate authentication credentials
 - **Fixed Infinite Loop Issue**: Resolved pagination bug that caused endless API calls by implementing proper end-of-data detection  
