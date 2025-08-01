@@ -197,65 +197,65 @@ export default function PMDashboard() {
             <TabsContent value="dashboard" className="bg-magnoos-dark space-y-8">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-magnoos-dark border-magnoos-dark">
-                  <CardContent className="p-6 bg-[#464646]">
+                <Card className="bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] border-[#FF6F00] shadow-lg hover:shadow-xl transition-all duration-200">
+                  <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Pending Approvals</p>
-                        <p className="text-2xl font-bold text-yellow-600">
+                        <p className="text-sm font-medium text-white/90">Pending Approvals</p>
+                        <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : stats?.pendingApprovals || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-yellow-600" />
+                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <Clock className="w-7 h-7 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] border-[#1ABC3C] shadow-lg hover:shadow-xl transition-all duration-200">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Approved This Month</p>
-                        <p className="text-2xl font-bold text-green-600">
+                        <p className="text-sm font-medium text-white/90">Approved This Month</p>
+                        <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : stats?.approvedMonth || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <Check className="w-6 h-6 text-green-600" />
+                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <Check className="w-7 h-7 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Active Projects</p>
-                        <p className="text-2xl font-bold text-magnoos-blue">
+                        <p className="text-sm font-medium text-white/90">Active Projects</p>
+                        <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : stats?.activeProjects || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <BarChart3 className="w-6 h-6 text-magnoos-blue" />
+                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <BarChart3 className="w-7 h-7 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-gradient-to-br from-[#00D9C0] to-[#A3E635] border-[#00D9C0] shadow-lg hover:shadow-xl transition-all duration-200">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Avg Approval Time</p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-sm font-medium text-white/90">Avg Approval Time</p>
+                        <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : stats?.avgApprovalTime || "N/A"}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-gray-300" />
+                      <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <Calendar className="w-7 h-7 text-white" />
                       </div>
                     </div>
                   </CardContent>
