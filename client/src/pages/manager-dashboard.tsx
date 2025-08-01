@@ -286,8 +286,8 @@ export default function ManagerDashboard() {
                           ) : stats?.totalRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30">
-                        <Plane className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Plane className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
@@ -306,8 +306,8 @@ export default function ManagerDashboard() {
                           ) : stats?.pendingRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm">
-                        <Clock className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Clock className="w-6 h-6 text-[#FF6F00] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
@@ -326,8 +326,8 @@ export default function ManagerDashboard() {
                           ) : stats?.approvedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm">
-                        <Check className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Check className="w-6 h-6 text-[#1ABC3C] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
@@ -346,8 +346,8 @@ export default function ManagerDashboard() {
                           ) : stats?.completedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm">
-                        <Flag className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Flag className="w-6 h-6 text-[#00D9C0] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
@@ -436,7 +436,7 @@ export default function ManagerDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="submit" className="bg-background space-y-8">
+            <TabsContent value="submit" className="space-y-8 bg-[#f9f9f9]">
               <div className="max-w-4xl mx-auto">
                 <Card className="bg-card border-border shadow-lg dark:bg-card dark:border-border light:bg-gradient-to-br light:from-[hsl(0,0%,100%)] light:to-[hsl(175,100%,99%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
                   <CardHeader>
