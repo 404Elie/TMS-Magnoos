@@ -422,7 +422,7 @@ export default function OperationsDashboard() {
                   ) : bookings && bookings.length > 0 ? (
                     <div className="bg-slate-800 space-y-4">
                       {bookings.slice(0, 5).map((booking) => (
-                        <div key={booking.id} className="flex items-center space-x-4 p-4 bg-blue-50 rounded-lg">
+                        <div key={booking.id} className="flex items-center space-x-4 p-4 bg-slate-700 rounded-lg">
                           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                             {booking.type === 'flight' ? (
                               <Plane className="w-4 h-4 text-white" />
@@ -574,8 +574,8 @@ export default function OperationsDashboard() {
                     </div>
                   ) : operationsRequests.length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                      <table className="min-w-full divide-y divide-gray-700">
+                        <thead className="bg-slate-800">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Traveler
@@ -600,7 +600,7 @@ export default function OperationsDashboard() {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-slate-900 divide-y divide-gray-700">
                           {operationsRequests.map((request) => {
                             const totalEstimated = (
                               parseFloat(request.estimatedFlightCost || "0") +
@@ -619,12 +619,12 @@ export default function OperationsDashboard() {
                                         {getInitials(request.traveler.firstName, request.traveler.lastName)}
                                       </AvatarFallback>
                                     </Avatar>
-                                    <span className="text-sm font-medium text-white">
+                                    <span className="text-sm font-medium text-gray-200">
                                       {request.traveler.firstName} {request.traveler.lastName}
                                     </span>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                   {request.destination}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
@@ -761,8 +761,8 @@ export default function OperationsDashboard() {
                     <CardContent>
                       {userBudgetSummaries.length > 0 ? (
                         <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                          <table className="min-w-full divide-y divide-gray-700">
+                            <thead className="bg-slate-800">
                               <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                   Employee
@@ -784,7 +784,7 @@ export default function OperationsDashboard() {
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-slate-900 divide-y divide-gray-700">
                               {userBudgetSummaries.map((user) => (
                                 <tr key={user.id}>
                                   <td className="px-6 py-4 whitespace-nowrap">
@@ -795,18 +795,18 @@ export default function OperationsDashboard() {
                                           {getInitials(user.firstName, user.lastName)}
                                         </AvatarFallback>
                                       </Avatar>
-                                      <span className="text-sm font-medium text-white">
+                                      <span className="text-sm font-medium text-gray-200">
                                         {user.firstName} {user.lastName}
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                     {formatCurrency(user.annualBudget)}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                     {formatCurrency(user.totalSpent)}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                     {formatCurrency(user.remaining)}
                                   </td>
                                   <td className="px-6 py-4 whitespace-nowrap">
@@ -894,8 +894,8 @@ export default function OperationsDashboard() {
                 <CardContent>
                   {projectBudgetSummaries.length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                      <table className="min-w-full divide-y divide-gray-700">
+                        <thead className="bg-slate-800">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Project
@@ -920,20 +920,20 @@ export default function OperationsDashboard() {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-slate-900 divide-y divide-gray-700">
                           {projectBudgetSummaries.map((project) => (
                             <tr key={project.id}>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-white">{project.name}</div>
+                                <div className="text-sm font-medium text-gray-200">{project.name}</div>
                                 <div className="text-sm text-gray-300">{project.description}</div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                 {formatCurrency(project.allocatedBudget)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                 {formatCurrency(project.totalSpent)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                 {formatCurrency(project.remaining)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
