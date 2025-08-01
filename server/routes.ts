@@ -374,10 +374,14 @@ export function registerRoutes(app: Express): Server {
             projectName: validatedData.projectId ? 'Project specified' : undefined
           };
 
-          await emailService.sendTravelRequestNotification(emailData, recipients);
+          const emailResult = await emailService.sendTravelRequestNotification(emailData, recipients);
+          console.log(`Email notification result: ${emailResult ? 'SUCCESS' : 'FAILED'}`);
+        } else {
+          console.log("No email recipients found or missing user data");
         }
       } catch (emailError) {
         console.error("Failed to send email notification:", emailError);
+        console.error("Email error details:", emailError);
         // Don't fail the request creation if email fails
       }
       

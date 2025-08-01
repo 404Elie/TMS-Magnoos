@@ -1,12 +1,13 @@
 import nodemailer from 'nodemailer';
 
 class EmailService {
-  private transporter: nodemailer.Transporter;
-  private initialized = true;
+  private transporter: nodemailer.Transporter | null = null;
+  private initialized = false;
+  private initPromise: Promise<void>;
 
   constructor() {
     // Use nodemailer test account for development - creates viewable test emails
-    this.setupTestAccount();
+    this.initPromise = this.setupTestAccount();
   }
 
   private async setupTestAccount() {
@@ -24,6 +25,7 @@ class EmailService {
         }
       });
       
+      this.initialized = true;
       console.log("Email service initialized with test account:");
       console.log(`- User: ${testAccount.user}`);
       console.log(`- Pass: ${testAccount.pass}`);
@@ -35,7 +37,14 @@ class EmailService {
         streamTransport: true,
         newline: 'unix'
       });
+      this.initialized = true;
       console.log("Email service initialized with console logging fallback");
+    }
+  }
+
+  private async ensureInitialized() {
+    if (!this.initialized) {
+      await this.initPromise;
     }
   }
 
@@ -54,6 +63,7 @@ class EmailService {
     recipients: { email: string; role: string }[]
   ): Promise<boolean> {
     try {
+      await this.ensureInitialized();
       const testEmail = 'e.radi@magnoos.com';
       
       console.log('\n' + '='.repeat(80));
@@ -96,7 +106,12 @@ class EmailService {
         `
       };
 
+      if (!this.transporter) {
+        throw new Error('Email transporter not initialized');
+      }
+      
       await this.transporter.sendMail(emailContent);
+      console.log('✅ Email sent successfully!');
       return true;
     } catch (error) {
       console.error('Failed to send travel request notification:', error);
@@ -120,6 +135,7 @@ class EmailService {
     recipients: { email: string; role: string }[]
   ): Promise<boolean> {
     try {
+      await this.ensureInitialized();
       const testEmail = 'e.radi@magnoos.com';
       
       console.log('\n' + '='.repeat(80));
@@ -160,7 +176,12 @@ class EmailService {
         `
       };
 
+      if (!this.transporter) {
+        throw new Error('Email transporter not initialized');
+      }
+      
       await this.transporter.sendMail(emailContent);
+      console.log('✅ Approval email sent successfully!');
       return true;
     } catch (error) {
       console.error('Failed to send approval notification:', error);
@@ -192,6 +213,7 @@ class EmailService {
     recipients: { email: string; role: string }[]
   ): Promise<boolean> {
     try {
+      await this.ensureInitialized();
       const testEmail = 'e.radi@magnoos.com';
       
       console.log('\n' + '='.repeat(80));
@@ -261,7 +283,12 @@ class EmailService {
         `
       };
 
+      if (!this.transporter) {
+        throw new Error('Email transporter not initialized');
+      }
+      
       await this.transporter.sendMail(emailContent);
+      console.log('✅ Booking completion email sent successfully!');
       return true;
     } catch (error) {
       console.error('Failed to send booking completion notification:', error);
