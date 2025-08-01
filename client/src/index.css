@@ -472,29 +472,20 @@
     color: white !important;
   }
   
-  /* Safe button hover states - only for buttons without existing background colors */
-  button:not([class*="bg-"]):not([style*="background"]):hover {
-    background-color: #f3f4f6 !important;
-    color: #111827 !important;
-    transition: all 0.2s ease;
+  /* Disable overly broad button hover states that cause invisibility */
+  /* button:hover styles are now removed to prevent invisibility issues */
+  
+  /* Fix Cancel button visibility with explicit targeting */
+  .inline-flex.items-center.justify-center.rounded-md.text-sm.font-medium:hover {
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
   }
   
-  .dark button:not([class*="bg-"]):not([style*="background"]):hover {
-    background-color: #374151 !important;
-    color: white !important;
-  }
-  
-  /* Outline button hover states */
-  button[variant="outline"]:hover,
-  .button-outline:hover {
-    background-color: #DADADA !important; /* Company Light Gray */
-    color: #111827 !important;
-  }
-  
-  .dark button[variant="outline"]:hover,
-  .dark .button-outline:hover {
-    background-color: #464646 !important; /* Company Dark Gray */
-    color: white !important;
+  .dark .inline-flex.items-center.justify-center.rounded-md.text-sm.font-medium:hover {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
+    border-color: #64748b !important;
   }
   
   /* Override hover for specific button types that were becoming invisible */
