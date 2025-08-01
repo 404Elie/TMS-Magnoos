@@ -588,13 +588,16 @@ export default function OperationsDashboard() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <div className="flex items-center">
                                     <Avatar className="w-8 h-8 mr-3">
-                                      <AvatarImage src={request.traveler.profileImageUrl} />
+                                      <AvatarImage src={request.traveler?.profileImageUrl} />
                                       <AvatarFallback className="bg-magnoos-blue text-white text-xs">
-                                        {getInitials(request.traveler.firstName, request.traveler.lastName)}
+                                        {getInitials(
+                                          request.traveler?.firstName || request.firstName, 
+                                          request.traveler?.lastName || request.lastName
+                                        )}
                                       </AvatarFallback>
                                     </Avatar>
                                     <span className="text-sm font-medium text-gray-200">
-                                      {request.traveler.firstName} {request.traveler.lastName}
+                                      {request.traveler?.firstName || request.firstName || 'Unknown'} {request.traveler?.lastName || request.lastName || 'User'}
                                     </span>
                                   </div>
                                 </td>

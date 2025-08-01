@@ -126,6 +126,9 @@ The system is designed to be scalable, maintainable, and provides a smooth user 
   - Approved This Month: Teal to Lime gradient (#1ABC3C to #A6E05A)
   - Active Projects: Electric Blue to Purple gradient (#0032FF to #8A2BE2)
   - Avg Approval Time: Vivid Teal to Lime Green gradient (#00D9C0 to #A3E635)
+- **Operations Dashboard Enhanced**: Removed Budget Remaining and Cost Savings cards, added colorful gradient styling matching PM dashboard design
+- **Table Readability Fixed**: All white background tables converted to dark theme with proper contrast across Operations dashboard
+- **Traveler Display Bug Fixed**: Resolved "Unknown User" issue by fixing database query logic that filtered out travel requests without projects
 - **Complete Workflow Verification**: Manager → PM → Operations travel request flow is fully functional and tested
 - **Electric Purple Tab Styling**: Consistent Electric Purple (#8A2BE2) for selected navigation tabs across the application
 

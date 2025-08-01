@@ -213,12 +213,12 @@ export class DatabaseStorage implements IStorage {
       const operationsCompleter = request.operationsCompletedBy ? await this.getUser(request.operationsCompletedBy) : undefined;
       const bookings = await this.getBookings(request.id);
 
-      if (requester && traveler && project) {
+      if (requester && traveler) {
         requestsWithDetails.push({
           ...request,
           requester,
           traveler,
-          project,
+          project: project || null,
           pmApprover,
           operationsCompleter,
           bookings,
@@ -240,13 +240,13 @@ export class DatabaseStorage implements IStorage {
     const operationsCompleter = request.operationsCompletedBy ? await this.getUser(request.operationsCompletedBy) : undefined;
     const requestBookings = await this.getBookings(request.id);
 
-    if (!requester || !traveler || !project) return undefined;
+    if (!requester || !traveler) return undefined;
 
     return {
       ...request,
       requester,
       traveler,
-      project,
+      project: project || null,
       pmApprover,
       operationsCompleter,
       bookings: requestBookings,
