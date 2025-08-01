@@ -348,39 +348,126 @@
   }
   
   /* Toast styling - make destructive toasts highly visible */
+  [data-state="open"][data-swipe="cancel"],
+  [data-state="open"],
   .group.destructive,
-  [data-toast].destructive {
+  [data-toast].destructive,
+  .destructive {
     background-color: #dc2626 !important;
-    border-color: #dc2626 !important;
+    border: 2px solid #dc2626 !important;
     color: white !important;
-    box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.4), 0 4px 6px -2px rgba(220, 38, 38, 0.05) !important;
+    box-shadow: 0 20px 40px -5px rgba(220, 38, 38, 0.6), 0 8px 16px -4px rgba(220, 38, 38, 0.3) !important;
+    z-index: 9999 !important;
+    position: relative !important;
+  }
+  
+  /* Toast viewport positioning */
+  [data-radix-toast-viewport] {
+    position: fixed !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    max-width: 420px !important;
+    padding: 1rem !important;
+  }
+  
+  /* Override ALL possible toast styling */
+  [role="status"],
+  [role="alert"],
+  [data-radix-toast-root],
+  .group.destructive,
+  [data-toast].destructive,
+  .destructive,
+  [data-state="open"],
+  [data-swipe="cancel"] {
+    background-color: #dc2626 !important;
+    border: 3px solid #ff0000 !important;
+    color: white !important;
+    box-shadow: 0 25px 50px -5px rgba(220, 38, 38, 0.8) !important;
+    z-index: 99999 !important;
+    position: relative !important;
+    min-height: 80px !important;
+    font-size: 16px !important;
+  }
+  
+  /* All text in destructive toasts should be white */
+  .group.destructive *,
+  [data-toast].destructive *,
+  .destructive *,
+  [data-state="open"] *,
+  [role="status"] *,
+  [role="alert"] *,
+  [data-radix-toast-root] * {
+    color: white !important;
+    font-weight: 500 !important;
   }
   
   .group.destructive [data-title],
   .group.destructive .text-sm.font-semibold,
   [data-toast].destructive [data-title],
-  [data-toast].destructive .text-sm.font-semibold {
+  [data-toast].destructive .text-sm.font-semibold,
+  .destructive [data-title],
+  .destructive .text-sm.font-semibold {
     color: white !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
   }
   
   .group.destructive [data-description],
   .group.destructive .text-sm.opacity-90,
   [data-toast].destructive [data-description],
-  [data-toast].destructive .text-sm.opacity-90 {
+  [data-toast].destructive .text-sm.opacity-90,
+  .destructive [data-description],
+  .destructive .text-sm.opacity-90 {
     color: rgba(255, 255, 255, 0.95) !important;
     opacity: 1 !important;
+    font-size: 0.95rem !important;
   }
   
   /* Toast close button for destructive */
   .group.destructive button[toast-close],
-  [data-toast].destructive button[toast-close] {
+  [data-toast].destructive button[toast-close],
+  .destructive button[toast-close] {
     color: rgba(255, 255, 255, 0.8) !important;
   }
   
   .group.destructive button[toast-close]:hover,
-  [data-toast].destructive button[toast-close]:hover {
+  [data-toast].destructive button[toast-close]:hover,
+  .destructive button[toast-close]:hover {
     color: white !important;
+  }
+  
+  /* Nuclear option - force ALL possible toast elements to be red */
+  div[data-state="open"],
+  div[data-swipe="cancel"],
+  div[role="status"], 
+  div[role="alert"],
+  [data-sonner-toast],
+  .toast,
+  .toast-message,
+  .notification {
+    background: #dc2626 !important;
+    color: white !important;
+    border: 3px solid #ff0000 !important;
+    box-shadow: 0 20px 40px rgba(220, 38, 38, 0.8) !important;
+    z-index: 999999 !important;
+    font-size: 16px !important;
+    min-height: 60px !important;
+    padding: 1rem !important;
+    border-radius: 8px !important;
+  }
+  
+  /* Force all child elements to be white text */
+  div[data-state="open"] *,
+  div[data-swipe="cancel"] *,
+  div[role="status"] *, 
+  div[role="alert"] *,
+  [data-sonner-toast] *,
+  .toast *,
+  .toast-message *,
+  .notification * {
+    color: white !important;
+    font-weight: 600 !important;
   }
   
   /* Custom clean tab styling - Light theme */
