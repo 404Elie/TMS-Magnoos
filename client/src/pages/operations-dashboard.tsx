@@ -578,11 +578,14 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-900 border-slate-700">
-                  <CardHeader>
-                    <CardTitle className="text-white">Expense Breakdown</CardTitle>
+                <Card className="bg-white dark:bg-white border-border shadow-lg">
+                  <CardHeader className="dark:bg-white bg-[#ffffff00]">
+                    <CardTitle className="text-gray-800 dark:text-gray-800 flex items-center gap-2">
+                      <PieChart className="w-5 h-5 text-[#0032FF]" />
+                      Expense Breakdown
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="bg-white dark:bg-white">
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -593,6 +596,7 @@ export default function OperationsDashboard() {
                             outerRadius={80}
                             dataKey="value"
                             label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
+                            labelStyle={{ fill: '#374151', fontSize: 12, fontWeight: 600 }}
                           >
                             {prepareExpenseBreakdownData().map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
@@ -600,15 +604,16 @@ export default function OperationsDashboard() {
                           </Pie>
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#1F2937', 
-                              border: '1px solid #374151',
+                              backgroundColor: '#FFFFFF', 
+                              border: '1px solid #D1D5DB',
                               borderRadius: '8px',
-                              color: '#F9FAFB'
+                              color: '#111827',
+                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
                           <Legend 
-                            wrapperStyle={{ color: '#9CA3AF' }}
+                            wrapperStyle={{ color: '#374151', fontWeight: 600 }}
                           />
                         </PieChart>
                       </ResponsiveContainer>
