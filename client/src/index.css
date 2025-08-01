@@ -399,12 +399,65 @@
     padding: 1rem !important;
   }
   
-  /* Simple dropdown fix - light mode by default */
+  /* Dropdown styling with proper hover colors */
   [data-radix-select-content] {
     background: white;
-    border: 1px solid #ccc;
-    color: black;
+    border: 1px solid #e5e7eb;
+    color: #111827;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .dark [data-radix-select-content] {
+    background: rgb(15 23 42);
+    border: 1px solid rgb(51 65 85);
+    color: white;
+  }
+  
+  /* Dropdown item hover states with company grey */
+  [data-radix-select-item] {
+    color: #111827;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  [data-radix-select-item]:hover,
+  [data-radix-select-item][data-highlighted] {
+    background-color: #DADADA; /* Company Light Gray */
+    color: #111827;
+    outline: none;
+  }
+  
+  .dark [data-radix-select-item] {
+    color: white;
+  }
+  
+  .dark [data-radix-select-item]:hover,
+  .dark [data-radix-select-item][data-highlighted] {
+    background-color: #464646; /* Company Dark Gray */
+    color: white;
+  }
+  
+  /* Button hover states with company grey */
+  button:hover {
+    background-color: #f3f4f6;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dark button:hover {
+    background-color: #374151;
+  }
+  
+  /* Outline button hover states */
+  button[variant="outline"]:hover,
+  .button-outline:hover {
+    background-color: #DADADA; /* Company Light Gray */
+    color: #111827;
+  }
+  
+  .dark button[variant="outline"]:hover,
+  .dark .button-outline:hover {
+    background-color: #464646; /* Company Dark Gray */
+    color: white;
   }
   
   [data-radix-select-item] {
