@@ -270,7 +270,7 @@ export default function ManagerDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="bg-background space-y-8">
+            <TabsContent value="dashboard" className="space-y-8 bg-[#f9f9f9]">
               {/* Stats Cards with Beautiful Gradients */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Total Requests - Electric Blue to Purple Gradient */}
