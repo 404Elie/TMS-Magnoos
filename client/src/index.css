@@ -475,7 +475,7 @@
   /* Disable overly broad button hover states that cause invisibility */
   /* button:hover styles are now removed to prevent invisibility issues */
   
-  /* Fix Cancel button visibility with explicit targeting */
+  /* Fix Cancel and Logout button visibility with explicit targeting */
   .inline-flex.items-center.justify-center.rounded-md.text-sm.font-medium:hover {
     background-color: #f8fafc !important;
     color: #1e293b !important;
@@ -486,6 +486,23 @@
     background-color: #334155 !important;
     color: #f1f5f9 !important;
     border-color: #64748b !important;
+  }
+  
+  /* Specific fix for Logout button in header using class targeting */
+  .hidden.sm\\:flex.border-border:hover,
+  header button[variant="outline"]:hover {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+    border-color: #cbd5e1 !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .dark .hidden.sm\\:flex.border-border:hover,
+  .dark header button[variant="outline"]:hover {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
+    border-color: #64748b !important;
+    transition: all 0.2s ease !important;
   }
   
   /* Override hover for specific button types that were becoming invisible */
