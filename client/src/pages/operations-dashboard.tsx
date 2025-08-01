@@ -294,82 +294,56 @@ export default function OperationsDashboard() {
 
             <TabsContent value="dashboard" className="space-y-8">
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-6">
-                <Card className="bg-slate-900 border-slate-700">
-                  <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Active Bookings - Electric Blue to Purple Gradient */}
+                <Card className="relative overflow-hidden border-none">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Active Bookings</p>
-                        <p className="text-2xl font-bold text-magnoos-primary">
+                        <p className="text-sm font-medium text-white/80">Active Bookings</p>
+                        <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : stats?.activeBookings || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-magnoos-primary/20 rounded-lg flex items-center justify-center">
-                        <Calendar className="w-6 h-6 text-magnoos-primary" />
+                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <Calendar className="w-6 h-6 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-900 border-slate-700">
-                  <CardContent className="p-6">
+                {/* Monthly Spend - Teal to Lime Gradient */}
+                <Card className="relative overflow-hidden border-none">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Monthly Spend</p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-sm font-medium text-white/80">Monthly Spend</p>
+                        <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                        <DollarSign className="w-6 h-6 text-green-400" />
+                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <DollarSign className="w-6 h-6 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-900 border-slate-700">
-                  <CardContent className="p-6">
+                {/* Pending Tasks - Orange to Coral Gradient */}
+                <Card className="relative overflow-hidden border-none">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-300">Budget Remaining</p>
-                        <p className="text-2xl font-bold text-yellow-400">
-                          {statsLoading ? "..." : formatCurrency(stats?.budgetRemaining || 0)}
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-yellow-400/20 rounded-lg flex items-center justify-center">
-                        <PiggyBank className="w-6 h-6 text-yellow-400" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-slate-900 border-slate-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-300">Pending Tasks</p>
-                        <p className="text-2xl font-bold text-red-400">
+                        <p className="text-sm font-medium text-white/80">Pending Tasks</p>
+                        <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : stats?.pendingTasks || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
-                        <CheckSquare className="w-6 h-6 text-red-400" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-slate-900 border-slate-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-300">Cost Savings</p>
-                        <p className="text-2xl font-bold text-green-400">
-                          {statsLoading ? "..." : formatCurrency(stats?.costSavings || 0)}
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                        <TrendingUp className="w-6 h-6 text-green-400" />
+                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <CheckSquare className="w-6 h-6 text-white" />
                       </div>
                     </div>
                   </CardContent>
