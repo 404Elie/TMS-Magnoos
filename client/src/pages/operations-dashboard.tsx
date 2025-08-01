@@ -689,7 +689,15 @@ export default function OperationsDashboard() {
                                       </Button>
                                     </div>
                                   ) : (
-                                    <Button size="sm" variant="ghost" className="text-magnoos-blue hover:text-magnoos-dark-blue">
+                                    <Button 
+                                      size="sm" 
+                                      variant="ghost" 
+                                      className="text-magnoos-blue hover:text-magnoos-dark-blue"
+                                      onClick={() => {
+                                        setSelectedRequest(request);
+                                        setCompletionModalOpen(true);
+                                      }}
+                                    >
                                       View Details
                                     </Button>
                                   )}

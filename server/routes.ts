@@ -403,6 +403,46 @@ export function registerRoutes(app: Express): Server {
       };
 
       const updatedRequest = await storage.updateTravelRequest(id, updates);
+      
+      // Send approval email notifications
+      try {
+        const request = await storage.getTravelRequest(id);
+        if (request && request.traveler && request.requester) {
+          const approver = await storage.getUser(req.userId);
+          
+          // Get notification recipients (requester, traveler, operations)
+          const allUsers = await storage.getAllUsers();
+          const recipients = [
+            { email: request.requester.email, role: 'requester' },
+            { email: request.traveler.email, role: 'traveler' },
+            ...allUsers
+              .filter(user => user.role === 'operations')
+              .filter(user => user.email)
+              .map(user => ({ email: user.email!, role: user.role }))
+          ].filter(r => r.email);
+
+          if (recipients.length > 0 && approver) {
+            const emailData = {
+              id: request.id,
+              travelerName: `${request.traveler.firstName || ''} ${request.traveler.lastName || ''}`.trim() || request.traveler.email || 'Unknown',
+              requesterName: `${request.requester.firstName || ''} ${request.requester.lastName || ''}`.trim() || request.requester.email || 'Unknown',
+              destination: request.destination,
+              origin: request.origin || 'Not specified',
+              departureDate: new Date(request.departureDate).toISOString(),
+              returnDate: new Date(request.returnDate).toISOString(),
+              purpose: request.purpose,
+              projectName: request.project?.name,
+              pmApproverName: `${approver.firstName || ''} ${approver.lastName || ''}`.trim() || approver.email || 'Unknown'
+            };
+
+            await emailService.sendTravelRequestApprovalNotification(emailData, recipients);
+          }
+        }
+      } catch (emailError) {
+        console.error("Failed to send approval email notification:", emailError);
+        // Don't fail the approval if email fails
+      }
+      
       res.json(updatedRequest);
     } catch (error) {
       console.error("Error approving travel request:", error);
@@ -476,6 +516,58 @@ export function registerRoutes(app: Express): Server {
       };
 
       const updatedRequest = await storage.updateTravelRequest(id, updates);
+      
+      // Send completion email notifications
+      try {
+        const request = await storage.getTravelRequest(id);
+        if (request && request.traveler && request.requester) {
+          const operationsUser = await storage.getUser(req.userId);
+          
+          // Get all bookings for this request to include in email
+          const bookings = await storage.getBookings(id);
+          const bookingDetails = bookings.map(booking => 
+            `${booking.type}: ${booking.provider || 'N/A'} - $${booking.cost.toFixed(2)}${booking.bookingReference ? ` (Ref: ${booking.bookingReference})` : ''}`
+          );
+          
+          // Get notification recipients (requester, traveler, PM who approved)
+          const recipients = [
+            { email: request.requester.email, role: 'requester' },
+            { email: request.traveler.email, role: 'traveler' }
+          ];
+          
+          if (request.pmApprovedBy) {
+            const pmUser = await storage.getUser(request.pmApprovedBy);
+            if (pmUser?.email) {
+              recipients.push({ email: pmUser.email, role: 'pm' });
+            }
+          }
+
+          const validRecipients = recipients.filter(r => r.email);
+
+          if (validRecipients.length > 0 && operationsUser) {
+            const emailData = {
+              id: request.id,
+              travelerName: `${request.traveler.firstName || ''} ${request.traveler.lastName || ''}`.trim() || request.traveler.email || 'Unknown',
+              requesterName: `${request.requester.firstName || ''} ${request.requester.lastName || ''}`.trim() || request.requester.email || 'Unknown',
+              destination: request.destination,
+              origin: request.origin || 'Not specified',
+              departureDate: new Date(request.departureDate).toISOString(),
+              returnDate: new Date(request.returnDate).toISOString(),
+              purpose: request.purpose,
+              projectName: request.project?.name,
+              totalCost: totalCost,
+              bookingDetails,
+              operationsCompleterName: `${operationsUser.firstName || ''} ${operationsUser.lastName || ''}`.trim() || operationsUser.email || 'Unknown'
+            };
+
+            await emailService.sendTravelRequestCompletionNotification(emailData, validRecipients);
+          }
+        }
+      } catch (emailError) {
+        console.error("Failed to send completion email notification:", emailError);
+        // Don't fail the completion if email fails
+      }
+      
       res.json(updatedRequest);
     } catch (error) {
       console.error("Error completing travel request:", error);
