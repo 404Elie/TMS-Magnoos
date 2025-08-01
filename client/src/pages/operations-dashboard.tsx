@@ -38,6 +38,15 @@ export default function OperationsDashboard() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
+  const [bookingEntries, setBookingEntries] = useState([{
+    type: "",
+    provider: "",
+    bookingReference: "",
+    cost: "",
+    details: "",
+  }]);
   const [newBooking, setNewBooking] = useState({
     type: "",
     provider: "",
@@ -123,18 +132,39 @@ export default function OperationsDashboard() {
     },
   });
 
-  // Complete travel request mutation
+  // Complete travel request mutation (enhanced with bookings)
   const completeRequestMutation = useMutation({
-    mutationFn: async ({ requestId, totalCost }: { requestId: string; totalCost: number }) => {
+    mutationFn: async ({ requestId, bookings }: { requestId: string; bookings: typeof bookingEntries }) => {
+      // First create all the bookings
+      for (const booking of bookings) {
+        if (booking.type && booking.cost) {
+          await apiRequest("POST", "/api/bookings", {
+            requestId,
+            ...booking,
+            cost: parseFloat(booking.cost)
+          });
+        }
+      }
+      
+      // Calculate total cost from all bookings
+      const totalCost = bookings.reduce((sum, booking) => {
+        return sum + (booking.cost ? parseFloat(booking.cost) : 0);
+      }, 0);
+      
+      // Then complete the request
       return await apiRequest("POST", `/api/travel-requests/${requestId}/complete`, { totalCost });
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Travel request completed successfully!",
+        description: "Travel request completed with bookings!",
       });
+      setCompletionModalOpen(false);
+      setSelectedRequest(null);
+      setBookingEntries([{ type: "", provider: "", bookingReference: "", cost: "", details: "" }]);
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {
@@ -169,8 +199,34 @@ export default function OperationsDashboard() {
     }
   };
 
-  const handleCompleteRequest = (requestId: string, totalCost: number) => {
-    completeRequestMutation.mutate({ requestId, totalCost });
+  const handleCompleteRequest = (request: TravelRequestWithDetails) => {
+    setSelectedRequest(request);
+    setCompletionModalOpen(true);
+  };
+
+  const handleCompleteWithBookings = () => {
+    if (selectedRequest) {
+      completeRequestMutation.mutate({ 
+        requestId: selectedRequest.id, 
+        bookings: bookingEntries.filter(booking => booking.type && booking.cost)
+      });
+    }
+  };
+
+  const addBookingEntry = () => {
+    setBookingEntries([...bookingEntries, { type: "", provider: "", bookingReference: "", cost: "", details: "" }]);
+  };
+
+  const updateBookingEntry = (index: number, field: string, value: string) => {
+    const updated = [...bookingEntries];
+    updated[index] = { ...updated[index], [field]: value };
+    setBookingEntries(updated);
+  };
+
+  const removeBookingEntry = (index: number) => {
+    if (bookingEntries.length > 1) {
+      setBookingEntries(bookingEntries.filter((_, i) => i !== index));
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -625,7 +681,7 @@ export default function OperationsDashboard() {
                                     <div className="flex space-x-2">
                                       <Button
                                         size="sm"
-                                        onClick={() => handleCompleteRequest(request.id, totalEstimated)}
+                                        onClick={() => handleCompleteRequest(request)}
                                         disabled={completeRequestMutation.isPending}
                                         className="bg-green-100 text-green-800 hover:bg-green-200"
                                       >
@@ -956,6 +1012,169 @@ export default function OperationsDashboard() {
             </TabsContent>
           </Tabs>
         </div>
+
+        {/* Completion Modal with Multiple Bookings */}
+        <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 border-slate-700">
+            <DialogHeader>
+              <DialogTitle className="text-white">Complete Travel Request</DialogTitle>
+              <DialogDescription className="text-gray-300">
+                Add booking details for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}'s trip to {selectedRequest?.destination}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-6">
+              {/* Travel Request Summary */}
+              <div className="bg-slate-800 p-4 rounded-lg">
+                <h3 className="font-semibold text-white mb-2">Trip Summary</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-gray-300">
+                    <span className="font-medium">Destination:</span> {selectedRequest?.destination}
+                  </div>
+                  <div className="text-gray-300">
+                    <span className="font-medium">Dates:</span> {selectedRequest && new Date(selectedRequest.departureDate).toLocaleDateString()} - {selectedRequest && new Date(selectedRequest.returnDate).toLocaleDateString()}
+                  </div>
+                  <div className="text-gray-300">
+                    <span className="font-medium">Project:</span> {selectedRequest?.project?.name || 'N/A'}
+                  </div>
+                  <div className="text-gray-300">
+                    <span className="font-medium">Purpose:</span> {selectedRequest?.purpose}
+                  </div>
+                </div>
+              </div>
+
+              {/* Booking Entries */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold text-white">Booking Details</h3>
+                  <Button
+                    onClick={addBookingEntry}
+                    size="sm"
+                    className="bg-magnoos-blue hover:bg-magnoos-dark-blue text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Booking
+                  </Button>
+                </div>
+                
+                <div className="space-y-4">
+                  {bookingEntries.map((booking, index) => (
+                    <div key={index} className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="font-medium text-white">Booking {index + 1}</h4>
+                        {bookingEntries.length > 1 && (
+                          <Button
+                            onClick={() => removeBookingEntry(index)}
+                            size="sm"
+                            variant="outline"
+                            className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+                          >
+                            Remove
+                          </Button>
+                        )}
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor={`type-${index}`} className="text-gray-300">Type</Label>
+                          <Select 
+                            value={booking.type} 
+                            onValueChange={(value) => updateBookingEntry(index, 'type', value)}
+                          >
+                            <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                              <SelectValue placeholder="Select booking type" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-700 border-slate-600">
+                              <SelectItem value="accommodation">Accommodation</SelectItem>
+                              <SelectItem value="car_rental">Car Rental</SelectItem>
+                              <SelectItem value="per_diem">Per Diem</SelectItem>
+                              <SelectItem value="ticket">Ticket</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor={`cost-${index}`} className="text-gray-300">Cost ($)</Label>
+                          <Input
+                            id={`cost-${index}`}
+                            type="number"
+                            step="0.01"
+                            value={booking.cost}
+                            onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
+                            className="bg-slate-700 border-slate-600 text-white"
+                            placeholder="0.00"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor={`provider-${index}`} className="text-gray-300">Provider</Label>
+                          <Input
+                            id={`provider-${index}`}
+                            value={booking.provider}
+                            onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
+                            className="bg-slate-700 border-slate-600 text-white"
+                            placeholder="e.g., Hotel Name, Airline"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor={`reference-${index}`} className="text-gray-300">Reference</Label>
+                          <Input
+                            id={`reference-${index}`}
+                            value={booking.bookingReference}
+                            onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
+                            className="bg-slate-700 border-slate-600 text-white"
+                            placeholder="Booking reference/confirmation"
+                          />
+                        </div>
+                        
+                        <div className="col-span-2">
+                          <Label htmlFor={`details-${index}`} className="text-gray-300">Details</Label>
+                          <Input
+                            id={`details-${index}`}
+                            value={booking.details}
+                            onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
+                            className="bg-slate-700 border-slate-600 text-white"
+                            placeholder="Additional details"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Total Cost Summary */}
+              <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-white">Total Cost:</span>
+                  <span className="text-xl font-bold text-white">
+                    ${bookingEntries.reduce((sum, booking) => sum + (parseFloat(booking.cost) || 0), 0).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-4">
+                <Button
+                  onClick={() => setCompletionModalOpen(false)}
+                  variant="outline"
+                  className="border-slate-600 text-gray-300 hover:bg-slate-700"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCompleteWithBookings}
+                  disabled={completeRequestMutation.isPending || bookingEntries.every(b => !b.type || !b.cost)}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  {completeRequestMutation.isPending ? "Completing..." : "Complete Request"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </ProtectedRoute>
   );
