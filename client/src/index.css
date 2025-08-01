@@ -437,37 +437,43 @@
     color: white !important;
   }
   
-  /* Nuclear option - force ALL possible toast elements to be red */
-  div[data-state="open"],
-  div[data-swipe="cancel"],
-  div[role="status"], 
-  div[role="alert"],
-  [data-sonner-toast],
-  .toast,
-  .toast-message,
-  .notification {
+  /* Target toast specifically with variant destructive */
+  [data-radix-toast-root][data-state="open"].destructive,
+  [data-radix-toast-root].destructive,
+  .group.destructive[data-state="open"] {
     background: #dc2626 !important;
     color: white !important;
-    border: 3px solid #ff0000 !important;
+    border: 2px solid #dc2626 !important;
     box-shadow: 0 20px 40px rgba(220, 38, 38, 0.8) !important;
     z-index: 999999 !important;
-    font-size: 16px !important;
+    font-size: 14px !important;
     min-height: 60px !important;
     padding: 1rem !important;
     border-radius: 8px !important;
   }
   
-  /* Force all child elements to be white text */
-  div[data-state="open"] *,
-  div[data-swipe="cancel"] *,
-  div[role="status"] *, 
-  div[role="alert"] *,
-  [data-sonner-toast] *,
-  .toast *,
-  .toast-message *,
-  .notification * {
-    color: white !important;
+  /* Ensure title and description text is visible and white */
+  [data-radix-toast-root].destructive [data-radix-toast-title],
+  [data-radix-toast-root].destructive [data-radix-toast-description],
+  .group.destructive [data-radix-toast-title],
+  .group.destructive [data-radix-toast-description],
+  .group.destructive .text-sm.font-semibold,
+  .group.destructive .text-sm.opacity-90 {
+    color: #ffffff !important;
     font-weight: 600 !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+  }
+  
+  /* Make sure the title is bold and visible */
+  [data-radix-toast-root].destructive [data-radix-toast-title],
+  .group.destructive [data-radix-toast-title],
+  .group.destructive .text-sm.font-semibold {
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    margin-bottom: 4px !important;
   }
   
   /* Custom clean tab styling - Light theme */
