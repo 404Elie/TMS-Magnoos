@@ -543,9 +543,12 @@ export function registerRoutes(app: Express): Server {
           
           // Get all bookings for this request to include in email
           const bookings = await storage.getBookings(id);
-          const bookingDetails = bookings.map(booking => 
-            `${booking.type}: ${booking.provider || 'N/A'} - $${Number(booking.cost || 0).toFixed(2)}${booking.bookingReference ? ` (Ref: ${booking.bookingReference})` : ''}`
-          );
+          const bookingDetails = bookings.map(booking => ({
+            type: booking.type,
+            provider: booking.provider,
+            bookingReference: booking.bookingReference,
+            cost: Number(booking.cost || 0)
+          }));
           
           // Get notification recipients (requester, traveler, PM who approved)
           const recipients = [
@@ -575,7 +578,7 @@ export function registerRoutes(app: Express): Server {
               projectName: request.project?.name,
               totalCost: totalCost,
               bookingDetails,
-              operationsCompleterName: `${operationsUser.firstName || ''} ${operationsUser.lastName || ''}`.trim() || operationsUser.email || 'Unknown'
+              operationsCompletedByName: `${operationsUser.firstName || ''} ${operationsUser.lastName || ''}`.trim() || operationsUser.email || 'Unknown'
             };
 
             await realEmailService.sendBookingCompletionNotification(emailData, validRecipients);

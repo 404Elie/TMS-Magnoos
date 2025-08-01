@@ -303,7 +303,8 @@ class RealEmailService {
     console.log(`Total Cost: $${request.totalCost.toLocaleString()}`);
     console.log('\nBooking Details:');
     request.bookingDetails.forEach(booking => {
-      console.log(`  • ${booking.type}: $${booking.cost} ${booking.provider ? `(${booking.provider})` : ''}`);
+      const cost = typeof booking.cost === 'number' ? booking.cost : parseFloat(booking.cost) || 0;
+      console.log(`  • ${booking.type}: $${cost} ${booking.provider ? `(${booking.provider})` : ''}`);
       if (booking.bookingReference) console.log(`    Reference: ${booking.bookingReference}`);
     });
     console.log('\nOriginal Recipients:');
@@ -311,14 +312,17 @@ class RealEmailService {
     console.log(`\n📨 EMAIL SENT TO: ${targetEmail}`);
     console.log('='.repeat(80) + '\n');
 
-    const bookingDetailsHtml = request.bookingDetails.map(booking => `
+    const bookingDetailsHtml = request.bookingDetails.map(booking => {
+      const cost = typeof booking.cost === 'number' ? booking.cost : parseFloat(booking.cost) || 0;
+      return `
       <tr>
         <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${booking.type}</td>
         <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${booking.provider || 'N/A'}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">$${booking.cost.toLocaleString()}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">$${cost.toLocaleString()}</td>
         <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">${booking.bookingReference || 'N/A'}</td>
       </tr>
-    `).join('');
+      `;
+    }).join('');
 
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
