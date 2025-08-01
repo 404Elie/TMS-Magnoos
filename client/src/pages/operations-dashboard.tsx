@@ -216,6 +216,8 @@ export default function OperationsDashboard() {
     req.status === 'pm_approved' || req.status === 'operations_completed'
   ) || [];
 
+  // Debug logging removed after issue resolution
+
   // Calculate user budget summaries
   const userBudgetSummaries = users?.map(user => {
     const userRequests = requests?.filter(req => req.travelerId === user.id) || [];
@@ -591,13 +593,15 @@ export default function OperationsDashboard() {
                                       <AvatarImage src={request.traveler?.profileImageUrl} />
                                       <AvatarFallback className="bg-magnoos-blue text-white text-xs">
                                         {getInitials(
-                                          request.traveler?.firstName || request.firstName, 
-                                          request.traveler?.lastName || request.lastName
+                                          request.traveler?.firstName, 
+                                          request.traveler?.lastName
                                         )}
                                       </AvatarFallback>
                                     </Avatar>
                                     <span className="text-sm font-medium text-gray-200">
-                                      {request.traveler?.firstName || request.firstName || 'Unknown'} {request.traveler?.lastName || request.lastName || 'User'}
+                                      {request.traveler?.firstName && request.traveler?.lastName 
+                                        ? `${request.traveler.firstName} ${request.traveler.lastName}` 
+                                        : request.traveler?.email || 'Unknown User'}
                                     </span>
                                   </div>
                                 </td>

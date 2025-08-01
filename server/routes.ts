@@ -294,11 +294,16 @@ export function registerRoutes(app: Express): Server {
           const zohoTraveler = zohoUsers.find(user => user.id === validatedData.travelerId);
           if (zohoTraveler) {
             // Create the user in our local database
+            // Parse the name from Zoho data properly
+            const nameParts = zohoTraveler.name?.split(' ') || [];
+            const firstName = zohoTraveler.firstName || nameParts[0] || zohoTraveler.email?.split('@')[0] || 'User';
+            const lastName = zohoTraveler.lastName || nameParts.slice(1).join(' ') || '';
+            
             traveler = await storage.createUser({
               id: zohoTraveler.id,
               email: zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`,
-              firstName: zohoTraveler.firstName || 'Unknown',
-              lastName: zohoTraveler.lastName || 'User',
+              firstName,
+              lastName,
               role: 'manager' // Default role for Zoho users
             });
           } else {
