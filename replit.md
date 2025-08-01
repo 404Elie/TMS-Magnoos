@@ -152,7 +152,7 @@ The system is designed to be scalable, maintainable, and provides a smooth user 
   - **Card Animations**: Added hover scale effects, shimmer loading states, and icon hover animations
   - **Tab Styling**: Electric Purple gradient for selected tabs across all dashboards
   - **Accessibility**: Improved text contrast with drop shadows and enhanced opacity levels
-  - **Color Adjustment**: Changed Operations Monthly Spend card from hard-to-read green gradient to high-contrast Vivid Teal→Dark Blue
+  - **Color Adjustment**: Enhanced Monthly Expense Trend chart with Vivid Teal→Lime Green gradient for better readability and visual appeal
 
 ### January 31, 2025
 - **Zoho Projects API Integration Complete**: Successfully integrated Zoho Projects API with separate authentication credentials

@@ -481,21 +481,21 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                {/* Monthly Spend - Vivid Teal to Dark Blue Gradient */}
+                {/* Monthly Spend - Teal to Lime Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#0032FF] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/90">Monthly Spend</p>
-                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300 drop-shadow-lg">
+                        <p className="text-sm font-medium text-white/80">Monthly Spend</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
                           {statsLoading ? (
                             <span className="shimmer inline-block w-20 h-8 bg-white/20 rounded"></span>
                           ) : formatCurrency(stats?.monthlySpend || 0)}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-white/25 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <DollarSign className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110 drop-shadow-md" />
+                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <DollarSign className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
@@ -527,7 +527,7 @@ export default function OperationsDashboard() {
                 <Card className="bg-card border-border shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-foreground flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-[#0032FF]" />
+                      <TrendingUp className="w-5 h-5 text-[#00D9C0]" />
                       Monthly Expense Trend
                     </CardTitle>
                   </CardHeader>
@@ -537,8 +537,8 @@ export default function OperationsDashboard() {
                         <AreaChart data={prepareMonthlyTrendData()}>
                           <defs>
                             <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#0032FF" stopOpacity={0.8}/>
-                              <stop offset="95%" stopColor="#0032FF" stopOpacity={0.1}/>
+                              <stop offset="5%" stopColor="#00D9C0" stopOpacity={0.8}/>
+                              <stop offset="95%" stopColor="#A3E635" stopOpacity={0.2}/>
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -546,28 +546,29 @@ export default function OperationsDashboard() {
                             dataKey="month" 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                            tick={{ fill: 'hsl(var(--foreground))', fontSize: 12, fontWeight: 500 }}
                           />
                           <YAxis 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                            tick={{ fill: 'hsl(var(--foreground))', fontSize: 12, fontWeight: 500 }}
                             tickFormatter={(value) => `$${value.toLocaleString()}`}
                           />
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#1F2937', 
-                              border: '1px solid #374151',
+                              backgroundColor: 'hsl(var(--card))', 
+                              border: '1px solid hsl(var(--border))',
                               borderRadius: '8px',
-                              color: '#F9FAFB'
+                              color: 'hsl(var(--foreground))',
+                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
                           <Area 
                             type="monotone" 
                             dataKey="amount" 
-                            stroke="#0032FF" 
-                            strokeWidth={2}
+                            stroke="#00D9C0" 
+                            strokeWidth={3}
                             fillOpacity={1} 
                             fill="url(#colorAmount)" 
                           />
