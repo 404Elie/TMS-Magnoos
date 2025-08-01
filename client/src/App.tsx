@@ -11,6 +11,7 @@ import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
 import AdminUsers from "@/pages/admin-users";
+import AdminPanel from "@/pages/admin-panel";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import type { User } from "@shared/schema";
 
@@ -72,9 +73,13 @@ function Router() {
         {(currentRole === 'operations' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
       </Route>
       
-      {/* Admin-only route */}
+      {/* Admin-only routes */}
       <Route path="/admin/users">
         {typedUser?.role === 'admin' ? <AdminUsers /> : <NotFound />}
+      </Route>
+      
+      <Route path="/admin">
+        {typedUser?.role === 'admin' ? <AdminPanel /> : <NotFound />}
       </Route>
       
       {/* Fallback to 404 */}

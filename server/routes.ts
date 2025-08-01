@@ -647,6 +647,73 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Admin-only delete endpoints for testing
+  const requireAdmin = (req: any, res: any, next: any) => {
+    const user = req.user;
+    if (!user || user.email !== 'admin@magnoos.com') {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    next();
+  };
+
+  // Delete travel request (admin only)
+  app.delete('/api/admin/travel-requests/:id', isAuthenticated, requireAdmin, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      // First delete related bookings
+      await storage.deleteBookingsByTravelRequestId(id);
+      
+      // Then delete the travel request
+      const deleted = await storage.deleteTravelRequest(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Travel request not found" });
+      }
+      
+      console.log(`🗑️ ADMIN DELETE: Travel request ${id} deleted by admin`);
+      res.json({ message: "Travel request and related bookings deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting travel request:", error);
+      res.status(500).json({ message: "Failed to delete travel request" });
+    }
+  });
+
+  // Delete booking (admin only)
+  app.delete('/api/admin/bookings/:id', isAuthenticated, requireAdmin, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      
+      const deleted = await storage.deleteBooking(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+      
+      console.log(`🗑️ ADMIN DELETE: Booking ${id} deleted by admin`);
+      res.json({ message: "Booking deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      res.status(500).json({ message: "Failed to delete booking" });
+    }
+  });
+
+  // Delete all test data (admin only) - nuclear option for complete cleanup
+  app.delete('/api/admin/cleanup-test-data', isAuthenticated, requireAdmin, async (req: any, res) => {
+    try {
+      const counts = await storage.deleteAllTestData();
+      
+      console.log(`🗑️ ADMIN CLEANUP: Deleted ${counts.bookings} bookings and ${counts.travelRequests} travel requests`);
+      res.json({ 
+        message: "All test data deleted successfully",
+        deleted: counts
+      });
+    } catch (error) {
+      console.error("Error cleaning up test data:", error);
+      res.status(500).json({ message: "Failed to cleanup test data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

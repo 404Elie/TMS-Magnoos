@@ -70,6 +70,12 @@ export interface IStorage {
   getUserBudgetSummary(userId: string, year: number): Promise<UserWithBudget | undefined>;
   getProjectBudgetSummary(projectId: string, year: number): Promise<ProjectWithBudget | undefined>;
   getDashboardStats(role: string, userId?: string): Promise<any>;
+  
+  // Admin delete operations for testing
+  deleteTravelRequest(id: string): Promise<boolean>;
+  deleteBooking(id: string): Promise<boolean>;
+  deleteBookingsByTravelRequestId(requestId: string): Promise<void>;
+  deleteAllTestData(): Promise<{ travelRequests: number; bookings: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -473,6 +479,54 @@ export class DatabaseStorage implements IStorage {
     }
 
     return {};
+  }
+
+  // Admin delete operations for testing
+  async deleteTravelRequest(id: string): Promise<boolean> {
+    try {
+      const result = await db.delete(travelRequests).where(eq(travelRequests.id, id));
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error("Error deleting travel request:", error);
+      return false;
+    }
+  }
+
+  async deleteBooking(id: string): Promise<boolean> {
+    try {
+      const result = await db.delete(bookings).where(eq(bookings.id, id));
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      return false;
+    }
+  }
+
+  async deleteBookingsByTravelRequestId(requestId: string): Promise<void> {
+    try {
+      await db.delete(bookings).where(eq(bookings.travelRequestId, requestId));
+    } catch (error) {
+      console.error("Error deleting bookings by travel request ID:", error);
+      throw error;
+    }
+  }
+
+  async deleteAllTestData(): Promise<{ travelRequests: number; bookings: number }> {
+    try {
+      // Delete all bookings first (to avoid foreign key constraints)
+      const deletedBookings = await db.delete(bookings);
+      
+      // Delete all travel requests
+      const deletedRequests = await db.delete(travelRequests);
+      
+      return {
+        bookings: deletedBookings.rowCount || 0,
+        travelRequests: deletedRequests.rowCount || 0
+      };
+    } catch (error) {
+      console.error("Error deleting all test data:", error);
+      throw error;
+    }
   }
 }
 

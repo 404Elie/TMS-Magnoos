@@ -65,6 +65,13 @@ export default function AdminRoleSwitcher() {
           </div>
           
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <Link href="/admin">
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Admin Panel
+              </Button>
+            </Link>
+            
             <Link href="/admin/users">
               <Button variant="outline" size="sm">
                 <Users className="h-4 w-4 mr-2" />
