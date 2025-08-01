@@ -273,6 +273,7 @@ export function registerRoutes(app: Express): Server {
 
   app.post('/api/travel-requests', isAuthenticated, requireRole(['manager']), async (req: any, res) => {
     try {
+      console.log("Received travel request data:", JSON.stringify(req.body, null, 2));
       const validatedData = insertTravelRequestSchema.parse(req.body);
       const requestData = {
         ...validatedData,
@@ -316,6 +317,7 @@ export function registerRoutes(app: Express): Server {
       res.status(201).json(newRequest);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log("Validation errors:", error.errors);
         return res.status(400).json({ message: "Invalid request data", errors: error.errors });
       }
       console.error("Error creating travel request:", error);
