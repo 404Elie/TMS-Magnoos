@@ -336,8 +336,8 @@ export default function PMDashboard() {
                     </div>
                   ) : pendingRequests && pendingRequests.length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                      <table className="min-w-full divide-y divide-gray-700">
+                        <thead className="bg-slate-800">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Traveler
@@ -359,7 +359,7 @@ export default function PMDashboard() {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-slate-900 divide-y divide-gray-700">
                           {pendingRequests.map((request) => (
                             <tr key={request.id}>
                               <td className="px-6 py-4 whitespace-nowrap">
@@ -370,12 +370,12 @@ export default function PMDashboard() {
                                       {getInitials(request.traveler.firstName, request.traveler.lastName)}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <span className="text-sm font-medium text-white">
+                                  <span className="text-sm font-medium text-gray-200">
                                     {request.traveler.firstName} {request.traveler.lastName}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                 {request.destination}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
@@ -384,7 +384,7 @@ export default function PMDashboard() {
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                                 {formatCurrency(
                                   (parseFloat(request.estimatedFlightCost || "0") +
                                    parseFloat(request.estimatedHotelCost || "0") +
