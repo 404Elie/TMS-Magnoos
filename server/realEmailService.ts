@@ -96,16 +96,10 @@ class RealEmailService {
       if (this.emailMethod === 'resend' && this.resend) {
         // Use Resend API for real email delivery
         const result = await this.resend.emails.send({
-          from: 'Magnoos Travel <delivered@resend.dev>', // Different subdomain
+          from: 'Magnoos Travel <onboarding@resend.dev>', // Resend verified domain
           to: [emailData.to],
           subject: emailData.subject,
           html: emailData.html,
-          text: this.htmlToText(emailData.html),
-          reply_to: 'noreply@magnoos.com',
-          headers: {
-            'X-Entity-Ref-ID': Math.random().toString(36).substring(7),
-            'List-Unsubscribe': '<mailto:unsubscribe@magnoos.com>',
-          },
         });
         
         if (result.error) {
@@ -115,7 +109,6 @@ class RealEmailService {
         
         console.log(`✅ Real email sent via Resend to: ${emailData.to}`);
         console.log(`📧 Message ID: ${result.data?.id}`);
-        console.log(`📊 Resend Response:`, JSON.stringify(result, null, 2));
         return true;
         
       } else if (this.emailMethod === 'smtp' && this.transporter) {
@@ -155,17 +148,7 @@ class RealEmailService {
     }
   }
 
-  private htmlToText(html: string): string {
-    // Simple HTML to text conversion for better deliverability
-    return html
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
-      .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
-      .replace(/&amp;/g, '&') // Replace HTML entities
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/\s+/g, ' ') // Normalize whitespace
-      .trim();
-  }
+
 
   // Convenience methods for travel notifications
   async sendTravelRequestNotification(
@@ -199,11 +182,8 @@ class RealEmailService {
     console.log('='.repeat(80) + '\n');
 
     const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 20px;">
-        <div style="text-align: center; margin-bottom: 20px;">
-          <h1 style="color: #0032FF; margin: 0; font-size: 24px;">Magnoos Travel Management</h1>
-        </div>
-        <h2 style="color: #8A2BE2; border-bottom: 2px solid #8A2BE2; padding-bottom: 10px;">New Travel Request Submitted</h2>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #0032FF;">🧳 New Travel Request Submitted</h2>
         
         <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="margin-top: 0; color: #8A2BE2;">Travel Details</h3>
@@ -272,11 +252,8 @@ class RealEmailService {
     console.log('='.repeat(80) + '\n');
 
     const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 20px;">
-        <div style="text-align: center; margin-bottom: 20px;">
-          <h1 style="color: #0032FF; margin: 0; font-size: 24px;">Magnoos Travel Management</h1>
-        </div>
-        <h2 style="color: #1ABC3C; border-bottom: 2px solid #1ABC3C; padding-bottom: 10px;">Travel Request Approved</h2>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #1ABC3C;">✅ Travel Request Approved</h2>
         
         <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1ABC3C;">
           <h3 style="margin-top: 0; color: #8A2BE2;">Approval Details</h3>
@@ -369,11 +346,8 @@ class RealEmailService {
     }).join('');
 
     const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 20px;">
-        <div style="text-align: center; margin-bottom: 20px;">
-          <h1 style="color: #0032FF; margin: 0; font-size: 24px;">Magnoos Travel Management</h1>
-        </div>
-        <h2 style="color: #FF6F00; border-bottom: 2px solid #FF6F00; padding-bottom: 10px;">Travel Arrangements Complete</h2>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #0032FF;">🎯 Travel Arrangements Complete</h2>
         
         <div style="background: #fff7ed; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FF6F00;">
           <h3 style="margin-top: 0; color: #8A2BE2;">Trip Summary</h3>
