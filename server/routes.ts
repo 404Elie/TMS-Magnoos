@@ -284,14 +284,39 @@ export function registerRoutes(app: Express): Server {
       };
       
       const validatedData = insertTravelRequestSchema.parse(transformedData);
-      const requestData = validatedData;
+      
+      // Ensure the traveler exists in our local database
+      let traveler = await storage.getUser(validatedData.travelerId);
+      if (!traveler) {
+        // Try to find the traveler in Zoho users and create local record
+        try {
+          const zohoUsers = await zohoService.getUsers();
+          const zohoTraveler = zohoUsers.find(user => user.id === validatedData.travelerId);
+          if (zohoTraveler) {
+            // Create the user in our local database
+            traveler = await storage.createUser({
+              id: zohoTraveler.id,
+              email: zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`,
+              firstName: zohoTraveler.firstName || 'Unknown',
+              lastName: zohoTraveler.lastName || 'User',
+              role: 'manager' // Default role for Zoho users
+            });
+          } else {
+            return res.status(400).json({ message: "Selected traveler not found" });
+          }
+        } catch (zohoError) {
+          console.error("Error fetching Zoho user:", zohoError);
+          return res.status(400).json({ message: "Unable to verify traveler" });
+        }
+      }
 
+      const requestData = validatedData;
       const newRequest = await storage.createTravelRequest(requestData);
       
       // Send email notifications
       try {
         const requester = await storage.getUser(req.user.id);
-        const traveler = await storage.getUser(validatedData.travelerId);
+        // traveler is already fetched above
         
         // Get notification recipients (PMs and Operations)
         const allUsers = await storage.getAllUsers();
