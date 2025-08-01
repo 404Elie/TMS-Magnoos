@@ -426,33 +426,33 @@ export default function OperationsDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["operations"]}>
-      <div className="min-h-screen bg-blue-950 operations-dashboard">
+      <div className="min-h-screen bg-background operations-dashboard">
         <Header currentRole="operations" />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-blue-950">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-background">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-4 bg-slate-900 border border-slate-700 backdrop-blur-md">
+            <TabsList className="grid w-full grid-cols-4 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard" 
-                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
+                className="custom-tab"
               >
                 Dashboard
               </TabsTrigger>
               <TabsTrigger 
                 value="bookings"
-                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
+                className="custom-tab"
               >
                 Active Bookings
               </TabsTrigger>
               <TabsTrigger 
                 value="budget-person"
-                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
+                className="custom-tab"
               >
                 Budget by Person
               </TabsTrigger>
               <TabsTrigger 
                 value="budget-project"
-                className="bg-slate-800 text-gray-300 data-[state=active]:bg-blue-600 data-[state=active]:text-white hover:bg-slate-700"
+                className="custom-tab"
               >
                 Budget by Project
               </TabsTrigger>
@@ -462,65 +462,74 @@ export default function OperationsDashboard() {
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Active Bookings - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-white/80">Active Bookings</p>
-                        <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : stats?.activeBookings || 0}
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.activeBookings || 0}
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <Calendar className="w-6 h-6 text-white" />
+                        <Calendar className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
                 {/* Monthly Spend - Teal to Lime Gradient */}
-                <Card className="relative overflow-hidden border-none">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-white/80">Monthly Spend</p>
-                        <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-20 h-8 bg-white/20 rounded"></span>
+                          ) : formatCurrency(stats?.monthlySpend || 0)}
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <DollarSign className="w-6 h-6 text-white" />
+                        <DollarSign className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
                 {/* Pending Tasks - Orange to Coral Gradient */}
-                <Card className="relative overflow-hidden border-none">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-white/80">Pending Tasks</p>
-                        <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : stats?.pendingTasks || 0}
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.pendingTasks || 0}
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <CheckSquare className="w-6 h-6 text-white" />
+                        <CheckSquare className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Working Charts */}
+              {/* Beautiful Charts with Magnoos Colors */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-slate-900 border-slate-700">
+                <Card className="bg-card border-border shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-white">Monthly Expense Trend</CardTitle>
+                    <CardTitle className="text-foreground flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-[#0032FF]" />
+                      Monthly Expense Trend
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-64">
@@ -532,17 +541,17 @@ export default function OperationsDashboard() {
                               <stop offset="95%" stopColor="#0032FF" stopOpacity={0.1}/>
                             </linearGradient>
                           </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                           <XAxis 
                             dataKey="month" 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                           />
                           <YAxis 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                             tickFormatter={(value) => `$${value.toLocaleString()}`}
                           />
                           <Tooltip 

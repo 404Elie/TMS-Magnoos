@@ -271,67 +271,83 @@ export default function ManagerDashboard() {
             </TabsList>
 
             <TabsContent value="dashboard" className="bg-background space-y-8">
-              {/* Stats Cards */}
+              {/* Stats Cards with Beautiful Gradients */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-card border-border shadow-lg">
-                  <CardContent className="p-6">
+                {/* Total Requests - Electric Blue to Purple Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Total Requests</p>
-                        <p className="text-2xl font-bold text-foreground">
-                          {statsLoading ? "..." : stats?.totalRequests || 0}
+                        <p className="text-sm font-medium text-white/80">Total Requests</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.totalRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-electric-blue) / 0.2)' }}>
-                        <Plane className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-electric-blue))' }} />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30">
+                        <Plane className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-card border-border shadow-lg">
-                  <CardContent className="p-6">
+                {/* Pending Approval - Orange to Coral Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Pending Approval</p>
-                        <p className="text-2xl font-bold" style={{ color: 'hsl(var(--magnoos-yellow))' }}>
-                          {statsLoading ? "..." : stats?.pendingRequests || 0}
+                        <p className="text-sm font-medium text-white/80">Pending Approval</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.pendingRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-yellow) / 0.2)' }}>
-                        <Clock className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-yellow))' }} />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm">
+                        <Clock className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-card border-border shadow-lg">
-                  <CardContent className="p-6">
+                {/* Approved - Teal to Lime Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Approved</p>
-                        <p className="text-2xl font-bold" style={{ color: 'hsl(var(--magnoos-lime))' }}>
-                          {statsLoading ? "..." : stats?.approvedRequests || 0}
+                        <p className="text-sm font-medium text-white/80">Approved</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.approvedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-lime) / 0.2)' }}>
-                        <Check className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-lime))' }} />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm">
+                        <Check className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-card border-border shadow-lg">
-                  <CardContent className="p-6">
+                {/* Completed - Vivid Teal to Lime Green Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#A3E635] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Completed</p>
-                        <p className="text-2xl font-bold" style={{ color: 'hsl(var(--magnoos-teal))' }}>
-                          {statsLoading ? "..." : stats?.completedRequests || 0}
+                        <p className="text-sm font-medium text-white/80">Completed</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.completedRequests || 0}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'hsl(var(--magnoos-teal) / 0.2)' }}>
-                        <Flag className="w-6 h-6" style={{ color: 'hsl(var(--magnoos-teal))' }} />
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/20 backdrop-blur-sm">
+                        <Flag className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
