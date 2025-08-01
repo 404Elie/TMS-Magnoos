@@ -499,8 +499,15 @@
   
   .logout-button:hover {
     background-color: #8A2BE2 !important;
-    color: white !important;
+    color: #ffffff !important;
     border-color: #8A2BE2 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    text-shadow: none !important;
+  }
+  
+  .logout-button:hover * {
+    color: #ffffff !important;
     opacity: 1 !important;
     visibility: visible !important;
   }
