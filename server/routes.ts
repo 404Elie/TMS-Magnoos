@@ -7,6 +7,35 @@ import { zohoService } from "./zohoService";
 import { realEmailService } from "./realEmailService";
 import { z } from "zod";
 
+// Helper function to get or create default projects for sales and events
+async function getOrCreateDefaultProject(type: string, name: string, description: string): Promise<string | null> {
+  const projectId = `default-${type}`;
+  
+  try {
+    // Check if project already exists
+    let project = await storage.getProject(projectId);
+    
+    if (!project) {
+      // Create the default project
+      project = await storage.createProject({
+        id: projectId,
+        zohoProjectId: projectId, // Use same ID for Zoho reference
+        name: name,
+        description: description,
+        budget: null,
+        travelBudget: null,
+        status: 'active'
+      });
+      console.log(`✅ Created default project: ${name} (${projectId})`);
+    }
+    
+    return project.id;
+  } catch (error) {
+    console.error(`Failed to get/create default project ${type}:`, error);
+    return null; // Return null if failed, will be handled by database constraints
+  }
+}
+
 // Middleware to check user role
 const requireRole = (allowedRoles: string[]) => {
   return async (req: any, res: any, next: any) => {
@@ -283,13 +312,21 @@ export function registerRoutes(app: Express): Server {
       console.log("Received travel request data:", JSON.stringify(req.body, null, 2));
       
       // Parse and transform the data before validation
+      let projectId = req.body.projectId === "" ? null : req.body.projectId;
+      
+      // Auto-assign project for sales and events purposes
+      if (req.body.purpose === "sales" && !projectId) {
+        projectId = await getOrCreateDefaultProject("sales", "Sales Activities", "All sales-related travel expenses");
+      } else if (req.body.purpose === "event" && !projectId) {
+        projectId = await getOrCreateDefaultProject("events", "Events & Conferences", "All event and conference-related travel expenses");
+      }
+      
       const transformedData = {
         ...req.body,
         requesterId: req.user.id,
         departureDate: new Date(req.body.departureDate),
         returnDate: new Date(req.body.returnDate),
-        // Convert empty string projectId to null for database compatibility
-        projectId: req.body.projectId === "" ? null : req.body.projectId,
+        projectId: projectId,
       };
       
       const validatedData = insertTravelRequestSchema.parse(transformedData);
