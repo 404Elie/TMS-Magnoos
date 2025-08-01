@@ -269,9 +269,9 @@ export default function PMDashboard() {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
                   <CardHeader>
-                    <CardTitle className="text-white">Recent Requests Needing Approval</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">Recent Requests Needing Approval</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {pendingLoading ? (
@@ -279,14 +279,14 @@ export default function PMDashboard() {
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
                       </div>
                     ) : pendingRequests && pendingRequests.length > 0 ? (
-                      <div className="bg-magnoos-dark space-y-3">
+                      <div className="bg-gray-50 dark:bg-magnoos-dark space-y-3">
                         {pendingRequests.slice(0, 3).map((request) => (
-                          <div key={request.id} className="flex items-center justify-between p-3 rounded-lg bg-[#464646]">
+                          <div key={request.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-[#464646]">
                             <div>
-                              <p className="font-medium text-white">
+                              <p className="font-medium text-gray-900 dark:text-white">
                                 {request.traveler.firstName} {request.traveler.lastName} - {request.destination}
                               </p>
-                              <p className="text-sm text-gray-300">
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
                                 {request.project?.name} • {new Date(request.createdAt!).toRelativeTimeString?.() || 'Recently submitted'}
                               </p>
                             </div>
@@ -302,25 +302,25 @@ export default function PMDashboard() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-300 text-center py-4">No pending approvals</p>
+                      <p className="text-gray-500 dark:text-gray-300 text-center py-4">No pending approvals</p>
                     )}
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
                   <CardHeader>
-                    <CardTitle className="text-white">Project Travel Summary</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">Project Travel Summary</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-magnoos-dark space-y-3">
+                    <div className="bg-gray-50 dark:bg-magnoos-dark space-y-3">
                       {Object.entries(projectAnalytics).slice(0, 3).map(([projectName, data]) => (
                         <div key={projectName} className="flex items-center justify-between">
-                          <span className="text-gray-300">{projectName}</span>
-                          <span className="font-medium">{data.total} trips</span>
+                          <span className="text-gray-600 dark:text-gray-300">{projectName}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{data.total} trips</span>
                         </div>
                       ))}
                       {Object.keys(projectAnalytics).length === 0 && (
-                        <p className="text-gray-300 text-center py-4">No travel data yet</p>
+                        <p className="text-gray-500 dark:text-gray-300 text-center py-4">No travel data yet</p>
                       )}
                     </div>
                   </CardContent>
@@ -329,42 +329,42 @@ export default function PMDashboard() {
             </TabsContent>
 
             <TabsContent value="approvals" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
-              <Card className="bg-magnoos-dark border-magnoos-dark">
+              <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
                 <CardHeader>
-                  <CardTitle className="text-white">Pending Travel Request Approvals</CardTitle>
+                  <CardTitle className="text-gray-900 dark:text-white">Pending Travel Request Approvals</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {pendingLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-300">Loading pending requests...</p>
+                      <p className="text-gray-600 dark:text-gray-300">Loading pending requests...</p>
                     </div>
                   ) : pendingRequests && pendingRequests.length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-700">
-                        <thead className="bg-slate-800">
+                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                        <thead className="bg-gray-100 dark:bg-slate-800">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Traveler
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Destination
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Est. Cost
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Actions
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-slate-900 divide-y divide-gray-700">
+                        <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
                           {pendingRequests.map((request) => (
                             <tr key={request.id}>
                               <td className="px-6 py-4 whitespace-nowrap">
@@ -375,21 +375,21 @@ export default function PMDashboard() {
                                       {getInitials(request.traveler.firstName, request.traveler.lastName)}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <span className="text-sm font-medium text-gray-200">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                                     {request.traveler.firstName} {request.traveler.lastName}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                 {request.destination}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 {request.project?.name}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                 {formatCurrency(
                                   (parseFloat(request.estimatedFlightCost || "0") +
                                    parseFloat(request.estimatedHotelCost || "0") +
@@ -417,22 +417,23 @@ export default function PMDashboard() {
                                         Reject
                                       </Button>
                                     </DialogTrigger>
-                                    <DialogContent>
+                                    <DialogContent className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-slate-700">
                                       <DialogHeader>
-                                        <DialogTitle>Reject Travel Request</DialogTitle>
-                                        <DialogDescription>
+                                        <DialogTitle className="text-gray-900 dark:text-white">Reject Travel Request</DialogTitle>
+                                        <DialogDescription className="text-gray-600 dark:text-gray-300">
                                           Please provide a reason for rejecting this travel request.
                                         </DialogDescription>
                                       </DialogHeader>
-                                      <div className="bg-magnoos-dark space-y-4">
+                                      <div className="bg-white dark:bg-magnoos-dark space-y-4">
                                         <div>
-                                          <Label htmlFor="rejection-reason">Rejection Reason</Label>
+                                          <Label htmlFor="rejection-reason" className="text-gray-900 dark:text-white">Rejection Reason</Label>
                                           <Textarea
                                             id="rejection-reason"
                                             value={rejectionReason}
                                             onChange={(e) => setRejectionReason(e.target.value)}
                                             placeholder="Enter reason for rejection..."
                                             rows={4}
+                                            className="bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                                           />
                                         </div>
                                         <div className="flex justify-end space-x-2">
@@ -463,8 +464,8 @@ export default function PMDashboard() {
                   ) : (
                     <div className="text-center py-8">
                       <Check className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                      <p className="text-gray-300">No pending approvals</p>
-                      <p className="text-sm text-gray-300 mt-2">All travel requests have been processed</p>
+                      <p className="text-gray-600 dark:text-gray-300">No pending approvals</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">All travel requests have been processed</p>
                     </div>
                   )}
                 </CardContent>
@@ -474,32 +475,32 @@ export default function PMDashboard() {
             <TabsContent value="analytics" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Travel Requests by Project Chart Placeholder */}
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
                   <CardHeader>
-                    <CardTitle className="text-white">Travel Requests by Project</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">Travel Requests by Project</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-gray-50 dark:bg-slate-800 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                        <p className="text-gray-300">Project Analytics Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <BarChart3 className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-2" />
+                        <p className="text-gray-600 dark:text-gray-300">Project Analytics Chart</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
                 {/* Approval Timeline Placeholder */}
-                <Card className="bg-magnoos-dark border-magnoos-dark">
+                <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
                   <CardHeader>
-                    <CardTitle className="text-white">Approval Timeline Trends</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">Approval Timeline Trends</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-gray-50 dark:bg-slate-800 rounded-lg flex items-center justify-center">
                       <div className="text-center">
-                        <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                        <p className="text-gray-300">Timeline Analytics Chart</p>
-                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
+                        <TrendingUp className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-2" />
+                        <p className="text-gray-600 dark:text-gray-300">Timeline Analytics Chart</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
@@ -507,54 +508,54 @@ export default function PMDashboard() {
               </div>
               
               {/* Project Details Table */}
-              <Card className="bg-magnoos-dark border-magnoos-dark">
+              <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
                 <CardHeader>
-                  <CardTitle className="text-white">Project Travel Details</CardTitle>
+                  <CardTitle className="text-gray-900 dark:text-white">Project Travel Details</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {requestsLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-300">Loading project analytics...</p>
+                      <p className="text-gray-600 dark:text-gray-300">Loading project analytics...</p>
                     </div>
                   ) : Object.keys(projectAnalytics).length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-700">
-                        <thead className="bg-slate-800">
+                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                        <thead className="bg-gray-100 dark:bg-slate-800">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Total Requests
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Approved
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Pending
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Completed
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-slate-900 divide-y divide-gray-700">
+                        <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
                           {Object.entries(projectAnalytics).map(([projectName, data]) => (
                             <tr key={projectName}>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">
                                 {projectName}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 {data.total}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400">
                                 {data.approved}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600 dark:text-yellow-400">
                                 {data.pending}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-400">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400">
                                 {data.completed}
                               </td>
                             </tr>
@@ -564,9 +565,9 @@ export default function PMDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-300">No project data available</p>
-                      <p className="text-sm text-gray-300 mt-2">Analytics will appear once travel requests are submitted</p>
+                      <BarChart3 className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-300">No project data available</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">Analytics will appear once travel requests are submitted</p>
                     </div>
                   )}
                 </CardContent>
