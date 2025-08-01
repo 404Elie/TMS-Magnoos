@@ -26,7 +26,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
-  createUser(userData: Omit<UpsertUser, 'id'>): Promise<User>;
+  createUser(userData: UpsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
   updateUserRole(id: string, activeRole: string): Promise<User>;
@@ -34,6 +34,7 @@ export interface IStorage {
   deleteUser(id: string): Promise<void>;
   
   // Project operations
+  getProject(id: string): Promise<Project | undefined>;
   getProjects(): Promise<Project[]>;
   createProject(project: InsertProject): Promise<Project>;
   updateProject(id: string, project: Partial<InsertProject>): Promise<Project>;
@@ -88,7 +89,7 @@ export class DatabaseStorage implements IStorage {
     return allUsers;
   }
 
-  async createUser(userData: Omit<UpsertUser, 'id'>): Promise<User> {
+  async createUser(userData: UpsertUser): Promise<User> {
     const [user] = await db.insert(users).values(userData).returning();
     return user;
   }
@@ -140,6 +141,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Project operations
+  async getProject(id: string): Promise<Project | undefined> {
+    const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    return project;
+  }
+
   async getProjects(): Promise<Project[]> {
     return await db.select().from(projects).orderBy(asc(projects.name));
   }

@@ -310,6 +310,35 @@ export function registerRoutes(app: Express): Server {
         }
       }
 
+      // Ensure the project exists in our local database (if projectId is provided)
+      if (validatedData.projectId) {
+        let project = await storage.getProject(validatedData.projectId);
+        if (!project) {
+          // Try to find the project in Zoho projects and create local record
+          try {
+            const zohoProjects = await zohoService.getProjects();
+            const zohoProject = zohoProjects.find(p => String(p.id) === validatedData.projectId);
+            if (zohoProject) {
+              // Create the project in our local database
+              project = await storage.createProject({
+                id: String(zohoProject.id),
+                zohoProjectId: String(zohoProject.id),
+                name: zohoProject.name,
+                description: zohoProject.description || '',
+                budget: null,
+                travelBudget: null,
+                status: 'active'
+              });
+            } else {
+              return res.status(400).json({ message: "Selected project not found" });
+            }
+          } catch (zohoError) {
+            console.error("Error fetching Zoho project:", zohoError);
+            return res.status(400).json({ message: "Unable to verify project" });
+          }
+        }
+      }
+
       const requestData = validatedData;
       const newRequest = await storage.createTravelRequest(requestData);
       
