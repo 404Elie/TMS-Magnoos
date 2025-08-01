@@ -481,21 +481,21 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                {/* Monthly Spend - Teal to Lime Gradient */}
+                {/* Monthly Spend - Vivid Teal to Dark Blue Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#0032FF] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/80">Monthly Spend</p>
-                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                        <p className="text-sm font-medium text-white/90">Monthly Spend</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300 drop-shadow-lg">
                           {statsLoading ? (
                             <span className="shimmer inline-block w-20 h-8 bg-white/20 rounded"></span>
                           ) : formatCurrency(stats?.monthlySpend || 0)}
                         </p>
                       </div>
-                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <DollarSign className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110" />
+                      <div className="w-12 h-12 bg-white/25 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <DollarSign className="w-6 h-6 text-white transition-transform duration-300 hover:scale-110 drop-shadow-md" />
                       </div>
                     </div>
                   </CardContent>
