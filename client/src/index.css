@@ -814,3 +814,15 @@
     border: 2px solid hsl(175, 100%, 85%) !important;
     color: hsl(220, 45%, 20%) !important;
   }
+
+/* Auth page tab orange fill */
+.auth-page [role="tab"][data-state="active"],
+.auth-page [data-state="active"] {
+  background-color: #FF6F00 !important;
+  color: white !important;
+}
+
+.auth-page [role="tab"] {
+  background-color: transparent !important;
+  color: #464646 !important;
+}
