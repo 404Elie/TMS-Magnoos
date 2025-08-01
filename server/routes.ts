@@ -227,6 +227,8 @@ export function registerRoutes(app: Express): Server {
       const userId = req.user.id;
       const user = await storage.getUser(userId);
       
+      console.log(`Travel requests query - User: ${user?.email}, Role: ${user?.role}, needsApproval: ${req.query.needsApproval}`);
+      
       let filters: any = {};
       
       // Role-based filtering
@@ -235,6 +237,7 @@ export function registerRoutes(app: Express): Server {
       } else if (user?.role === 'pm') {
         // PMs see all requests but can filter by status
         if (req.query.needsApproval === 'true') {
+          console.log(`PM filtering for pending approvals only (status=submitted)`);
           filters.pmId = userId; // This will filter for submitted status
         }
       }
@@ -243,7 +246,9 @@ export function registerRoutes(app: Express): Server {
       if (req.query.projectId) filters.projectId = req.query.projectId;
       if (req.query.status) filters.status = req.query.status;
 
+      console.log(`Applied filters:`, filters);
       const requests = await storage.getTravelRequests(filters);
+      console.log(`Returned ${requests.length} requests, statuses: [${requests.map(r => r.status).join(', ')}]`);
       res.json(requests);
     } catch (error) {
       console.error("Error fetching travel requests:", error);
