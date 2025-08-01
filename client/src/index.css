@@ -318,36 +318,6 @@
     box-shadow: 0 6px 20px rgba(0, 50, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   }
   
-  /* Form elements with enhanced light mode styling */
-  .light input,
-  .light textarea,
-  .light select,
-  .light [role="combobox"],
-  .light button[role="combobox"] {
-    background-color: hsl(0, 0%, 100%) !important;
-    border-color: hsl(175, 100%, 85%) !important;
-    color: hsl(0, 0%, 15%) !important;
-  }
-  
-  .light input:focus,
-  .light textarea:focus,
-  .light select:focus,
-  .light [role="combobox"]:focus,
-  .light button[role="combobox"]:focus {
-    background-color: hsl(0, 0%, 100%) !important;
-    border-color: hsl(236, 100%, 58%) !important;
-    box-shadow: 0 0 0 2px hsla(236, 100%, 58%, 0.2) !important;
-  }
-  
-  .light input:hover,
-  .light textarea:hover,
-  .light select:hover,
-  .light [role="combobox"]:hover,
-  .light button[role="combobox"]:hover {
-    background-color: hsl(175, 100%, 99%) !important;
-    border-color: hsl(175, 100%, 80%) !important;
-  }
-
   /* Custom clean tab styling - Light theme */
   .custom-tab {
     background: transparent !important;
@@ -441,9 +411,9 @@
     border-color: hsl(220, 45%, 10%);
   }
   
-  /* ONLY target the specific dashboard tabs purple background issue */
+  /* Remove dark background from dashboard tab panels - now transparent for gradient background */
   .operations-dashboard [role="tabpanel"],
   .manager-dashboard [role="tabpanel"],
   .pm-dashboard [role="tabpanel"] {
-    background-color: hsl(220, 45%, 10%) !important;
+    background-color: transparent !important;
   }
