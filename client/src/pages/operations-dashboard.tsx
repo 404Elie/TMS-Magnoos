@@ -1270,90 +1270,81 @@ export default function OperationsDashboard() {
 
         {/* Completion Modal with Multiple Bookings */}
         <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 shadow-2xl">
-            <DialogHeader className="pb-4 border-b border-gray-200 dark:border-slate-700">
-              <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
-              <DialogDescription className="text-gray-600 dark:text-gray-300 mt-2">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900">
+            <DialogHeader>
+              <DialogTitle className="text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-300">
                 Add booking details for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}'s trip to {selectedRequest?.destination}
               </DialogDescription>
             </DialogHeader>
             
-            <div className="space-y-6 mt-6">
+            <div className="space-y-6">
               {/* Travel Request Summary */}
-              <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 p-6 rounded-xl border border-gray-200 dark:border-slate-600">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                  <div className="w-2 h-2 bg-magnoos-blue rounded-full mr-3"></div>
-                  Trip Summary
-                </h3>
-                <div className="grid grid-cols-2 gap-6 text-sm">
-                  <div className="text-gray-700 dark:text-gray-200">
-                    <span className="font-semibold text-magnoos-blue dark:text-magnoos-purple">Destination:</span> {selectedRequest?.destination}
+              <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Trip Summary</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-gray-600 dark:text-gray-300">
+                    <span className="font-medium">Destination:</span> {selectedRequest?.destination}
                   </div>
-                  <div className="text-gray-700 dark:text-gray-200">
-                    <span className="font-semibold text-magnoos-blue dark:text-magnoos-purple">Dates:</span> {selectedRequest && new Date(selectedRequest.departureDate).toLocaleDateString()} - {selectedRequest && new Date(selectedRequest.returnDate).toLocaleDateString()}
+                  <div className="text-gray-600 dark:text-gray-300">
+                    <span className="font-medium">Dates:</span> {selectedRequest && new Date(selectedRequest.departureDate).toLocaleDateString()} - {selectedRequest && new Date(selectedRequest.returnDate).toLocaleDateString()}
                   </div>
-                  <div className="text-gray-700 dark:text-gray-200">
-                    <span className="font-semibold text-magnoos-blue dark:text-magnoos-purple">Project:</span> {selectedRequest?.project?.name || 'N/A'}
+                  <div className="text-gray-600 dark:text-gray-300">
+                    <span className="font-medium">Project:</span> {selectedRequest?.project?.name || 'N/A'}
                   </div>
-                  <div className="text-gray-700 dark:text-gray-200">
-                    <span className="font-semibold text-magnoos-blue dark:text-magnoos-purple">Purpose:</span> {selectedRequest?.purpose}
+                  <div className="text-gray-600 dark:text-gray-300">
+                    <span className="font-medium">Purpose:</span> {selectedRequest?.purpose}
                   </div>
                 </div>
               </div>
 
               {/* Booking Entries */}
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-gray-200 dark:border-slate-600">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                    <div className="w-2 h-2 bg-magnoos-purple rounded-full mr-3"></div>
-                    Booking Details
-                  </h3>
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">Booking Details</h3>
                   <Button
                     onClick={addBookingEntry}
                     size="sm"
-                    className="bg-magnoos-blue hover:bg-magnoos-dark-blue text-white shadow-lg"
+                    className="bg-magnoos-blue hover:bg-magnoos-dark-blue text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Add Booking
                   </Button>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {bookingEntries.map((booking, index) => (
-                    <div key={index} className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-700 p-6 rounded-xl border border-blue-200 dark:border-slate-600 shadow-sm">
-                      <div className="flex justify-between items-center mb-6">
-                        <h4 className="text-md font-semibold text-gray-900 dark:text-white flex items-center">
-                          <div className="w-3 h-3 bg-magnoos-blue rounded-full mr-3"></div>
-                          Booking {index + 1}
-                        </h4>
+                    <div key={index} className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="font-medium text-gray-900 dark:text-white">Booking {index + 1}</h4>
                         {bookingEntries.length > 1 && (
                           <Button
                             onClick={() => removeBookingEntry(index)}
                             size="sm"
                             variant="outline"
-                            className="text-gray-600 dark:text-gray-300 border-gray-300 dark:border-slate-500 hover:bg-gray-100 dark:hover:bg-slate-600 hover:text-gray-800 dark:hover:text-white"
+                            className="text-gray-600 dark:text-gray-400 border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700"
                           >
                             Remove
                           </Button>
                         )}
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-6">
+                      <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor={`type-${index}`} className="text-gray-800 dark:text-gray-200 font-medium mb-2 block">Type</Label>
+                          <Label htmlFor={`type-${index}`} className="text-gray-700 dark:text-gray-300">Type</Label>
                           <Select 
                             value={booking.type} 
                             onValueChange={(value) => updateBookingEntry(index, 'type', value)}
                           >
-                            <SelectTrigger className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500 text-gray-900 dark:text-white h-11 shadow-sm focus:ring-2 focus:ring-magnoos-blue">
+                            <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
                               <SelectValue placeholder="Select booking type" />
                             </SelectTrigger>
-                            <SelectContent className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500">
-                              <SelectItem value="accommodation">🏨 Accommodation</SelectItem>
-                              <SelectItem value="car_rental">🚗 Car Rental</SelectItem>
-                              <SelectItem value="per_diem">💰 Per Diem</SelectItem>
-                              <SelectItem value="ticket">✈️ Ticket</SelectItem>
-                              <SelectItem value="other">📝 Other</SelectItem>
+                            <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                              <SelectItem value="accommodation">Accommodation</SelectItem>
+                              <SelectItem value="car_rental">Car Rental</SelectItem>
+                              <SelectItem value="per_diem">Per Diem</SelectItem>
+                              <SelectItem value="ticket">Ticket</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -1361,19 +1352,19 @@ export default function OperationsDashboard() {
                         {booking.type === 'per_diem' ? (
                           <>
                             <div>
-                              <Label htmlFor={`rate-${index}`} className="text-gray-800 dark:text-gray-200 font-medium mb-2 block">Per Diem Rate ($/day)</Label>
+                              <Label htmlFor={`rate-${index}`} className="text-gray-700 dark:text-gray-300">Per Diem Rate ($/day)</Label>
                               <Input
                                 id={`rate-${index}`}
                                 type="number"
                                 step="0.01"
                                 value={booking.perDiemRate}
                                 onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
-                                className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500 text-gray-900 dark:text-white h-11 shadow-sm focus:ring-2 focus:ring-magnoos-blue"
+                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                                 placeholder="0.00"
                               />
                             </div>
                             <div>
-                              <Label htmlFor={`cost-${index}`} className="text-gray-800 dark:text-gray-200 font-medium mb-2 block">
+                              <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">
                                 Total Cost (${selectedRequest ? Math.ceil((new Date(selectedRequest.returnDate).getTime() - new Date(selectedRequest.departureDate).getTime()) / (1000 * 3600 * 24)) : 0} days)
                               </Label>
                               <Input
@@ -1382,7 +1373,7 @@ export default function OperationsDashboard() {
                                 step="0.01"
                                 value={booking.cost}
                                 onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                                className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500 text-gray-900 dark:text-white h-11 shadow-sm focus:ring-2 focus:ring-magnoos-blue"
+                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                                 placeholder="0.00"
                                 readOnly={booking.type === 'per_diem'}
                               />
@@ -1390,48 +1381,48 @@ export default function OperationsDashboard() {
                           </>
                         ) : (
                           <div>
-                            <Label htmlFor={`cost-${index}`} className="text-gray-800 dark:text-gray-200 font-medium mb-2 block">Cost ($)</Label>
+                            <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">Cost ($)</Label>
                             <Input
                               id={`cost-${index}`}
                               type="number"
                               step="0.01"
                               value={booking.cost}
                               onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                              className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500 text-gray-900 dark:text-white h-11 shadow-sm focus:ring-2 focus:ring-magnoos-blue"
+                              className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                               placeholder="0.00"
                             />
                           </div>
                         )}
                         
                         <div>
-                          <Label htmlFor={`provider-${index}`} className="text-gray-800 dark:text-gray-200 font-medium mb-2 block">Provider</Label>
+                          <Label htmlFor={`provider-${index}`} className="text-gray-700 dark:text-gray-300">Provider</Label>
                           <Input
                             id={`provider-${index}`}
                             value={booking.provider}
                             onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
-                            className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500 text-gray-900 dark:text-white h-11 shadow-sm focus:ring-2 focus:ring-magnoos-blue"
+                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                             placeholder="e.g., Hotel Name, Airline"
                           />
                         </div>
                         
                         <div>
-                          <Label htmlFor={`reference-${index}`} className="text-gray-800 dark:text-gray-200 font-medium mb-2 block">Reference</Label>
+                          <Label htmlFor={`reference-${index}`} className="text-gray-700 dark:text-gray-300">Reference</Label>
                           <Input
                             id={`reference-${index}`}
                             value={booking.bookingReference}
                             onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
-                            className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500 text-gray-900 dark:text-white h-11 shadow-sm focus:ring-2 focus:ring-magnoos-blue"
+                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                             placeholder="Booking reference/confirmation"
                           />
                         </div>
                         
                         <div className="col-span-2">
-                          <Label htmlFor={`details-${index}`} className="text-gray-800 dark:text-gray-200 font-medium mb-2 block">Details</Label>
+                          <Label htmlFor={`details-${index}`} className="text-gray-700 dark:text-gray-300">Details</Label>
                           <Input
                             id={`details-${index}`}
                             value={booking.details}
                             onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
-                            className="bg-white dark:bg-slate-700 border-blue-200 dark:border-slate-500 text-gray-900 dark:text-white h-11 shadow-sm focus:ring-2 focus:ring-magnoos-blue"
+                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                             placeholder="Additional details"
                           />
                         </div>
@@ -1442,31 +1433,28 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Total Cost Summary */}
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 p-6 rounded-xl border border-green-200 dark:border-slate-600 shadow-lg">
+              <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-lg border border-gray-300 dark:border-slate-700">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-                    <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                    Total Cost:
-                  </span>
-                  <span className="text-2xl font-bold text-green-700 dark:text-green-400">
+                  <span className="font-semibold text-gray-900 dark:text-white">Total Cost:</span>
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">
                     ${bookingEntries.reduce((sum, booking) => sum + (parseFloat(booking.cost) || 0), 0).toFixed(2)}
                   </span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+              <div className="flex justify-end space-x-4">
                 <Button
                   onClick={() => setCompletionModalOpen(false)}
                   variant="outline"
-                  className="border-gray-300 dark:border-slate-500 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 px-6 py-2 h-11"
+                  className="border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleCompleteWithBookings}
                   disabled={completeRequestMutation.isPending || bookingEntries.every(b => !b.type || !b.cost)}
-                  className="bg-green-600 hover:bg-green-700 text-white shadow-lg px-6 py-2 h-11"
+                  className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   {completeRequestMutation.isPending ? "Completing..." : "Complete Request"}
                 </Button>
