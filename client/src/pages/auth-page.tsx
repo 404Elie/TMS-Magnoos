@@ -233,7 +233,7 @@ export default function AuthPage() {
 
                 <TabsContent value="login" className="space-y-4 mt-6">
                   <Form {...loginForm}>
-                    <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+                    <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4 bg-[#f2f1fe]">
                       <FormField
                         control={loginForm.control}
                         name="email"
