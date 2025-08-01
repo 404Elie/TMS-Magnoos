@@ -193,6 +193,13 @@ class RealEmailService {
           <p style="margin: 0; color: #0032FF; font-weight: bold;">✅ This is a REAL email from the Magnoos Travel Management System</p>
         </div>
         
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
+             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Access Travel Management System
+          </a>
+        </div>
+        
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
           Original recipients: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}<br>
           Test routing: All notifications sent to e.radi@magnoos.com
@@ -252,6 +259,13 @@ class RealEmailService {
         
         <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #1ABC3C;">
           <p style="margin: 0; color: #1ABC3C; font-weight: bold;">🎯 Next Steps: Operations team will now handle your booking arrangements.</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
+             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Access Travel Management System
+          </a>
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
@@ -354,6 +368,13 @@ class RealEmailService {
         
         <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #1ABC3C;">
           <p style="margin: 0; color: #1ABC3C; font-weight: bold;">✅ All travel arrangements are now complete and confirmed!</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
+             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Access Travel Management System
+          </a>
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
