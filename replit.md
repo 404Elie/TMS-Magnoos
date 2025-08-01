@@ -118,6 +118,15 @@ The system is designed to be scalable, maintainable, and provides a smooth user 
 ## Recent Changes
 
 ### August 1, 2025
+- **Role Renaming Complete**: Updated all role display names throughout the application:
+  - **"Manager" → "Member"**: Users who submit travel requests are now called "Members"
+  - **"PM" → "Manager"**: Users who approve requests are now called "Managers" 
+  - All functionality remains identical, only display names changed in Header, auth page, and landing page
+- **Logout Button Styling Fixed**: Resolved visibility issues with clean electric purple hover effect:
+  - Removed complex multi-color hover styling that was causing button to become invisible
+  - Added simple electric purple (#8A2BE2) highlight on hover with white text
+  - Ensured button remains visible at all times with proper base styling and CSS overrides
+  - Located in `client/src/index.css` with `.logout-button` class targeting
 - **Role-Based Email Notifications Implemented**: Comprehensive automatic email system where new users receive emails based on their role:
   - **Manager Role**: Only gets emails for their own travel requests when Operations completes bookings (not all managers get all emails)
   - **PM Role**: Gets emails when any Manager submits request AND when Operations completes bookings  
