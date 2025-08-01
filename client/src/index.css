@@ -845,8 +845,8 @@
 [data-radix-select-item]:hover,
 [data-radix-select-item][data-highlighted],
 .ui-select-item:hover {
-  background-color: #3B82F6 !important; /* Electric Blue hover */
-  color: white !important;
+  background-color: rgba(59, 130, 246, 0.1) !important; /* Light blue hover */
+  color: #1D4ED8 !important; /* Blue text */
 }
 
 /* Dark mode dropdown hover states */
@@ -855,8 +855,8 @@
 .dark [data-radix-select-item]:hover,
 .dark [data-radix-select-item][data-highlighted],
 .dark .ui-select-item:hover {
-  background-color: #1D4ED8 !important; /* Darker blue for dark mode */
-  color: white !important;
+  background-color: rgba(59, 130, 246, 0.2) !important; /* Darker blue background for dark mode */
+  color: #60A5FA !important; /* Lighter blue text for dark mode */
 }
 
 /* Ensure dropdown text is visible in both modes */
@@ -865,11 +865,12 @@
 .ui-select-item {
   color: #111827 !important;
   background-color: transparent !important;
+  transition: all 0.2s ease !important;
 }
 
 .dark [role="option"],
 .dark [data-radix-select-item],
 .dark .ui-select-item {
-  color: white !important;
+  color: #E5E7EB !important;
   background-color: transparent !important;
 }
