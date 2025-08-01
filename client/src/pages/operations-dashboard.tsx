@@ -524,43 +524,43 @@ export default function OperationsDashboard() {
 
               {/* Beautiful Charts with Magnoos Colors */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-card border-border shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-foreground flex items-center gap-2">
+                <Card className="bg-white dark:bg-white border-border shadow-lg">
+                  <CardHeader className="bg-white dark:bg-white">
+                    <CardTitle className="text-gray-800 dark:text-gray-800 flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-[#00D9C0]" />
                       Monthly Expense Trend
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="bg-white dark:bg-white">
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={prepareMonthlyTrendData()}>
                           <defs>
                             <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                               <stop offset="5%" stopColor="#00D9C0" stopOpacity={0.8}/>
-                              <stop offset="95%" stopColor="#A3E635" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="#A3E635" stopOpacity={0.3}/>
                             </linearGradient>
                           </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                           <XAxis 
                             dataKey="month" 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: 'hsl(var(--foreground))', fontSize: 12, fontWeight: 500 }}
+                            tick={{ fill: '#374151', fontSize: 12, fontWeight: 600 }}
                           />
                           <YAxis 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: 'hsl(var(--foreground))', fontSize: 12, fontWeight: 500 }}
+                            tick={{ fill: '#374151', fontSize: 12, fontWeight: 600 }}
                             tickFormatter={(value) => `$${value.toLocaleString()}`}
                           />
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: 'hsl(var(--card))', 
-                              border: '1px solid hsl(var(--border))',
+                              backgroundColor: '#FFFFFF', 
+                              border: '1px solid #D1D5DB',
                               borderRadius: '8px',
-                              color: 'hsl(var(--foreground))',
-                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
+                              color: '#111827',
+                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
