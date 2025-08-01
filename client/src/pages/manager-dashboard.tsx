@@ -249,10 +249,10 @@ export default function ManagerDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["manager"]}>
-      <div className="min-h-screen bg-background manager-dashboard">
+      <div className="min-h-screen dark:bg-background light:bg-transparent manager-dashboard">
         <Header currentRole="manager" />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-background">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-2 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
@@ -270,7 +270,7 @@ export default function ManagerDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8 bg-[#f9f9f9]">
+            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
               {/* Stats Cards with Beautiful Gradients */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Total Requests - Electric Blue to Purple Gradient */}
@@ -436,7 +436,7 @@ export default function ManagerDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="submit" className="space-y-8 bg-[#f9f9f9]">
+            <TabsContent value="submit" className="space-y-8 dark:bg-background light:bg-transparent">
               <div className="max-w-4xl mx-auto">
                 <Card className="bg-card border-border shadow-lg dark:bg-card dark:border-border light:bg-gradient-to-br light:from-[hsl(0,0%,100%)] light:to-[hsl(175,100%,99%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
                   <CardHeader>
