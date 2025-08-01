@@ -234,11 +234,11 @@ export function registerRoutes(app: Express): Server {
       // Role-based filtering
       if (user?.role === 'manager') {
         filters.requesterId = userId; // Managers see only their requests
-      } else if (user?.role === 'pm') {
-        // PMs see all requests but can filter by status
+      } else if (user?.role === 'pm' || user?.role === 'admin') {
+        // PMs and admins see all requests but can filter by status
         if (req.query.needsApproval === 'true') {
-          console.log(`PM filtering for pending approvals only (status=submitted)`);
-          filters.pmId = userId; // This will filter for submitted status
+          console.log(`${user?.role.toUpperCase()} filtering for pending approvals only (status=submitted)`);
+          filters.status = 'submitted'; // Filter for submitted status only
         }
       }
       // Operations see all requests (no additional filters)
