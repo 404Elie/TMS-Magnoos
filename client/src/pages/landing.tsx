@@ -57,14 +57,14 @@ export default function Landing() {
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Manager Features */}
+            {/* Member Features */}
             <Card className="border-l-4 border-l-magnoos-blue">
               <CardHeader>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Users className="w-6 h-6 text-magnoos-blue" />
                   </div>
-                  <CardTitle className="text-magnoos-dark">Manager Portal</CardTitle>
+                  <CardTitle className="text-magnoos-dark">Member Portal</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -92,14 +92,14 @@ export default function Landing() {
               </CardContent>
             </Card>
 
-            {/* PM Features */}
+            {/* Manager Features */}
             <Card className="border-l-4 border-l-green-500">
               <CardHeader>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                     <TrendingUp className="w-6 h-6 text-green-600" />
                   </div>
-                  <CardTitle className="text-magnoos-dark">PM Dashboard</CardTitle>
+                  <CardTitle className="text-magnoos-dark">Manager Dashboard</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>

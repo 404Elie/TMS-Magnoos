@@ -32,8 +32,8 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
-      case 'manager': return 'Manager';
-      case 'pm': return 'Project Manager';
+      case 'manager': return 'Member';
+      case 'pm': return 'Manager';
       case 'operations': return 'Operations';
       case 'admin': return 'Admin';
       default: return role;

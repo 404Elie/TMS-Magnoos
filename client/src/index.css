@@ -488,10 +488,8 @@
     border-color: #64748b !important;
   }
   
-  /* Ultra-specific fix for Logout button - override everything */
-  header .hidden.sm\\:flex.border-border.text-foreground:hover,
-  .header .hidden.sm\\:flex:hover,
-  button.hidden.sm\\:flex:hover {
+  /* Fixed logout button with explicit background and text colors */
+  .text-\\[\\#001538\\].bg-\\[\\#ffffff\\]:hover {
     background-color: hsl(175, 100%, 92%) !important;
     color: hsl(236, 100%, 58%) !important;
     border-color: hsl(236, 100%, 58%) !important;
@@ -499,9 +497,7 @@
     visibility: visible !important;
   }
   
-  .dark header .hidden.sm\\:flex.border-border.text-foreground:hover,
-  .dark .header .hidden.sm\\:flex:hover,
-  .dark button.hidden.sm\\:flex:hover {
+  .dark .text-\\[\\#001538\\].bg-\\[\\#ffffff\\]:hover {
     background-color: #334155 !important;
     color: #f1f5f9 !important;
     border-color: #64748b !important;
