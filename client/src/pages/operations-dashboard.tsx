@@ -1301,7 +1301,7 @@ export default function OperationsDashboard() {
               {/* Booking Entries */}
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold text-white">Booking Details</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white">Booking Details</h3>
                   <Button
                     onClick={addBookingEntry}
                     size="sm"
@@ -1314,15 +1314,15 @@ export default function OperationsDashboard() {
                 
                 <div className="space-y-4">
                   {bookingEntries.map((booking, index) => (
-                    <div key={index} className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                    <div key={index} className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
                       <div className="flex justify-between items-center mb-4">
-                        <h4 className="font-medium text-white">Booking {index + 1}</h4>
+                        <h4 className="font-medium text-gray-900 dark:text-white">Booking {index + 1}</h4>
                         {bookingEntries.length > 1 && (
                           <Button
                             onClick={() => removeBookingEntry(index)}
                             size="sm"
                             variant="outline"
-                            className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+                            className="text-red-600 dark:text-red-400 border-red-300 dark:border-red-400 hover:bg-red-50 dark:hover:bg-red-400 hover:text-red-700 dark:hover:text-white"
                           >
                             Remove
                           </Button>
@@ -1331,15 +1331,15 @@ export default function OperationsDashboard() {
                       
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor={`type-${index}`} className="text-gray-300">Type</Label>
+                          <Label htmlFor={`type-${index}`} className="text-gray-700 dark:text-gray-300">Type</Label>
                           <Select 
                             value={booking.type} 
                             onValueChange={(value) => updateBookingEntry(index, 'type', value)}
                           >
-                            <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                            <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
                               <SelectValue placeholder="Select booking type" />
                             </SelectTrigger>
-                            <SelectContent className="bg-slate-700 border-slate-600">
+                            <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
                               <SelectItem value="accommodation">Accommodation</SelectItem>
                               <SelectItem value="car_rental">Car Rental</SelectItem>
                               <SelectItem value="per_diem">Per Diem</SelectItem>
@@ -1352,19 +1352,19 @@ export default function OperationsDashboard() {
                         {booking.type === 'per_diem' ? (
                           <>
                             <div>
-                              <Label htmlFor={`rate-${index}`} className="text-gray-300">Per Diem Rate ($/day)</Label>
+                              <Label htmlFor={`rate-${index}`} className="text-gray-700 dark:text-gray-300">Per Diem Rate ($/day)</Label>
                               <Input
                                 id={`rate-${index}`}
                                 type="number"
                                 step="0.01"
                                 value={booking.perDiemRate}
                                 onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
-                                className="bg-slate-700 border-slate-600 text-white"
+                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                                 placeholder="0.00"
                               />
                             </div>
                             <div>
-                              <Label htmlFor={`cost-${index}`} className="text-gray-300">
+                              <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">
                                 Total Cost (${selectedRequest ? Math.ceil((new Date(selectedRequest.returnDate).getTime() - new Date(selectedRequest.departureDate).getTime()) / (1000 * 3600 * 24)) : 0} days)
                               </Label>
                               <Input
@@ -1373,7 +1373,7 @@ export default function OperationsDashboard() {
                                 step="0.01"
                                 value={booking.cost}
                                 onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                                className="bg-slate-700 border-slate-600 text-white"
+                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                                 placeholder="0.00"
                                 readOnly={booking.type === 'per_diem'}
                               />
@@ -1381,48 +1381,48 @@ export default function OperationsDashboard() {
                           </>
                         ) : (
                           <div>
-                            <Label htmlFor={`cost-${index}`} className="text-gray-300">Cost ($)</Label>
+                            <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">Cost ($)</Label>
                             <Input
                               id={`cost-${index}`}
                               type="number"
                               step="0.01"
                               value={booking.cost}
                               onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                              className="bg-slate-700 border-slate-600 text-white"
+                              className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                               placeholder="0.00"
                             />
                           </div>
                         )}
                         
                         <div>
-                          <Label htmlFor={`provider-${index}`} className="text-gray-300">Provider</Label>
+                          <Label htmlFor={`provider-${index}`} className="text-gray-700 dark:text-gray-300">Provider</Label>
                           <Input
                             id={`provider-${index}`}
                             value={booking.provider}
                             onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
-                            className="bg-slate-700 border-slate-600 text-white"
+                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                             placeholder="e.g., Hotel Name, Airline"
                           />
                         </div>
                         
                         <div>
-                          <Label htmlFor={`reference-${index}`} className="text-gray-300">Reference</Label>
+                          <Label htmlFor={`reference-${index}`} className="text-gray-700 dark:text-gray-300">Reference</Label>
                           <Input
                             id={`reference-${index}`}
                             value={booking.bookingReference}
                             onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
-                            className="bg-slate-700 border-slate-600 text-white"
+                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                             placeholder="Booking reference/confirmation"
                           />
                         </div>
                         
                         <div className="col-span-2">
-                          <Label htmlFor={`details-${index}`} className="text-gray-300">Details</Label>
+                          <Label htmlFor={`details-${index}`} className="text-gray-700 dark:text-gray-300">Details</Label>
                           <Input
                             id={`details-${index}`}
                             value={booking.details}
                             onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
-                            className="bg-slate-700 border-slate-600 text-white"
+                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
                             placeholder="Additional details"
                           />
                         </div>
@@ -1433,10 +1433,10 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Total Cost Summary */}
-              <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
+              <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-lg border border-gray-300 dark:border-slate-700">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold text-white">Total Cost:</span>
-                  <span className="text-xl font-bold text-white">
+                  <span className="font-semibold text-gray-900 dark:text-white">Total Cost:</span>
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">
                     ${bookingEntries.reduce((sum, booking) => sum + (parseFloat(booking.cost) || 0), 0).toFixed(2)}
                   </span>
                 </div>
@@ -1447,7 +1447,7 @@ export default function OperationsDashboard() {
                 <Button
                   onClick={() => setCompletionModalOpen(false)}
                   variant="outline"
-                  className="border-slate-600 text-gray-300 hover:bg-slate-700"
+                  className="border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
                 >
                   Cancel
                 </Button>
