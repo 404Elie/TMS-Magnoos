@@ -50,6 +50,8 @@ export function registerRoutes(app: Express): Server {
       const zohoUsers = await zohoService.getUsers();
       
       if (zohoUsers.length > 0) {
+        // Debug logging removed after investigation
+        
         // Transform Zoho users to expected format
         const transformedUsers = zohoUsers.map(user => ({
           id: user.id,
