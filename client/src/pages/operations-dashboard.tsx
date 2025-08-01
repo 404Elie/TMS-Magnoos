@@ -316,7 +316,17 @@ export default function OperationsDashboard() {
 
   // Calculate project budget summaries
   const projectBudgetSummaries = projects?.map(project => {
-    const projectRequests = requests?.filter(req => req.projectId === project.id) || [];
+    // Filter for completed travel requests that have actual costs
+    // Try both direct ID matching and zohoProjectId matching
+    const projectRequests = requests?.filter(req => {
+      const projectIdMatch = String(req.projectId) === String(project.id);
+      const zohoIdMatch = String(req.projectId) === String(project.zohoProjectId);
+      return (projectIdMatch || zohoIdMatch) && 
+             req.status === 'operations_completed' && 
+             req.actualTotalCost && 
+             parseFloat(req.actualTotalCost) > 0;
+    }) || [];
+    
     const totalSpent = projectRequests.reduce((sum, req) => {
       return sum + (parseFloat(req.actualTotalCost || "0"));
     }, 0);
@@ -1132,8 +1142,8 @@ export default function OperationsDashboard() {
                           </tr>
                         </thead>
                         <tbody className="bg-slate-900 divide-y divide-gray-700">
-                          {projectBudgetSummaries.map((project) => (
-                            <tr key={project.id}>
+                          {projectBudgetSummaries.map((project, index) => (
+                            <tr key={`project-${project.id}-${index}`}>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm font-medium text-gray-200">{project.name}</div>
                                 <div className="text-sm text-gray-300">{project.description}</div>
