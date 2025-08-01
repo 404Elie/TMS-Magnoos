@@ -331,7 +331,7 @@
   }
   
   .custom-tab[data-state="active"] {
-    background: #8A2BE2 !important;
+    background: linear-gradient(135deg, #8A2BE2, #9A3BF2) !important;
     border: 1px solid #8A2BE2 !important;
     color: white !important;
     font-weight: 600 !important;
@@ -339,6 +339,16 @@
     box-shadow: 0 2px 8px rgba(138, 43, 226, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     ring: none !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    position: relative !important;
+  }
+  
+  .custom-tab[data-state="active"]::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(135deg, #8A2BE2, #9A3BF2) !important;
+    border-radius: inherit !important;
+    z-index: -1 !important;
   }
   
   .custom-tab:hover:not([data-state="active"]) {
@@ -527,6 +537,26 @@
   html:not(.dark) [data-theme="light"] .bg-background input,
   html:not(.dark) [data-theme="light"] .bg-input,
   html:not(.dark) [data-theme="light"] input.bg-background {
+    background-color: hsl(0, 0%, 100%) !important;
+    border: 2px solid hsl(175, 100%, 85%) !important;
+    color: hsl(220, 45%, 20%) !important;
+  }
+  
+  /* Override any remaining dark input styling in light mode */
+  html:not(.dark) input[class*="bg-"],
+  html:not(.dark) textarea[class*="bg-"],
+  html:not(.dark) select[class*="bg-"],
+  html:not(.dark) [data-theme="light"] input[class*="bg-"],
+  html:not(.dark) [data-theme="light"] textarea[class*="bg-"],
+  html:not(.dark) [data-theme="light"] select[class*="bg-"] {
+    background-color: hsl(0, 0%, 100%) !important;
+    border-color: hsl(175, 100%, 85%) !important;
+    color: hsl(220, 45%, 20%) !important;
+  }
+  
+  /* Force white backgrounds on all input-like elements in light mode */
+  html:not(.dark) [role="combobox"]:not([data-state="active"]),
+  html:not(.dark) [data-theme="light"] [role="combobox"]:not([data-state="active"]) {
     background-color: hsl(0, 0%, 100%) !important;
     border: 2px solid hsl(175, 100%, 85%) !important;
     color: hsl(220, 45%, 20%) !important;
