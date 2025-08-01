@@ -39,7 +39,8 @@ export default function PMDashboard() {
 
   // Fetch pending approvals
   const { data: pendingRequests, isLoading: pendingLoading } = useQuery<TravelRequestWithDetails[]>({
-    queryKey: ["/api/travel-requests", { needsApproval: true }],
+    queryKey: ["/api/travel-requests", "needsApproval=true"],
+    queryFn: () => apiRequest("GET", "/api/travel-requests?needsApproval=true").then(res => res.json()),
     retry: false,
   });
 
@@ -53,7 +54,9 @@ export default function PMDashboard() {
         title: "Success",
         description: "Travel request approved successfully!",
       });
+      // Invalidate all travel request queries including the pending approvals
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel-requests", "needsApproval=true"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
     },
     onError: (error) => {
@@ -88,7 +91,9 @@ export default function PMDashboard() {
       });
       setRejectionReason("");
       setSelectedRequestId(null);
+      // Invalidate all travel request queries including the pending approvals
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel-requests", "needsApproval=true"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
     },
     onError: (error) => {
