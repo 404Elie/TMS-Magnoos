@@ -524,14 +524,14 @@ export default function OperationsDashboard() {
 
               {/* Beautiful Charts with Magnoos Colors */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-white dark:bg-white border-border shadow-lg">
-                  <CardHeader className="dark:bg-white bg-[#ffffff00]">
-                    <CardTitle className="text-gray-800 dark:text-gray-800 flex items-center gap-2">
+                <Card className="bg-slate-900 border-slate-700 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-[#00D9C0]" />
                       Monthly Expense Trend
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="bg-white dark:bg-white">
+                  <CardContent>
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={prepareMonthlyTrendData()}>
@@ -541,26 +541,26 @@ export default function OperationsDashboard() {
                               <stop offset="95%" stopColor="#A3E635" stopOpacity={0.3}/>
                             </linearGradient>
                           </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                           <XAxis 
                             dataKey="month" 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#374151', fontSize: 12, fontWeight: 600 }}
+                            tick={{ fill: '#FFFFFF', fontSize: 12, fontWeight: 600 }}
                           />
                           <YAxis 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#374151', fontSize: 12, fontWeight: 600 }}
+                            tick={{ fill: '#FFFFFF', fontSize: 12, fontWeight: 600 }}
                             tickFormatter={(value) => `$${value.toLocaleString()}`}
                           />
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#FFFFFF', 
-                              border: '1px solid #D1D5DB',
+                              backgroundColor: '#1F2937', 
+                              border: '1px solid #374151',
                               borderRadius: '8px',
-                              color: '#111827',
-                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                              color: '#F9FAFB',
+                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
@@ -578,14 +578,14 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-white dark:bg-white border-border shadow-lg">
-                  <CardHeader className="dark:bg-white bg-[#ffffff00]">
-                    <CardTitle className="text-gray-800 dark:text-gray-800 flex items-center gap-2">
-                      <PieChart className="w-5 h-5 text-[#0032FF]" />
+                <Card className="bg-slate-900 border-slate-700 shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-[#0032FF]" />
                       Expense Breakdown
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="bg-white dark:bg-white">
+                  <CardContent>
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -596,7 +596,7 @@ export default function OperationsDashboard() {
                             outerRadius={80}
                             dataKey="value"
                             label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
-                            labelStyle={{ fill: '#374151', fontSize: 12, fontWeight: 600 }}
+                            labelStyle={{ fill: '#FFFFFF', fontSize: 12, fontWeight: 600 }}
                           >
                             {prepareExpenseBreakdownData().map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
@@ -604,16 +604,16 @@ export default function OperationsDashboard() {
                           </Pie>
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#FFFFFF', 
-                              border: '1px solid #D1D5DB',
+                              backgroundColor: '#1F2937', 
+                              border: '1px solid #374151',
                               borderRadius: '8px',
-                              color: '#111827',
-                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                              color: '#F9FAFB',
+                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
                           <Legend 
-                            wrapperStyle={{ color: '#374151', fontWeight: 600 }}
+                            wrapperStyle={{ color: '#FFFFFF', fontWeight: 600 }}
                           />
                         </PieChart>
                       </ResponsiveContainer>
