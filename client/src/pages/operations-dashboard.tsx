@@ -62,6 +62,7 @@ export default function OperationsDashboard() {
     provider: "",
     bookingReference: "",
     cost: "",
+    perDiemRate: "",
     details: "",
   }]);
   const [newBooking, setNewBooking] = useState({
@@ -69,6 +70,7 @@ export default function OperationsDashboard() {
     provider: "",
     bookingReference: "",
     cost: "",
+    perDiemRate: "",
     details: "",
   });
 
@@ -83,6 +85,8 @@ export default function OperationsDashboard() {
     queryKey: ["/api/travel-requests"],
     retry: false,
   });
+
+
 
   // Fetch all bookings
   const { data: bookings, isLoading: bookingsLoading } = useQuery<Booking[]>({
@@ -123,6 +127,7 @@ export default function OperationsDashboard() {
         provider: "",
         bookingReference: "",
         cost: "",
+        perDiemRate: "",
         details: "",
       });
       setSelectedRequestId(null);
@@ -181,7 +186,7 @@ export default function OperationsDashboard() {
       });
       setCompletionModalOpen(false);
       setSelectedRequest(null);
-      setBookingEntries([{ type: "", provider: "", bookingReference: "", cost: "", details: "" }]);
+      setBookingEntries([{ type: "", provider: "", bookingReference: "", cost: "", perDiemRate: "", details: "" }]);
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
       queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
@@ -234,12 +239,28 @@ export default function OperationsDashboard() {
   };
 
   const addBookingEntry = () => {
-    setBookingEntries([...bookingEntries, { type: "", provider: "", bookingReference: "", cost: "", details: "" }]);
+    setBookingEntries([...bookingEntries, { type: "", provider: "", bookingReference: "", cost: "", perDiemRate: "", details: "" }]);
   };
 
   const updateBookingEntry = (index: number, field: string, value: string) => {
     const updated = [...bookingEntries];
     updated[index] = { ...updated[index], [field]: value };
+    
+    // Auto-calculate total cost for per diem bookings
+    if (updated[index].type === 'per_diem' && selectedRequest) {
+      if (field === 'perDiemRate' || (field === 'type' && value === 'per_diem')) {
+        const perDiemRate = parseFloat(field === 'perDiemRate' ? value : updated[index].perDiemRate);
+        if (perDiemRate > 0) {
+          const departureDate = new Date(selectedRequest.departureDate);
+          const returnDate = new Date(selectedRequest.returnDate);
+          const timeDifference = returnDate.getTime() - departureDate.getTime();
+          const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+          const totalCost = perDiemRate * daysDifference;
+          updated[index].cost = totalCost.toFixed(2);
+        }
+      }
+    }
+    
     setBookingEntries(updated);
   };
 
@@ -717,6 +738,7 @@ export default function OperationsDashboard() {
                               <SelectItem value="flight">Flight</SelectItem>
                               <SelectItem value="hotel">Hotel</SelectItem>
                               <SelectItem value="car_rental">Car Rental</SelectItem>
+                              <SelectItem value="per_diem">Per Diem</SelectItem>
                               <SelectItem value="other">Other</SelectItem>
                             </SelectContent>
                           </Select>
@@ -742,17 +764,65 @@ export default function OperationsDashboard() {
                           />
                         </div>
                         
-                        <div>
-                          <Label htmlFor="cost">Cost</Label>
-                          <Input
-                            id="cost"
-                            type="number"
-                            step="0.01"
-                            value={newBooking.cost}
-                            onChange={(e) => setNewBooking({...newBooking, cost: e.target.value})}
-                            placeholder="0.00"
-                          />
-                        </div>
+                        {newBooking.type === 'per_diem' ? (
+                          <>
+                            <div>
+                              <Label htmlFor="per-diem-rate">Per Diem Rate ($/day)</Label>
+                              <Input
+                                id="per-diem-rate"
+                                type="number"
+                                step="0.01"
+                                value={newBooking.perDiemRate}
+                                onChange={(e) => {
+                                  const rate = e.target.value;
+                                  setNewBooking({...newBooking, perDiemRate: rate});
+                                  
+                                  // Auto-calculate total if we have a selected request and rate
+                                  if (selectedRequestId && parseFloat(rate) > 0) {
+                                    const selectedReq = operationsRequests?.find(req => req.id === selectedRequestId);
+                                    if (selectedReq) {
+                                      const departureDate = new Date(selectedReq.departureDate);
+                                      const returnDate = new Date(selectedReq.returnDate);
+                                      const timeDifference = returnDate.getTime() - departureDate.getTime();
+                                      const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+                                      const totalCost = parseFloat(rate) * daysDifference;
+                                      setNewBooking(prev => ({...prev, cost: totalCost.toFixed(2)}));
+                                    }
+                                  }
+                                }}
+                                placeholder="0.00"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="cost">
+                                Total Cost ({selectedRequestId && operationsRequests ? 
+                                  Math.ceil((new Date(operationsRequests.find(req => req.id === selectedRequestId)?.returnDate || 0).getTime() - 
+                                           new Date(operationsRequests.find(req => req.id === selectedRequestId)?.departureDate || 0).getTime()) / (1000 * 3600 * 24)) : 0} days)
+                              </Label>
+                              <Input
+                                id="cost"
+                                type="number"
+                                step="0.01"
+                                value={newBooking.cost}
+                                onChange={(e) => setNewBooking({...newBooking, cost: e.target.value})}
+                                placeholder="0.00"
+                                readOnly={newBooking.type === 'per_diem'}
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          <div>
+                            <Label htmlFor="cost">Cost</Label>
+                            <Input
+                              id="cost"
+                              type="number"
+                              step="0.01"
+                              value={newBooking.cost}
+                              onChange={(e) => setNewBooking({...newBooking, cost: e.target.value})}
+                              placeholder="0.00"
+                            />
+                          </div>
+                        )}
                         
                         <div className="flex justify-end space-x-2">
                           <Button variant="outline" onClick={() => {
@@ -761,6 +831,7 @@ export default function OperationsDashboard() {
                               provider: "",
                               bookingReference: "",
                               cost: "",
+                              perDiemRate: "",
                               details: "",
                             });
                             setSelectedRequestId(null);
@@ -1271,18 +1342,50 @@ export default function OperationsDashboard() {
                           </Select>
                         </div>
                         
-                        <div>
-                          <Label htmlFor={`cost-${index}`} className="text-gray-300">Cost ($)</Label>
-                          <Input
-                            id={`cost-${index}`}
-                            type="number"
-                            step="0.01"
-                            value={booking.cost}
-                            onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                            className="bg-slate-700 border-slate-600 text-white"
-                            placeholder="0.00"
-                          />
-                        </div>
+                        {booking.type === 'per_diem' ? (
+                          <>
+                            <div>
+                              <Label htmlFor={`rate-${index}`} className="text-gray-300">Per Diem Rate ($/day)</Label>
+                              <Input
+                                id={`rate-${index}`}
+                                type="number"
+                                step="0.01"
+                                value={booking.perDiemRate}
+                                onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
+                                className="bg-slate-700 border-slate-600 text-white"
+                                placeholder="0.00"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor={`cost-${index}`} className="text-gray-300">
+                                Total Cost (${selectedRequest ? Math.ceil((new Date(selectedRequest.returnDate).getTime() - new Date(selectedRequest.departureDate).getTime()) / (1000 * 3600 * 24)) : 0} days)
+                              </Label>
+                              <Input
+                                id={`cost-${index}`}
+                                type="number"
+                                step="0.01"
+                                value={booking.cost}
+                                onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
+                                className="bg-slate-700 border-slate-600 text-white"
+                                placeholder="0.00"
+                                readOnly={booking.type === 'per_diem'}
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          <div>
+                            <Label htmlFor={`cost-${index}`} className="text-gray-300">Cost ($)</Label>
+                            <Input
+                              id={`cost-${index}`}
+                              type="number"
+                              step="0.01"
+                              value={booking.cost}
+                              onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
+                              className="bg-slate-700 border-slate-600 text-white"
+                              placeholder="0.00"
+                            />
+                          </div>
+                        )}
                         
                         <div>
                           <Label htmlFor={`provider-${index}`} className="text-gray-300">Provider</Label>
