@@ -471,10 +471,10 @@
     margin-bottom: 4px !important;
   }
   
-  /* Explicit dropdown reset - override any toast styling */
+  /* Base dropdown styles - default to light mode */
   [data-radix-select-content] {
-    background-color: white !important;
-    border: 1px solid #ccc !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cccccc !important;
     color: #000000 !important;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
     z-index: 9999 !important;
@@ -498,7 +498,7 @@
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-    font-weight: normal !important;
+    font-weight: 500 !important;
     text-shadow: none !important;
     border: none !important;
     box-shadow: none !important;
@@ -506,27 +506,34 @@
   
   [data-radix-select-item]:hover,
   [data-radix-select-item][data-highlighted] {
-    background-color: #f0f9ff !important;
+    background-color: #e0f2fe !important;
     color: #000000 !important;
     border: none !important;
     box-shadow: none !important;
   }
   
-  /* Light mode specific */
-  html:not(.dark) [data-radix-select-content] {
-    background-color: white !important;
+  /* Force light mode colors with maximum specificity */
+  html:not(.dark) [data-radix-select-content],
+  body:not(.dark) [data-radix-select-content],
+  :root:not(.dark) [data-radix-select-content] {
+    background-color: #ffffff !important;
     color: #000000 !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid #cccccc !important;
   }
   
-  html:not(.dark) [data-radix-select-item] {
+  html:not(.dark) [data-radix-select-item],
+  body:not(.dark) [data-radix-select-item],
+  :root:not(.dark) [data-radix-select-item] {
     color: #000000 !important;
     background-color: transparent !important;
+    font-weight: 500 !important;
   }
   
   html:not(.dark) [data-radix-select-item]:hover,
-  html:not(.dark) [data-radix-select-item][data-highlighted] {
-    background-color: #f0f9ff !important;
+  html:not(.dark) [data-radix-select-item][data-highlighted],
+  body:not(.dark) [data-radix-select-item]:hover,
+  body:not(.dark) [data-radix-select-item][data-highlighted] {
+    background-color: #e0f2fe !important;
     color: #000000 !important;
   }
   
