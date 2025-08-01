@@ -737,7 +737,7 @@ export default function ManagerDashboard() {
                           <Button 
                             type="submit" 
                             className="text-white"
-                            style={{ backgroundColor: 'hsl(var(--magnoos-electric-blue))', borderColor: 'hsl(var(--magnoos-electric-blue))' }}
+                            style={{ backgroundColor: 'hsl(var(--magnoos-purple))', borderColor: 'hsl(var(--magnoos-purple))' }}
                             disabled={submitRequestMutation.isPending}
                           >
                             {submitRequestMutation.isPending ? "Submitting..." : "Submit Request"}

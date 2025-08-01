@@ -238,22 +238,22 @@
   }
   
   .custom-tab[data-state="active"] {
-    background: linear-gradient(135deg, hsl(var(--magnoos-electric-blue)), hsl(var(--magnoos-orange))) !important;
-    border: 1px solid hsl(var(--magnoos-electric-blue)) !important;
+    background: hsl(var(--magnoos-purple)) !important;
+    border: 1px solid hsl(var(--magnoos-purple)) !important;
     color: white !important;
     font-weight: 600 !important;
     outline: none !important;
-    box-shadow: 0 2px 8px rgba(0, 50, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 2px 8px rgba(138, 43, 226, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     ring: none !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
   }
   
   .custom-tab:hover:not([data-state="active"]) {
-    background: linear-gradient(135deg, hsl(var(--magnoos-electric-blue) / 0.1), hsl(var(--magnoos-orange) / 0.1)) !important;
-    color: hsl(var(--magnoos-electric-blue)) !important;
+    background: hsl(var(--magnoos-purple) / 0.1) !important;
+    color: hsl(var(--magnoos-purple)) !important;
     outline: none !important;
-    box-shadow: 0 1px 3px rgba(0, 50, 255, 0.1) !important;
-    border-color: hsl(var(--magnoos-electric-blue) / 0.3) !important;
+    box-shadow: 0 1px 3px rgba(138, 43, 226, 0.2) !important;
+    border-color: hsl(var(--magnoos-purple) / 0.3) !important;
   }
   
   .custom-tab:focus,
