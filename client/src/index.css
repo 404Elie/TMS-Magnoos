@@ -488,21 +488,25 @@
     border-color: #64748b !important;
   }
   
-  /* Specific fix for Logout button in header using class targeting */
-  .hidden.sm\\:flex.border-border:hover,
-  header button[variant="outline"]:hover {
-    background-color: #f1f5f9 !important;
-    color: #334155 !important;
-    border-color: #cbd5e1 !important;
-    transition: all 0.2s ease !important;
+  /* Ultra-specific fix for Logout button - override everything */
+  header .hidden.sm\\:flex.border-border.text-foreground:hover,
+  .header .hidden.sm\\:flex:hover,
+  button.hidden.sm\\:flex:hover {
+    background-color: hsl(175, 100%, 92%) !important;
+    color: hsl(236, 100%, 58%) !important;
+    border-color: hsl(236, 100%, 58%) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   
-  .dark .hidden.sm\\:flex.border-border:hover,
-  .dark header button[variant="outline"]:hover {
+  .dark header .hidden.sm\\:flex.border-border.text-foreground:hover,
+  .dark .header .hidden.sm\\:flex:hover,
+  .dark button.hidden.sm\\:flex:hover {
     background-color: #334155 !important;
     color: #f1f5f9 !important;
     border-color: #64748b !important;
-    transition: all 0.2s ease !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   
   /* Override hover for specific button types that were becoming invisible */
