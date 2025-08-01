@@ -198,7 +198,7 @@ export default function AuthPage() {
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList 
-                  className="grid w-full grid-cols-2 p-1 rounded-lg"
+                  className="h-10 items-center justify-center bg-muted text-muted-foreground grid w-full grid-cols-2 p-1 rounded-lg pt-[0px] pb-[0px] pl-[2px] pr-[2px]"
                   style={{ 
                     background: 'rgba(255, 255, 255, 0.1)',
                     backdropFilter: 'blur(8px)',
