@@ -137,35 +137,62 @@
     border: 1px solid rgb(51 65 85) !important;
   }
   
+  /* Auth page styling - restore orange highlights */
+  .auth-page input,
+  .auth-page .ui-input,
+  .auth-page [data-testid="input"] {
+    border: 2px solid #FF6F00 !important;
+    background-color: white !important;
+    color: #111827 !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .auth-page input:focus,
+  .auth-page .ui-input:focus,
+  .auth-page [data-testid="input"]:focus {
+    border-color: #FF6F00 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.2) !important;
+    background-color: white !important;
+  }
+  
+  .auth-page input::placeholder,
+  .auth-page .ui-input::placeholder,
+  .auth-page [data-testid="input"]::placeholder {
+    color: #9CA3AF !important;
+  }
+  
   /* Clean modal form styling only - don't touch auth page */
-  .modal-form input, 
-  .modal-form select, 
-  .modal-form textarea {
+  .modal-form input:not(.auth-page input), 
+  .modal-form select:not(.auth-page select), 
+  .modal-form textarea:not(.auth-page textarea) {
     border: 1px solid rgb(229 231 235);
     background-color: white;
     color: rgb(17 24 39);
   }
   
-  .dark .modal-form input, 
-  .dark .modal-form select, 
-  .dark .modal-form textarea {
+  .dark .modal-form input:not(.auth-page input), 
+  .dark .modal-form select:not(.auth-page select), 
+  .dark .modal-form textarea:not(.auth-page textarea) {
     border: 1px solid rgb(51 65 85);
     background-color: rgb(15 23 42);
     color: white;
   }
   
   /* Clean focus states for modal forms only */
-  .modal-form input:focus, 
-  .modal-form select:focus, 
-  .modal-form textarea:focus {
+  .modal-form input:not(.auth-page input):focus, 
+  .modal-form select:not(.auth-page select):focus, 
+  .modal-form textarea:not(.auth-page textarea):focus {
     border-color: rgb(59 130 246);
     outline: none;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
   
-  .dark .modal-form input:focus, 
-  .dark .modal-form select:focus, 
-  .dark .modal-form textarea:focus {
+  .dark .modal-form input:not(.auth-page input):focus, 
+  .dark .modal-form select:not(.auth-page select):focus, 
+  .dark .modal-form textarea:not(.auth-page textarea):focus {
     border-color: rgb(147 197 253);
     box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1);
   }
