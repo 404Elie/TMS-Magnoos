@@ -1270,7 +1270,13 @@ export default function OperationsDashboard() {
 
         {/* Completion Modal with Multiple Bookings */}
         <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900">
+          <DialogContent 
+            className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700" 
+            style={{
+              backgroundColor: 'white',
+              color: 'rgb(17 24 39)'
+            }}
+          >
             <DialogHeader>
               <DialogTitle className="text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-300">

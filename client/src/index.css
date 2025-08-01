@@ -124,6 +124,43 @@
                 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
   
+  /* Dialog Override - Ensure clean white/dark backgrounds */
+  [data-radix-dialog-content] {
+    background-color: white !important;
+    color: rgb(17 24 39) !important;
+    border: 1px solid rgb(229 231 235) !important;
+  }
+  
+  .dark [data-radix-dialog-content] {
+    background-color: rgb(15 23 42) !important; /* slate-900 */
+    color: white !important;
+    border: 1px solid rgb(51 65 85) !important;
+  }
+  
+  /* Force override any conflicting styles */
+  [data-radix-dialog-content] * {
+    background-color: inherit;
+  }
+  
+  /* Prevent any red/destructive styling from affecting dialogs */
+  [data-radix-dialog-content].destructive,
+  [data-radix-dialog-content] .destructive,
+  [data-radix-dialog-content][class*="red"],
+  [data-radix-dialog-content][style*="red"] {
+    background-color: white !important;
+    color: rgb(17 24 39) !important;
+    border-color: rgb(229 231 235) !important;
+  }
+  
+  .dark [data-radix-dialog-content].destructive,
+  .dark [data-radix-dialog-content] .destructive,
+  .dark [data-radix-dialog-content][class*="red"],
+  .dark [data-radix-dialog-content][style*="red"] {
+    background-color: rgb(15 23 42) !important;
+    color: white !important;
+    border-color: rgb(51 65 85) !important;
+  }
+  
   /* Vibrant Light Mode Enhancements */
   .vibrant-bg-light {
     background: linear-gradient(135deg, 
