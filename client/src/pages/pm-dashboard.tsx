@@ -276,7 +276,7 @@ export default function PMDashboard() {
                     ) : pendingRequests && pendingRequests.length > 0 ? (
                       <div className="bg-magnoos-dark space-y-3">
                         {pendingRequests.slice(0, 3).map((request) => (
-                          <div key={request.id} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                          <div key={request.id} className="flex items-center justify-between p-3 rounded-lg bg-[#464646]">
                             <div>
                               <p className="font-medium text-white">
                                 {request.traveler.firstName} {request.traveler.lastName} - {request.destination}
