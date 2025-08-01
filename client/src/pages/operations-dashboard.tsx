@@ -858,37 +858,37 @@ export default function OperationsDashboard() {
                   {requestsLoading ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-300">Loading travel requests...</p>
+                      <p className="text-gray-600 dark:text-gray-300">Loading travel requests...</p>
                     </div>
                   ) : operationsRequests.length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-700">
-                        <thead className="bg-slate-800">
+                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                        <thead className="bg-gray-100 dark:bg-slate-800">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Traveler
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Destination
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Dates
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Total Cost
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Status
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Actions
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-slate-900 divide-y divide-gray-700">
+                        <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
                           {operationsRequests.map((request) => {
                             const totalEstimated = (
                               parseFloat(request.estimatedFlightCost || "0") +
@@ -910,23 +910,23 @@ export default function OperationsDashboard() {
                                         )}
                                       </AvatarFallback>
                                     </Avatar>
-                                    <span className="text-sm font-medium text-gray-200">
+                                    <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                                       {request.traveler?.firstName && request.traveler?.lastName 
                                         ? `${request.traveler.firstName} ${request.traveler.lastName}` 
                                         : request.traveler?.email || 'Unknown User'}
                                     </span>
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                   {request.destination}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                   {request.project?.name}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                   {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                   {actualCost > 0 ? formatCurrency(actualCost) : formatCurrency(totalEstimated)}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -966,9 +966,9 @@ export default function OperationsDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-300">No travel requests to process</p>
-                      <p className="text-sm text-gray-300 mt-2">Approved requests will appear here for booking</p>
+                      <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-300">No travel requests to process</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">Approved requests will appear here for booking</p>
                     </div>
                   )}
                 </CardContent>
@@ -977,20 +977,20 @@ export default function OperationsDashboard() {
 
             <TabsContent value="budget-person" className="space-y-8 dark:bg-background light:bg-transparent">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white">Travel Expense Tracking by Person</h2>
-                <p className="text-gray-300">Monitor individual travel expenses and spending patterns</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Travel Expense Tracking by Person</h2>
+                <p className="text-gray-600 dark:text-gray-300">Monitor individual travel expenses and spending patterns</p>
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Summary Cards */}
                 <div className="lg:col-span-1 space-y-6">
-                  <Card className="bg-slate-900 border-slate-700">
+                  <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                     <CardHeader>
-                      <CardTitle className="text-white">Top Spenders</CardTitle>
+                      <CardTitle className="text-gray-900 dark:text-white">Top Spenders</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {userBudgetSummaries.length > 0 ? (
-                        <div className="bg-slate-800 space-y-3">
+                        <div className="bg-gray-50 dark:bg-slate-800 space-y-3">
                           {userBudgetSummaries
                             .sort((a, b) => b.totalSpent - a.totalSpent)
                             .slice(0, 5)
@@ -1003,44 +1003,44 @@ export default function OperationsDashboard() {
                                     {getInitials(user.firstName, user.lastName)}
                                   </AvatarFallback>
                                 </Avatar>
-                                <span className="text-sm font-medium">
+                                <span className="text-sm font-medium text-gray-900 dark:text-white">
                                   {user.firstName} {user.lastName}
                                 </span>
                               </div>
-                              <span className="text-sm font-bold text-white">
+                              <span className="text-sm font-bold text-gray-900 dark:text-white">
                                 {formatCurrency(user.totalSpent)}
                               </span>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-300 text-center py-4">No spending data available</p>
+                        <p className="text-gray-500 dark:text-gray-300 text-center py-4">No spending data available</p>
                       )}
                     </CardContent>
                   </Card>
                   
-                  <Card className="bg-slate-900 border-slate-700">
+                  <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                     <CardHeader>
-                      <CardTitle className="text-white">Recent Activity</CardTitle>
+                      <CardTitle className="text-gray-900 dark:text-white">Recent Activity</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="bg-slate-800 space-y-3">
+                      <div className="bg-gray-50 dark:bg-slate-800 space-y-3">
                         {userBudgetSummaries
                           .filter(user => user.totalSpent > 0)
                           .sort((a, b) => b.totalSpent - a.totalSpent)
                           .slice(0, 3)
                           .map((user) => (
-                          <div key={user.id} className="p-3 border border-slate-600 rounded-lg bg-slate-700">
-                            <p className="text-sm font-medium text-white">
+                          <div key={user.id} className="p-3 border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-100 dark:bg-slate-700">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
                               {user.firstName} {user.lastName}
                             </p>
-                            <p className="text-xs text-gray-300">
+                            <p className="text-xs text-gray-600 dark:text-gray-300">
                               Latest expense: {formatCurrency(user.totalSpent)}
                             </p>
                           </div>
                         ))}
                         {userBudgetSummaries.filter(user => user.totalSpent > 0).length === 0 && (
-                          <p className="text-gray-300 text-center py-4">No recent activity</p>
+                          <p className="text-gray-500 dark:text-gray-300 text-center py-4">No recent activity</p>
                         )}
                       </div>
                     </CardContent>
@@ -1049,28 +1049,28 @@ export default function OperationsDashboard() {
                 
                 {/* Budget Table */}
                 <div className="lg:col-span-2">
-                  <Card className="bg-slate-900 border-slate-700">
+                  <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                     <CardHeader>
-                      <CardTitle className="text-white">Individual Expense Overview</CardTitle>
+                      <CardTitle className="text-gray-900 dark:text-white">Individual Expense Overview</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {userBudgetSummaries.length > 0 ? (
                         <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-700">
-                            <thead className="bg-slate-800">
+                          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                            <thead className="bg-gray-100 dark:bg-slate-800">
                               <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                                   Employee
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                                   Total Spent
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                                   Trips
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="bg-slate-900 divide-y divide-gray-700">
+                            <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
                               {userBudgetSummaries.map((user) => (
                                 <tr key={user.id}>
                                   <td className="px-6 py-4 whitespace-nowrap">
@@ -1081,15 +1081,15 @@ export default function OperationsDashboard() {
                                           {getInitials(user.firstName, user.lastName)}
                                         </AvatarFallback>
                                       </Avatar>
-                                      <span className="text-sm font-medium text-gray-200">
+                                      <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                                         {user.firstName} {user.lastName}
                                       </span>
                                     </div>
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                     {formatCurrency(user.totalSpent)}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                     {user.tripCount}
                                   </td>
                                 </tr>
@@ -1099,9 +1099,9 @@ export default function OperationsDashboard() {
                         </div>
                       ) : (
                         <div className="text-center py-8">
-                          <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                          <p className="text-gray-300">No expense data available</p>
-                          <p className="text-sm text-gray-300 mt-2">Expense information will appear once travel requests are processed</p>
+                          <Users className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
+                          <p className="text-gray-600 dark:text-gray-300">No expense data available</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">Expense information will appear once travel requests are processed</p>
                         </div>
                       )}
                     </CardContent>
@@ -1112,15 +1112,15 @@ export default function OperationsDashboard() {
 
             <TabsContent value="budget-project" className="space-y-8 dark:bg-background light:bg-transparent">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white">Project Expense Tracking</h2>
-                <p className="text-gray-300">Monitor project-based travel expenses and spending patterns</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Expense Tracking</h2>
+                <p className="text-gray-600 dark:text-gray-300">Monitor project-based travel expenses and spending patterns</p>
               </div>
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 {/* Project Expense Distribution Chart */}
-                <Card className="bg-slate-900 border-slate-700">
+                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Project Expense Distribution</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">Project Expense Distribution</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-64">
@@ -1140,15 +1140,16 @@ export default function OperationsDashboard() {
                           </Pie>
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#1F2937', 
-                              border: '1px solid #374151',
+                              backgroundColor: 'white', 
+                              border: '1px solid #e5e7eb',
                               borderRadius: '8px',
-                              color: '#F9FAFB'
+                              color: '#111827'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
                           <Legend 
-                            wrapperStyle={{ color: '#9CA3AF' }}
+                            wrapperStyle={{ fontWeight: 600 }}
+                            className="text-gray-900 dark:text-white"
                           />
                         </PieChart>
                       </ResponsiveContainer>
@@ -1157,20 +1158,21 @@ export default function OperationsDashboard() {
                 </Card>
                 
                 {/* Project Spending Chart */}
-                <Card className="bg-slate-900 border-slate-700">
+                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                   <CardHeader>
-                    <CardTitle className="text-white">Project Spending Overview</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">Project Spending Overview</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={prepareProjectSpendingData()}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-slate-600" />
                           <XAxis 
                             dataKey="name" 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9CA3AF', fontSize: 11 }}
+                            className="fill-gray-700 dark:fill-gray-300"
+                            tick={{ fontSize: 11 }}
                             angle={-45}
                             textAnchor="end"
                             height={80}
@@ -1178,15 +1180,16 @@ export default function OperationsDashboard() {
                           <YAxis 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                            className="fill-gray-700 dark:fill-gray-300"
+                            tick={{ fontSize: 12 }}
                             tickFormatter={(value) => `$${value.toLocaleString()}`}
                           />
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#1F2937', 
-                              border: '1px solid #374151',
+                              backgroundColor: 'white', 
+                              border: '1px solid #e5e7eb',
                               borderRadius: '8px',
-                              color: '#F9FAFB'
+                              color: '#111827'
                             }}
                             formatter={(value: any, name: string) => {
                               if (name === 'spent') return [`$${value.toLocaleString()}`, 'Total Spent'];
@@ -1207,44 +1210,44 @@ export default function OperationsDashboard() {
               </div>
               
               {/* Project Budget Table */}
-              <Card className="bg-slate-900 border-slate-700">
+              <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Project Expense Overview</CardTitle>
+                  <CardTitle className="text-gray-900 dark:text-white">Project Expense Overview</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {projectBudgetSummaries.length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-700">
-                        <thead className="bg-slate-800">
+                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+                        <thead className="bg-gray-100 dark:bg-slate-800">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Project
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Total Spent
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Total Trips
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Avg Cost/Trip
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-slate-900 divide-y divide-gray-700">
+                        <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
                           {projectBudgetSummaries.map((project, index) => (
                             <tr key={`project-${project.id}-${index}`}>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-200">{project.name}</div>
-                                <div className="text-sm text-gray-300">{project.description}</div>
+                                <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{project.name}</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-300">{project.description}</div>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                 {formatCurrency(project.totalSpent)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 {project.tripCount}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 {formatCurrency(project.avgCostPerTrip)}
                               </td>
                             </tr>
@@ -1254,9 +1257,9 @@ export default function OperationsDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-300">No project expense data available</p>
-                      <p className="text-sm text-gray-300 mt-2">Expense information will appear once travel requests are processed</p>
+                      <BarChart3 className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-300">No project expense data available</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">Expense information will appear once travel requests are processed</p>
                     </div>
                   )}
                 </CardContent>
@@ -1267,29 +1270,29 @@ export default function OperationsDashboard() {
 
         {/* Completion Modal with Multiple Bookings */}
         <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 border-slate-700">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
             <DialogHeader>
-              <DialogTitle className="text-white">Complete Travel Request</DialogTitle>
-              <DialogDescription className="text-gray-300">
+              <DialogTitle className="text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-300">
                 Add booking details for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}'s trip to {selectedRequest?.destination}
               </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-6">
               {/* Travel Request Summary */}
-              <div className="bg-slate-800 p-4 rounded-lg">
-                <h3 className="font-semibold text-white mb-2">Trip Summary</h3>
+              <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Trip Summary</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="text-gray-300">
+                  <div className="text-gray-600 dark:text-gray-300">
                     <span className="font-medium">Destination:</span> {selectedRequest?.destination}
                   </div>
-                  <div className="text-gray-300">
+                  <div className="text-gray-600 dark:text-gray-300">
                     <span className="font-medium">Dates:</span> {selectedRequest && new Date(selectedRequest.departureDate).toLocaleDateString()} - {selectedRequest && new Date(selectedRequest.returnDate).toLocaleDateString()}
                   </div>
-                  <div className="text-gray-300">
+                  <div className="text-gray-600 dark:text-gray-300">
                     <span className="font-medium">Project:</span> {selectedRequest?.project?.name || 'N/A'}
                   </div>
-                  <div className="text-gray-300">
+                  <div className="text-gray-600 dark:text-gray-300">
                     <span className="font-medium">Purpose:</span> {selectedRequest?.purpose}
                   </div>
                 </div>
