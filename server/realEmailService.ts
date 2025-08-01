@@ -102,8 +102,14 @@ class RealEmailService {
           html: emailData.html,
         });
         
+        if (result.error) {
+          console.error(`❌ Resend API error:`, result.error);
+          return false;
+        }
+        
         console.log(`✅ Real email sent via Resend to: ${emailData.to}`);
         console.log(`📧 Message ID: ${result.data?.id}`);
+        console.log(`📊 Resend Response:`, JSON.stringify(result, null, 2));
         return true;
         
       } else if (this.emailMethod === 'smtp' && this.transporter) {
