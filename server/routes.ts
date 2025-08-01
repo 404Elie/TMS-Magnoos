@@ -531,7 +531,7 @@ export function registerRoutes(app: Express): Server {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const stats = await storage.getDashboardStats(user.role, userId);
+      const stats = await storage.getDashboardStats(user.activeRole || user.role, userId);
       res.json(stats);
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
