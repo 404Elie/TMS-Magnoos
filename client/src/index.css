@@ -826,3 +826,15 @@
   background-color: transparent !important;
   color: #464646 !important;
 }
+
+/* Auth page tab hover states */
+.auth-page [role="tab"]:hover:not([data-state="active"]) {
+  background-color: rgba(255, 111, 0, 0.1) !important;
+  color: #FF6F00 !important;
+}
+
+/* Dark mode hover states for auth page tabs */
+.dark .auth-page [role="tab"]:hover:not([data-state="active"]) {
+  background-color: rgba(255, 111, 0, 0.2) !important;
+  color: #FF6F00 !important;
+}
