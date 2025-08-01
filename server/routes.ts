@@ -398,7 +398,7 @@ export function registerRoutes(app: Express): Server {
         const requester = await storage.getUser(req.user.id);
         // traveler is already fetched above
         
-        // Get notification recipients (PMs and Operations)
+        // Get notification recipients - PMs and Operations get notified when Manager submits request
         const allUsers = await storage.getAllUsers();
         const recipients = allUsers
           .filter(user => user.role === 'pm' || user.role === 'operations')
@@ -458,7 +458,7 @@ export function registerRoutes(app: Express): Server {
         if (request && request.traveler && request.requester) {
           const approver = await storage.getUser(req.userId);
           
-          // Get notification recipients (requester, traveler, operations)
+          // Get notification recipients - when PM approves, Operations users get notified
           const allUsers = await storage.getAllUsers();
           const recipients = [
             { email: request.requester.email, role: 'requester' },
