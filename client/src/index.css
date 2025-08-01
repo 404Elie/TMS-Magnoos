@@ -371,12 +371,9 @@
     padding: 1rem !important;
   }
   
-  /* Only target toast elements specifically, exclude select dropdowns */
-  [role="status"].destructive:not([data-radix-select-content]):not([data-radix-select-item]),
-  [role="alert"].destructive:not([data-radix-select-content]):not([data-radix-select-item]),
-  [data-radix-toast-root].destructive:not([data-radix-select-content]):not([data-radix-select-item]),
-  .group.destructive:not([data-radix-select-content]):not([data-radix-select-item]),
-  [data-toast].destructive:not([data-radix-select-content]):not([data-radix-select-item]) {
+  /* Toast background styling - only for toast elements */
+  [data-sonner-toast].destructive,
+  [data-toast].destructive {
     background-color: #dc2626 !important;
     border: 3px solid #ff0000 !important;
     color: white !important;
@@ -387,12 +384,9 @@
     font-size: 16px !important;
   }
   
-  /* All text in destructive toasts should be white - but exclude select/dropdown elements */
-  .group.destructive *:not([data-radix-select-content]):not([data-radix-select-item]):not([data-radix-select-viewport]),
-  [data-toast].destructive *:not([data-radix-select-content]):not([data-radix-select-item]):not([data-radix-select-viewport]),
-  [role="status"].destructive *:not([data-radix-select-content]):not([data-radix-select-item]):not([data-radix-select-viewport]),
-  [role="alert"].destructive *:not([data-radix-select-content]):not([data-radix-select-item]):not([data-radix-select-viewport]),
-  [data-radix-toast-root].destructive *:not([data-radix-select-content]):not([data-radix-select-item]):not([data-radix-select-viewport]) {
+  /* Toast text styling - only for toast elements */
+  [data-sonner-toast].destructive *,
+  [data-toast].destructive * {
     color: white !important;
     font-weight: 500 !important;
   }
@@ -471,88 +465,37 @@
     margin-bottom: 4px !important;
   }
   
-  /* Base dropdown styles - default to light mode */
+  /* Simple dropdown fix - light mode by default */
   [data-radix-select-content] {
-    background-color: #ffffff !important;
-    border: 1px solid #cccccc !important;
-    color: #000000 !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
-    z-index: 9999 !important;
-    min-width: 160px !important;
-    border-radius: 6px !important;
-    padding: 4px !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    font-weight: normal !important;
-    text-shadow: none !important;
+    background: white;
+    border: 1px solid #ccc;
+    color: black;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
   
   [data-radix-select-item] {
-    background-color: transparent !important;
-    color: #000000 !important;
-    padding: 8px 12px !important;
-    cursor: pointer !important;
-    border-radius: 4px !important;
-    font-size: 14px !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    font-weight: 500 !important;
-    text-shadow: none !important;
-    border: none !important;
-    box-shadow: none !important;
+    color: black;
+    padding: 8px 12px;
+    cursor: pointer;
   }
   
-  [data-radix-select-item]:hover,
-  [data-radix-select-item][data-highlighted] {
-    background-color: #e0f2fe !important;
-    color: #000000 !important;
-    border: none !important;
-    box-shadow: none !important;
+  [data-radix-select-item]:hover {
+    background: #f5f5f5;
   }
   
-  /* Force light mode colors with maximum specificity */
-  html:not(.dark) [data-radix-select-content],
-  body:not(.dark) [data-radix-select-content],
-  :root:not(.dark) [data-radix-select-content] {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border: 1px solid #cccccc !important;
-  }
-  
-  html:not(.dark) [data-radix-select-item],
-  body:not(.dark) [data-radix-select-item],
-  :root:not(.dark) [data-radix-select-item] {
-    color: #000000 !important;
-    background-color: transparent !important;
-    font-weight: 500 !important;
-  }
-  
-  html:not(.dark) [data-radix-select-item]:hover,
-  html:not(.dark) [data-radix-select-item][data-highlighted],
-  body:not(.dark) [data-radix-select-item]:hover,
-  body:not(.dark) [data-radix-select-item][data-highlighted] {
-    background-color: #e0f2fe !important;
-    color: #000000 !important;
-  }
-  
-  /* Dark mode overrides for dropdown */
+  /* Dark mode only */
   .dark [data-radix-select-content] {
-    background-color: #1f2937 !important;
-    border: 1px solid #374151 !important;
-    color: #f9fafb !important;
+    background: #374151;
+    border-color: #4b5563;
+    color: white;
   }
   
   .dark [data-radix-select-item] {
-    color: #f9fafb !important;
-    background-color: transparent !important;
+    color: white;
   }
   
-  .dark [data-radix-select-item]:hover,
-  .dark [data-radix-select-item][data-highlighted] {
-    background-color: #374151 !important;
-    color: #f9fafb !important;
+  .dark [data-radix-select-item]:hover {
+    background: #4b5563;
   }
   
   /* Custom clean tab styling - Light theme */
