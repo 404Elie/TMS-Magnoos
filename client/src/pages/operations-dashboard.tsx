@@ -1268,188 +1268,205 @@ export default function OperationsDashboard() {
           </Tabs>
         </div>
 
-        {/* Completion Modal with Multiple Bookings */}
-        <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
-          <DialogContent 
-            className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700" 
-            style={{
-              backgroundColor: 'white',
-              color: 'rgb(17 24 39)'
-            }}
-          >
-            <DialogHeader>
-              <DialogTitle className="text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
-              <DialogDescription className="text-gray-600 dark:text-gray-300">
-                Add booking details for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}'s trip to {selectedRequest?.destination}
-              </DialogDescription>
-            </DialogHeader>
+        {/* Custom Completion Modal - No Radix Components */}
+        {completionModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/50"
+              onClick={() => setCompletionModalOpen(false)}
+            />
             
-            <div className="space-y-6">
-              {/* Travel Request Summary */}
-              <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Trip Summary</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="text-gray-600 dark:text-gray-300">
-                    <span className="font-medium">Destination:</span> {selectedRequest?.destination}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-300">
-                    <span className="font-medium">Dates:</span> {selectedRequest && new Date(selectedRequest.departureDate).toLocaleDateString()} - {selectedRequest && new Date(selectedRequest.returnDate).toLocaleDateString()}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-300">
-                    <span className="font-medium">Project:</span> {selectedRequest?.project?.name || 'N/A'}
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-300">
-                    <span className="font-medium">Purpose:</span> {selectedRequest?.purpose}
-                  </div>
+            {/* Modal Content */}
+            <div className="relative z-50 w-full max-w-4xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Complete Travel Request</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                    Add booking details for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}'s trip to {selectedRequest?.destination}
+                  </p>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCompletionModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
               </div>
 
-              {/* Booking Entries */}
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Booking Details</h3>
-                  <Button
-                    onClick={addBookingEntry}
-                    size="sm"
-                    className="bg-magnoos-blue hover:bg-magnoos-dark-blue text-white"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Booking
-                  </Button>
-                </div>
-                
-                <div className="space-y-4">
-                  {bookingEntries.map((booking, index) => (
-                    <div key={index} className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
-                      <div className="flex justify-between items-center mb-4">
-                        <h4 className="font-medium text-gray-900 dark:text-white">Booking {index + 1}</h4>
-                        {bookingEntries.length > 1 && (
-                          <Button
-                            onClick={() => removeBookingEntry(index)}
-                            size="sm"
-                            variant="outline"
-                            className="text-gray-600 dark:text-gray-400 border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700"
-                          >
-                            Remove
-                          </Button>
-                        )}
+              {/* Content */}
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)] bg-white dark:bg-slate-900">
+                <div className="space-y-6">
+                  {/* Travel Request Summary */}
+                  <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Trip Summary</h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="text-gray-600 dark:text-gray-300">
+                        <span className="font-medium">Destination:</span> {selectedRequest?.destination}
                       </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor={`type-${index}`} className="text-gray-700 dark:text-gray-300">Type</Label>
-                          <Select 
-                            value={booking.type} 
-                            onValueChange={(value) => updateBookingEntry(index, 'type', value)}
-                          >
-                            <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
-                              <SelectValue placeholder="Select booking type" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                              <SelectItem value="accommodation">Accommodation</SelectItem>
-                              <SelectItem value="car_rental">Car Rental</SelectItem>
-                              <SelectItem value="per_diem">Per Diem</SelectItem>
-                              <SelectItem value="ticket">Ticket</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        {booking.type === 'per_diem' ? (
-                          <>
-                            <div>
-                              <Label htmlFor={`rate-${index}`} className="text-gray-700 dark:text-gray-300">Per Diem Rate ($/day)</Label>
-                              <Input
-                                id={`rate-${index}`}
-                                type="number"
-                                step="0.01"
-                                value={booking.perDiemRate}
-                                onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
-                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">
-                                Total Cost (${selectedRequest ? Math.ceil((new Date(selectedRequest.returnDate).getTime() - new Date(selectedRequest.departureDate).getTime()) / (1000 * 3600 * 24)) : 0} days)
-                              </Label>
-                              <Input
-                                id={`cost-${index}`}
-                                type="number"
-                                step="0.01"
-                                value={booking.cost}
-                                onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                placeholder="0.00"
-                                readOnly={booking.type === 'per_diem'}
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <div>
-                            <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">Cost ($)</Label>
-                            <Input
-                              id={`cost-${index}`}
-                              type="number"
-                              step="0.01"
-                              value={booking.cost}
-                              onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                              className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                              placeholder="0.00"
-                            />
-                          </div>
-                        )}
-                        
-                        <div>
-                          <Label htmlFor={`provider-${index}`} className="text-gray-700 dark:text-gray-300">Provider</Label>
-                          <Input
-                            id={`provider-${index}`}
-                            value={booking.provider}
-                            onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
-                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                            placeholder="e.g., Hotel Name, Airline"
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor={`reference-${index}`} className="text-gray-700 dark:text-gray-300">Reference</Label>
-                          <Input
-                            id={`reference-${index}`}
-                            value={booking.bookingReference}
-                            onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
-                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                            placeholder="Booking reference/confirmation"
-                          />
-                        </div>
-                        
-                        <div className="col-span-2">
-                          <Label htmlFor={`details-${index}`} className="text-gray-700 dark:text-gray-300">Details</Label>
-                          <Input
-                            id={`details-${index}`}
-                            value={booking.details}
-                            onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
-                            className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                            placeholder="Additional details"
-                          />
-                        </div>
+                      <div className="text-gray-600 dark:text-gray-300">
+                        <span className="font-medium">Dates:</span> {selectedRequest && new Date(selectedRequest.departureDate).toLocaleDateString()} - {selectedRequest && new Date(selectedRequest.returnDate).toLocaleDateString()}
+                      </div>
+                      <div className="text-gray-600 dark:text-gray-300">
+                        <span className="font-medium">Project:</span> {selectedRequest?.project?.name || 'N/A'}
+                      </div>
+                      <div className="text-gray-600 dark:text-gray-300">
+                        <span className="font-medium">Purpose:</span> {selectedRequest?.purpose}
                       </div>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Booking Entries */}
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Booking Details</h3>
+                      <Button
+                        onClick={addBookingEntry}
+                        size="sm"
+                        className="bg-magnoos-blue hover:bg-magnoos-dark-blue text-white"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Booking
+                      </Button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {bookingEntries.map((booking, index) => (
+                        <div key={index} className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+                          <div className="flex justify-between items-center mb-4">
+                            <h4 className="font-medium text-gray-900 dark:text-white">Booking {index + 1}</h4>
+                            {bookingEntries.length > 1 && (
+                              <Button
+                                onClick={() => removeBookingEntry(index)}
+                                size="sm"
+                                variant="outline"
+                                className="text-gray-600 dark:text-gray-400 border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700"
+                              >
+                                Remove
+                              </Button>
+                            )}
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor={`type-${index}`} className="text-gray-700 dark:text-gray-300">Type</Label>
+                              <Select 
+                                value={booking.type} 
+                                onValueChange={(value) => updateBookingEntry(index, 'type', value)}
+                              >
+                                <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
+                                  <SelectValue placeholder="Select booking type" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                  <SelectItem value="accommodation">Accommodation</SelectItem>
+                                  <SelectItem value="car_rental">Car Rental</SelectItem>
+                                  <SelectItem value="per_diem">Per Diem</SelectItem>
+                                  <SelectItem value="ticket">Ticket</SelectItem>
+                                  <SelectItem value="other">Other</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            {booking.type === 'per_diem' ? (
+                              <>
+                                <div>
+                                  <Label htmlFor={`rate-${index}`} className="text-gray-700 dark:text-gray-300">Per Diem Rate ($/day)</Label>
+                                  <Input
+                                    id={`rate-${index}`}
+                                    type="number"
+                                    step="0.01"
+                                    value={booking.perDiemRate}
+                                    onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
+                                    className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
+                                    placeholder="0.00"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">
+                                    Total Cost (${selectedRequest ? Math.ceil((new Date(selectedRequest.returnDate).getTime() - new Date(selectedRequest.departureDate).getTime()) / (1000 * 3600 * 24)) : 0} days)
+                                  </Label>
+                                  <Input
+                                    id={`cost-${index}`}
+                                    type="number"
+                                    step="0.01"
+                                    value={booking.cost}
+                                    onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
+                                    className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
+                                    placeholder="0.00"
+                                    readOnly={booking.type === 'per_diem'}
+                                  />
+                                </div>
+                              </>
+                            ) : (
+                              <div>
+                                <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">Cost ($)</Label>
+                                <Input
+                                  id={`cost-${index}`}
+                                  type="number"
+                                  step="0.01"
+                                  value={booking.cost}
+                                  onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
+                                  className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
+                                  placeholder="0.00"
+                                />
+                              </div>
+                            )}
+                            
+                            <div>
+                              <Label htmlFor={`provider-${index}`} className="text-gray-700 dark:text-gray-300">Provider</Label>
+                              <Input
+                                id={`provider-${index}`}
+                                value={booking.provider}
+                                onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
+                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
+                                placeholder="e.g., Hotel Name, Airline"
+                              />
+                            </div>
+                            
+                            <div>
+                              <Label htmlFor={`reference-${index}`} className="text-gray-700 dark:text-gray-300">Reference</Label>
+                              <Input
+                                id={`reference-${index}`}
+                                value={booking.bookingReference}
+                                onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
+                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
+                                placeholder="Booking reference/confirmation"
+                              />
+                            </div>
+                            
+                            <div className="col-span-2">
+                              <Label htmlFor={`details-${index}`} className="text-gray-700 dark:text-gray-300">Details</Label>
+                              <Input
+                                id={`details-${index}`}
+                                value={booking.details}
+                                onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
+                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
+                                placeholder="Additional details"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Total Cost Summary */}
+                  <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-lg border border-gray-300 dark:border-slate-700">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-gray-900 dark:text-white">Total Cost:</span>
+                      <span className="text-xl font-bold text-gray-900 dark:text-white">
+                        ${bookingEntries.reduce((sum, booking) => sum + (parseFloat(booking.cost) || 0), 0).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Total Cost Summary */}
-              <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-lg border border-gray-300 dark:border-slate-700">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-900 dark:text-white">Total Cost:</span>
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">
-                    ${bookingEntries.reduce((sum, booking) => sum + (parseFloat(booking.cost) || 0), 0).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-4">
+              {/* Footer */}
+              <div className="flex justify-end space-x-4 p-6 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
                 <Button
                   onClick={() => setCompletionModalOpen(false)}
                   variant="outline"
@@ -1466,8 +1483,8 @@ export default function OperationsDashboard() {
                 </Button>
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        )}
       </div>
     </ProtectedRoute>
   );
