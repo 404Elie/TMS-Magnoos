@@ -417,3 +417,93 @@
   .pm-dashboard [role="tabpanel"] {
     background-color: transparent !important;
   }
+  
+  /* Light Mode Form Elements - White backgrounds with colored borders */
+  .light input[type="text"],
+  .light input[type="email"], 
+  .light input[type="password"],
+  .light input[type="date"],
+  .light textarea,
+  .light select,
+  html:not(.dark) input[type="text"],
+  html:not(.dark) input[type="email"],
+  html:not(.dark) input[type="password"], 
+  html:not(.dark) input[type="date"],
+  html:not(.dark) textarea,
+  html:not(.dark) select {
+    background-color: hsl(0, 0%, 100%) !important;
+    border: 2px solid hsl(175, 100%, 85%) !important;
+    color: hsl(220, 45%, 20%) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  /* Focus states for light mode forms */
+  .light input:focus,
+  .light textarea:focus,
+  .light select:focus,
+  html:not(.dark) input:focus,
+  html:not(.dark) textarea:focus,
+  html:not(.dark) select:focus {
+    background-color: hsl(175, 100%, 98%) !important;
+    border-color: hsl(236, 100%, 58%) !important;
+    box-shadow: 0 0 0 3px hsl(236, 100%, 58%, 0.1) !important;
+    outline: none !important;
+  }
+  
+  /* Placeholder text in light mode */
+  .light input::placeholder,
+  .light textarea::placeholder,
+  html:not(.dark) input::placeholder,
+  html:not(.dark) textarea::placeholder {
+    color: hsl(220, 45%, 50%) !important;
+    opacity: 0.7 !important;
+  }
+  
+  /* Select dropdown arrow styling for light mode */
+  .light select,
+  html:not(.dark) select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem !important;
+  }
+  
+  /* Override shadcn/ui components in light mode */
+  html:not(.dark) .bg-background,
+  html:not(.dark) [data-theme="light"] .bg-background {
+    background-color: hsl(0, 0%, 100%) !important;
+  }
+  
+  html:not(.dark) .bg-input,
+  html:not(.dark) [data-theme="light"] .bg-input {
+    background-color: hsl(0, 0%, 100%) !important;
+  }
+  
+  html:not(.dark) .border-input,
+  html:not(.dark) [data-theme="light"] .border-input {
+    border-color: hsl(175, 100%, 85%) !important;
+  }
+  
+  /* Shadcn/ui Button overrides for light mode */
+  html:not(.dark) button[role="combobox"],
+  html:not(.dark) [data-theme="light"] button[role="combobox"] {
+    background-color: hsl(0, 0%, 100%) !important;
+    border: 2px solid hsl(175, 100%, 85%) !important;
+    color: hsl(220, 45%, 20%) !important;
+  }
+  
+  html:not(.dark) button[role="combobox"]:hover,
+  html:not(.dark) [data-theme="light"] button[role="combobox"]:hover {
+    background-color: hsl(175, 100%, 98%) !important;
+    border-color: hsl(175, 100%, 75%) !important;
+  }
+  
+  /* Specific targeting for FormControl and FormItem backgrounds */
+  html:not(.dark) [data-radix-collection-item],
+  html:not(.dark) [data-theme="light"] [data-radix-collection-item] {
+    background-color: hsl(0, 0%, 100%) !important;
+  }
