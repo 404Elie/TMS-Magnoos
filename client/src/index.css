@@ -137,28 +137,33 @@
     border: 1px solid rgb(51 65 85) !important;
   }
   
-  /* Force override any conflicting styles */
-  [data-radix-dialog-content] * {
-    background-color: inherit;
-  }
-  
-  /* Prevent any red/destructive styling from affecting dialogs */
-  [data-radix-dialog-content].destructive,
-  [data-radix-dialog-content] .destructive,
-  [data-radix-dialog-content][class*="red"],
-  [data-radix-dialog-content][style*="red"] {
+  /* Clean form styling - remove red highlights */
+  input, select, textarea {
+    border: 1px solid rgb(229 231 235) !important;
     background-color: white !important;
     color: rgb(17 24 39) !important;
-    border-color: rgb(229 231 235) !important;
   }
   
-  .dark [data-radix-dialog-content].destructive,
-  .dark [data-radix-dialog-content] .destructive,
-  .dark [data-radix-dialog-content][class*="red"],
-  .dark [data-radix-dialog-content][style*="red"] {
+  .dark input, 
+  .dark select, 
+  .dark textarea {
+    border: 1px solid rgb(51 65 85) !important;
     background-color: rgb(15 23 42) !important;
     color: white !important;
-    border-color: rgb(51 65 85) !important;
+  }
+  
+  /* Clean focus states */
+  input:focus, select:focus, textarea:focus {
+    border-color: rgb(59 130 246) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  }
+  
+  .dark input:focus, 
+  .dark select:focus, 
+  .dark textarea:focus {
+    border-color: rgb(147 197 253) !important;
+    box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1) !important;
   }
   
   /* Vibrant Light Mode Enhancements */
@@ -355,14 +360,14 @@
     box-shadow: 0 6px 20px rgba(0, 50, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   }
   
-  /* Error message styling for auth page */
+  /* Error message styling for auth page - Clean dark/light mode */
   .auth-page .error-message,
   .auth-page [data-error],
   .auth-page .text-destructive,
   .auth-page [class*="error"] {
-    color: #dc2626 !important;
-    background-color: rgba(220, 38, 38, 0.1) !important;
-    border: 1px solid rgba(220, 38, 38, 0.3) !important;
+    color: #e11d48 !important;
+    background-color: rgba(225, 29, 72, 0.1) !important;
+    border: 1px solid rgba(225, 29, 72, 0.3) !important;
     padding: 0.5rem 0.75rem !important;
     border-radius: 0.375rem !important;
     font-weight: 500 !important;
@@ -372,30 +377,16 @@
     opacity: 1 !important;
   }
   
-  /* Make FormMessage visible and red */
+  /* Make FormMessage visible with proper colors */
   .auth-page [data-slot="form-message"],
   .auth-page .form-message {
-    color: #dc2626 !important;
+    color: #e11d48 !important;
     font-weight: 500 !important;
     font-size: 0.875rem !important;
     margin-top: 0.25rem !important;
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-  }
-  
-  /* Toast styling - make destructive toasts highly visible */
-  [data-state="open"][data-swipe="cancel"],
-  [data-state="open"],
-  .group.destructive,
-  [data-toast].destructive,
-  .destructive {
-    background-color: #dc2626 !important;
-    border: 2px solid #dc2626 !important;
-    color: white !important;
-    box-shadow: 0 20px 40px -5px rgba(220, 38, 38, 0.6), 0 8px 16px -4px rgba(220, 38, 38, 0.3) !important;
-    z-index: 9999 !important;
-    position: relative !important;
   }
   
   /* Toast viewport positioning */
@@ -406,100 +397,6 @@
     z-index: 9999 !important;
     max-width: 420px !important;
     padding: 1rem !important;
-  }
-  
-  /* Toast background styling - only for toast elements */
-  [data-sonner-toast].destructive,
-  [data-toast].destructive {
-    background-color: #dc2626 !important;
-    border: 3px solid #ff0000 !important;
-    color: white !important;
-    box-shadow: 0 25px 50px -5px rgba(220, 38, 38, 0.8) !important;
-    z-index: 99999 !important;
-    position: relative !important;
-    min-height: 80px !important;
-    font-size: 16px !important;
-  }
-  
-  /* Toast text styling - only for toast elements */
-  [data-sonner-toast].destructive *,
-  [data-toast].destructive * {
-    color: white !important;
-    font-weight: 500 !important;
-  }
-  
-  .group.destructive [data-title],
-  .group.destructive .text-sm.font-semibold,
-  [data-toast].destructive [data-title],
-  [data-toast].destructive .text-sm.font-semibold,
-  .destructive [data-title],
-  .destructive .text-sm.font-semibold {
-    color: white !important;
-    font-weight: 700 !important;
-    font-size: 1rem !important;
-  }
-  
-  .group.destructive [data-description],
-  .group.destructive .text-sm.opacity-90,
-  [data-toast].destructive [data-description],
-  [data-toast].destructive .text-sm.opacity-90,
-  .destructive [data-description],
-  .destructive .text-sm.opacity-90 {
-    color: rgba(255, 255, 255, 0.95) !important;
-    opacity: 1 !important;
-    font-size: 0.95rem !important;
-  }
-  
-  /* Toast close button for destructive */
-  .group.destructive button[toast-close],
-  [data-toast].destructive button[toast-close],
-  .destructive button[toast-close] {
-    color: rgba(255, 255, 255, 0.8) !important;
-  }
-  
-  .group.destructive button[toast-close]:hover,
-  [data-toast].destructive button[toast-close]:hover,
-  .destructive button[toast-close]:hover {
-    color: white !important;
-  }
-  
-  /* Target toast specifically with variant destructive */
-  [data-radix-toast-root][data-state="open"].destructive,
-  [data-radix-toast-root].destructive,
-  .group.destructive[data-state="open"] {
-    background: #dc2626 !important;
-    color: white !important;
-    border: 2px solid #dc2626 !important;
-    box-shadow: 0 20px 40px rgba(220, 38, 38, 0.8) !important;
-    z-index: 999999 !important;
-    font-size: 14px !important;
-    min-height: 60px !important;
-    padding: 1rem !important;
-    border-radius: 8px !important;
-  }
-  
-  /* Ensure title and description text is visible and white */
-  [data-radix-toast-root].destructive [data-radix-toast-title],
-  [data-radix-toast-root].destructive [data-radix-toast-description],
-  .group.destructive [data-radix-toast-title],
-  .group.destructive [data-radix-toast-description],
-  .group.destructive .text-sm.font-semibold,
-  .group.destructive .text-sm.opacity-90 {
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    line-height: 1.4 !important;
-    text-shadow: none !important;
-    opacity: 1 !important;
-  }
-  
-  /* Make sure the title is bold and visible */
-  [data-radix-toast-root].destructive [data-radix-toast-title],
-  .group.destructive [data-radix-toast-title],
-  .group.destructive .text-sm.font-semibold {
-    font-weight: 700 !important;
-    font-size: 15px !important;
-    margin-bottom: 4px !important;
   }
   
   /* Simple dropdown fix - light mode by default */
