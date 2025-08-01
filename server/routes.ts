@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./auth";
 import { insertTravelRequestSchema, insertBookingSchema, insertBudgetTrackingSchema } from "@shared/schema";
 import { zohoService } from "./zohoService";
-import { emailService } from "./emailService";
+import { realEmailService } from "./realEmailService";
 import { z } from "zod";
 
 // Middleware to check user role
@@ -374,7 +374,7 @@ export function registerRoutes(app: Express): Server {
             projectName: validatedData.projectId ? 'Project specified' : undefined
           };
 
-          const emailResult = await emailService.sendTravelRequestNotification(emailData, recipients);
+          const emailResult = await realEmailService.sendTravelRequestNotification(emailData, recipients);
           console.log(`Email notification result: ${emailResult ? 'SUCCESS' : 'FAILED'}`);
         } else {
           console.log("No email recipients found or missing user data");
@@ -439,7 +439,7 @@ export function registerRoutes(app: Express): Server {
               pmApproverName: `${approver.firstName || ''} ${approver.lastName || ''}`.trim() || approver.email || 'Unknown'
             };
 
-            await emailService.sendTravelRequestApprovalNotification(emailData, recipients);
+            await realEmailService.sendTravelRequestApprovalNotification(emailData, recipients);
           }
         }
       } catch (emailError) {
@@ -573,7 +573,7 @@ export function registerRoutes(app: Express): Server {
               operationsCompleterName: `${operationsUser.firstName || ''} ${operationsUser.lastName || ''}`.trim() || operationsUser.email || 'Unknown'
             };
 
-            await emailService.sendBookingCompletionNotification(emailData, validRecipients);
+            await realEmailService.sendBookingCompletionNotification(emailData, validRecipients);
           }
         }
       } catch (emailError) {
