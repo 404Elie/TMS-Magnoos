@@ -288,6 +288,8 @@ export function registerRoutes(app: Express): Server {
         requesterId: req.user.id,
         departureDate: new Date(req.body.departureDate),
         returnDate: new Date(req.body.returnDate),
+        // Convert empty string projectId to null for database compatibility
+        projectId: req.body.projectId === "" ? null : req.body.projectId,
       };
       
       const validatedData = insertTravelRequestSchema.parse(transformedData);
