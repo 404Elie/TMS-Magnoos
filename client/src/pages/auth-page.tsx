@@ -202,37 +202,39 @@ export default function AuthPage() {
                   style={{ 
                     background: 'linear-gradient(135deg, rgba(255, 111, 0, 0.1), rgba(255, 111, 0, 0.05))',
                     backdropFilter: 'blur(8px)',
-                    border: '1px solid rgba(255, 111, 0, 0.2)'
+                    border: '2px solid #FF6F00'
                   }}
                 >
                   <TabsTrigger 
                     value="login" 
-                    className="transition-all font-medium"
+                    className="transition-all font-medium rounded-md"
                     style={{
                       color: activeTab === 'login' ? 'white' : '#000037',
                       background: activeTab === 'login' 
                         ? 'linear-gradient(135deg, #FF6F00, #ff8533)' 
                         : 'transparent',
                       boxShadow: activeTab === 'login' 
-                        ? '0 2px 8px rgba(255, 111, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                        ? '0 4px 12px rgba(255, 111, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)' 
                         : 'none',
-                      textShadow: activeTab === 'login' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
+                      textShadow: activeTab === 'login' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none',
+                      border: activeTab === 'login' ? '2px solid #FF6F00' : '2px solid transparent'
                     }}
                   >
                     Sign In
                   </TabsTrigger>
                   <TabsTrigger 
                     value="register"
-                    className="transition-all font-medium"
+                    className="transition-all font-medium rounded-md"
                     style={{
                       color: activeTab === 'register' ? 'white' : '#000037',
                       background: activeTab === 'register' 
                         ? 'linear-gradient(135deg, #FF6F00, #ff8533)' 
                         : 'transparent',
                       boxShadow: activeTab === 'register' 
-                        ? '0 2px 8px rgba(255, 111, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                        ? '0 4px 12px rgba(255, 111, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)' 
                         : 'none',
-                      textShadow: activeTab === 'register' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none'
+                      textShadow: activeTab === 'register' ? '0 1px 2px rgba(0, 0, 0, 0.3)' : 'none',
+                      border: activeTab === 'register' ? '2px solid #FF6F00' : '2px solid transparent'
                     }}
                   >
                     Sign Up

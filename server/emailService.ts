@@ -1,4 +1,4 @@
-no highimport nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 class EmailService {
   private transporter: nodemailer.Transporter | null = null;
