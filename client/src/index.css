@@ -838,3 +838,38 @@
   background-color: rgba(255, 111, 0, 0.2) !important;
   color: #FF6F00 !important;
 }
+
+/* Dropdown hover states - matching manager dashboard traveler button */
+[role="option"]:hover,
+[role="option"][data-highlighted],
+[data-radix-select-item]:hover,
+[data-radix-select-item][data-highlighted],
+.ui-select-item:hover {
+  background-color: #3B82F6 !important; /* Electric Blue hover */
+  color: white !important;
+}
+
+/* Dark mode dropdown hover states */
+.dark [role="option"]:hover,
+.dark [role="option"][data-highlighted],
+.dark [data-radix-select-item]:hover,
+.dark [data-radix-select-item][data-highlighted],
+.dark .ui-select-item:hover {
+  background-color: #1D4ED8 !important; /* Darker blue for dark mode */
+  color: white !important;
+}
+
+/* Ensure dropdown text is visible in both modes */
+[role="option"],
+[data-radix-select-item],
+.ui-select-item {
+  color: #111827 !important;
+  background-color: transparent !important;
+}
+
+.dark [role="option"],
+.dark [data-radix-select-item],
+.dark .ui-select-item {
+  color: white !important;
+  background-color: transparent !important;
+}
