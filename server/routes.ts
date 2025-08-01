@@ -569,7 +569,7 @@ export function registerRoutes(app: Express): Server {
               operationsCompleterName: `${operationsUser.firstName || ''} ${operationsUser.lastName || ''}`.trim() || operationsUser.email || 'Unknown'
             };
 
-            await emailService.sendTravelRequestCompletionNotification(emailData, validRecipients);
+            await emailService.sendBookingCompletionNotification(emailData, validRecipients);
           }
         }
       } catch (emailError) {
