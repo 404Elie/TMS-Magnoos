@@ -472,27 +472,61 @@
     color: white !important;
   }
   
-  /* Button hover states with company grey */
-  button:hover {
-    background-color: #f3f4f6;
-    transition: background-color 0.2s ease;
+  /* Safe button hover states - only for buttons without existing background colors */
+  button:not([class*="bg-"]):not([style*="background"]):hover {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+    transition: all 0.2s ease;
   }
   
-  .dark button:hover {
-    background-color: #374151;
+  .dark button:not([class*="bg-"]):not([style*="background"]):hover {
+    background-color: #374151 !important;
+    color: white !important;
   }
   
   /* Outline button hover states */
   button[variant="outline"]:hover,
   .button-outline:hover {
-    background-color: #DADADA; /* Company Light Gray */
-    color: #111827;
+    background-color: #DADADA !important; /* Company Light Gray */
+    color: #111827 !important;
   }
   
   .dark button[variant="outline"]:hover,
   .dark .button-outline:hover {
-    background-color: #464646; /* Company Dark Gray */
-    color: white;
+    background-color: #464646 !important; /* Company Dark Gray */
+    color: white !important;
+  }
+  
+  /* Override hover for specific button types that were becoming invisible */
+  button[type="button"]:hover,
+  [role="button"]:hover,
+  .btn:hover {
+    background-color: #f9fafb !important;
+    color: #374151 !important;
+    border-color: #d1d5db !important;
+  }
+  
+  .dark button[type="button"]:hover,
+  .dark [role="button"]:hover,
+  .dark .btn:hover {
+    background-color: #374151 !important;
+    color: #e5e7eb !important;
+    border-color: #6b7280 !important;
+  }
+  
+  /* Ensure destructive buttons (like cancel) maintain proper contrast */
+  button[class*="destructive"]:hover,
+  button[class*="secondary"]:hover,
+  button[class*="ghost"]:hover {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+  }
+  
+  .dark button[class*="destructive"]:hover,
+  .dark button[class*="secondary"]:hover,
+  .dark button[class*="ghost"]:hover {
+    background-color: #334155 !important;
+    color: #f1f5f9 !important;
   }
   
   /* Additional Select component targeting */
