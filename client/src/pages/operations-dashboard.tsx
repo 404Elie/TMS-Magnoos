@@ -28,7 +28,8 @@ import {
   Users,
   BarChart3,
   AlertTriangle,
-  Plus
+  Plus,
+  X
 } from "lucide-react";
 import { 
   LineChart, 
