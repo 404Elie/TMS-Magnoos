@@ -355,7 +355,7 @@ export default function ManagerDashboard() {
               </div>
 
               {/* Recent Requests */}
-              <Card className="bg-card border-border shadow-lg">
+              <Card className="bg-card border-border shadow-lg dark:bg-card dark:border-border light:bg-gradient-to-br light:from-[hsl(0,0%,100%)] light:to-[hsl(175,100%,99%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
                 <CardHeader>
                   <CardTitle className="text-foreground">My Travel Requests</CardTitle>
                 </CardHeader>
@@ -438,7 +438,7 @@ export default function ManagerDashboard() {
 
             <TabsContent value="submit" className="bg-background space-y-8">
               <div className="max-w-4xl mx-auto">
-                <Card className="bg-card border-border shadow-lg">
+                <Card className="bg-card border-border shadow-lg dark:bg-card dark:border-border light:bg-gradient-to-br light:from-[hsl(0,0%,100%)] light:to-[hsl(175,100%,99%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
                   <CardHeader>
                     <CardTitle className="text-foreground">Submit Travel Request</CardTitle>
                     <CardDescription className="text-muted-foreground">

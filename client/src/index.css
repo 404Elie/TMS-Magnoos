@@ -3,24 +3,24 @@
 @tailwind utilities;
 
 :root {
-  /* Light theme colors - Magnoos Company Palette */
-  --background: hsl(0, 0%, 100%); /* Magnoos White */
+  /* Light theme colors - Vibrant Magnoos Company Palette */
+  --background: hsl(0, 0%, 98%); /* Slightly off-white for better vibrancy */
   --foreground: hsl(218, 100%, 11%); /* Magnoos Dark Blue */
-  --muted: hsl(207, 13%, 85%); /* Magnoos Light Gray */
-  --muted-foreground: hsl(214, 16%, 40%); /* Magnoos Dark Gray */
+  --muted: hsl(175, 100%, 95%); /* Very light vivid teal for vibrancy */
+  --muted-foreground: hsl(218, 100%, 25%); /* Lighter dark blue for better readability */
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(218, 100%, 11%);
   --card: hsl(0, 0%, 100%);
   --card-foreground: hsl(218, 100%, 11%);
-  --border: hsl(207, 13%, 85%);
-  --input: hsl(207, 13%, 90%);
+  --border: hsl(175, 100%, 85%); /* Light vivid teal borders */
+  --input: hsl(175, 100%, 92%); /* Very light teal for inputs */
   --primary: hsl(236, 100%, 58%); /* Magnoos Electric Blue */
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(207, 13%, 95%);
+  --secondary: hsl(175, 100%, 88%); /* Light vivid teal secondary */
   --secondary-foreground: hsl(218, 100%, 11%);
-  --accent: hsl(175, 39%, 55%); /* Teal/Turquoise */
+  --accent: hsl(16, 100%, 66%); /* Orange accent for vibrancy */
   --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(16, 100%, 66%); /* Coral/Peach for errors */
+  --destructive: hsl(3, 100%, 69%); /* Coral for errors */
   --destructive-foreground: hsl(0, 0%, 100%);
   --ring: hsl(236, 100%, 58%);
   --radius: 0.75rem;
@@ -124,6 +124,52 @@
                 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
   
+  /* Vibrant Light Mode Enhancements */
+  .vibrant-bg-light {
+    background: linear-gradient(135deg, 
+      hsl(175, 100%, 98%) 0%, 
+      hsl(0, 0%, 100%) 25%, 
+      hsl(51, 100%, 98%) 50%,
+      hsl(0, 0%, 100%) 75%,
+      hsl(175, 100%, 98%) 100%);
+  }
+  
+  .vibrant-card-light {
+    background: linear-gradient(135deg, 
+      hsl(0, 0%, 100%) 0%, 
+      hsl(175, 100%, 99%) 100%);
+    border: 1px solid hsl(175, 100%, 85%);
+    box-shadow: 0 4px 20px -4px hsl(175, 100%, 80%);
+  }
+  
+  .vibrant-input-light {
+    background: linear-gradient(135deg, 
+      hsl(175, 100%, 98%) 0%, 
+      hsl(0, 0%, 100%) 100%);
+    border: 2px solid hsl(175, 100%, 85%);
+  }
+  
+  .vibrant-input-light:focus {
+    border-color: hsl(236, 100%, 58%);
+    box-shadow: 0 0 0 3px hsl(236, 100%, 90%);
+  }
+  
+  /* Enhanced button styles for light mode */
+  .vibrant-button-light {
+    background: linear-gradient(135deg, 
+      hsl(236, 100%, 58%) 0%, 
+      hsl(266, 66%, 58%) 100%);
+    box-shadow: 0 4px 15px -4px hsl(236, 100%, 70%);
+  }
+  
+  .vibrant-button-light:hover {
+    background: linear-gradient(135deg, 
+      hsl(236, 100%, 50%) 0%, 
+      hsl(266, 66%, 50%) 100%);
+    box-shadow: 0 8px 25px -8px hsl(236, 100%, 60%);
+  }
+}
+  
   /* Button Animations */
   .animated-button {
     @apply transform transition-all duration-200 hover:scale-105 active:scale-95;
@@ -142,7 +188,11 @@
   
   /* Table Row Hover Effects */
   .hover-row {
-    @apply transition-all duration-200 hover:bg-accent/50 hover:shadow-md;
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+  
+  .hover-row:hover {
+    background-color: hsl(var(--accent) / 0.5);
   }
   
   /* Loading Shimmer Effect */
@@ -367,6 +417,3 @@
   .pm-dashboard [role="tabpanel"] {
     background-color: hsl(220, 45%, 10%) !important;
   }
-  
-
-}

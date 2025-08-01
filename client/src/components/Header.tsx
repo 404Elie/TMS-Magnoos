@@ -47,7 +47,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
   const typedUser = user as User | undefined;
 
   return (
-    <header className="border-b border-border shadow-lg backdrop-blur-md" style={{ backgroundColor: 'hsl(var(--card))' }}>
+    <header className="border-b border-border shadow-lg backdrop-blur-md dark:bg-card light:bg-gradient-to-r light:from-[hsl(175,100%,99%)] light:to-[hsl(0,0%,100%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
@@ -91,7 +91,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
               variant="outline" 
               size="sm"
               onClick={handleLogout}
-              className="hidden sm:flex border-border text-foreground hover:bg-muted"
+              className="hidden sm:flex border-border text-foreground hover:bg-muted dark:border-border dark:hover:bg-muted light:border-[hsl(175,100%,85%)] light:hover:bg-[hsl(175,100%,92%)] light:hover:border-[hsl(236,100%,58%)] transition-all duration-300"
             >
               Logout
             </Button>

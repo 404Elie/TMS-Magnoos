@@ -12,7 +12,7 @@ import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
 import AdminUsers from "@/pages/admin-users";
 import AdminPanel from "@/pages/admin-panel";
-import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import type { User } from "@shared/schema";
 
 function Router() {
@@ -88,16 +88,31 @@ function Router() {
   );
 }
 
+function AppContent() {
+  const { theme } = useTheme();
+  
+  return (
+    <div 
+      className="min-h-screen text-foreground transition-all duration-300" 
+      style={{ 
+        background: theme === 'light' 
+          ? 'linear-gradient(135deg, hsl(175, 100%, 98%) 0%, hsl(0, 0%, 100%) 25%, hsl(51, 100%, 98%) 50%, hsl(0, 0%, 100%) 75%, hsl(175, 100%, 98%) 100%)' 
+          : 'hsl(var(--background))' 
+      }}
+    >
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <div className="min-h-screen bg-background text-foreground">
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </div>
+        <AppContent />
       </ThemeProvider>
     </QueryClientProvider>
   );
