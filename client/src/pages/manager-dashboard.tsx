@@ -536,7 +536,7 @@ export default function ManagerDashboard() {
                                         >
                                           {field.value
                                             ? (() => {
-                                                const selectedProject = projects?.find((project) => project.id === field.value);
+                                                const selectedProject = projects?.find((project) => String(project.id) === field.value);
                                                 return selectedProject?.name || "Select project...";
                                               })()
                                             : "Select project..."}
@@ -555,7 +555,7 @@ export default function ManagerDashboard() {
                                                 key={project.id}
                                                 value={project.name}
                                                 onSelect={() => {
-                                                  field.onChange(project.id);
+                                                  field.onChange(String(project.id));
                                                   setProjectSearchOpen(false);
                                                 }}
                                               >
@@ -572,7 +572,7 @@ export default function ManagerDashboard() {
                                                 <Check
                                                   className={cn(
                                                     "ml-auto h-4 w-4",
-                                                    field.value === project.id ? "opacity-100" : "opacity-0"
+                                                    field.value === String(project.id) ? "opacity-100" : "opacity-0"
                                                   )}
                                                 />
                                               </CommandItem>
