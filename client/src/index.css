@@ -238,8 +238,8 @@
   }
   
   .custom-tab[data-state="active"] {
-    background: hsl(var(--magnoos-purple)) !important;
-    border: 1px solid hsl(var(--magnoos-purple)) !important;
+    background: #8A2BE2 !important;
+    border: 1px solid #8A2BE2 !important;
     color: white !important;
     font-weight: 600 !important;
     outline: none !important;
@@ -249,11 +249,11 @@
   }
   
   .custom-tab:hover:not([data-state="active"]) {
-    background: hsl(var(--magnoos-purple) / 0.1) !important;
-    color: hsl(var(--magnoos-purple)) !important;
+    background: rgba(138, 43, 226, 0.1) !important;
+    color: #8A2BE2 !important;
     outline: none !important;
     box-shadow: 0 1px 3px rgba(138, 43, 226, 0.2) !important;
-    border-color: hsl(var(--magnoos-purple) / 0.3) !important;
+    border-color: rgba(138, 43, 226, 0.3) !important;
   }
   
   .custom-tab:focus,
