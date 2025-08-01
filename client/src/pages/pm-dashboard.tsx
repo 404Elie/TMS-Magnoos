@@ -474,11 +474,11 @@ export default function PMDashboard() {
                     <CardTitle className="text-white">Travel Requests by Project</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <BarChart3 className="w-12 h-12 text-gray-300 mx-auto mb-2" />
                         <p className="text-gray-300">Project Analytics Chart</p>
-                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
+                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
@@ -490,11 +490,11 @@ export default function PMDashboard() {
                     <CardTitle className="text-white">Approval Timeline Trends</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="h-64 bg-slate-800 rounded-lg flex items-center justify-center">
                       <div className="text-center">
                         <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-2" />
                         <p className="text-gray-300">Timeline Analytics Chart</p>
-                        <p className="text-xs text-gray-300">Chart visualization would be implemented here</p>
+                        <p className="text-xs text-gray-400">Chart visualization would be implemented here</p>
                       </div>
                     </div>
                   </CardContent>
@@ -514,8 +514,8 @@ export default function PMDashboard() {
                     </div>
                   ) : Object.keys(projectAnalytics).length > 0 ? (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                      <table className="min-w-full divide-y divide-gray-700">
+                        <thead className="bg-slate-800">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                               Project
@@ -534,22 +534,22 @@ export default function PMDashboard() {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-slate-900 divide-y divide-gray-700">
                           {Object.entries(projectAnalytics).map(([projectName, data]) => (
                             <tr key={projectName}>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">
                                 {projectName}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                 {data.total}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-400">
                                 {data.approved}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-400">
                                 {data.pending}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-400">
                                 {data.completed}
                               </td>
                             </tr>
