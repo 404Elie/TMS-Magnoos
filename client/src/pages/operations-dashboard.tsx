@@ -545,9 +545,9 @@ export default function OperationsDashboard() {
 
               {/* Beautiful Charts with Magnoos Colors */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-slate-900 border-slate-700 shadow-lg">
+                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
+                    <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-[#00D9C0]" />
                       Monthly Expense Trend
                     </CardTitle>
@@ -562,26 +562,28 @@ export default function OperationsDashboard() {
                               <stop offset="95%" stopColor="#A3E635" stopOpacity={0.3}/>
                             </linearGradient>
                           </defs>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-slate-600" />
                           <XAxis 
                             dataKey="month" 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#FFFFFF', fontSize: 12, fontWeight: 600 }}
+                            className="fill-gray-700 dark:fill-white"
+                            tick={{ fontSize: 12, fontWeight: 600 }}
                           />
                           <YAxis 
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: '#FFFFFF', fontSize: 12, fontWeight: 600 }}
+                            className="fill-gray-700 dark:fill-white"
+                            tick={{ fontSize: 12, fontWeight: 600 }}
                             tickFormatter={(value) => `$${value.toLocaleString()}`}
                           />
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#1F2937', 
-                              border: '1px solid #374151',
+                              backgroundColor: 'white', 
+                              border: '1px solid #e5e7eb',
                               borderRadius: '8px',
-                              color: '#F9FAFB',
-                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)'
+                              color: '#111827',
+                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
@@ -599,9 +601,9 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-slate-900 border-slate-700 shadow-lg">
+                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
+                    <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-[#0032FF]" />
                       Expense Breakdown
                     </CardTitle>
@@ -617,7 +619,8 @@ export default function OperationsDashboard() {
                             outerRadius={80}
                             dataKey="value"
                             label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
-                            labelStyle={{ fill: '#FFFFFF', fontSize: 12, fontWeight: 600 }}
+                            labelStyle={{ fill: 'currentColor', fontSize: 12, fontWeight: 600 }}
+                            className="text-gray-900 dark:text-white"
                           >
                             {prepareExpenseBreakdownData().map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.color} />
@@ -625,16 +628,17 @@ export default function OperationsDashboard() {
                           </Pie>
                           <Tooltip 
                             contentStyle={{ 
-                              backgroundColor: '#1F2937', 
-                              border: '1px solid #374151',
+                              backgroundColor: 'white', 
+                              border: '1px solid #e5e7eb',
                               borderRadius: '8px',
-                              color: '#F9FAFB',
-                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.25)'
+                              color: '#111827',
+                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
                             }}
                             formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
                           />
                           <Legend 
-                            wrapperStyle={{ color: '#FFFFFF', fontWeight: 600 }}
+                            wrapperStyle={{ fontWeight: 600 }}
+                            className="text-gray-900 dark:text-white"
                           />
                         </PieChart>
                       </ResponsiveContainer>
@@ -644,9 +648,9 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Recent Activity */}
-              <Card className="bg-slate-900 border-slate-700">
+              <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Recent Booking Activities</CardTitle>
+                  <CardTitle className="text-gray-900 dark:text-white">Recent Booking Activities</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {bookingsLoading ? (
@@ -654,9 +658,9 @@ export default function OperationsDashboard() {
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
                     </div>
                   ) : bookings && bookings.length > 0 ? (
-                    <div className="bg-slate-800 space-y-4">
+                    <div className="bg-gray-50 dark:bg-slate-800 space-y-4">
                       {bookings.slice(0, 5).map((booking) => (
-                        <div key={booking.id} className="flex items-center space-x-4 p-4 bg-slate-700 rounded-lg">
+                        <div key={booking.id} className="flex items-center space-x-4 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg">
                           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                             {booking.type === 'flight' ? (
                               <Plane className="w-4 h-4 text-white" />
@@ -667,10 +671,10 @@ export default function OperationsDashboard() {
                             )}
                           </div>
                           <div className="flex-1">
-                            <p className="font-medium text-white">
+                            <p className="font-medium text-gray-900 dark:text-white">
                               {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)} booking
                             </p>
-                            <p className="text-sm text-gray-300">
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
                               {booking.provider} • {formatCurrency(booking.cost)} • {booking.bookingReference}
                             </p>
                           </div>
@@ -680,8 +684,8 @@ export default function OperationsDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-8">
-                      <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-300">No recent booking activities</p>
+                      <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-300">No recent booking activities</p>
                     </div>
                   )}
                 </CardContent>
@@ -689,11 +693,11 @@ export default function OperationsDashboard() {
             </TabsContent>
 
             <TabsContent value="bookings" className="space-y-8 dark:bg-background light:bg-transparent">
-              <Card className="bg-slate-900 border-slate-700">
+              <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">Active Travel Bookings</CardTitle>
-                    <CardDescription>Manage bookings for approved travel requests</CardDescription>
+                    <CardTitle className="text-gray-900 dark:text-white">Active Travel Bookings</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-300">Manage bookings for approved travel requests</CardDescription>
                   </div>
                   <Dialog>
                     <DialogTrigger asChild>
@@ -709,7 +713,7 @@ export default function OperationsDashboard() {
                           Add a new booking for an approved travel request
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="bg-slate-800 space-y-4">
+                      <div className="bg-gray-50 dark:bg-slate-800 space-y-4">
                         <div>
                           <Label htmlFor="request-select">Travel Request</Label>
                           <Select onValueChange={setSelectedRequestId}>
