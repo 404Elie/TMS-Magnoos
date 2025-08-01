@@ -96,10 +96,12 @@ class RealEmailService {
       if (this.emailMethod === 'resend' && this.resend) {
         // Use Resend API for real email delivery
         const result = await this.resend.emails.send({
-          from: 'Magnoos Travel <onboarding@resend.dev>', // Resend verified domain
+          from: 'Magnoos Travel System <onboarding@resend.dev>', // Resend verified domain
           to: [emailData.to],
           subject: emailData.subject,
           html: emailData.html,
+          text: this.htmlToText(emailData.html), // Add plain text version
+          reply_to: 'noreply@magnoos.com',
         });
         
         if (result.error) {
@@ -147,6 +149,18 @@ class RealEmailService {
       console.error('❌ Failed to send email:', error);
       return false;
     }
+  }
+
+  private htmlToText(html: string): string {
+    // Simple HTML to text conversion for better deliverability
+    return html
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/&nbsp;/g, ' ') // Replace non-breaking spaces
+      .replace(/&amp;/g, '&') // Replace HTML entities
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
   }
 
   // Convenience methods for travel notifications
@@ -215,7 +229,7 @@ class RealEmailService {
 
     return await this.sendEmail({
       to: targetEmail,
-      subject: `New Travel Request: ${request.travelerName} - ${request.destination}`,
+      subject: `Travel Request Submitted - ${request.travelerName} to ${request.destination}`,
       html: emailContent
     });
   }
@@ -283,7 +297,7 @@ class RealEmailService {
 
     return await this.sendEmail({
       to: targetEmail,
-      subject: `Travel Request Approved: ${request.travelerName} - ${request.destination}`,
+      subject: `Travel Approved - ${request.travelerName} to ${request.destination}`,
       html: emailContent
     });
   }
@@ -392,7 +406,7 @@ class RealEmailService {
 
     return await this.sendEmail({
       to: targetEmail,
-      subject: `Travel Bookings Complete: ${request.travelerName} - ${request.destination}`,
+      subject: `Travel Arrangements Confirmed - ${request.travelerName} to ${request.destination}`,
       html: emailContent
     });
   }
