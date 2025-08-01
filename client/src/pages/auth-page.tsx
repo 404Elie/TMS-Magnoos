@@ -128,9 +128,7 @@ export default function AuthPage() {
     <div 
       className="min-h-screen flex items-center justify-center p-4"
       style={{ 
-        background: 'linear-gradient(135deg, #0032FF, #8A2BE2) !important',
-        minHeight: '100vh',
-        width: '100%'
+        background: 'linear-gradient(135deg, #0032FF, #8A2BE2)'
       }}
     >
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">

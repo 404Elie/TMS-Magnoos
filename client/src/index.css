@@ -225,12 +225,6 @@
     box-shadow: 0 6px 20px rgba(0, 50, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   }
   
-  /* Force auth page background */
-  .auth-background {
-    background: linear-gradient(135deg, #0032FF, #8A2BE2) !important;
-    min-height: 100vh !important;
-  }
-  
   /* Custom clean tab styling - Light theme */
   .custom-tab {
     background: transparent !important;
