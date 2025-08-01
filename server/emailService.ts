@@ -26,6 +26,7 @@ class EmailService {
       
       console.log("Email service initialized with test account:");
       console.log(`- User: ${testAccount.user}`);
+      console.log(`- Pass: ${testAccount.pass}`);
       console.log("- Emails will be sent and viewable at: https://ethereal.email");
     } catch (error) {
       console.error("Failed to create test email account:", error);
