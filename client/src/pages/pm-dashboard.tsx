@@ -198,7 +198,7 @@ export default function PMDashboard() {
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="bg-magnoos-dark border-magnoos-dark">
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 bg-[#464646]">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-300">Pending Approvals</p>
