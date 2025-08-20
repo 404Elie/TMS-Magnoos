@@ -402,7 +402,7 @@ function TravelRequestForm() {
               <Button
                 type="submit"
                 disabled={submitMutation.isPending}
-                className="bg-magnoos-primary hover:bg-magnoos-primary/90 text-white min-w-[120px]"
+                className="hover:bg-magnoos-primary/90 text-white min-w-[120px] bg-[#8e2fe6]"
               >
                 {submitMutation.isPending ? "Submitting..." : "Submit Request"}
               </Button>
