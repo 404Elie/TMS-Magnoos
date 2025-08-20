@@ -93,6 +93,7 @@ export default function OperationsDashboard() {
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [editingDocument, setEditingDocument] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
 
   // Form schemas for passport and visa
   const passportSchema = z.object({
@@ -1766,18 +1767,32 @@ export default function OperationsDashboard() {
                               <FormItem className="md:col-span-2">
                                 <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
                                 <FormControl>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      <SelectValue placeholder="Select employee" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      {users?.map((user) => (
-                                        <SelectItem key={user.id} value={user.id}>
-                                          {user.name} ({user.email})
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
+                                  <div className="space-y-2">
+                                    <Input
+                                      placeholder="Search employees..."
+                                      value={employeeSearchTerm}
+                                      onChange={(e) => setEmployeeSearchTerm(e.target.value)}
+                                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                                    />
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                      <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                        <SelectValue placeholder="Select employee" />
+                                      </SelectTrigger>
+                                      <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 max-h-60 overflow-y-auto">
+                                        {users
+                                          ?.filter((user) => 
+                                            employeeSearchTerm === "" || 
+                                            user.name?.toLowerCase().includes(employeeSearchTerm.toLowerCase()) ||
+                                            user.email?.toLowerCase().includes(employeeSearchTerm.toLowerCase())
+                                          )
+                                          .map((user) => (
+                                            <SelectItem key={user.id} value={user.id}>
+                                              {user.name} ({user.email})
+                                            </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -2005,18 +2020,32 @@ export default function OperationsDashboard() {
                               <FormItem>
                                 <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
                                 <FormControl>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      <SelectValue placeholder="Select employee" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      {users?.map((user) => (
-                                        <SelectItem key={user.id} value={user.id}>
-                                          {user.name} ({user.email})
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
+                                  <div className="space-y-2">
+                                    <Input
+                                      placeholder="Search employees..."
+                                      value={employeeSearchTerm}
+                                      onChange={(e) => setEmployeeSearchTerm(e.target.value)}
+                                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                                    />
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                      <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                        <SelectValue placeholder="Select employee" />
+                                      </SelectTrigger>
+                                      <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 max-h-60 overflow-y-auto">
+                                        {users
+                                          ?.filter((user) => 
+                                            employeeSearchTerm === "" || 
+                                            user.name?.toLowerCase().includes(employeeSearchTerm.toLowerCase()) ||
+                                            user.email?.toLowerCase().includes(employeeSearchTerm.toLowerCase())
+                                          )
+                                          .map((user) => (
+                                            <SelectItem key={user.id} value={user.id}>
+                                              {user.name} ({user.email})
+                                            </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
