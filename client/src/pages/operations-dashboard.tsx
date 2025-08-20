@@ -78,7 +78,7 @@ export default function OperationsDashboard() {
   });
 
   // Fetch dashboard stats
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery<any>({
     queryKey: ["/api/dashboard/stats"],
     retry: false,
   });
@@ -104,13 +104,13 @@ export default function OperationsDashboard() {
   });
 
   // Fetch users for budget tracking
-  const { data: users } = useQuery({
+  const { data: users } = useQuery<any[]>({
     queryKey: ["/api/zoho/users"],
     retry: false,
   });
 
   // Fetch projects for budget tracking
-  const { data: projects } = useQuery({
+  const { data: projects } = useQuery<any[]>({
     queryKey: ["/api/zoho/projects"],
     retry: false,
   });
@@ -380,9 +380,11 @@ export default function OperationsDashboard() {
 
     const monthlyData: { [key: string]: number } = {};
     bookings.forEach(booking => {
+      if (!booking.createdAt) return;
       const date = new Date(booking.createdAt);
       const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
-      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + booking.cost;
+      const cost = parseFloat(String(booking.cost || 0));
+      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + cost;
     });
 
     return Object.entries(monthlyData)
@@ -403,7 +405,8 @@ export default function OperationsDashboard() {
     const typeData: { [key: string]: number } = {};
     bookings.forEach(booking => {
       const type = booking.type.charAt(0).toUpperCase() + booking.type.slice(1) + 's';
-      typeData[type] = (typeData[type] || 0) + booking.cost;
+      const cost = parseFloat(String(booking.cost || 0));
+      typeData[type] = (typeData[type] || 0) + cost;
     });
 
     const colors = ['#0032FF', '#FF6F00', '#1ABC3C', '#8A2BE2', '#FF6F61'];
@@ -648,7 +651,6 @@ export default function OperationsDashboard() {
                             outerRadius={80}
                             dataKey="value"
                             label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
-                            labelStyle={{ fill: 'currentColor', fontSize: 12, fontWeight: 600 }}
                             className="text-gray-900 dark:text-white"
                           >
                             {prepareExpenseBreakdownData().map((entry, index) => (
@@ -931,7 +933,7 @@ export default function OperationsDashboard() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <div className="flex items-center">
                                     <Avatar className="w-8 h-8 mr-3">
-                                      <AvatarImage src={request.traveler?.profileImageUrl} />
+                                      <AvatarImage src={request.traveler?.profileImageUrl || undefined} />
                                       <AvatarFallback className="bg-magnoos-blue text-white text-xs">
                                         {getInitials(
                                           request.traveler?.firstName, 
