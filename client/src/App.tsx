@@ -57,7 +57,8 @@ function Router() {
         {currentRole === 'manager' && <ManagerDashboard />}
         {currentRole === 'pm' && <PMDashboard />}
         {currentRole === 'operations' && <OperationsDashboard />}
-        {!currentRole && <NotFound />}
+        {typedUser?.role === 'admin' && !currentRole && <ManagerDashboard />}
+        {!currentRole && !typedUser?.role && <NotFound />}
       </Route>
       
       {/* Role-specific routes with admin access control */}

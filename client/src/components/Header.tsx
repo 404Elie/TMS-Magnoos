@@ -71,7 +71,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
             {/* User Profile */}
             <div className="flex items-center space-x-3">
               <Avatar className="w-8 h-8">
-                <AvatarImage src={userImage || typedUser?.profileImageUrl} alt="User Avatar" />
+                <AvatarImage src={userImage || typedUser?.profileImageUrl || undefined} alt="User Avatar" />
                 <AvatarFallback className="text-white text-sm" style={{ background: 'linear-gradient(135deg, hsl(var(--magnoos-electric-blue)), hsl(var(--magnoos-vivid-teal)))' }}>
                   {typedUser ? getInitials(`${typedUser.firstName || ''} ${typedUser.lastName || ''}`.trim() || typedUser.email || 'U') : 'U'}
                 </AvatarFallback>
