@@ -488,29 +488,7 @@
     border-color: #64748b !important;
   }
   
-  /* Logout button base and hover styles */
-  .logout-button {
-    background-color: transparent !important;
-    color: hsl(var(--foreground)) !important;
-    border-color: hsl(var(--border)) !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-  
-  .logout-button:hover {
-    background-color: #8A2BE2 !important;
-    color: #ffffff !important;
-    border-color: #8A2BE2 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    text-shadow: none !important;
-  }
-  
-  .logout-button:hover * {
-    color: #ffffff !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
+
   
   /* Override hover for specific button types that were becoming invisible */
   button[type="button"]:hover,

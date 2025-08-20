@@ -32,8 +32,8 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
-      case 'manager': return 'Member';
-      case 'pm': return 'Manager';
+      case 'manager': return 'Manager';
+      case 'pm': return 'Project Manager';
       case 'operations': return 'Operations';
       case 'admin': return 'Admin';
       default: return role;
@@ -91,7 +91,7 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
               variant="outline" 
               size="sm"
               onClick={handleLogout}
-              className="hidden sm:flex logout-button border-border text-foreground transition-all duration-300"
+              className="hidden sm:flex"
             >
               Logout
             </Button>
