@@ -48,7 +48,7 @@ export default function AdminRoleSwitcher() {
     return null;
   }
 
-  const currentRole = (user as any)?.activeRole || 'manager';
+  const currentRole = (user as any)?.activeRole || 'pm';
 
   return (
     <Card className="mb-6 border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20">
@@ -85,9 +85,10 @@ export default function AdminRoleSwitcher() {
                   <SelectValue placeholder="Switch role" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-orange-200 dark:bg-slate-800 dark:border-orange-700">
-                  <SelectItem value="manager" className="text-orange-900 dark:text-orange-100">Manager</SelectItem>
                   <SelectItem value="pm" className="text-orange-900 dark:text-orange-100">Project Manager</SelectItem>
-                  <SelectItem value="operations" className="text-orange-900 dark:text-orange-100">Operations</SelectItem>
+                  <SelectItem value="manager" className="text-orange-900 dark:text-orange-100">Manager</SelectItem>
+                  <SelectItem value="operations_ksa" className="text-orange-900 dark:text-orange-100">Operations KSA</SelectItem>
+                  <SelectItem value="operations_uae" className="text-orange-900 dark:text-orange-100">Operations UAE</SelectItem>
                 </SelectContent>
               </Select>
               

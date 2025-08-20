@@ -26,7 +26,7 @@ export const sessions = pgTable(
 );
 
 // User roles enum
-export const userRoleEnum = pgEnum("user_role", ["manager", "pm", "operations", "admin"]);
+export const userRoleEnum = pgEnum("user_role", ["pm", "manager", "operations_ksa", "operations_uae", "admin"]);
 
 // Travel request status enum
 export const requestStatusEnum = pgEnum("request_status", [
@@ -45,6 +45,17 @@ export const bookingStatusEnum = pgEnum("booking_status", [
   "cancelled"
 ]);
 
+// Document type enum
+export const documentTypeEnum = pgEnum("document_type", ["passport", "visa"]);
+
+// Document status enum  
+export const documentStatusEnum = pgEnum("document_status", [
+  "active",
+  "expired",
+  "expiring_soon",
+  "revoked"
+]);
+
 // User storage table
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -53,7 +64,7 @@ export const users = pgTable("users", {
   firstName: varchar("first_name").notNull(),
   lastName: varchar("last_name").notNull(),
   profileImageUrl: varchar("profile_image_url"),
-  role: userRoleEnum("role").notNull().default("manager"),
+  role: userRoleEnum("role").notNull().default("pm"),
   activeRole: userRoleEnum("active_role"), // For admin users to switch roles
   zohoUserId: varchar("zoho_user_id"),
   annualTravelBudget: decimal("annual_travel_budget", { precision: 10, scale: 2 }).default("15000"),
@@ -130,6 +141,23 @@ export const budgetTracking = pgTable("budget_tracking", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Visa/Passport tracking table
+export const documentsTracking = pgTable("documents_tracking", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  documentType: documentTypeEnum("document_type").notNull(),
+  documentNumber: varchar("document_number").notNull(),
+  countryCode: varchar("country_code").notNull(), // Country issuing the document
+  issuedDate: timestamp("issued_date").notNull(),
+  expiryDate: timestamp("expiry_date").notNull(),
+  status: documentStatusEnum("status").notNull().default("active"),
+  notes: text("notes"),
+  attachmentUrl: varchar("attachment_url"), // For storing document scans
+  createdBy: varchar("created_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   requestsAsRequester: many(travelRequests, { relationName: "requester" }),
@@ -138,6 +166,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   operationsCompletions: many(travelRequests, { relationName: "operationsCompleter" }),
   bookings: many(bookings),
   budgetTracking: many(budgetTracking),
+  documents: many(documentsTracking, { relationName: "documentOwner" }),
+  createdDocuments: many(documentsTracking, { relationName: "documentCreator" }),
 }));
 
 export const projectsRelations = relations(projects, ({ many }) => ({
@@ -195,6 +225,19 @@ export const budgetTrackingRelations = relations(budgetTracking, ({ one }) => ({
   }),
 }));
 
+export const documentsTrackingRelations = relations(documentsTracking, ({ one }) => ({
+  user: one(users, {
+    fields: [documentsTracking.userId],
+    references: [users.id],
+    relationName: "documentOwner",
+  }),
+  creator: one(users, {
+    fields: [documentsTracking.createdBy],
+    references: [users.id],
+    relationName: "documentCreator",
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -236,6 +279,13 @@ export const insertBudgetTrackingSchema = createInsertSchema(budgetTracking).omi
   updatedAt: true,
 });
 
+export const insertDocumentTrackingSchema = createInsertSchema(documentsTracking).omit({
+  id: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -247,6 +297,8 @@ export type Booking = typeof bookings.$inferSelect;
 export type InsertBooking = z.infer<typeof insertBookingSchema>;
 export type BudgetTracking = typeof budgetTracking.$inferSelect;
 export type InsertBudgetTracking = z.infer<typeof insertBudgetTrackingSchema>;
+export type DocumentTracking = typeof documentsTracking.$inferSelect;
+export type InsertDocumentTracking = z.infer<typeof insertDocumentTrackingSchema>;
 
 // Extended types with relations
 export type TravelRequestWithDetails = TravelRequest & {
@@ -266,4 +318,9 @@ export type ProjectWithBudget = Project & {
 export type UserWithBudget = User & {
   budgetTracking: BudgetTracking[];
   requestsAsTraveler: TravelRequest[];
+};
+
+export type DocumentTrackingWithUser = DocumentTracking & {
+  user: User;
+  creator: User;
 };

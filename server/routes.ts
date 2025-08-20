@@ -43,20 +43,20 @@ async function getRoleBasedRecipients(eventType: 'request_submitted' | 'request_
 
   switch (eventType) {
     case 'request_submitted':
-      // When Manager submits request: PM and Operations get notified
+      // When PM submits request: Manager and Operations get notified
       recipients.push(
         ...allUsers
-          .filter(user => user.role === 'pm' || user.role === 'operations')
+          .filter(user => user.role === 'manager' || user.role === 'operations_ksa' || user.role === 'operations_uae')
           .filter(user => user.email)
           .map(user => ({ email: user.email!, role: user.role }))
       );
       break;
 
     case 'request_approved':
-      // When PM approves request: Operations get notified
+      // When Manager approves request: Operations get notified
       recipients.push(
         ...allUsers
-          .filter(user => user.role === 'operations')
+          .filter(user => user.role === 'operations_ksa' || user.role === 'operations_uae')
           .filter(user => user.email)
           .map(user => ({ email: user.email!, role: user.role }))
       );
@@ -78,9 +78,9 @@ async function getRoleBasedRecipients(eventType: 'request_submitted' | 'request_
         recipients.push({ email: request.traveler.email, role: 'traveler' });
       }
       if (request?.pmApprovedBy) {
-        const pmUser = await storage.getUser(request.pmApprovedBy);
-        if (pmUser?.email) {
-          recipients.push({ email: pmUser.email, role: 'pm' });
+        const managerUser = await storage.getUser(request.pmApprovedBy);
+        if (managerUser?.email) {
+          recipients.push({ email: managerUser.email, role: 'manager' });
         }
       }
       break;
@@ -825,6 +825,47 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error cleaning up test data:", error);
       res.status(500).json({ message: "Failed to cleanup test data" });
+    }
+  });
+
+  // Document Management Routes
+  // Get all documents (for Manager and Operations)
+  app.get("/api/documents", requireRole(['manager', 'operations_ksa', 'operations_uae', 'admin']), async (req, res) => {
+    try {
+      const documents = await storage.getAllDocuments();
+      res.json(documents);
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      res.status(500).json({ message: "Failed to fetch documents" });
+    }
+  });
+
+  // Add new document (Manager and Operations)
+  app.post("/api/documents", requireRole(['manager', 'operations_ksa', 'operations_uae', 'admin']), async (req, res) => {
+    try {
+      const documentData = {
+        ...req.body,
+        createdBy: req.userId,
+        issuedDate: new Date(req.body.issuedDate),
+        expiryDate: new Date(req.body.expiryDate),
+      };
+
+      const document = await storage.createDocument(documentData);
+      res.status(201).json(document);
+    } catch (error) {
+      console.error("Error creating document:", error);
+      res.status(500).json({ message: "Failed to create document" });
+    }
+  });
+
+  // Update document status (Manager and Operations)
+  app.patch("/api/documents/:id", requireRole(['manager', 'operations_ksa', 'operations_uae', 'admin']), async (req, res) => {
+    try {
+      const document = await storage.updateDocument(req.params.id, req.body);
+      res.json(document);
+    } catch (error) {
+      console.error("Error updating document:", error);
+      res.status(500).json({ message: "Failed to update document" });
     }
   });
 

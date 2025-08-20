@@ -255,7 +255,7 @@ export default function ManagerDashboard() {
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-2 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
+            <TabsList className="grid w-full grid-cols-3 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard"
                 className="custom-tab"
@@ -267,6 +267,12 @@ export default function ManagerDashboard() {
                 className="custom-tab"
               >
                 Submit Request
+              </TabsTrigger>
+              <TabsTrigger 
+                value="operations"
+                className="custom-tab"
+              >
+                Operations & Documents
               </TabsTrigger>
             </TabsList>
 
@@ -763,6 +769,44 @@ export default function ManagerDashboard() {
                     </Form>
                   </CardContent>
                 </Card>
+              </div>
+            </TabsContent>
+
+            {/* Operations Tab - Manager has highest authority and can access Operations functionality */}
+            <TabsContent value="operations" className="mt-6 space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-foreground mb-4">Operations & Document Management</h2>
+                <p className="text-muted-foreground">As a Manager, you have full access to Operations functionality including bookings, expenses, and document tracking.</p>
+              </div>
+              
+              {/* Quick Navigation Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setActiveTab("operations-bookings")}>
+                  <CardContent className="p-6 text-center">
+                    <Plane className="h-12 w-12 mx-auto mb-4 text-blue-500" />
+                    <h3 className="text-lg font-semibold mb-2">Travel Bookings</h3>
+                    <p className="text-muted-foreground text-sm">Manage flight bookings, hotels, and travel arrangements for approved requests.</p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => window.location.href = '/documents'}>
+                  <CardContent className="p-6 text-center">
+                    <Flag className="h-12 w-12 mx-auto mb-4 text-green-500" />
+                    <h3 className="text-lg font-semibold mb-2">Document Tracking</h3>
+                    <p className="text-muted-foreground text-sm">Track visa and passport expiration dates for all employees.</p>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-4">Access full Operations dashboard with all functionality</p>
+                <Button 
+                  onClick={() => window.location.href = '/operations'}
+                  style={{ backgroundColor: '#8A2BE2', borderColor: '#8A2BE2' }}
+                  className="text-white"
+                >
+                  Open Full Operations Dashboard
+                </Button>
               </div>
             </TabsContent>
           </Tabs>

@@ -10,6 +10,7 @@ import AuthPage from "@/pages/auth-page";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
+import DocumentsManagement from "@/pages/documents-management";
 import AdminUsers from "@/pages/admin-users";
 import AdminPanel from "@/pages/admin-panel";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
@@ -54,23 +55,33 @@ function Router() {
   return (
     <Switch>
       <Route path="/">
-        {currentRole === 'manager' && <ManagerDashboard />}
         {currentRole === 'pm' && <PMDashboard />}
-        {currentRole === 'operations' && <OperationsDashboard />}
+        {currentRole === 'manager' && <ManagerDashboard />}
+        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae') && <OperationsDashboard />}
         {!currentRole && <NotFound />}
       </Route>
       
       {/* Role-specific routes with admin access control */}
-      <Route path="/manager">
-        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <ManagerDashboard /> : <NotFound />}
-      </Route>
-      
       <Route path="/pm">
         {(currentRole === 'pm' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
       </Route>
       
+      <Route path="/manager">
+        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <ManagerDashboard /> : <NotFound />}
+      </Route>
+      
+      {/* Manager can also access Operations dashboard since they have highest authority */}
+      <Route path="/manager-operations">
+        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
+      </Route>
+      
       <Route path="/operations">
-        {(currentRole === 'operations' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
+        {((currentRole === 'operations_ksa' || currentRole === 'operations_uae') || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
+      </Route>
+      
+      {/* Document Management Routes - Accessible by Manager and Operations */}
+      <Route path="/documents">
+        {((currentRole === 'manager' || currentRole === 'operations_ksa' || currentRole === 'operations_uae') || typedUser?.role === 'admin') ? <DocumentsManagement /> : <NotFound />}
       </Route>
       
       {/* Admin-only routes */}
