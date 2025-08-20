@@ -283,20 +283,37 @@ export default function ManagerDashboard() {
   // Approve mutation
   const approveMutation = useMutation({
     mutationFn: async (requestId: string) => {
-      const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/approve`);
-      return response.json();
+      try {
+        const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/approve`);
+        // Check if response is ok before parsing JSON
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          return await response.json();
+        } else {
+          const text = await response.text();
+          throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
+        }
+      } catch (error) {
+        console.error("Approval mutation error:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
       toast({
         title: "Request approved successfully",
         description: "The travel request has been approved and assigned to operations.",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
+      console.error("Approval error:", error);
       toast({
         title: "Error approving request",
-        description: error.message,
+        description: error.message || "Failed to approve request",
         variant: "destructive",
       });
     },
@@ -305,20 +322,36 @@ export default function ManagerDashboard() {
   // Reject mutation  
   const rejectMutation = useMutation({
     mutationFn: async (requestId: string) => {
-      const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/reject`);
-      return response.json();
+      try {
+        const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/reject`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          return await response.json();
+        } else {
+          const text = await response.text();
+          throw new Error(`Expected JSON but got: ${text.substring(0, 100)}`);
+        }
+      } catch (error) {
+        console.error("Rejection mutation error:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
       toast({
         title: "Request rejected",
         description: "The travel request has been rejected.",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
+      console.error("Rejection error:", error);
       toast({
         title: "Error rejecting request", 
-        description: error.message,
+        description: error.message || "Failed to reject request",
         variant: "destructive",
       });
     },

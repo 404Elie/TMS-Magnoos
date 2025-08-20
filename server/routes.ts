@@ -497,12 +497,12 @@ export function registerRoutes(app: Express): Server {
   });
 
   // PM approval endpoints
-  app.post('/api/travel-requests/:id/approve', isAuthenticated, requireRole(['pm']), async (req: any, res) => {
+  app.patch('/api/travel-requests/:id/approve', isAuthenticated, requireRole(['pm', 'admin']), async (req: any, res) => {
     try {
       const { id } = req.params;
       const updates = {
         status: "pm_approved" as const,
-        pmApprovedBy: req.userId,
+        pmApprovedBy: req.user.id,
         pmApprovedAt: new Date(),
       };
 
@@ -512,7 +512,7 @@ export function registerRoutes(app: Express): Server {
       try {
         const request = await storage.getTravelRequest(id);
         if (request && request.traveler && request.requester) {
-          const approver = await storage.getUser(req.userId);
+          const approver = await storage.getUser(req.user.id);
           
           // Get role-based notification recipients for request approval
           const recipients = await getRoleBasedRecipients('request_approved', request);
@@ -546,14 +546,14 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.post('/api/travel-requests/:id/reject', isAuthenticated, requireRole(['pm']), async (req: any, res) => {
+  app.patch('/api/travel-requests/:id/reject', isAuthenticated, requireRole(['pm', 'admin']), async (req: any, res) => {
     try {
       const { id } = req.params;
       const { reason } = req.body;
       
       const updates = {
         status: "pm_rejected" as const,
-        pmApprovedBy: req.userId,
+        pmApprovedBy: req.user.id,
         pmApprovedAt: new Date(),
         pmRejectionReason: reason,
       };
@@ -815,7 +815,8 @@ export function registerRoutes(app: Express): Server {
       res.json({ success, message: success ? 'Test email sent successfully' : 'Test email failed' });
     } catch (error) {
       console.error('Test email error:', error);
-      res.status(500).json({ message: 'Test email failed', error: error.message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ message: 'Test email failed', error: errorMessage });
     }
   });
 
