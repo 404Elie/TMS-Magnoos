@@ -63,10 +63,10 @@ function Router() {
         {(() => {
           try {
             if (currentRole === 'manager') {
-              return <ManagerDashboard />;
+              return <PMDashboard />;
             }
             if (currentRole === 'pm') {
-              return <PMDashboard />;
+              return <ManagerDashboard />;
             }
             if (currentRole === 'operations_ksa' || currentRole === 'operations_uae') {
               return <OperationsDashboard />;

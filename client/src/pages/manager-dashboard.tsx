@@ -328,9 +328,9 @@ export default function ManagerDashboard() {
   };
 
   return (
-    <ProtectedRoute allowedRoles={["manager"]}>
+    <ProtectedRoute allowedRoles={["pm"]}>
       <div className="min-h-screen dark:bg-background light:bg-transparent manager-dashboard">
-        <Header currentRole="manager" />
+        <Header currentRole="pm" />
         
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
           <AdminRoleSwitcher />
