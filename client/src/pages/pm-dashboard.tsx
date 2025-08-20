@@ -67,13 +67,13 @@ function TravelRequestForm() {
   const selectedPurpose = form.watch("purpose");
 
   // Fetch projects for dropdown
-  const { data: projects } = useQuery({
+  const { data: projects = [] } = useQuery({
     queryKey: ["/api/zoho/projects"],
     retry: false,
   });
 
   // Fetch Zoho users for employee dropdown
-  const { data: employees } = useQuery({
+  const { data: employees = [] } = useQuery({
     queryKey: ["/api/zoho/users"],
     retry: false,
   });
