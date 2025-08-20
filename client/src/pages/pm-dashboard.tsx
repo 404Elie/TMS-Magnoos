@@ -40,8 +40,12 @@ function TravelRequestForm() {
     departureDate: true,
     returnDate: true,
     purpose: true,
+    customPurpose: true,
     estimatedFlightCost: true,
     notes: true,
+  }).extend({
+    projectId: z.string().optional(),
+    customPurpose: z.string().optional(),
   });
 
   const form = useForm({
@@ -53,10 +57,14 @@ function TravelRequestForm() {
       departureDate: new Date(),
       returnDate: new Date(),
       purpose: "",
+      customPurpose: "",
       estimatedFlightCost: "",
       notes: "",
     },
   });
+
+  // Watch purpose field to conditionally show project and custom purpose fields
+  const selectedPurpose = form.watch("purpose");
 
   // Fetch projects for dropdown
   const { data: projects } = useQuery({
@@ -166,31 +174,33 @@ function TravelRequestForm() {
                 )}
               />
 
-              {/* Project Selection */}
-              <FormField
-                control={form.control}
-                name="projectId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Project *</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                          <SelectValue placeholder="Select project" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-slate-700">
-                          {projects?.map((project: any) => (
-                            <SelectItem key={project.id} value={project.id.toString()}>
-                              {project.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* Project Selection - Only show when purpose is "delivery" */}
+              {selectedPurpose === "delivery" && (
+                <FormField
+                  control={form.control}
+                  name="projectId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-900 dark:text-white">Project *</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                            <SelectValue placeholder="Select project" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white dark:bg-slate-700">
+                            {projects?.map((project: any) => (
+                              <SelectItem key={project.id} value={project.id.toString()}>
+                                {project.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               {/* Destination */}
               <FormField
@@ -310,11 +320,9 @@ function TravelRequestForm() {
                           <SelectValue placeholder="Select purpose" />
                         </SelectTrigger>
                         <SelectContent className="bg-white dark:bg-slate-700">
-                          <SelectItem value="client_meeting">Client Meeting</SelectItem>
-                          <SelectItem value="project_work">Project Work</SelectItem>
-                          <SelectItem value="training">Training</SelectItem>
-                          <SelectItem value="conference">Conference</SelectItem>
-                          <SelectItem value="site_visit">Site Visit</SelectItem>
+                          <SelectItem value="delivery">Delivery</SelectItem>
+                          <SelectItem value="sales">Sales</SelectItem>
+                          <SelectItem value="event">Event</SelectItem>
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
@@ -323,6 +331,27 @@ function TravelRequestForm() {
                   </FormItem>
                 )}
               />
+
+              {/* Custom Purpose - Only show when purpose is "other" */}
+              {selectedPurpose === "other" && (
+                <FormField
+                  control={form.control}
+                  name="customPurpose"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-900 dark:text-white">Specify Purpose *</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Please specify the purpose of travel"
+                          className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               {/* Estimated Cost */}
               <FormField
