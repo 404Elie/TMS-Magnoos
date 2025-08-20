@@ -34,6 +34,11 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     }
 
     if (!isLoading && isAuthenticated && allowedRoles && typedUser) {
+      // Admin always has access to everything
+      if (typedUser.role === 'admin') {
+        return;
+      }
+
       const currentRole = getCurrentRole(typedUser);
       if (currentRole && !allowedRoles.includes(currentRole)) {
         toast({
