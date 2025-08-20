@@ -1740,9 +1740,9 @@ export default function OperationsDashboard() {
                 </div>
               )}
 
-              {/* Document Form Modal - Will be added in next iteration */}
+              {/* Document Form Modal */}
               <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900">
                   <DialogHeader>
                     <DialogTitle className="text-gray-900 dark:text-white">
                       {editingDocument ? `Edit ${documentType}` : `Add New ${documentType}`}
@@ -1754,32 +1754,327 @@ export default function OperationsDashboard() {
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className="py-6">
-                    <p className="text-center text-gray-600 dark:text-gray-300">
-                      {documentType === "passport" ? "Passport" : "Visa"} form will be implemented here with comprehensive fields for:
-                    </p>
-                    <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                      {documentType === "passport" ? (
-                        <>
-                          <li>• Employee Selection</li>
-                          <li>• Passport Number & Personal Details</li>
-                          <li>• Nationality & Place of Birth</li>
-                          <li>• Issue & Expiry Dates</li>
-                          <li>• Issuing Authority & Country</li>
-                          <li>• Additional Notes</li>
-                        </>
-                      ) : (
-                        <>
-                          <li>• Employee & Passport Selection</li>
-                          <li>• Visa Number & Type</li>
-                          <li>• Issuing & Destination Countries</li>
-                          <li>• Entry Type & Duration</li>
-                          <li>• Consulate & Fee Information</li>
-                          <li>• Application & Approval Dates</li>
-                        </>
-                      )}
-                    </ul>
-                  </div>
+                  {documentType === "passport" ? (
+                    <Form {...passportForm}>
+                      <form onSubmit={passportForm.handleSubmit((data) => createPassportMutation.mutate(data))} className="space-y-6 py-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Employee Selection */}
+                          <FormField
+                            control={passportForm.control}
+                            name="userId"
+                            render={({ field }) => (
+                              <FormItem className="md:col-span-2">
+                                <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
+                                <FormControl>
+                                  <Select onValueChange={field.onChange} value={field.value}>
+                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      <SelectValue placeholder="Select employee" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      {allUsers?.map((user) => (
+                                        <SelectItem key={user.id} value={user.id}>
+                                          {user.firstName} {user.lastName} ({user.email})
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Passport Number */}
+                          <FormField
+                            control={passportForm.control}
+                            name="passportNumber"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Passport Number *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter passport number" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Full Name */}
+                          <FormField
+                            control={passportForm.control}
+                            name="fullName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Full Name *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter full name as on passport" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Nationality */}
+                          <FormField
+                            control={passportForm.control}
+                            name="nationality"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Nationality *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter nationality" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Date of Birth */}
+                          <FormField
+                            control={passportForm.control}
+                            name="dateOfBirth"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Date of Birth *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Place of Birth */}
+                          <FormField
+                            control={passportForm.control}
+                            name="placeOfBirth"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Place of Birth *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter place of birth" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Gender */}
+                          <FormField
+                            control={passportForm.control}
+                            name="gender"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Gender *</FormLabel>
+                                <FormControl>
+                                  <Select onValueChange={field.onChange} value={field.value}>
+                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      <SelectValue placeholder="Select gender" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      <SelectItem value="Male">Male</SelectItem>
+                                      <SelectItem value="Female">Female</SelectItem>
+                                      <SelectItem value="Other">Other</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Issue Date */}
+                          <FormField
+                            control={passportForm.control}
+                            name="issueDate"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Issue Date *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Expiry Date */}
+                          <FormField
+                            control={passportForm.control}
+                            name="expiryDate"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Expiry Date *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Issuing Authority */}
+                          <FormField
+                            control={passportForm.control}
+                            name="issuingAuthority"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Issuing Authority *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter issuing authority" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Issuing Country */}
+                          <FormField
+                            control={passportForm.control}
+                            name="issuingCountry"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Issuing Country *</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter issuing country" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Personal Number */}
+                          <FormField
+                            control={passportForm.control}
+                            name="personalNumber"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Personal Number</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter personal number (optional)" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Notes */}
+                          <FormField
+                            control={passportForm.control}
+                            name="notes"
+                            render={({ field }) => (
+                              <FormItem className="md:col-span-2">
+                                <FormLabel className="text-gray-900 dark:text-white">Additional Notes</FormLabel>
+                                <FormControl>
+                                  <Textarea {...field} placeholder="Enter any additional notes..." rows={3} className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-slate-600">
+                          <Button 
+                            type="submit" 
+                            disabled={createPassportMutation.isPending}
+                            className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                          >
+                            {createPassportMutation.isPending ? "Creating..." : editingDocument ? "Update Passport" : "Create Passport"}
+                          </Button>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={() => setDocumentModalOpen(false)}
+                            className="border-gray-300 dark:border-slate-600"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  ) : (
+                    <Form {...visaForm}>
+                      <form onSubmit={visaForm.handleSubmit((data) => createVisaMutation.mutate(data))} className="space-y-6 py-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Employee Selection */}
+                          <FormField
+                            control={visaForm.control}
+                            name="userId"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
+                                <FormControl>
+                                  <Select onValueChange={field.onChange} value={field.value}>
+                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      <SelectValue placeholder="Select employee" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      {allUsers?.map((user) => (
+                                        <SelectItem key={user.id} value={user.id}>
+                                          {user.firstName} {user.lastName}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Passport Selection */}
+                          <FormField
+                            control={visaForm.control}
+                            name="passportId"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-gray-900 dark:text-white">Associated Passport *</FormLabel>
+                                <FormControl>
+                                  <Select onValueChange={field.onChange} value={field.value}>
+                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      <SelectValue placeholder="Select passport" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                                      {passports?.map((passport) => (
+                                        <SelectItem key={passport.id} value={passport.id}>
+                                          {passport.passportNumber} ({passport.user?.firstName} {passport.user?.lastName})
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Continue with visa fields... */}
+                          <div className="md:col-span-2 text-center text-gray-600 dark:text-gray-300">
+                            <p>Visa form fields will be completed in the next step...</p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-slate-600">
+                          <Button 
+                            type="submit" 
+                            disabled={createVisaMutation.isPending}
+                            className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                          >
+                            {createVisaMutation.isPending ? "Creating..." : editingDocument ? "Update Visa" : "Create Visa"}
+                          </Button>
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={() => setDocumentModalOpen(false)}
+                            className="border-gray-300 dark:border-slate-600"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  )}
                 </DialogContent>
               </Dialog>
 

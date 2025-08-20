@@ -903,6 +903,154 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Passport management endpoints
+  app.get('/api/passports', isAuthenticated, async (req: any, res) => {
+    try {
+      const passports = await storage.getAllPassports();
+      res.json(passports);
+    } catch (error) {
+      console.error("Error fetching passports:", error);
+      res.status(500).json({ message: "Failed to fetch passports" });
+    }
+  });
+
+  app.post('/api/passports', isAuthenticated, requireRole(['operations_ksa', 'operations_uae']), async (req: any, res) => {
+    try {
+      const passportSchema = z.object({
+        userId: z.string().min(1, "Employee is required"),
+        passportNumber: z.string().min(1, "Passport number is required"),
+        fullName: z.string().min(1, "Full name is required"),
+        nationality: z.string().min(1, "Nationality is required"),
+        dateOfBirth: z.string().min(1, "Date of birth is required"),
+        placeOfBirth: z.string().min(1, "Place of birth is required"),
+        gender: z.enum(["Male", "Female", "Other"]),
+        issueDate: z.string().min(1, "Issue date is required"),
+        expiryDate: z.string().min(1, "Expiry date is required"),
+        issuingAuthority: z.string().min(1, "Issuing authority is required"),
+        issuingCountry: z.string().min(1, "Issuing country is required"),
+        personalNumber: z.string().optional(),
+        notes: z.string().optional(),
+      });
+
+      const validatedData = passportSchema.parse(req.body);
+      
+      // Check if user exists
+      const user = await storage.getUser(validatedData.userId);
+      if (!user) {
+        return res.status(400).json({ message: "Selected employee not found" });
+      }
+
+      // Create passport record in employee_documents table
+      const passportData = {
+        userId: validatedData.userId,
+        documentType: 'passport' as const,
+        documentNumber: validatedData.passportNumber,
+        issuingCountry: validatedData.issuingCountry,
+        issueDate: new Date(validatedData.issueDate),
+        expiryDate: new Date(validatedData.expiryDate),
+        notes: validatedData.notes || null,
+        documentData: {
+          fullName: validatedData.fullName,
+          nationality: validatedData.nationality,
+          dateOfBirth: validatedData.dateOfBirth,
+          placeOfBirth: validatedData.placeOfBirth,
+          gender: validatedData.gender,
+          issuingAuthority: validatedData.issuingAuthority,
+          personalNumber: validatedData.personalNumber,
+        }
+      };
+
+      const newPassport = await storage.createEmployeeDocument(passportData);
+      res.status(201).json(newPassport);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid passport data", errors: error.errors });
+      }
+      console.error("Error creating passport:", error);
+      res.status(500).json({ message: "Failed to create passport" });
+    }
+  });
+
+  // Visa management endpoints
+  app.get('/api/visas', isAuthenticated, async (req: any, res) => {
+    try {
+      const visas = await storage.getAllVisas();
+      res.json(visas);
+    } catch (error) {
+      console.error("Error fetching visas:", error);
+      res.status(500).json({ message: "Failed to fetch visas" });
+    }
+  });
+
+  app.post('/api/visas', isAuthenticated, requireRole(['operations_ksa', 'operations_uae']), async (req: any, res) => {
+    try {
+      const visaSchema = z.object({
+        userId: z.string().min(1, "Employee is required"),
+        passportId: z.string().min(1, "Passport is required"),
+        visaNumber: z.string().min(1, "Visa number is required"),
+        visaType: z.string().min(1, "Visa type is required"),
+        issuingCountry: z.string().min(1, "Issuing country is required"),
+        destinationCountry: z.string().min(1, "Destination country is required"),
+        issueDate: z.string().min(1, "Issue date is required"),
+        expiryDate: z.string().min(1, "Expiry date is required"),
+        entryType: z.enum(["Single Entry", "Multiple Entry", "Transit"]),
+        duration: z.string().optional(),
+        issuingConsulate: z.string().optional(),
+        applicationDate: z.string().optional(),
+        approvalDate: z.string().optional(),
+        feeAmount: z.string().optional(),
+        feeCurrency: z.string().default("USD"),
+        notes: z.string().optional(),
+      });
+
+      const validatedData = visaSchema.parse(req.body);
+      
+      // Check if user exists
+      const user = await storage.getUser(validatedData.userId);
+      if (!user) {
+        return res.status(400).json({ message: "Selected employee not found" });
+      }
+
+      // Check if passport exists
+      const passport = await storage.getEmployeeDocument(validatedData.passportId);
+      if (!passport || passport.documentType !== 'passport') {
+        return res.status(400).json({ message: "Selected passport not found" });
+      }
+
+      // Create visa record in employee_documents table
+      const visaData = {
+        userId: validatedData.userId,
+        documentType: 'visa' as const,
+        documentNumber: validatedData.visaNumber,
+        issuingCountry: validatedData.issuingCountry,
+        issueDate: new Date(validatedData.issueDate),
+        expiryDate: new Date(validatedData.expiryDate),
+        notes: validatedData.notes || null,
+        documentData: {
+          passportId: validatedData.passportId,
+          visaType: validatedData.visaType,
+          destinationCountry: validatedData.destinationCountry,
+          entryType: validatedData.entryType,
+          duration: validatedData.duration,
+          issuingConsulate: validatedData.issuingConsulate,
+          applicationDate: validatedData.applicationDate,
+          approvalDate: validatedData.approvalDate,
+          feeAmount: validatedData.feeAmount,
+          feeCurrency: validatedData.feeCurrency,
+        }
+      };
+
+      const newVisa = await storage.createEmployeeDocument(visaData);
+      res.status(201).json(newVisa);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid visa data", errors: error.errors });
+      }
+      console.error("Error creating visa:", error);
+      res.status(500).json({ message: "Failed to create visa" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

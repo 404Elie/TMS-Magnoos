@@ -81,6 +81,10 @@ export interface IStorage {
   updateEmployeeDocument(id: string, updates: Partial<EmployeeDocument>): Promise<EmployeeDocument>;
   deleteEmployeeDocument(id: string): Promise<void>;
   
+  // Passport and visa specific operations
+  getAllPassports(): Promise<EmployeeDocument[]>;
+  getAllVisas(): Promise<EmployeeDocument[]>;
+  
   // Admin delete operations for testing
   deleteTravelRequest(id: string): Promise<boolean>;
   deleteBooking(id: string): Promise<boolean>;
@@ -587,6 +591,25 @@ export class DatabaseStorage implements IStorage {
 
   async deleteEmployeeDocument(id: string): Promise<void> {
     await db.delete(employeeDocuments).where(eq(employeeDocuments.id, id));
+  }
+
+  // Passport and visa specific operations
+  async getAllPassports(): Promise<EmployeeDocument[]> {
+    return await db
+      .select()
+      .from(employeeDocuments)
+      .leftJoin(users, eq(employeeDocuments.userId, users.id))
+      .where(eq(employeeDocuments.documentType, 'passport'))
+      .orderBy(desc(employeeDocuments.expiryDate));
+  }
+
+  async getAllVisas(): Promise<EmployeeDocument[]> {
+    return await db
+      .select()
+      .from(employeeDocuments)
+      .leftJoin(users, eq(employeeDocuments.userId, users.id))
+      .where(eq(employeeDocuments.documentType, 'visa'))
+      .orderBy(desc(employeeDocuments.expiryDate));
   }
 }
 
