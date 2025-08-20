@@ -486,6 +486,27 @@ export default function OperationsDashboard() {
             </TabsList>
 
             <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
+              {/* Welcome Banner */}
+              <Card className="bg-gradient-to-r from-electric-blue/10 to-purple/10 dark:from-electric-blue/5 dark:to-purple/5 border-electric-blue/20">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        Welcome to Operations {user?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'}
+                      </h2>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        Manage travel bookings, track expenses, and handle document processing for approved requests
+                      </p>
+                    </div>
+                    <div className="hidden md:block">
+                      <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center">
+                        <MapPin className="w-8 h-8 text-electric-blue" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Active Bookings - Electric Blue to Purple Gradient */}
@@ -714,9 +735,23 @@ export default function OperationsDashboard() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-600 dark:text-gray-300">No recent booking activities</p>
+                    <div className="text-center py-12">
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-md mx-auto">
+                        <Calendar className="w-16 h-16 text-blue-500 dark:text-blue-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Booking Activities Yet</h3>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4">
+                          Travel requests are processed here once they're approved by project managers.
+                        </p>
+                        <div className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
+                          <p>📋 When new requests arrive, you'll be able to:</p>
+                          <ul className="text-left space-y-1 mt-2">
+                            <li>• Create flight and hotel bookings</li>
+                            <li>• Calculate per diem allowances</li>
+                            <li>• Track expenses and budgets</li>
+                            <li>• Manage visa and passport documents</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -996,10 +1031,28 @@ export default function OperationsDashboard() {
                       </table>
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <Calendar className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-600 dark:text-gray-300">No travel requests to process</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">Approved requests will appear here for booking</p>
+                    <div className="text-center py-16">
+                      <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-lg mx-auto">
+                        <Calendar className="w-20 h-20 text-green-500 dark:text-green-400 mx-auto mb-6" />
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Ready for Action!</h3>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4">
+                          No approved travel requests are waiting for processing right now.
+                        </p>
+                        <div className="text-sm text-gray-500 dark:text-gray-400 space-y-3">
+                          <div className="bg-white dark:bg-slate-600 rounded-lg p-4">
+                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">How the process works:</h4>
+                            <ol className="text-left space-y-1">
+                              <li>1️⃣ Managers submit travel requests</li>
+                              <li>2️⃣ Project managers approve requests</li>
+                              <li>3️⃣ <strong>You handle bookings and logistics</strong></li>
+                              <li>4️⃣ Travelers receive booking confirmations</li>
+                            </ol>
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            This dashboard will populate with new requests as they get approved
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -1129,10 +1182,14 @@ export default function OperationsDashboard() {
                           </table>
                         </div>
                       ) : (
-                        <div className="text-center py-8">
-                          <Users className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
-                          <p className="text-gray-600 dark:text-gray-300">No expense data available</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">Expense information will appear once travel requests are processed</p>
+                        <div className="text-center py-12">
+                          <div className="bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6">
+                            <Users className="w-16 h-16 text-purple-500 dark:text-purple-400 mx-auto mb-4" />
+                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">No Employee Expenses Yet</h4>
+                            <p className="text-gray-600 dark:text-gray-300 text-sm">
+                              Individual spending data will appear here once travel bookings are completed and processed.
+                            </p>
+                          </div>
                         </div>
                       )}
                     </CardContent>
