@@ -10,18 +10,15 @@ import AuthPage from "@/pages/auth-page";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
+import SimpleDashboard from "./SimpleDashboard";
 import DocumentManagement from "@/pages/document-management";
 import AdminUsers from "@/pages/admin-users";
 import AdminPanel from "@/pages/admin-panel";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
-import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import type { User } from "@shared/schema";
 
 function Router() {
-  console.log('🚀 Router component is rendering');
-  
   const { isAuthenticated, isLoading, user } = useAuth();
-  console.log('🔍 Auth state:', { isAuthenticated, isLoading, user });
 
   const typedUser = user as User | undefined;
 
@@ -59,61 +56,63 @@ function Router() {
 
   const currentRole = getCurrentRole(typedUser);
 
-  console.log('=== ROUTER DEBUG ===');
+  console.log('=== CRITICAL DEBUG ===');
   console.log('isAuthenticated:', isAuthenticated);
   console.log('isLoading:', isLoading);
   console.log('user:', user);
+  console.log('typedUser:', typedUser);
   console.log('currentRole:', currentRole);
-  console.log('====================');
+  console.log('================');
 
   // If authenticated, route based on user role
   return (
     <Switch>
       <Route path="/">
-        {(() => {
-          try {
-            if (currentRole === 'manager') {
-              console.log('Attempting to render ManagerDashboard');
-              return <ManagerDashboard />;
+        <div style={{ padding: '20px', fontSize: '14px', backgroundColor: '#f0f0f0', color: '#000' }}>
+          <h3>Debug Info</h3>
+          <p>isAuthenticated: {String(isAuthenticated)}</p>
+          <p>isLoading: {String(isLoading)}</p>
+          <p>user: {JSON.stringify(user, null, 2)}</p>
+          <p>currentRole: {currentRole}</p>
+          <hr />
+          {(() => {
+            try {
+              if (currentRole === 'manager') {
+                console.log('Attempting to render ManagerDashboard');
+                return <ManagerDashboard />;
+              }
+              if (currentRole === 'pm') {
+                console.log('Attempting to render PMDashboard');
+                return <PMDashboard />;
+              }
+              if (currentRole === 'operations_ksa' || currentRole === 'operations_uae') {
+                console.log('Attempting to render SimpleDashboard instead of OperationsDashboard');
+                return <SimpleDashboard />;
+              }
+              if (currentRole === 'admin') {
+                console.log('Attempting to render ManagerDashboard for admin');
+                return <ManagerDashboard />;
+              }
+              if (!currentRole) {
+                console.log('No role - rendering default ManagerDashboard');
+                return <ManagerDashboard />;
+              }
+              
+              console.error('No component matched!');
+              return <div style={{ color: 'red', padding: '20px', fontSize: '16px' }}>
+                ERROR: No component matched currentRole: {currentRole}
+              </div>;
+            } catch (error) {
+              console.error('RENDER ERROR:', error);
+              const err = error as Error;
+              return <div style={{ color: 'red', padding: '20px', fontSize: '16px' }}>
+                RENDER ERROR: {err.message || 'Unknown error'}
+                <br />
+                Stack: {err.stack || 'No stack trace'}
+              </div>;
             }
-            if (currentRole === 'pm') {
-              console.log('Attempting to render PMDashboard');
-              return <PMDashboard />;
-            }
-            if (currentRole === 'operations_ksa' || currentRole === 'operations_uae') {
-              console.log('Attempting to render test content instead of OperationsDashboard');
-              return (
-                <div style={{ padding: '20px', backgroundColor: '#e8f5e8' }}>
-                  <h1>Operations Dashboard Test</h1>
-                  <p>User: {JSON.stringify(user, null, 2)}</p>
-                  <p>Role: {currentRole}</p>
-                  <p>Status: Successfully rendering without OperationsDashboard component</p>
-                </div>
-              );
-            }
-            if (currentRole === 'admin') {
-              console.log('Attempting to render ManagerDashboard for admin');
-              return <ManagerDashboard />;
-            }
-            if (!currentRole) {
-              console.log('No role - rendering default ManagerDashboard');
-              return <ManagerDashboard />;
-            }
-            
-            console.error('No component matched!');
-            return <div style={{ color: 'red', padding: '20px', fontSize: '16px' }}>
-              ERROR: No component matched currentRole: {currentRole}
-            </div>;
-          } catch (error) {
-            console.error('RENDER ERROR:', error);
-            const err = error as Error;
-            return <div style={{ color: 'red', padding: '20px', fontSize: '16px' }}>
-              RENDER ERROR: {err.message || 'Unknown error'}
-              <br />
-              Stack: {err.stack || 'No stack trace'}
-            </div>;
-          }
-        })()}
+          })()}
+        </div>
       </Route>
       
       {/* Role-specific routes with admin access control */}
@@ -149,9 +148,7 @@ function Router() {
 }
 
 function AppContent() {
-  console.log('🎨 AppContent component is rendering');
   const { theme } = useTheme();
-  console.log('🎨 Theme:', theme);
   
   return (
     <div 
@@ -163,7 +160,6 @@ function AppContent() {
       }}
     >
       <TooltipProvider>
-        <AdminRoleSwitcher />
         <Toaster />
         <Router />
       </TooltipProvider>
@@ -172,7 +168,6 @@ function AppContent() {
 }
 
 function App() {
-  console.log('🏁 App component is rendering');
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>

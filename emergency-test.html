@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emergency Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background-color: #f0f0f0;
+        }
+        .debug { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 10px 0;
+            border: 2px solid #007bff;
+        }
+        .error { 
+            background: #ffebee; 
+            color: #c62828;
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: 10px 0;
+            border: 1px solid #f8bbd9;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug">
+        <h2>Emergency Debug Test</h2>
+        <p><strong>Status:</strong> This static HTML is loading successfully</p>
+        <p><strong>Time:</strong> <span id="time"></span></p>
+        <p><strong>Location:</strong> <a href="http://localhost:5000/">Main App</a></p>
+    </div>
+    
+    <div class="error">
+        <h3>Problem:</h3>
+        <p>The React app is not rendering. The issue is likely in one of these areas:</p>
+        <ul>
+            <li>React component crash during render</li>
+            <li>Missing or broken imports</li>
+            <li>JavaScript syntax errors</li>
+            <li>Authentication/session issues</li>
+        </ul>
+    </div>
+    
+    <script>
+        document.getElementById('time').textContent = new Date().toLocaleTimeString();
+        console.log('Emergency test page loaded successfully');
+        
+        // Test fetch to API
+        fetch('/api/user')
+            .then(res => res.json())
+            .then(data => {
+                console.log('API response:', data);
+            })
+            .catch(err => {
+                console.error('API error:', err);
+            });
+    </script>
+</body>
+</html>
