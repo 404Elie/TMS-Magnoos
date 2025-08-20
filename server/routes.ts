@@ -197,7 +197,7 @@ export function registerRoutes(app: Express): Server {
       const zohoProjects = await zohoService.getProjects();
       // Transform to expected format for frontend - return only id and name for cleaner dropdown
       const transformedProjects = zohoProjects.map(project => ({
-        id: project.id || project.id_string,
+        id: project.id,
         name: project.name
       }));
       res.json(transformedProjects);
@@ -403,8 +403,8 @@ export function registerRoutes(app: Express): Server {
             // Create the user in our local database
             // Parse the name from Zoho data properly
             const nameParts = zohoTraveler.name?.split(' ') || [];
-            const firstName = zohoTraveler.firstName || nameParts[0] || zohoTraveler.email?.split('@')[0] || 'User';
-            const lastName = zohoTraveler.lastName || nameParts.slice(1).join(' ') || '';
+            const firstName = nameParts[0] || zohoTraveler.email?.split('@')[0] || 'User';
+            const lastName = nameParts.slice(1).join(' ') || '';
             
             traveler = await storage.createUser({
               id: zohoTraveler.id,
@@ -433,7 +433,6 @@ export function registerRoutes(app: Express): Server {
             if (zohoProject) {
               // Create the project in our local database
               project = await storage.createProject({
-                id: String(zohoProject.id),
                 zohoProjectId: String(zohoProject.id),
                 name: zohoProject.name,
                 description: zohoProject.description || '',

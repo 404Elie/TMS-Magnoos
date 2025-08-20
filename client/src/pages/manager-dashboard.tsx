@@ -108,10 +108,15 @@ export default function ManagerDashboard() {
   });
 
   // Fetch pending requests for approval
-  const { data: pendingRequests, isLoading: pendingLoading } = useQuery<TravelRequestWithDetails[]>({
+  const { data: pendingRequests, isLoading: pendingLoading, error: pendingError } = useQuery<TravelRequestWithDetails[]>({
     queryKey: ["/api/travel-requests", { needsApproval: true }],
     retry: false,
   });
+
+  // Debug logging for pending requests
+  console.log("Pending requests data:", pendingRequests);
+  console.log("Pending requests loading:", pendingLoading);
+  console.log("Pending requests error:", pendingError);
 
   // Submit travel request mutation
   const submitRequestMutation = useMutation({

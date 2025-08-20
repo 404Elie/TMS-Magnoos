@@ -1793,7 +1793,7 @@ export default function OperationsDashboard() {
                                           {users?.map((user) => (
                                             <CommandItem
                                               key={user.id}
-                                              value={`${user.name} ${user.email}`}
+                                              value={`${user.firstName} ${user.lastName} ${user.email}`}
                                               onSelect={() => {
                                                 field.onChange(user.id);
                                                 setEmployeeComboboxOpen(false);
@@ -1805,7 +1805,7 @@ export default function OperationsDashboard() {
                                                   field.value === user.id ? "opacity-100" : "opacity-0"
                                                 )}
                                               />
-                                              {user.name} ({user.email})
+                                              {user.firstName} {user.lastName} ({user.email})
                                             </CommandItem>
                                           ))}
                                         </CommandGroup>
