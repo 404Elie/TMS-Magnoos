@@ -62,6 +62,7 @@ function Router() {
         {currentRole === 'manager' && <ManagerDashboard />}
         {currentRole === 'pm' && <PMDashboard />}
         {(currentRole === 'operations_ksa' || currentRole === 'operations_uae') && <OperationsDashboard />}
+        {currentRole === 'admin' && <ManagerDashboard />}
         {!currentRole && <ManagerDashboard />}
       </Route>
       
