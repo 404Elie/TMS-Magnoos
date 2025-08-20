@@ -208,7 +208,7 @@ export default function PMDashboard() {
                       <div>
                         <p className="text-sm font-medium text-white/90">Pending Approvals</p>
                         <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : stats?.pendingApprovals || 0}
+                          {statsLoading ? "..." : (stats as any)?.pendingApprovals || 0}
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
@@ -224,7 +224,7 @@ export default function PMDashboard() {
                       <div>
                         <p className="text-sm font-medium text-white/90">Approved This Month</p>
                         <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : stats?.approvedMonth || 0}
+                          {statsLoading ? "..." : (stats as any)?.approvedMonth || 0}
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
@@ -240,7 +240,7 @@ export default function PMDashboard() {
                       <div>
                         <p className="text-sm font-medium text-white/90">Active Projects</p>
                         <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : stats?.activeProjects || 0}
+                          {statsLoading ? "..." : (stats as any)?.activeProjects || 0}
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
@@ -256,7 +256,7 @@ export default function PMDashboard() {
                       <div>
                         <p className="text-sm font-medium text-white/90">Avg Approval Time</p>
                         <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : stats?.avgApprovalTime || "N/A"}
+                          {statsLoading ? "..." : (stats as any)?.avgApprovalTime || "N/A"}
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
@@ -287,7 +287,7 @@ export default function PMDashboard() {
                                 {request.traveler.firstName} {request.traveler.lastName} - {request.destination}
                               </p>
                               <p className="text-sm text-gray-600 dark:text-gray-300">
-                                {request.project?.name} • {new Date(request.createdAt!).toRelativeTimeString?.() || 'Recently submitted'}
+                                {request.project?.name} • {request.createdAt ? new Date(request.createdAt).toLocaleDateString() : 'Recently submitted'}
                               </p>
                             </div>
                             <Button 
@@ -370,7 +370,7 @@ export default function PMDashboard() {
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="flex items-center">
                                   <Avatar className="w-8 h-8 mr-3">
-                                    <AvatarImage src={request.traveler.profileImageUrl} />
+                                    <AvatarImage src={request.traveler.profileImageUrl || undefined} />
                                     <AvatarFallback className="bg-magnoos-blue text-white text-xs">
                                       {getInitials(request.traveler.firstName, request.traveler.lastName)}
                                     </AvatarFallback>

@@ -53,14 +53,10 @@ import {
 import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget, ProjectWithBudget } from "@shared/schema";
 
 export default function OperationsDashboard() {
-  console.log("OperationsDashboard component starting to render");
-  
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("dashboard");
-  
-  console.log("OperationsDashboard - user:", user);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
@@ -454,8 +450,6 @@ export default function OperationsDashboard() {
         trips: project.tripCount
       }));
   };
-
-  console.log("OperationsDashboard about to return JSX");
 
   return (
     <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>

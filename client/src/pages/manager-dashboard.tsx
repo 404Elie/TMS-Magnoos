@@ -255,7 +255,7 @@ export default function ManagerDashboard() {
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-2 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
+            <TabsList className="grid w-full grid-cols-4 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard"
                 className="custom-tab"
@@ -267,6 +267,18 @@ export default function ManagerDashboard() {
                 className="custom-tab"
               >
                 Submit Request
+              </TabsTrigger>
+              <TabsTrigger 
+                value="operations-ksa"
+                className="custom-tab"
+              >
+                Operations KSA
+              </TabsTrigger>
+              <TabsTrigger 
+                value="operations-uae"
+                className="custom-tab"
+              >
+                Operations UAE
               </TabsTrigger>
             </TabsList>
 
@@ -764,6 +776,228 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            {/* Operations KSA Tab */}
+            <TabsContent value="operations-ksa" className="space-y-8 dark:bg-background light:bg-transparent">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-white" />
+                  </div>
+                  Operations KSA Dashboard
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300">Monitor KSA operations team performance and travel processing</p>
+              </div>
+
+              {/* KSA Operations Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">Active KSA Bookings</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : (stats as any)?.activeBookingsKsa || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <Plane className="w-6 h-6 text-[#0032FF]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">KSA Monthly Spend</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-20 h-8 bg-white/20 rounded"></span>
+                          ) : formatCurrency((stats as any)?.monthlySpendKsa || 0)}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <DollarSign className="w-6 h-6 text-[#1ABC3C]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">KSA Pending Tasks</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : (stats as any)?.pendingTasksKsa || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <Clock className="w-6 h-6 text-[#FF6F00]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#A3E635] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">KSA Completion Rate</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : `${(stats as any)?.completionRateKsa || 95}%`}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <Check className="w-6 h-6 text-[#00D9C0]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* KSA Recent Activity */}
+              <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-white">Recent KSA Operations Activity</CardTitle>
+                  <CardDescription>Latest bookings and operations handled by the KSA team</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <MapPin className="w-8 h-8 text-electric-blue" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">KSA Operations Tracking</h4>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">
+                      KSA operations data will appear here as travel requests are processed and bookings are completed.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Operations UAE Tab */}
+            <TabsContent value="operations-uae" className="space-y-8 dark:bg-background light:bg-transparent">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-white" />
+                  </div>
+                  Operations UAE Dashboard
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300">Monitor UAE operations team performance and travel processing</p>
+              </div>
+
+              {/* UAE Operations Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">Active UAE Bookings</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : (stats as any)?.activeBookingsUae || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <Plane className="w-6 h-6 text-[#0032FF]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">UAE Monthly Spend</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-20 h-8 bg-white/20 rounded"></span>
+                          ) : formatCurrency((stats as any)?.monthlySpendUae || 0)}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <DollarSign className="w-6 h-6 text-[#1ABC3C]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">UAE Pending Tasks</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : (stats as any)?.pendingTasksUae || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <Clock className="w-6 h-6 text-[#FF6F00]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#A3E635] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">UAE Completion Rate</p>
+                        <p className="text-3xl font-bold text-white mt-1">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : `${(stats as any)?.completionRateUae || 92}%`}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                        <Check className="w-6 h-6 text-[#00D9C0]" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* UAE Recent Activity */}
+              <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-white">Recent UAE Operations Activity</CardTitle>
+                  <CardDescription>Latest bookings and operations handled by the UAE team</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <MapPin className="w-8 h-8 text-electric-blue" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">UAE Operations Tracking</h4>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm">
+                      UAE operations data will appear here as travel requests are processed and bookings are completed.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
