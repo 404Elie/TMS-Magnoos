@@ -22,6 +22,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { 
   Calendar, 
   DollarSign, 
@@ -93,7 +97,7 @@ export default function OperationsDashboard() {
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [editingDocument, setEditingDocument] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
+  const [employeeComboboxOpen, setEmployeeComboboxOpen] = useState(false);
 
   // Form schemas for passport and visa
   const passportSchema = z.object({
@@ -1767,32 +1771,47 @@ export default function OperationsDashboard() {
                               <FormItem className="md:col-span-2">
                                 <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
                                 <FormControl>
-                                  <div className="space-y-2">
-                                    <Input
-                                      placeholder="Search employees..."
-                                      value={employeeSearchTerm}
-                                      onChange={(e) => setEmployeeSearchTerm(e.target.value)}
-                                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                                    />
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                      <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                        <SelectValue placeholder="Select employee" />
-                                      </SelectTrigger>
-                                      <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 max-h-60 overflow-y-auto">
-                                        {users
-                                          ?.filter((user) => 
-                                            employeeSearchTerm === "" || 
-                                            user.name?.toLowerCase().includes(employeeSearchTerm.toLowerCase()) ||
-                                            user.email?.toLowerCase().includes(employeeSearchTerm.toLowerCase())
-                                          )
-                                          .map((user) => (
-                                            <SelectItem key={user.id} value={user.id}>
+                                  <Popover open={employeeComboboxOpen} onOpenChange={setEmployeeComboboxOpen}>
+                                    <PopoverTrigger asChild>
+                                      <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        aria-expanded={employeeComboboxOpen}
+                                        className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                                      >
+                                        {field.value
+                                          ? users?.find((user) => user.id === field.value)?.name + " (" + users?.find((user) => user.id === field.value)?.email + ")"
+                                          : "Select employee..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0 bg-white dark:bg-slate-700">
+                                      <Command>
+                                        <CommandInput placeholder="Search employees..." className="h-9" />
+                                        <CommandEmpty>No employee found.</CommandEmpty>
+                                        <CommandGroup className="max-h-60 overflow-y-auto">
+                                          {users?.map((user) => (
+                                            <CommandItem
+                                              key={user.id}
+                                              value={`${user.name} ${user.email}`}
+                                              onSelect={() => {
+                                                field.onChange(user.id);
+                                                setEmployeeComboboxOpen(false);
+                                              }}
+                                            >
+                                              <Check
+                                                className={cn(
+                                                  "mr-2 h-4 w-4",
+                                                  field.value === user.id ? "opacity-100" : "opacity-0"
+                                                )}
+                                              />
                                               {user.name} ({user.email})
-                                            </SelectItem>
+                                            </CommandItem>
                                           ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
+                                        </CommandGroup>
+                                      </Command>
+                                    </PopoverContent>
+                                  </Popover>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -2020,32 +2039,45 @@ export default function OperationsDashboard() {
                               <FormItem>
                                 <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
                                 <FormControl>
-                                  <div className="space-y-2">
-                                    <Input
-                                      placeholder="Search employees..."
-                                      value={employeeSearchTerm}
-                                      onChange={(e) => setEmployeeSearchTerm(e.target.value)}
-                                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                                    />
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                      <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                        <SelectValue placeholder="Select employee" />
-                                      </SelectTrigger>
-                                      <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 max-h-60 overflow-y-auto">
-                                        {users
-                                          ?.filter((user) => 
-                                            employeeSearchTerm === "" || 
-                                            user.name?.toLowerCase().includes(employeeSearchTerm.toLowerCase()) ||
-                                            user.email?.toLowerCase().includes(employeeSearchTerm.toLowerCase())
-                                          )
-                                          .map((user) => (
-                                            <SelectItem key={user.id} value={user.id}>
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                                      >
+                                        {field.value
+                                          ? users?.find((user) => user.id === field.value)?.name + " (" + users?.find((user) => user.id === field.value)?.email + ")"
+                                          : "Select employee..."}
+                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0 bg-white dark:bg-slate-700">
+                                      <Command>
+                                        <CommandInput placeholder="Search employees..." className="h-9" />
+                                        <CommandEmpty>No employee found.</CommandEmpty>
+                                        <CommandGroup className="max-h-60 overflow-y-auto">
+                                          {users?.map((user) => (
+                                            <CommandItem
+                                              key={user.id}
+                                              value={`${user.name} ${user.email}`}
+                                              onSelect={() => {
+                                                field.onChange(user.id);
+                                              }}
+                                            >
+                                              <Check
+                                                className={cn(
+                                                  "mr-2 h-4 w-4",
+                                                  field.value === user.id ? "opacity-100" : "opacity-0"
+                                                )}
+                                              />
                                               {user.name} ({user.email})
-                                            </SelectItem>
+                                            </CommandItem>
                                           ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
+                                        </CommandGroup>
+                                      </Command>
+                                    </PopoverContent>
+                                  </Popover>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
