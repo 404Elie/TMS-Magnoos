@@ -560,7 +560,7 @@ export function registerRoutes(app: Express): Server {
   });
 
   // Operations booking endpoints
-  app.get('/api/bookings', isAuthenticated, requireRole(['operations']), async (req: any, res) => {
+  app.get('/api/bookings', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
     try {
       const { requestId } = req.query;
       const bookings = await storage.getBookings(requestId as string);
@@ -571,7 +571,7 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.post('/api/bookings', isAuthenticated, requireRole(['operations']), async (req: any, res) => {
+  app.post('/api/bookings', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
     try {
       console.log("Booking request body:", JSON.stringify(req.body, null, 2));
       
@@ -601,7 +601,7 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.post('/api/travel-requests/:id/complete', isAuthenticated, requireRole(['operations']), async (req: any, res) => {
+  app.post('/api/travel-requests/:id/complete', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
     try {
       const { id } = req.params;
       const { totalCost } = req.body;
@@ -667,7 +667,7 @@ export function registerRoutes(app: Express): Server {
   });
 
   // Budget tracking endpoints (Operations only)
-  app.get('/api/budget-tracking', isAuthenticated, requireRole(['operations']), async (req: any, res) => {
+  app.get('/api/budget-tracking', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
     try {
       const { userId, projectId, year, month } = req.query;
       const filters: any = {};
@@ -685,7 +685,7 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.get('/api/budget-tracking/user/:userId', isAuthenticated, requireRole(['operations']), async (req: any, res) => {
+  app.get('/api/budget-tracking/user/:userId', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
     try {
       const { userId } = req.params;
       const { year = new Date().getFullYear() } = req.query;
@@ -698,7 +698,7 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.get('/api/budget-tracking/project/:projectId', isAuthenticated, requireRole(['operations']), async (req: any, res) => {
+  app.get('/api/budget-tracking/project/:projectId', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
     try {
       const { projectId } = req.params;
       const { year = new Date().getFullYear() } = req.query;
