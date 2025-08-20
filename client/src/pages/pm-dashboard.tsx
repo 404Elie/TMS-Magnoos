@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, Check, TrendingUp } from "lucide-react";
+import { Clock, Check, TrendingUp, ChevronsUpDown } from "lucide-react";
 import type { TravelRequestWithDetails } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -33,26 +33,26 @@ function TravelRequestForm() {
 
   // Form validation schema
   const formSchema = insertTravelRequestSchema.pick({
+    travelerId: true,
     projectId: true,
     destination: true,
-    startDate: true,
-    endDate: true,
+    departureDate: true,
+    returnDate: true,
     purpose: true,
-    estimatedCost: true,
-    urgency: true,
+    estimatedFlightCost: true,
     notes: true,
   });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      travelerId: "",
       projectId: "",
       destination: "",
-      startDate: new Date(),
-      endDate: new Date(),
+      departureDate: new Date(),
+      returnDate: new Date(),
       purpose: "",
-      estimatedCost: "",
-      urgency: "medium" as const,
+      estimatedFlightCost: "",
       notes: "",
     },
   });
@@ -60,6 +60,12 @@ function TravelRequestForm() {
   // Fetch projects for dropdown
   const { data: projects } = useQuery({
     queryKey: ["/api/zoho/projects"],
+    retry: false,
+  });
+
+  // Fetch Zoho users for employee dropdown
+  const { data: employees } = useQuery({
+    queryKey: ["/api/zoho/users"],
     retry: false,
   });
 
@@ -103,6 +109,59 @@ function TravelRequestForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Employee Selection */}
+              <FormField
+                control={form.control}
+                name="travelerId"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                          >
+                            {field.value
+                              ? employees?.find((emp: any) => emp.id === field.value)?.name + " (" + employees?.find((emp: any) => emp.id === field.value)?.email + ")"
+                              : "Select employee..."}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0 bg-white dark:bg-slate-700">
+                          <Command>
+                            <CommandInput placeholder="Search employees..." className="h-9" />
+                            <CommandEmpty>No employee found.</CommandEmpty>
+                            <CommandGroup className="max-h-60 overflow-y-auto">
+                              {employees?.map((emp: any) => (
+                                <CommandItem
+                                  key={emp.id}
+                                  value={`${emp.name} ${emp.email}`}
+                                  onSelect={() => {
+                                    field.onChange(emp.id);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      field.value === emp.id ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {emp.name} ({emp.email})
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {/* Project Selection */}
               <FormField
                 control={form.control}
@@ -151,7 +210,7 @@ function TravelRequestForm() {
               {/* Start Date */}
               <FormField
                 control={form.control}
-                name="startDate"
+                name="departureDate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-900 dark:text-white">Start Date *</FormLabel>
@@ -194,7 +253,7 @@ function TravelRequestForm() {
               {/* End Date */}
               <FormField
                 control={form.control}
-                name="endDate"
+                name="returnDate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-900 dark:text-white">End Date *</FormLabel>
@@ -264,10 +323,10 @@ function TravelRequestForm() {
               {/* Estimated Cost */}
               <FormField
                 control={form.control}
-                name="estimatedCost"
+                name="estimatedFlightCost"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Estimated Cost (USD) *</FormLabel>
+                    <FormLabel className="text-gray-900 dark:text-white">Estimated Flight Cost (USD) *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -281,30 +340,7 @@ function TravelRequestForm() {
                 )}
               />
 
-              {/* Urgency */}
-              <FormField
-                control={form.control}
-                name="urgency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Urgency</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                          <SelectValue placeholder="Select urgency" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-slate-700">
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="urgent">Urgent</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
             </div>
 
             {/* Notes */}
