@@ -65,29 +65,76 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
           </div>
           
           <div className="flex items-center space-x-4">
-            {/* Navigation Menu for Manager and Operations roles */}
+            {/* Navigation Menu - Admin can access EVERYTHING, Manager can access Operations */}
             {typedUser && (currentRole === 'manager' || currentRole?.startsWith('operations') || typedUser.role === 'admin') && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="text-foreground hover:bg-accent">
                     <Settings className="h-4 w-4 mr-2" />
-                    Quick Access
+                    {typedUser.role === 'admin' ? 'Admin Access' : 'Quick Access'}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  {(currentRole === 'manager' || typedUser.role === 'admin') && (
+                  {/* Admin has access to EVERYTHING */}
+                  {typedUser.role === 'admin' && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/pm" className="flex items-center w-full">
+                          <FileText className="h-4 w-4 mr-2" />
+                          PM Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/manager" className="flex items-center w-full">
+                          <Users className="h-4 w-4 mr-2" />
+                          Manager Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/operations" className="flex items-center w-full">
+                          <Users className="h-4 w-4 mr-2" />
+                          Operations Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/documents" className="flex items-center w-full">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Document Tracking
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin" className="flex items-center w-full">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  
+                  {/* Manager can access Operations and Documents */}
+                  {currentRole === 'manager' && typedUser.role !== 'admin' && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/operations" className="flex items-center w-full">
+                          <Users className="h-4 w-4 mr-2" />
+                          Operations Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/documents" className="flex items-center w-full">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Document Tracking
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  
+                  {/* Operations roles can access Documents */}
+                  {currentRole?.startsWith('operations') && typedUser.role !== 'admin' && (
                     <DropdownMenuItem asChild>
                       <Link href="/documents" className="flex items-center w-full">
                         <FileText className="h-4 w-4 mr-2" />
                         Document Tracking
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  {(currentRole?.startsWith('operations') || currentRole === 'manager' || typedUser.role === 'admin') && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/operations" className="flex items-center w-full">
-                        <Users className="h-4 w-4 mr-2" />
-                        Operations Dashboard
                       </Link>
                     </DropdownMenuItem>
                   )}

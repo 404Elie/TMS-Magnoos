@@ -55,14 +55,20 @@ function Router() {
   return (
     <Switch>
       <Route path="/">
-        {currentRole === 'pm' && <PMDashboard />}
-        {currentRole === 'manager' && <ManagerDashboard />}
-        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae') && <OperationsDashboard />}
-        {typedUser?.role === 'admin' && <PMDashboard />}
-        {!currentRole && <NotFound />}
+        {/* Admin gets default dashboard based on their selected role, or PM dashboard as default */}
+        {typedUser?.role === 'admin' && (
+          (currentRole === 'pm' && <PMDashboard />) ||
+          (currentRole === 'manager' && <ManagerDashboard />) ||
+          ((currentRole === 'operations_ksa' || currentRole === 'operations_uae') && <OperationsDashboard />) ||
+          <PMDashboard /> // Default for admin
+        )}
+        {currentRole === 'pm' && typedUser?.role !== 'admin' && <PMDashboard />}
+        {currentRole === 'manager' && typedUser?.role !== 'admin' && <ManagerDashboard />}
+        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae') && typedUser?.role !== 'admin' && <OperationsDashboard />}
+        {!currentRole && !typedUser && <NotFound />}
       </Route>
       
-      {/* Role-specific routes with admin access control */}
+      {/* Role-specific routes - Admin has access to EVERYTHING */}
       <Route path="/pm">
         {(currentRole === 'pm' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
       </Route>
@@ -71,13 +77,11 @@ function Router() {
         {(currentRole === 'manager' || typedUser?.role === 'admin') ? <ManagerDashboard /> : <NotFound />}
       </Route>
       
-      {/* Manager can also access Operations dashboard since they have highest authority */}
-      <Route path="/manager-operations">
-        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
-      </Route>
-      
       <Route path="/operations">
-        {((currentRole === 'operations_ksa' || currentRole === 'operations_uae') || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
+        {(
+          (currentRole === 'operations_ksa' || currentRole === 'operations_uae' || currentRole === 'manager') || 
+          typedUser?.role === 'admin'
+        ) ? <OperationsDashboard /> : <NotFound />}
       </Route>
       
       {/* Document Management Routes - Accessible by Manager and Operations */}
