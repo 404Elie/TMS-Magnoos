@@ -46,7 +46,7 @@ async function getRoleBasedRecipients(eventType: 'request_submitted' | 'request_
       // When Manager submits request: PM and Operations get notified
       recipients.push(
         ...allUsers
-          .filter(user => user.role === 'pm' || user.role === 'operations')
+          .filter(user => user.role === 'pm' || user.role === 'operations_ksa' || user.role === 'operations_uae')
           .filter(user => user.email)
           .map(user => ({ email: user.email!, role: user.role }))
       );
@@ -56,7 +56,7 @@ async function getRoleBasedRecipients(eventType: 'request_submitted' | 'request_
       // When PM approves request: Operations get notified
       recipients.push(
         ...allUsers
-          .filter(user => user.role === 'operations')
+          .filter(user => user.role === 'operations_ksa' || user.role === 'operations_uae')
           .filter(user => user.email)
           .map(user => ({ email: user.email!, role: user.role }))
       );
@@ -210,7 +210,7 @@ export function registerRoutes(app: Express): Server {
         return res.status(403).json({ message: "Admin access required" });
       }
 
-      const validRoles = ['manager', 'pm', 'operations'];
+      const validRoles = ['manager', 'pm', 'operations_ksa', 'operations_uae'];
       if (!validRoles.includes(role)) {
         return res.status(400).json({ message: "Invalid role" });
       }
@@ -240,7 +240,7 @@ export function registerRoutes(app: Express): Server {
         email: z.string().email(),
         firstName: z.string().min(1),
         lastName: z.string().min(1),
-        role: z.enum(['manager', 'pm', 'operations', 'admin']),
+        role: z.enum(['manager', 'pm', 'operations_ksa', 'operations_uae', 'admin']),
         annualTravelBudget: z.string().optional()
       });
 
@@ -269,7 +269,7 @@ export function registerRoutes(app: Express): Server {
         email: z.string().email().optional(),
         firstName: z.string().min(1).optional(),
         lastName: z.string().min(1).optional(),
-        role: z.enum(['manager', 'pm', 'operations', 'admin']).optional(),
+        role: z.enum(['manager', 'pm', 'operations_ksa', 'operations_uae', 'admin']).optional(),
         annualTravelBudget: z.string().optional()
       });
 
@@ -825,6 +825,73 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error cleaning up test data:", error);
       res.status(500).json({ message: "Failed to cleanup test data" });
+    }
+  });
+
+  // Employee Documents API Routes (Operations only)
+  app.get('/api/employee-documents', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      // Only operations users can view documents
+      if (user.role !== 'operations_ksa' && user.role !== 'operations_uae' && user.role !== 'admin') {
+        return res.status(403).json({ message: "Access denied. Operations role required." });
+      }
+
+      const documents = await storage.getAllEmployeeDocuments();
+      res.json(documents);
+    } catch (error) {
+      console.error("Error fetching employee documents:", error);
+      res.status(500).json({ message: "Failed to fetch employee documents" });
+    }
+  });
+
+  app.post('/api/employee-documents', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      // Only operations users can create documents
+      if (user.role !== 'operations_ksa' && user.role !== 'operations_uae' && user.role !== 'admin') {
+        return res.status(403).json({ message: "Access denied. Operations role required." });
+      }
+
+      const documentData = req.body;
+      const document = await storage.createEmployeeDocument(documentData);
+      res.status(201).json(document);
+    } catch (error) {
+      console.error("Error creating employee document:", error);
+      res.status(500).json({ message: "Failed to create employee document" });
+    }
+  });
+
+  app.put('/api/employee-documents/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (user.role !== 'operations_ksa' && user.role !== 'operations_uae' && user.role !== 'admin') {
+        return res.status(403).json({ message: "Access denied. Operations role required." });
+      }
+
+      const { id } = req.params;
+      const updates = req.body;
+      const document = await storage.updateEmployeeDocument(id, updates);
+      res.json(document);
+    } catch (error) {
+      console.error("Error updating employee document:", error);
+      res.status(500).json({ message: "Failed to update employee document" });
+    }
+  });
+
+  app.delete('/api/employee-documents/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (user.role !== 'operations_ksa' && user.role !== 'operations_uae' && user.role !== 'admin') {
+        return res.status(403).json({ message: "Access denied. Operations role required." });
+      }
+
+      const { id } = req.params;
+      await storage.deleteEmployeeDocument(id);
+      res.json({ message: "Document deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting employee document:", error);
+      res.status(500).json({ message: "Failed to delete employee document" });
     }
   });
 

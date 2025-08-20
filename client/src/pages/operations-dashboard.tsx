@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
+import { Link } from "wouter";
 import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +30,8 @@ import {
   BarChart3,
   AlertTriangle,
   Plus,
-  X
+  X,
+  FileText
 } from "lucide-react";
 import { 
   LineChart, 
@@ -540,6 +542,32 @@ export default function OperationsDashboard() {
                         <CheckSquare className="w-6 h-6 text-[#FF6F00] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Quick Access - Document Management */}
+              <div className="grid grid-cols-1 gap-6">
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-teal-200 dark:border-teal-700">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                      <FileText className="h-5 w-5 text-electric-blue" />
+                      Document Management
+                    </CardTitle>
+                    <CardDescription>
+                      Manage employee visas, passports, and other travel documents
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Link href="/documents">
+                      <Button 
+                        className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                        data-testid="button-manage-documents"
+                      >
+                        <FileText className="h-4 w-4 mr-2" />
+                        Manage Visas & Passports
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               </div>

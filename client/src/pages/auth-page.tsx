@@ -406,9 +406,10 @@ export default function AuthPage() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="manager">Manager - Submit Travel Requests</SelectItem>
-                                <SelectItem value="pm">Project Manager - Approve Requests</SelectItem>
-                                <SelectItem value="operations">Operations - Handle Bookings</SelectItem>
+                                <SelectItem value="manager">Project Manager - Submit Travel Requests</SelectItem>
+                                <SelectItem value="pm">Business Unit Manager - Approve & Assign Requests</SelectItem>
+                                <SelectItem value="operations_ksa">Operations KSA - Handle Bookings & Documents</SelectItem>
+                                <SelectItem value="operations_uae">Operations UAE - Handle Bookings & Documents</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />

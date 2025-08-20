@@ -10,6 +10,7 @@ import AuthPage from "@/pages/auth-page";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
+import DocumentManagement from "@/pages/document-management";
 import AdminUsers from "@/pages/admin-users";
 import AdminPanel from "@/pages/admin-panel";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
@@ -60,7 +61,7 @@ function Router() {
       <Route path="/">
         {currentRole === 'manager' && <ManagerDashboard />}
         {currentRole === 'pm' && <PMDashboard />}
-        {currentRole === 'operations' && <OperationsDashboard />}
+        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae') && <OperationsDashboard />}
         {!currentRole && <ManagerDashboard />}
       </Route>
       
@@ -74,7 +75,11 @@ function Router() {
       </Route>
       
       <Route path="/operations">
-        {(currentRole === 'operations' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
+        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
+      </Route>
+      
+      <Route path="/documents">
+        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae' || typedUser?.role === 'admin') ? <DocumentManagement /> : <NotFound />}
       </Route>
       
       {/* Admin-only routes */}

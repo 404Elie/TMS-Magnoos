@@ -26,7 +26,7 @@ export const sessions = pgTable(
 );
 
 // User roles enum
-export const userRoleEnum = pgEnum("user_role", ["manager", "pm", "operations", "admin"]);
+export const userRoleEnum = pgEnum("user_role", ["manager", "pm", "operations_ksa", "operations_uae", "admin"]);
 
 // Travel request status enum
 export const requestStatusEnum = pgEnum("request_status", [
@@ -45,6 +45,14 @@ export const bookingStatusEnum = pgEnum("booking_status", [
   "cancelled"
 ]);
 
+// Document type enum for visas and passports
+export const documentTypeEnum = pgEnum("document_type", [
+  "passport",
+  "visa",
+  "emirates_id",
+  "iqama"
+]);
+
 // User storage table
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -57,6 +65,21 @@ export const users = pgTable("users", {
   activeRole: userRoleEnum("active_role"), // For admin users to switch roles
   zohoUserId: varchar("zoho_user_id"),
   annualTravelBudget: decimal("annual_travel_budget", { precision: 10, scale: 2 }).default("15000"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Employee documents table (visas, passports, etc.)
+export const employeeDocuments = pgTable("employee_documents", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  documentType: documentTypeEnum("document_type").notNull(),
+  documentNumber: varchar("document_number").notNull(),
+  issuingCountry: varchar("issuing_country").notNull(),
+  issueDate: timestamp("issue_date").notNull(),
+  expiryDate: timestamp("expiry_date").notNull(),
+  notes: text("notes"),
+  attachmentUrl: varchar("attachment_url"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -195,6 +218,13 @@ export const budgetTrackingRelations = relations(budgetTracking, ({ one }) => ({
   }),
 }));
 
+export const employeeDocumentsRelations = relations(employeeDocuments, ({ one }) => ({
+  user: one(users, {
+    fields: [employeeDocuments.userId],
+    references: [users.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -236,6 +266,12 @@ export const insertBudgetTrackingSchema = createInsertSchema(budgetTracking).omi
   updatedAt: true,
 });
 
+export const insertEmployeeDocumentSchema = createInsertSchema(employeeDocuments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -247,6 +283,8 @@ export type Booking = typeof bookings.$inferSelect;
 export type InsertBooking = z.infer<typeof insertBookingSchema>;
 export type BudgetTracking = typeof budgetTracking.$inferSelect;
 export type InsertBudgetTracking = z.infer<typeof insertBudgetTrackingSchema>;
+export type EmployeeDocument = typeof employeeDocuments.$inferSelect;
+export type InsertEmployeeDocument = z.infer<typeof insertEmployeeDocumentSchema>;
 
 // Extended types with relations
 export type TravelRequestWithDetails = TravelRequest & {

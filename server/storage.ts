@@ -4,6 +4,7 @@ import {
   travelRequests,
   bookings,
   budgetTracking,
+  employeeDocuments,
   type User,
   type UpsertUser,
   type Project,
@@ -15,6 +16,8 @@ import {
   type InsertBooking,
   type BudgetTracking,
   type InsertBudgetTracking,
+  type EmployeeDocument,
+  type InsertEmployeeDocument,
   type ProjectWithBudget,
   type UserWithBudget,
 } from "@shared/schema";
@@ -70,6 +73,13 @@ export interface IStorage {
   getUserBudgetSummary(userId: string, year: number): Promise<UserWithBudget | undefined>;
   getProjectBudgetSummary(projectId: string, year: number): Promise<ProjectWithBudget | undefined>;
   getDashboardStats(role: string, userId?: string): Promise<any>;
+  
+  // Employee documents operations
+  getAllEmployeeDocuments(): Promise<EmployeeDocument[]>;
+  getEmployeeDocument(id: string): Promise<EmployeeDocument | undefined>;
+  createEmployeeDocument(document: InsertEmployeeDocument): Promise<EmployeeDocument>;
+  updateEmployeeDocument(id: string, updates: Partial<EmployeeDocument>): Promise<EmployeeDocument>;
+  deleteEmployeeDocument(id: string): Promise<void>;
   
   // Admin delete operations for testing
   deleteTravelRequest(id: string): Promise<boolean>;
@@ -527,6 +537,44 @@ export class DatabaseStorage implements IStorage {
       console.error("Error deleting all test data:", error);
       throw error;
     }
+  }
+
+  // Employee documents operations
+  async getAllEmployeeDocuments(): Promise<EmployeeDocument[]> {
+    return await db
+      .select()
+      .from(employeeDocuments)
+      .leftJoin(users, eq(employeeDocuments.userId, users.id))
+      .orderBy(desc(employeeDocuments.expiryDate));
+  }
+
+  async getEmployeeDocument(id: string): Promise<EmployeeDocument | undefined> {
+    const [result] = await db
+      .select()
+      .from(employeeDocuments)
+      .where(eq(employeeDocuments.id, id));
+    return result;
+  }
+
+  async createEmployeeDocument(document: InsertEmployeeDocument): Promise<EmployeeDocument> {
+    const [result] = await db
+      .insert(employeeDocuments)
+      .values(document)
+      .returning();
+    return result;
+  }
+
+  async updateEmployeeDocument(id: string, updates: Partial<EmployeeDocument>): Promise<EmployeeDocument> {
+    const [result] = await db
+      .update(employeeDocuments)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(employeeDocuments.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteEmployeeDocument(id: string): Promise<void> {
+    await db.delete(employeeDocuments).where(eq(employeeDocuments.id, id));
   }
 }
 
