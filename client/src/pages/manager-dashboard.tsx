@@ -107,11 +107,16 @@ export default function ManagerDashboard() {
     retry: false,
   });
 
-  // Fetch pending requests for approval
-  const { data: pendingRequests, isLoading: pendingLoading, error: pendingError } = useQuery<TravelRequestWithDetails[]>({
+  // Fetch pending requests for approval (only submitted status)
+  const { data: allPendingRequests, isLoading: pendingLoading, error: pendingError } = useQuery<TravelRequestWithDetails[]>({
     queryKey: ["/api/travel-requests", { needsApproval: true }],
     retry: false,
   });
+
+  // Filter to only show truly pending requests (status = 'submitted')
+  const pendingRequests = allPendingRequests?.filter(
+    (request: any) => request.status === 'submitted'
+  ) || [];
 
   // Debug logging for pending requests
   console.log("Pending requests data:", pendingRequests);
