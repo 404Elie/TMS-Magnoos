@@ -153,6 +153,8 @@ export default function PMDashboard() {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
   };
 
+
+
   // Calculate project analytics
   const projectAnalytics = allRequests?.reduce((acc, request) => {
     const projectName = request.project?.name || 'Unknown';
@@ -268,7 +270,7 @@ export default function PMDashboard() {
                     <CardTitle className="text-gray-900 dark:text-white">My Recent Requests</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {allRequestsLoading ? (
+                    {requestsLoading ? (
                       <div className="text-center py-4">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
                       </div>
