@@ -106,6 +106,12 @@ export default function ManagerDashboard() {
     retry: false,
   });
 
+  // Fetch pending requests for approval
+  const { data: pendingRequests, isLoading: pendingLoading } = useQuery<TravelRequestWithDetails[]>({
+    queryKey: ["/api/travel-requests", { needsApproval: true }],
+    retry: false,
+  });
+
   // Submit travel request mutation
   const submitRequestMutation = useMutation({
     mutationFn: async (data: TravelRequestForm) => {
@@ -247,6 +253,79 @@ export default function ManagerDashboard() {
     }).format(typeof amount === "string" ? parseFloat(amount) : amount);
   };
 
+  // Helper function to get operations team suggestion based on destination
+  const getSuggestedOperationsTeam = (destination: string) => {
+    const ksaKeywords = ['saudi', 'riyadh', 'jeddah', 'dammam', 'ksa', 'arabia'];
+    const uaeKeywords = ['dubai', 'abu dhabi', 'uae', 'emirates', 'sharjah'];
+    
+    const destLower = destination.toLowerCase();
+    
+    if (ksaKeywords.some(keyword => destLower.includes(keyword))) {
+      return 'operations_ksa';
+    } else if (uaeKeywords.some(keyword => destLower.includes(keyword))) {
+      return 'operations_uae';
+    }
+    
+    return 'operations_ksa'; // Default suggestion
+  };
+
+  // Helper function to get initials
+  const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
+  };
+
+  // Approve mutation
+  const approveMutation = useMutation({
+    mutationFn: async (requestId: string) => {
+      const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/approve`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      toast({
+        title: "Request approved successfully",
+        description: "The travel request has been approved and assigned to operations.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error approving request",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Reject mutation  
+  const rejectMutation = useMutation({
+    mutationFn: async (requestId: string) => {
+      const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/reject`);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      toast({
+        title: "Request rejected",
+        description: "The travel request has been rejected.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error rejecting request", 
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleApprove = (requestId: string) => {
+    approveMutation.mutate(requestId);
+  };
+
+  const handleReject = (requestId: string) => {
+    rejectMutation.mutate(requestId);
+  };
+
   return (
     <ProtectedRoute allowedRoles={["manager"]}>
       <div className="min-h-screen dark:bg-background light:bg-transparent manager-dashboard">
@@ -255,7 +334,7 @@ export default function ManagerDashboard() {
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
           <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-4 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
+            <TabsList className="grid w-full grid-cols-5 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard"
                 className="custom-tab"
@@ -267,6 +346,12 @@ export default function ManagerDashboard() {
                 className="custom-tab"
               >
                 Submit Request
+              </TabsTrigger>
+              <TabsTrigger 
+                value="approvals"
+                className="custom-tab"
+              >
+                Approvals
               </TabsTrigger>
               <TabsTrigger 
                 value="operations-ksa"
@@ -776,6 +861,142 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            {/* Approvals Tab */}
+            <TabsContent value="approvals" className="space-y-8 dark:bg-background light:bg-transparent">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
+                    <Check className="w-5 h-5 text-white" />
+                  </div>
+                  Travel Request Approvals
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300">Review and approve travel requests from project managers</p>
+              </div>
+
+              {/* Pending Approvals Table */}
+              <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-white">Pending Approvals</CardTitle>
+                  <CardDescription>Travel requests awaiting your approval</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {pendingLoading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-electric-blue mx-auto"></div>
+                      <p className="text-gray-600 dark:text-gray-300 mt-4">Loading pending requests...</p>
+                    </div>
+                  ) : pendingRequests && pendingRequests.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-100 dark:bg-slate-800">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                              Traveler
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                              Destination
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                              Project
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                              Dates
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                              Est. Cost
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                              Operations Team
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
+                          {pendingRequests.map((request) => (
+                            <tr key={request.id}>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <Avatar className="w-8 h-8 mr-3">
+                                    <AvatarImage src={request.traveler.profileImageUrl || undefined} />
+                                    <AvatarFallback className="bg-electric-blue text-white text-xs">
+                                      {getInitials(request.traveler.firstName, request.traveler.lastName)}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                                    {request.traveler.firstName} {request.traveler.lastName}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                                {request.destination}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                                {request.project?.name}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                                {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                                {formatCurrency(
+                                  (parseFloat(request.estimatedFlightCost || "0") +
+                                   parseFloat(request.estimatedHotelCost || "0") +
+                                   parseFloat(request.estimatedOtherCost || "0"))
+                                )}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                                <Select defaultValue={getSuggestedOperationsTeam(request.destination)}>
+                                  <SelectTrigger className="w-32">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="operations_ksa">KSA Team</SelectItem>
+                                    <SelectItem value="operations_uae">UAE Team</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div className="flex space-x-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleApprove(request.id)}
+                                    disabled={approveMutation.isPending}
+                                    className="bg-green-100 text-green-800 hover:bg-green-200"
+                                  >
+                                    {approveMutation.isPending ? "..." : "Approve"}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleReject(request.id)}
+                                    disabled={rejectMutation.isPending}
+                                    className="bg-red-100 text-red-800 hover:bg-red-200"
+                                  >
+                                    {rejectMutation.isPending ? "..." : "Reject"}
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Check className="w-8 h-8 text-electric-blue" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">No Pending Approvals</h4>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm">
+                        All travel requests have been processed. New requests will appear here when submitted.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Operations KSA Tab */}

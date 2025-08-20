@@ -10,30 +10,23 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-### White Screen and Database Connection Issues Resolution (August 20, 2025)
-- **Critical Issues Resolved**: 
-  - Fixed admin login white screen blocking system usage
-  - Fixed database connection termination during authentication
-- **Root Causes**: 
-  - Missing imports causing JavaScript runtime errors in App.tsx
-  - Neon database connection timeouts during passport authentication
-- **Fixed Issues**:
-  - Missing `useTheme` import from ThemeContext
-  - Missing `TooltipProvider` import from ui/tooltip
-  - Incorrect `AdminRoleSwitcher` import syntax (named vs default export)
-  - Database connection errors in `getUser` and `getUserByEmail` methods
-  - Passport deserializeUser error handling
-  - Enhanced operations dashboard empty states with helpful messaging
+### Role Permission Restructure (August 20, 2025)
+- **Critical Role Correction Completed**: 
+  - Fixed incorrectly implemented role permissions across all dashboards  
+  - Business Unit Manager now has full powers: submit requests, approve/reject, assign to operations
+  - Project Manager role corrected to submit-only functionality (no approval powers)
+- **Changes Made**:
+  - Moved approval functionality from PM dashboard to Manager dashboard
+  - Added comprehensive approval workflow with operations team assignment to Manager role
+  - Restructured PM dashboard to focus on request submission only
+  - Updated Manager dashboard with full approval table and location-based team suggestions
+  - Enhanced Manager dashboard with KSA/UAE operations monitoring capabilities
 - **Resolution Impact**: 
-  - All roles now render properly with functional dashboards
-  - Admin role switching works correctly
-  - Authentication flow stable with proper error handling
-  - Operations dashboards display informative content when empty
-- **Testing Verified**: Login, authentication, role switching, and dashboard loading all functional
-- **Enhancements Added**: 
-  - Operations KSA and UAE tracking sections added to Business Manager dashboard
-  - Full dashboard analytics and TypeScript error resolution completed
-  - All role-based dashboards now fully functional with comprehensive monitoring capabilities
+  - Role hierarchy now correctly reflects business requirements
+  - Business Unit Managers have complete oversight and approval authority
+  - Project Managers focused on travel request creation only
+  - Operations teams properly assigned based on destination location
+- **System Architecture Alignment**: All role permissions now match intended business workflow
 
 ## System Architecture
 
@@ -58,10 +51,10 @@ Preferred communication style: Simple, everyday language.
 - **Authentication System**: Integrated Replit Auth, role-based access control, session persistence, automatic user profile creation.
 - **Database Schema**: Manages Users, Projects (with budget), Travel Requests (lifecycle), Bookings (flight, hotel), Budget Tracking, and Sessions.
 - **Role-Based Access Control**:
-    - **Manager**: Creates travel requests, views team requests, manages projects.
-    - **Project Manager**: Approves/rejects travel requests for their projects.
-    - **Operations**: Handles bookings, completes travel arrangements, manages budgets, manages visa/passport documents.
-- **Data Flow**: Authentication via Replit Auth; Travel Request flow (Manager submits → PM approves/rejects → Operations handles); Real-time budget updates.
+    - **Business Unit Manager**: Creates travel requests, approves/rejects all requests, assigns to operations teams, views operations dashboards.
+    - **Project Manager**: Creates travel requests only (submit-only role).
+    - **Operations KSA/UAE**: Handles bookings, completes travel arrangements, manages budgets, manages visa/passport documents.
+- **Data Flow**: Authentication via Replit Auth; Travel Request flow (PM submits → Business Unit Manager approves/rejects → Operations handles); Real-time budget updates.
 
 ## External Dependencies
 

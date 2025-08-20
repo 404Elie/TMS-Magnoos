@@ -178,7 +178,7 @@ export default function PMDashboard() {
         
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-magnoos-dark light:bg-transparent">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-3 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
+            <TabsList className="grid w-full grid-cols-2 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard"
                 className="custom-tab"
@@ -186,16 +186,10 @@ export default function PMDashboard() {
                 Dashboard
               </TabsTrigger>
               <TabsTrigger 
-                value="approvals"
+                value="submit"
                 className="custom-tab"
               >
-                Pending Approvals
-              </TabsTrigger>
-              <TabsTrigger 
-                value="analytics"
-                className="custom-tab"
-              >
-                Project Analytics
+                Submit Request
               </TabsTrigger>
             </TabsList>
 
@@ -206,7 +200,7 @@ export default function PMDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/90">Pending Approvals</p>
+                        <p className="text-sm font-medium text-white/90">My Requests</p>
                         <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : (stats as any)?.pendingApprovals || 0}
                         </p>
@@ -222,7 +216,7 @@ export default function PMDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/90">Approved This Month</p>
+                        <p className="text-sm font-medium text-white/90">Submitted This Month</p>
                         <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : (stats as any)?.approvedMonth || 0}
                         </p>
@@ -254,7 +248,7 @@ export default function PMDashboard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/90">Avg Approval Time</p>
+                        <p className="text-sm font-medium text-white/90">Avg Response Time</p>
                         <p className="text-3xl font-bold text-white">
                           {statsLoading ? "..." : (stats as any)?.avgApprovalTime || "N/A"}
                         </p>
@@ -271,38 +265,43 @@ export default function PMDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
                   <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">Recent Requests Needing Approval</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">My Recent Requests</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {pendingLoading ? (
+                    {allRequestsLoading ? (
                       <div className="text-center py-4">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
                       </div>
-                    ) : pendingRequests && pendingRequests.length > 0 ? (
+                    ) : allRequests && allRequests.length > 0 ? (
                       <div className="bg-gray-50 dark:bg-magnoos-dark space-y-3">
-                        {pendingRequests.slice(0, 3).map((request) => (
+                        {allRequests.slice(0, 3).map((request) => (
                           <div key={request.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-[#464646]">
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">
-                                {request.traveler.firstName} {request.traveler.lastName} - {request.destination}
+                                {request.destination}
                               </p>
                               <p className="text-sm text-gray-600 dark:text-gray-300">
-                                {request.project?.name} • {request.createdAt ? new Date(request.createdAt).toLocaleDateString() : 'Recently submitted'}
+                                {request.project?.name} • {getStatusBadge(request.status)}
                               </p>
                             </div>
                             <Button 
                               size="sm"
-                              onClick={() => setActiveTab("approvals")}
+                              onClick={() => setActiveTab("submit")}
                               className="text-magnoos-blue hover:text-magnoos-dark-blue"
                               variant="ghost"
                             >
-                              Review
+                              View
                             </Button>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 dark:text-gray-300 text-center py-4">No pending approvals</p>
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 dark:text-gray-300 mb-3">No travel requests yet</p>
+                        <Button onClick={() => setActiveTab("submit")} size="sm">
+                          Submit First Request
+                        </Button>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
