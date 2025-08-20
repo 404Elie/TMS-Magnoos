@@ -126,7 +126,10 @@ function TravelRequestForm() {
                             className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
                           >
                             {field.value
-                              ? employees?.find((emp: any) => emp.id === field.value)?.name + " (" + employees?.find((emp: any) => emp.id === field.value)?.email + ")"
+                              ? (() => {
+                                  const selectedEmp = employees?.find((emp: any) => emp.id === field.value);
+                                  return selectedEmp ? `${selectedEmp.firstName} ${selectedEmp.lastName} (${selectedEmp.email})` : "Select employee...";
+                                })()
                               : "Select employee..."}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -139,7 +142,7 @@ function TravelRequestForm() {
                               {employees?.map((emp: any) => (
                                 <CommandItem
                                   key={emp.id}
-                                  value={`${emp.name} ${emp.email}`}
+                                  value={`${emp.firstName} ${emp.lastName} ${emp.email}`}
                                   onSelect={() => {
                                     field.onChange(emp.id);
                                   }}
@@ -150,7 +153,7 @@ function TravelRequestForm() {
                                       field.value === emp.id ? "opacity-100" : "opacity-0"
                                     )}
                                   />
-                                  {emp.name} ({emp.email})
+                                  {emp.firstName} {emp.lastName} ({emp.email})
                                 </CommandItem>
                               ))}
                             </CommandGroup>
