@@ -1,14 +1,12 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import logoPath from "@assets/ChatGPT Image May 7, 2025, 03_07_22 PM_1753942249102.png";
 import type { User } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
-import { useLocation, Link } from "wouter";
+import { useLocation } from "wouter";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { FileText, Users, Settings } from "lucide-react";
 
 interface HeaderProps {
   currentRole?: string;
@@ -34,10 +32,9 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
-      case 'pm': return 'Project Manager';
-      case 'manager': return 'Manager';
-      case 'operations_ksa': return 'Operations KSA';
-      case 'operations_uae': return 'Operations UAE';
+      case 'manager': return 'Member';
+      case 'pm': return 'Manager';
+      case 'operations': return 'Operations';
       case 'admin': return 'Admin';
       default: return role;
     }
@@ -65,83 +62,6 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
           </div>
           
           <div className="flex items-center space-x-4">
-            {/* Navigation Menu - Admin can access EVERYTHING, Manager can access Operations */}
-            {typedUser && (currentRole === 'manager' || currentRole?.startsWith('operations') || typedUser.role === 'admin') && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-foreground hover:bg-accent">
-                    <Settings className="h-4 w-4 mr-2" />
-                    {typedUser.role === 'admin' ? 'Admin Access' : 'Quick Access'}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  {/* Admin has access to EVERYTHING */}
-                  {typedUser.role === 'admin' && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/pm" className="flex items-center w-full">
-                          <FileText className="h-4 w-4 mr-2" />
-                          PM Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/manager" className="flex items-center w-full">
-                          <Users className="h-4 w-4 mr-2" />
-                          Manager Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/operations" className="flex items-center w-full">
-                          <Users className="h-4 w-4 mr-2" />
-                          Operations Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/documents" className="flex items-center w-full">
-                          <FileText className="h-4 w-4 mr-2" />
-                          Document Tracking
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center w-full">
-                          <Settings className="h-4 w-4 mr-2" />
-                          Admin Panel
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  
-                  {/* Manager can access Operations and Documents */}
-                  {currentRole === 'manager' && typedUser.role !== 'admin' && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/operations" className="flex items-center w-full">
-                          <Users className="h-4 w-4 mr-2" />
-                          Operations Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/documents" className="flex items-center w-full">
-                          <FileText className="h-4 w-4 mr-2" />
-                          Document Tracking
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  
-                  {/* Operations roles can access Documents */}
-                  {currentRole?.startsWith('operations') && typedUser.role !== 'admin' && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/documents" className="flex items-center w-full">
-                        <FileText className="h-4 w-4 mr-2" />
-                        Document Tracking
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-            
             {/* Admin Role Switcher */}
             {typedUser && typedUser.role === 'admin' && <AdminRoleSwitcher />}
             

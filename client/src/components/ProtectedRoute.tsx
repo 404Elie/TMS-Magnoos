@@ -50,8 +50,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
             case 'pm':
               window.location.href = "/pm";
               break;
-            case 'operations_ksa':
-            case 'operations_uae':
+            case 'operations':
               window.location.href = "/operations";
               break;
             default:

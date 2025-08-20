@@ -10,7 +10,6 @@ import AuthPage from "@/pages/auth-page";
 import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
-import DocumentsManagement from "@/pages/documents-management";
 import AdminUsers from "@/pages/admin-users";
 import AdminPanel from "@/pages/admin-panel";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
@@ -24,7 +23,7 @@ function Router() {
   // Get the current effective role for the user
   const getCurrentRole = (user: User | undefined) => {
     if (!user) return null;
-    return user.role === 'admin' ? (user.activeRole || 'pm') : user.role;
+    return user.role === 'admin' ? (user.activeRole || 'manager') : user.role;
   };
 
   // Show loading state while authentication is being checked
@@ -55,38 +54,23 @@ function Router() {
   return (
     <Switch>
       <Route path="/">
-        {/* Admin gets default dashboard based on their selected role, or PM dashboard as default */}
-        {typedUser?.role === 'admin' && (
-          (currentRole === 'pm' && <PMDashboard />) ||
-          (currentRole === 'manager' && <ManagerDashboard />) ||
-          ((currentRole === 'operations_ksa' || currentRole === 'operations_uae') && <OperationsDashboard />) ||
-          <PMDashboard /> // Default for admin
-        )}
-        {currentRole === 'pm' && typedUser?.role !== 'admin' && <PMDashboard />}
-        {currentRole === 'manager' && typedUser?.role !== 'admin' && <ManagerDashboard />}
-        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae') && typedUser?.role !== 'admin' && <OperationsDashboard />}
-        {!currentRole && !typedUser && <NotFound />}
+        {currentRole === 'manager' && <ManagerDashboard />}
+        {currentRole === 'pm' && <PMDashboard />}
+        {currentRole === 'operations' && <OperationsDashboard />}
+        {!currentRole && <NotFound />}
       </Route>
       
-      {/* Role-specific routes - Admin has access to EVERYTHING */}
-      <Route path="/pm">
-        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
-      </Route>
-      
+      {/* Role-specific routes with admin access control */}
       <Route path="/manager">
         {(currentRole === 'manager' || typedUser?.role === 'admin') ? <ManagerDashboard /> : <NotFound />}
       </Route>
       
-      <Route path="/operations">
-        {(
-          (currentRole === 'operations_ksa' || currentRole === 'operations_uae' || currentRole === 'manager') || 
-          typedUser?.role === 'admin'
-        ) ? <OperationsDashboard /> : <NotFound />}
+      <Route path="/pm">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
       </Route>
       
-      {/* Document Management Routes - Accessible by Manager and Operations */}
-      <Route path="/documents">
-        {((currentRole === 'manager' || currentRole === 'operations_ksa' || currentRole === 'operations_uae') || typedUser?.role === 'admin') ? <DocumentsManagement /> : <NotFound />}
+      <Route path="/operations">
+        {(currentRole === 'operations' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
       </Route>
       
       {/* Admin-only routes */}

@@ -4,7 +4,6 @@ import {
   travelRequests,
   bookings,
   budgetTracking,
-  documentsTracking,
   type User,
   type UpsertUser,
   type Project,
@@ -16,8 +15,6 @@ import {
   type InsertBooking,
   type BudgetTracking,
   type InsertBudgetTracking,
-  type DocumentTracking,
-  type InsertDocumentTracking,
   type ProjectWithBudget,
   type UserWithBudget,
 } from "@shared/schema";
@@ -73,14 +70,6 @@ export interface IStorage {
   getUserBudgetSummary(userId: string, year: number): Promise<UserWithBudget | undefined>;
   getProjectBudgetSummary(projectId: string, year: number): Promise<ProjectWithBudget | undefined>;
   getDashboardStats(role: string, userId?: string): Promise<any>;
-  
-  // Document tracking operations
-  getAllDocuments(): Promise<DocumentTracking[]>;
-  getDocument(id: string): Promise<DocumentTracking | undefined>;
-  getDocumentsByUser(userId: string): Promise<DocumentTracking[]>;
-  createDocument(document: InsertDocumentTracking): Promise<DocumentTracking>;
-  updateDocument(id: string, updates: Partial<DocumentTracking>): Promise<DocumentTracking>;
-  deleteDocument(id: string): Promise<void>;
   
   // Admin delete operations for testing
   deleteTravelRequest(id: string): Promise<boolean>;
@@ -496,7 +485,7 @@ export class DatabaseStorage implements IStorage {
   async deleteTravelRequest(id: string): Promise<boolean> {
     try {
       const result = await db.delete(travelRequests).where(eq(travelRequests.id, id));
-      return (result.rowCount ?? 0) > 0;
+      return result.rowCount > 0;
     } catch (error) {
       console.error("Error deleting travel request:", error);
       return false;
@@ -506,7 +495,7 @@ export class DatabaseStorage implements IStorage {
   async deleteBooking(id: string): Promise<boolean> {
     try {
       const result = await db.delete(bookings).where(eq(bookings.id, id));
-      return (result.rowCount ?? 0) > 0;
+      return result.rowCount > 0;
     } catch (error) {
       console.error("Error deleting booking:", error);
       return false;
@@ -515,7 +504,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteBookingsByTravelRequestId(requestId: string): Promise<void> {
     try {
-      await db.delete(bookings).where(eq(bookings.requestId, requestId));
+      await db.delete(bookings).where(eq(bookings.travelRequestId, requestId));
     } catch (error) {
       console.error("Error deleting bookings by travel request ID:", error);
       throw error;
@@ -538,44 +527,6 @@ export class DatabaseStorage implements IStorage {
       console.error("Error deleting all test data:", error);
       throw error;
     }
-  }
-
-  // Document tracking operations
-  async getAllDocuments(): Promise<DocumentTracking[]> {
-    const documents = await db.select().from(documentsTracking).orderBy(desc(documentsTracking.createdAt));
-    return documents;
-  }
-
-  async getDocument(id: string): Promise<DocumentTracking | undefined> {
-    const [document] = await db.select().from(documentsTracking).where(eq(documentsTracking.id, id));
-    return document;
-  }
-
-  async getDocumentsByUser(userId: string): Promise<DocumentTracking[]> {
-    const documents = await db
-      .select()
-      .from(documentsTracking)
-      .where(eq(documentsTracking.userId, userId))
-      .orderBy(desc(documentsTracking.createdAt));
-    return documents;
-  }
-
-  async createDocument(document: InsertDocumentTracking): Promise<DocumentTracking> {
-    const [newDocument] = await db.insert(documentsTracking).values(document).returning();
-    return newDocument;
-  }
-
-  async updateDocument(id: string, updates: Partial<DocumentTracking>): Promise<DocumentTracking> {
-    const [document] = await db
-      .update(documentsTracking)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(documentsTracking.id, id))
-      .returning();
-    return document;
-  }
-
-  async deleteDocument(id: string): Promise<void> {
-    await db.delete(documentsTracking).where(eq(documentsTracking.id, id));
   }
 }
 
