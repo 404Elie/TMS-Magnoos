@@ -19,6 +19,330 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { insertTravelRequestSchema } from "@shared/schema";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
+// Travel Request Form Component
+function TravelRequestForm() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Form validation schema
+  const formSchema = insertTravelRequestSchema.pick({
+    projectId: true,
+    destination: true,
+    startDate: true,
+    endDate: true,
+    purpose: true,
+    estimatedCost: true,
+    urgency: true,
+    notes: true,
+  });
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      projectId: "",
+      destination: "",
+      startDate: new Date(),
+      endDate: new Date(),
+      purpose: "",
+      estimatedCost: "",
+      urgency: "medium" as const,
+      notes: "",
+    },
+  });
+
+  // Fetch projects for dropdown
+  const { data: projects } = useQuery({
+    queryKey: ["/api/zoho/projects"],
+    retry: false,
+  });
+
+  // Submit mutation
+  const submitMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", "/api/travel-requests", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Travel request submitted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      form.reset();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit request",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: any) => {
+    submitMutation.mutate(data);
+  };
+
+  return (
+    <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
+      <CardHeader>
+        <CardTitle className="text-gray-900 dark:text-white">Submit Travel Request</CardTitle>
+        <CardDescription className="text-gray-600 dark:text-gray-300">
+          Fill out the details for your travel request
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Project Selection */}
+              <FormField
+                control={form.control}
+                name="projectId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Project *</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                          <SelectValue placeholder="Select project" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-slate-700">
+                          {projects?.map((project: any) => (
+                            <SelectItem key={project.id} value={project.id.toString()}>
+                              {project.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Destination */}
+              <FormField
+                control={form.control}
+                name="destination"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Destination *</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter destination"
+                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Start Date */}
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Start Date *</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date < new Date(new Date().setHours(0, 0, 0, 0))
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* End Date */}
+              <FormField
+                control={form.control}
+                name="endDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">End Date *</FormLabel>
+                    <FormControl>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date < new Date(new Date().setHours(0, 0, 0, 0))
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Purpose */}
+              <FormField
+                control={form.control}
+                name="purpose"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Purpose *</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                          <SelectValue placeholder="Select purpose" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-slate-700">
+                          <SelectItem value="client_meeting">Client Meeting</SelectItem>
+                          <SelectItem value="project_work">Project Work</SelectItem>
+                          <SelectItem value="training">Training</SelectItem>
+                          <SelectItem value="conference">Conference</SelectItem>
+                          <SelectItem value="site_visit">Site Visit</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Estimated Cost */}
+              <FormField
+                control={form.control}
+                name="estimatedCost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Estimated Cost (USD) *</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        placeholder="Enter estimated cost"
+                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Urgency */}
+              <FormField
+                control={form.control}
+                name="urgency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Urgency</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                          <SelectValue placeholder="Select urgency" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white dark:bg-slate-700">
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="urgent">Urgent</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Notes */}
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-900 dark:text-white">Additional Notes</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Any additional information or special requests..."
+                      rows={4}
+                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                disabled={submitMutation.isPending}
+                className="bg-magnoos-primary hover:bg-magnoos-primary/90 text-white min-w-[120px]"
+              >
+                {submitMutation.isPending ? "Submitting..." : "Submit Request"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function PMDashboard() {
   const { user } = useAuth();
@@ -227,20 +551,7 @@ export default function PMDashboard() {
             </TabsContent>
 
             <TabsContent value="submit" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
-              <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
-                <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-white">Submit Travel Request</CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-300">
-                    Fill out the details for your travel request
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <p className="text-gray-600 dark:text-gray-300">Submit Request form will be available here.</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">This form allows Project Managers to submit travel requests for approval.</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <TravelRequestForm />
             </TabsContent>
           </Tabs>
         </div>
