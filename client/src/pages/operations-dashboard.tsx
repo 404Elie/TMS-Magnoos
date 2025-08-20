@@ -492,7 +492,7 @@ export default function OperationsDashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                        Welcome to Operations {user?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'}
+                        Welcome to Operations {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-300">
                         Manage travel bookings, track expenses, and handle document processing for approved requests
