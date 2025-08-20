@@ -65,6 +65,9 @@ function TravelRequestForm() {
 
   // Watch purpose field to conditionally show project and custom purpose fields
   const selectedPurpose = form.watch("purpose");
+  
+  // State for controlling employee dropdown
+  const [employeeOpen, setEmployeeOpen] = useState(false);
 
   // Fetch projects for dropdown
   const { data: projects = [] } = useQuery({
@@ -126,11 +129,12 @@ function TravelRequestForm() {
                   <FormItem className="md:col-span-2">
                     <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
                     <FormControl>
-                      <Popover>
+                      <Popover open={employeeOpen} onOpenChange={setEmployeeOpen}>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             role="combobox"
+                            aria-expanded={employeeOpen}
                             className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
                           >
                             {field.value
@@ -153,6 +157,7 @@ function TravelRequestForm() {
                                   value={`${emp.firstName} ${emp.lastName} ${emp.email}`}
                                   onSelect={() => {
                                     field.onChange(emp.id);
+                                    setEmployeeOpen(false);
                                   }}
                                 >
                                   <Check
@@ -174,33 +179,7 @@ function TravelRequestForm() {
                 )}
               />
 
-              {/* Project Selection - Only show when purpose is "delivery" */}
-              {selectedPurpose === "delivery" && (
-                <FormField
-                  control={form.control}
-                  name="projectId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-white">Project *</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                            <SelectValue placeholder="Select project" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-700">
-                            {projects?.map((project: any) => (
-                              <SelectItem key={project.id} value={project.id.toString()}>
-                                {project.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+
 
               {/* Origin */}
               <FormField
@@ -350,6 +329,34 @@ function TravelRequestForm() {
                   </FormItem>
                 )}
               />
+
+              {/* Project Selection - Only show when purpose is "delivery" */}
+              {selectedPurpose === "delivery" && (
+                <FormField
+                  control={form.control}
+                  name="projectId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-900 dark:text-white">Project *</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
+                            <SelectValue placeholder="Select project" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white dark:bg-slate-700">
+                            {projects?.map((project: any) => (
+                              <SelectItem key={project.id} value={project.id.toString()}>
+                                {project.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               {/* Custom Purpose - Only show when purpose is "other" */}
               {selectedPurpose === "other" && (
