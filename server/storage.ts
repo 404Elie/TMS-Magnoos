@@ -91,13 +91,25 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user;
+    } catch (error) {
+      console.error('Database error in getUser:', error);
+      // If connection fails, return undefined to allow graceful degradation
+      return undefined;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      return user;
+    } catch (error) {
+      console.error('Database error in getUserByEmail:', error);
+      // If connection fails, return undefined to allow graceful degradation
+      return undefined;
+    }
   }
 
   async getAllUsers(): Promise<User[]> {
@@ -495,7 +507,7 @@ export class DatabaseStorage implements IStorage {
   async deleteTravelRequest(id: string): Promise<boolean> {
     try {
       const result = await db.delete(travelRequests).where(eq(travelRequests.id, id));
-      return result.rowCount > 0;
+      return (result.rowCount ?? 0) > 0;
     } catch (error) {
       console.error("Error deleting travel request:", error);
       return false;
@@ -505,7 +517,7 @@ export class DatabaseStorage implements IStorage {
   async deleteBooking(id: string): Promise<boolean> {
     try {
       const result = await db.delete(bookings).where(eq(bookings.id, id));
-      return result.rowCount > 0;
+      return (result.rowCount ?? 0) > 0;
     } catch (error) {
       console.error("Error deleting booking:", error);
       return false;
@@ -530,8 +542,8 @@ export class DatabaseStorage implements IStorage {
       const deletedRequests = await db.delete(travelRequests);
       
       return {
-        bookings: deletedBookings.rowCount || 0,
-        travelRequests: deletedRequests.rowCount || 0
+        bookings: deletedBookings.rowCount ?? 0,
+        travelRequests: deletedRequests.rowCount ?? 0
       };
     } catch (error) {
       console.error("Error deleting all test data:", error);

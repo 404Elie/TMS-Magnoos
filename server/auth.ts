@@ -62,7 +62,8 @@ export function setupAuth(app: Express) {
           }
           return done(null, user);
         } catch (error) {
-          return done(error);
+          console.error('LocalStrategy error:', error);
+          return done(null, false, { message: "Database connection error" });
         }
       }
     )
@@ -72,9 +73,14 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
+      if (!user) {
+        return done(null, false);
+      }
       done(null, user);
     } catch (error) {
-      done(error);
+      console.error('Passport deserializeUser error:', error);
+      // Return null user instead of error to prevent session corruption
+      done(null, false);
     }
   });
 
