@@ -24,7 +24,7 @@ function Router() {
   // Get the current effective role for the user
   const getCurrentRole = (user: User | undefined) => {
     if (!user) return null;
-    return user.role === 'admin' ? (user.activeRole || 'manager') : user.role;
+    return user.role === 'admin' ? (user.activeRole || 'pm') : user.role;
   };
 
   // Show loading state while authentication is being checked
@@ -58,6 +58,7 @@ function Router() {
         {currentRole === 'pm' && <PMDashboard />}
         {currentRole === 'manager' && <ManagerDashboard />}
         {(currentRole === 'operations_ksa' || currentRole === 'operations_uae') && <OperationsDashboard />}
+        {typedUser?.role === 'admin' && <PMDashboard />}
         {!currentRole && <NotFound />}
       </Route>
       
