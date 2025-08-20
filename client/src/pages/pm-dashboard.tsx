@@ -36,12 +36,12 @@ function TravelRequestForm() {
   const formSchema = insertTravelRequestSchema.pick({
     travelerId: true,
     projectId: true,
+    origin: true,
     destination: true,
     departureDate: true,
     returnDate: true,
     purpose: true,
     customPurpose: true,
-    estimatedFlightCost: true,
     notes: true,
   }).extend({
     projectId: z.string().optional(),
@@ -53,12 +53,12 @@ function TravelRequestForm() {
     defaultValues: {
       travelerId: "",
       projectId: "",
+      origin: "",
       destination: "",
       departureDate: new Date(),
       returnDate: new Date(),
       purpose: "",
       customPurpose: "",
-      estimatedFlightCost: "",
       notes: "",
     },
   });
@@ -202,13 +202,32 @@ function TravelRequestForm() {
                 />
               )}
 
+              {/* Origin */}
+              <FormField
+                control={form.control}
+                name="origin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Traveling From (Origin) *</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter departure location"
+                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {/* Destination */}
               <FormField
                 control={form.control}
                 name="destination"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Destination *</FormLabel>
+                    <FormLabel className="text-gray-900 dark:text-white">Traveling To (Destination) *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -353,25 +372,7 @@ function TravelRequestForm() {
                 />
               )}
 
-              {/* Estimated Cost */}
-              <FormField
-                control={form.control}
-                name="estimatedFlightCost"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Estimated Flight Cost (USD) *</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="number"
-                        placeholder="Enter estimated cost"
-                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
 
 
             </div>
