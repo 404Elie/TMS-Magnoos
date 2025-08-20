@@ -25,7 +25,7 @@ export default function AdminRoleSwitcher() {
         title: "Role Switched",
         description: "Successfully switched to the selected role.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       // Refresh the page to update the UI
       window.location.reload();
     },

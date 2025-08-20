@@ -23,7 +23,11 @@ function Router() {
   // Get the current effective role for the user
   const getCurrentRole = (user: User | undefined) => {
     if (!user) return null;
-    return user.role === 'admin' ? (user.activeRole || 'manager') : user.role;
+    // Admin users can switch roles, default to manager if no activeRole is set
+    if (user.role === 'admin') {
+      return user.activeRole || 'manager';
+    }
+    return user.role;
   };
 
   // Show loading state while authentication is being checked
@@ -57,8 +61,7 @@ function Router() {
         {currentRole === 'manager' && <ManagerDashboard />}
         {currentRole === 'pm' && <PMDashboard />}
         {currentRole === 'operations' && <OperationsDashboard />}
-        {typedUser?.role === 'admin' && !currentRole && <ManagerDashboard />}
-        {!currentRole && !typedUser?.role && <NotFound />}
+        {!currentRole && <ManagerDashboard />}
       </Route>
       
       {/* Role-specific routes with admin access control */}
