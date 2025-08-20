@@ -5,6 +5,11 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +36,12 @@ import {
   AlertTriangle,
   Plus,
   X,
-  FileText
+  FileText,
+  Search,
+  Edit2,
+  Trash2,
+  Calendar as CalendarIcon,
+  Eye
 } from "lucide-react";
 import { 
   LineChart, 
@@ -77,6 +87,90 @@ export default function OperationsDashboard() {
     details: "",
   });
 
+  // Document management state
+  const [documentModalOpen, setDocumentModalOpen] = useState(false);
+  const [documentType, setDocumentType] = useState<"passport" | "visa">("passport");
+  const [selectedDocument, setSelectedDocument] = useState<any>(null);
+  const [editingDocument, setEditingDocument] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Form schemas for passport and visa
+  const passportSchema = z.object({
+    userId: z.string().min(1, "Employee is required"),
+    passportNumber: z.string().min(1, "Passport number is required"),
+    fullName: z.string().min(1, "Full name is required"),
+    nationality: z.string().min(1, "Nationality is required"),
+    dateOfBirth: z.string().min(1, "Date of birth is required"),
+    placeOfBirth: z.string().min(1, "Place of birth is required"),
+    gender: z.enum(["Male", "Female", "Other"]),
+    issueDate: z.string().min(1, "Issue date is required"),
+    expiryDate: z.string().min(1, "Expiry date is required"),
+    issuingAuthority: z.string().min(1, "Issuing authority is required"),
+    issuingCountry: z.string().min(1, "Issuing country is required"),
+    personalNumber: z.string().optional(),
+    notes: z.string().optional(),
+  });
+
+  const visaSchema = z.object({
+    userId: z.string().min(1, "Employee is required"),
+    passportId: z.string().min(1, "Passport is required"),
+    visaNumber: z.string().min(1, "Visa number is required"),
+    visaType: z.string().min(1, "Visa type is required"),
+    issuingCountry: z.string().min(1, "Issuing country is required"),
+    destinationCountry: z.string().min(1, "Destination country is required"),
+    issueDate: z.string().min(1, "Issue date is required"),
+    expiryDate: z.string().min(1, "Expiry date is required"),
+    entryType: z.enum(["Single Entry", "Multiple Entry", "Transit"]),
+    duration: z.string().optional(),
+    issuingConsulate: z.string().optional(),
+    applicationDate: z.string().optional(),
+    approvalDate: z.string().optional(),
+    feeAmount: z.string().optional(),
+    feeCurrency: z.string().default("USD"),
+    notes: z.string().optional(),
+  });
+
+  const passportForm = useForm({
+    resolver: zodResolver(passportSchema),
+    defaultValues: {
+      userId: "",
+      passportNumber: "",
+      fullName: "",
+      nationality: "",
+      dateOfBirth: "",
+      placeOfBirth: "",
+      gender: "Male" as const,
+      issueDate: "",
+      expiryDate: "",
+      issuingAuthority: "",
+      issuingCountry: "",
+      personalNumber: "",
+      notes: "",
+    },
+  });
+
+  const visaForm = useForm({
+    resolver: zodResolver(visaSchema),
+    defaultValues: {
+      userId: "",
+      passportId: "",
+      visaNumber: "",
+      visaType: "",
+      issuingCountry: "",
+      destinationCountry: "",
+      issueDate: "",
+      expiryDate: "",
+      entryType: "Single Entry" as const,
+      duration: "",
+      issuingConsulate: "",
+      applicationDate: "",
+      approvalDate: "",
+      feeAmount: "",
+      feeCurrency: "USD",
+      notes: "",
+    },
+  });
+
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery<any>({
     queryKey: ["/api/dashboard/stats"],
@@ -112,6 +206,30 @@ export default function OperationsDashboard() {
   // Fetch projects for budget tracking
   const { data: projects } = useQuery<any[]>({
     queryKey: ["/api/zoho/projects"],
+    retry: false,
+  });
+
+  // Fetch employee documents (passports and visas)
+  const { data: documents, isLoading: documentsLoading } = useQuery<any[]>({
+    queryKey: ["/api/employee-documents"],
+    retry: false,
+  });
+
+  // Fetch all employee passports
+  const { data: passports } = useQuery<any[]>({
+    queryKey: ["/api/passports"],
+    retry: false,
+  });
+
+  // Fetch all employee visas
+  const { data: visas } = useQuery<any[]>({
+    queryKey: ["/api/visas"],
+    retry: false,
+  });
+
+  // Fetch all users for dropdown
+  const { data: allUsers } = useQuery<any[]>({
+    queryKey: ["/api/users"],
     retry: false,
   });
 
@@ -214,6 +332,54 @@ export default function OperationsDashboard() {
     },
   });
 
+  // Create passport mutation
+  const createPassportMutation = useMutation({
+    mutationFn: async (passportData: any) => {
+      return await apiRequest("POST", "/api/passports", passportData);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Passport added successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/passports"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/employee-documents"] });
+      setDocumentModalOpen(false);
+      passportForm.reset();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Create visa mutation
+  const createVisaMutation = useMutation({
+    mutationFn: async (visaData: any) => {
+      return await apiRequest("POST", "/api/visas", visaData);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Visa added successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/visas"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/employee-documents"] });
+      setDocumentModalOpen(false);
+      visaForm.reset();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCreateBooking = () => {
     if (selectedRequestId && newBooking.type && newBooking.cost) {
       createBookingMutation.mutate({
@@ -266,6 +432,31 @@ export default function OperationsDashboard() {
     
     setBookingEntries(updated);
   };
+
+  // Helper function to check document expiry status
+  const getExpiryStatus = (expiryDate: string) => {
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (daysUntilExpiry < 0) {
+      return { status: "expired", color: "destructive", text: "Expired", days: Math.abs(daysUntilExpiry) };
+    } else if (daysUntilExpiry <= 30) {
+      return { status: "expiring-soon", color: "destructive", text: `${daysUntilExpiry} days left`, days: daysUntilExpiry };
+    } else if (daysUntilExpiry <= 90) {
+      return { status: "warning", color: "secondary", text: `${daysUntilExpiry} days left`, days: daysUntilExpiry };
+    } else {
+      return { status: "valid", color: "default", text: `${daysUntilExpiry} days left`, days: daysUntilExpiry };
+    }
+  };
+
+  // Filter documents based on search term
+  const filteredDocuments = documents?.filter(doc =>
+    doc.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doc.user?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doc.documentNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doc.documentType?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
 
   const removeBookingEntry = (index: number) => {
     if (bookingEntries.length > 1) {
@@ -458,7 +649,7 @@ export default function OperationsDashboard() {
         
         <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-4 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
+            <TabsList className="grid w-full grid-cols-5 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard" 
                 className="custom-tab"
@@ -470,6 +661,12 @@ export default function OperationsDashboard() {
                 className="custom-tab"
               >
                 Active Bookings
+              </TabsTrigger>
+              <TabsTrigger 
+                value="documents"
+                className="custom-tab"
+              >
+                Documents
               </TabsTrigger>
               <TabsTrigger 
                 value="budget-person"
@@ -1352,6 +1549,300 @@ export default function OperationsDashboard() {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Documents Management Tab */}
+            <TabsContent value="documents" className="space-y-8 dark:bg-background light:bg-transparent">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  Document Management
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">
+                  Manage employee passports, visas, and travel documents with expiry tracking
+                </p>
+              </div>
+
+              {/* Action Bar */}
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search documents, employees, or numbers..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-600"
+                  />
+                </div>
+                
+                <div className="flex gap-2">
+                  <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        onClick={() => {
+                          setDocumentType("passport");
+                          setEditingDocument(null);
+                        }}
+                        className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Passport
+                      </Button>
+                    </DialogTrigger>
+                  </Dialog>
+                  
+                  <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        onClick={() => {
+                          setDocumentType("visa");
+                          setEditingDocument(null);
+                        }}
+                        variant="outline"
+                        className="border-electric-blue text-electric-blue hover:bg-electric-blue/10"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Visa
+                      </Button>
+                    </DialogTrigger>
+                  </Dialog>
+                </div>
+              </div>
+
+              {/* Documents Grid */}
+              {documentsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[...Array(6)].map((_, i) => (
+                    <Card key={i} className="animate-pulse">
+                      <CardContent className="p-6">
+                        <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-gray-300 rounded w-1/2 mb-4"></div>
+                        <div className="space-y-2">
+                          <div className="h-3 bg-gray-300 rounded"></div>
+                          <div className="h-3 bg-gray-300 rounded w-2/3"></div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : filteredDocuments.length === 0 ? (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      No Documents Found
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-6">
+                      {searchTerm ? "No documents match your search criteria" : "Start by adding employee passports and visas"}
+                    </p>
+                    <Button 
+                      onClick={() => {
+                        setDocumentType("passport");
+                        setDocumentModalOpen(true);
+                      }}
+                      className="bg-gradient-to-r from-electric-blue to-purple text-white"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add First Document
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredDocuments.map((document) => {
+                    const expiryStatus = getExpiryStatus(document.expiryDate);
+                    return (
+                      <Card key={document.id} className={`transition-all hover:shadow-lg ${
+                        expiryStatus.status === 'expired' ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20' :
+                        expiryStatus.status === 'expiring-soon' ? 'border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20' :
+                        expiryStatus.status === 'warning' ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/20' :
+                        'border-gray-200 dark:border-slate-700'
+                      }`}>
+                        <CardContent className="p-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${
+                                document.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'
+                              }`}>
+                                {document.documentType === 'passport' ? '🛂' : '📋'}
+                              </div>
+                              <div>
+                                <h3 className="font-medium text-gray-900 dark:text-white capitalize">
+                                  {document.documentType}
+                                </h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">
+                                  {document.user?.firstName} {document.user?.lastName}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setSelectedDocument(document)}
+                                className="text-gray-600 hover:text-gray-900"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setEditingDocument(document);
+                                  setDocumentType(document.documentType as "passport" | "visa");
+                                  setDocumentModalOpen(true);
+                                }}
+                                className="text-gray-600 hover:text-gray-900"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-300">Number:</span>
+                              <span className="font-medium">{document.documentNumber}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600 dark:text-gray-300">Country:</span>
+                              <span>{document.issuingCountry}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-600 dark:text-gray-300">Expires:</span>
+                              <Badge 
+                                variant={expiryStatus.color as any}
+                                className={`text-xs ${
+                                  expiryStatus.status === 'expired' ? 'bg-red-100 text-red-700' :
+                                  expiryStatus.status === 'expiring-soon' ? 'bg-orange-100 text-orange-700' :
+                                  expiryStatus.status === 'warning' ? 'bg-yellow-100 text-yellow-700' :
+                                  'bg-green-100 text-green-700'
+                                }`}
+                              >
+                                {expiryStatus.text}
+                              </Badge>
+                            </div>
+                            {document.notes && (
+                              <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
+                                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                                  {document.notes}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Document Form Modal - Will be added in next iteration */}
+              <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900">
+                  <DialogHeader>
+                    <DialogTitle className="text-gray-900 dark:text-white">
+                      {editingDocument ? `Edit ${documentType}` : `Add New ${documentType}`}
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-600 dark:text-gray-300">
+                      {documentType === "passport" 
+                        ? "Enter passport details for the employee" 
+                        : "Enter visa details for the employee"}
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="py-6">
+                    <p className="text-center text-gray-600 dark:text-gray-300">
+                      {documentType === "passport" ? "Passport" : "Visa"} form will be implemented here with comprehensive fields for:
+                    </p>
+                    <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      {documentType === "passport" ? (
+                        <>
+                          <li>• Employee Selection</li>
+                          <li>• Passport Number & Personal Details</li>
+                          <li>• Nationality & Place of Birth</li>
+                          <li>• Issue & Expiry Dates</li>
+                          <li>• Issuing Authority & Country</li>
+                          <li>• Additional Notes</li>
+                        </>
+                      ) : (
+                        <>
+                          <li>• Employee & Passport Selection</li>
+                          <li>• Visa Number & Type</li>
+                          <li>• Issuing & Destination Countries</li>
+                          <li>• Entry Type & Duration</li>
+                          <li>• Consulate & Fee Information</li>
+                          <li>• Application & Approval Dates</li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Document Detail Modal */}
+              <Dialog open={!!selectedDocument} onOpenChange={() => setSelectedDocument(null)}>
+                <DialogContent className="max-w-lg bg-white dark:bg-slate-900">
+                  <DialogHeader>
+                    <DialogTitle className="text-gray-900 dark:text-white capitalize">
+                      {selectedDocument?.documentType} Details
+                    </DialogTitle>
+                  </DialogHeader>
+                  
+                  {selectedDocument && (
+                    <div className="py-6 space-y-4">
+                      <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-600">
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl ${
+                          selectedDocument.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'
+                        }`}>
+                          {selectedDocument.documentType === 'passport' ? '🛂' : '📋'}
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-900 dark:text-white">
+                            {selectedDocument.user?.firstName} {selectedDocument.user?.lastName}
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">
+                            {selectedDocument.user?.email}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-300">Document Number</span>
+                          <p className="font-medium text-gray-900 dark:text-white">{selectedDocument.documentNumber}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-300">Issuing Country</span>
+                          <p className="font-medium text-gray-900 dark:text-white">{selectedDocument.issuingCountry}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-300">Issue Date</span>
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {new Date(selectedDocument.issueDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-gray-600 dark:text-gray-300">Expiry Date</span>
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {new Date(selectedDocument.expiryDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {selectedDocument.notes && (
+                        <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                          <span className="text-gray-600 dark:text-gray-300 text-sm">Notes</span>
+                          <p className="text-gray-900 dark:text-white mt-1">{selectedDocument.notes}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
             </TabsContent>
           </Tabs>
         </div>
