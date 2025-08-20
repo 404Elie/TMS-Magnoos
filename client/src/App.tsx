@@ -18,10 +18,7 @@ import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import type { User } from "@shared/schema";
 
 function Router() {
-  console.log('🚀 Router component is rendering');
-  
   const { isAuthenticated, isLoading, user } = useAuth();
-  console.log('🔍 Auth state:', { isAuthenticated, isLoading, user });
 
   const typedUser = user as User | undefined;
 
@@ -59,13 +56,6 @@ function Router() {
 
   const currentRole = getCurrentRole(typedUser);
 
-  console.log('=== ROUTER DEBUG ===');
-  console.log('isAuthenticated:', isAuthenticated);
-  console.log('isLoading:', isLoading);
-  console.log('user:', user);
-  console.log('currentRole:', currentRole);
-  console.log('====================');
-
   // If authenticated, route based on user role
   return (
     <Switch>
@@ -73,30 +63,18 @@ function Router() {
         {(() => {
           try {
             if (currentRole === 'manager') {
-              console.log('Attempting to render ManagerDashboard');
               return <ManagerDashboard />;
             }
             if (currentRole === 'pm') {
-              console.log('Attempting to render PMDashboard');
               return <PMDashboard />;
             }
             if (currentRole === 'operations_ksa' || currentRole === 'operations_uae') {
-              console.log('Attempting to render test content instead of OperationsDashboard');
-              return (
-                <div style={{ padding: '20px', backgroundColor: '#e8f5e8' }}>
-                  <h1>Operations Dashboard Test</h1>
-                  <p>User: {JSON.stringify(user, null, 2)}</p>
-                  <p>Role: {currentRole}</p>
-                  <p>Status: Successfully rendering without OperationsDashboard component</p>
-                </div>
-              );
+              return <OperationsDashboard />;
             }
             if (currentRole === 'admin') {
-              console.log('Attempting to render ManagerDashboard for admin');
               return <ManagerDashboard />;
             }
             if (!currentRole) {
-              console.log('No role - rendering default ManagerDashboard');
               return <ManagerDashboard />;
             }
             
@@ -149,9 +127,7 @@ function Router() {
 }
 
 function AppContent() {
-  console.log('🎨 AppContent component is rendering');
   const { theme } = useTheme();
-  console.log('🎨 Theme:', theme);
   
   return (
     <div 
@@ -172,7 +148,6 @@ function AppContent() {
 }
 
 function App() {
-  console.log('🏁 App component is rendering');
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>

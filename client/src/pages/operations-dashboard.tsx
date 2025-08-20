@@ -53,14 +53,9 @@ import {
 import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget, ProjectWithBudget } from "@shared/schema";
 
 export default function OperationsDashboard() {
-  console.log('=== OperationsDashboard START ===');
-  
   const { user } = useAuth();
-  console.log('✓ useAuth hook called successfully');
   const { toast } = useToast();
-  console.log('✓ useToast hook called successfully');
   const queryClient = useQueryClient();
-  console.log('✓ useQueryClient hook called successfully');
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
