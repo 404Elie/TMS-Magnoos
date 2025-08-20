@@ -1771,9 +1771,9 @@ export default function OperationsDashboard() {
                                       <SelectValue placeholder="Select employee" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      {allUsers?.map((user) => (
+                                      {users?.map((user) => (
                                         <SelectItem key={user.id} value={user.id}>
-                                          {user.firstName} {user.lastName} ({user.email})
+                                          {user.name} ({user.email})
                                         </SelectItem>
                                       ))}
                                     </SelectContent>
@@ -2010,9 +2010,9 @@ export default function OperationsDashboard() {
                                       <SelectValue placeholder="Select employee" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      {allUsers?.map((user) => (
+                                      {users?.map((user) => (
                                         <SelectItem key={user.id} value={user.id}>
-                                          {user.firstName} {user.lastName}
+                                          {user.name} ({user.email})
                                         </SelectItem>
                                       ))}
                                     </SelectContent>
