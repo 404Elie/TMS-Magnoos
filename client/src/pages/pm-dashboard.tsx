@@ -496,7 +496,7 @@ export default function PMDashboard() {
             <TabsContent value="dashboard" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] border-[#FF6F00] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
+                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -506,13 +506,13 @@ export default function PMDashboard() {
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Clock className="w-7 h-7 text-[#FF6F00]" />
+                        <Clock className="w-7 h-7 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] border-[#1ABC3C] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
+                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -522,7 +522,7 @@ export default function PMDashboard() {
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-7 h-7 text-[#1ABC3C]" />
+                        <Check className="w-7 h-7 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
@@ -544,7 +544,7 @@ export default function PMDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#00D9C0] to-[#A3E635] border-[#00D9C0] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
+                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -554,7 +554,7 @@ export default function PMDashboard() {
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-7 h-7 text-[#00D9C0]" />
+                        <Check className="w-7 h-7 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>

@@ -434,9 +434,9 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
                 
-                {/* Pending Approval - Orange to Coral Gradient */}
+                {/* Pending Approval - Electric Blue to Purple Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -448,15 +448,15 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <Clock className="w-6 h-6 text-[#FF6F00] transition-transform duration-300 hover:scale-110" />
+                        <Clock className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                {/* Approved - Teal to Lime Gradient */}
+                {/* Approved - Electric Blue to Purple Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -468,15 +468,15 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-6 h-6 text-[#1ABC3C] transition-transform duration-300 hover:scale-110" />
+                        <Check className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                {/* Completed - Vivid Teal to Lime Green Gradient */}
+                {/* Completed - Electric Blue to Purple Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#A3E635] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -488,7 +488,7 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <Flag className="w-6 h-6 text-[#00D9C0] transition-transform duration-300 hover:scale-110" />
+                        <Flag className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>

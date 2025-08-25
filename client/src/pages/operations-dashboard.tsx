@@ -731,9 +731,9 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                {/* Monthly Spend - Teal to Lime Gradient */}
+                {/* Monthly Spend - Electric Blue to Purple Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -745,15 +745,15 @@ export default function OperationsDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <DollarSign className="w-6 h-6 text-[#1ABC3C] transition-transform duration-300 hover:scale-110" />
+                        <DollarSign className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                {/* Pending Tasks - Orange to Coral Gradient */}
+                {/* Pending Tasks - Electric Blue to Purple Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -765,7 +765,7 @@ export default function OperationsDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <CheckSquare className="w-6 h-6 text-[#FF6F00] transition-transform duration-300 hover:scale-110" />
+                        <CheckSquare className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>

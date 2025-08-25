@@ -255,8 +255,8 @@
   /* Smooth Tab Transitions */
   .futuristic-tabs [data-state="active"] {
     @apply transform transition-all duration-300;
-    background: linear-gradient(135deg, hsl(var(--magnoos-electric-blue)), hsl(var(--magnoos-purple)));
-    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+    background: linear-gradient(135deg, hsl(var(--magnoos-electric-blue)), #1a4aff);
+    box-shadow: 0 4px 15px rgba(0, 50, 255, 0.3);
   }
   
   /* Table Row Hover Effects */
@@ -611,12 +611,12 @@
   }
   
   .custom-tab[data-state="active"] {
-    background: linear-gradient(135deg, #8A2BE2, #9A3BF2) !important;
-    border: 1px solid #8A2BE2 !important;
+    background: linear-gradient(135deg, #0032FF, #1a4aff) !important;
+    border: 1px solid #0032FF !important;
     color: white !important;
     font-weight: 600 !important;
     outline: none !important;
-    box-shadow: 0 2px 8px rgba(138, 43, 226, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 2px 8px rgba(0, 50, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
     ring: none !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
     position: relative !important;
@@ -626,17 +626,17 @@
     content: '' !important;
     position: absolute !important;
     inset: 0 !important;
-    background: linear-gradient(135deg, #8A2BE2, #9A3BF2) !important;
+    background: linear-gradient(135deg, #0032FF, #1a4aff) !important;
     border-radius: inherit !important;
     z-index: -1 !important;
   }
   
   .custom-tab:hover:not([data-state="active"]) {
-    background: rgba(138, 43, 226, 0.1) !important;
-    color: #8A2BE2 !important;
+    background: rgba(0, 50, 255, 0.1) !important;
+    color: #0032FF !important;
     outline: none !important;
-    box-shadow: 0 1px 3px rgba(138, 43, 226, 0.2) !important;
-    border-color: rgba(138, 43, 226, 0.3) !important;
+    box-shadow: 0 1px 3px rgba(0, 50, 255, 0.2) !important;
+    border-color: rgba(0, 50, 255, 0.3) !important;
   }
   
   .custom-tab:focus,
