@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plane, Users, TrendingUp, Shield, CheckCircle, Calendar } from "lucide-react";
-import logoPath from "@assets/ChatGPT Image May 7, 2025, 03_07_22 PM_1753942249102.png";
+import logoPath from "@assets/Magnoos-Logo (3)_1756107685181.png";
 
 export default function Landing() {
   return (

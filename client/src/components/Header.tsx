@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
-import logoPath from "@assets/ChatGPT Image May 7, 2025, 03_07_22 PM_1753942249102.png";
+import logoPath from "@assets/Magnoos-Logo (3)_1756107685181.png";
 import type { User } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
