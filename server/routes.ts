@@ -432,30 +432,26 @@ export function registerRoutes(app: Express): Server {
         }
       }
 
-      // Ensure the project exists in our local database (if projectId is provided)
+      // Handle project mapping and creation (if projectId is provided)
+      let localProjectId = null;
       if (validatedData.projectId) {
-        let project = await storage.getProject(validatedData.projectId);
+        // First try to find project by Zoho ID
+        let project = await storage.getProjectByZohoId(validatedData.projectId);
         if (!project) {
           // Try to find the project in Zoho projects and create local record
           try {
             const zohoProjects = await zohoService.getProjects();
             const zohoProject = zohoProjects.find(p => String(p.id) === validatedData.projectId);
             if (zohoProject) {
-              // Check if project already exists by zohoProjectId to prevent duplicates
-              const existingProject = await storage.getProjectByZohoId(String(zohoProject.id));
-              if (existingProject) {
-                project = existingProject;
-              } else {
-                // Create the project in our local database
-                project = await storage.createProject({
-                  zohoProjectId: String(zohoProject.id),
-                  name: zohoProject.name,
-                  description: zohoProject.description || '',
-                  budget: null,
-                  travelBudget: null,
-                  status: 'active'
-                });
-              }
+              // Create the project in our local database
+              project = await storage.createProject({
+                zohoProjectId: String(zohoProject.id),
+                name: zohoProject.name,
+                description: zohoProject.description || '',
+                budget: null,
+                travelBudget: null,
+                status: 'active'
+              });
             } else {
               return res.status(400).json({ message: "Selected project not found" });
             }
@@ -464,12 +460,14 @@ export function registerRoutes(app: Express): Server {
             return res.status(400).json({ message: "Unable to verify project" });
           }
         }
+        localProjectId = project.id; // Use the local project ID
       }
 
-      // Update the travel request data to use the local user ID instead of Zoho ID
+      // Update the travel request data to use local IDs instead of Zoho IDs
       const requestData = {
         ...validatedData,
-        travelerId: traveler.id  // Use the local database user ID
+        travelerId: traveler.id,  // Use the local database user ID
+        projectId: localProjectId  // Use the local database project ID
       };
       const newRequest = await storage.createTravelRequest(requestData);
       

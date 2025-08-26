@@ -39,6 +39,7 @@ export interface IStorage {
   
   // Project operations
   getProject(id: string): Promise<Project | undefined>;
+  getProjectByZohoId(zohoProjectId: string): Promise<Project | undefined>;
   getProjects(): Promise<Project[]>;
   createProject(project: InsertProject): Promise<Project>;
   updateProject(id: string, project: Partial<InsertProject>): Promise<Project>;
@@ -187,6 +188,11 @@ export class DatabaseStorage implements IStorage {
   // Project operations
   async getProject(id: string): Promise<Project | undefined> {
     const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    return project;
+  }
+
+  async getProjectByZohoId(zohoProjectId: string): Promise<Project | undefined> {
+    const [project] = await db.select().from(projects).where(eq(projects.zohoProjectId, zohoProjectId));
     return project;
   }
 
