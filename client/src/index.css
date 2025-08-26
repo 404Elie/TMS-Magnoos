@@ -234,10 +234,42 @@
     background-color: transparent !important;
   }
   
+  /* Force remove any teal/cyan colors */
+  .rdp-day:hover,
+  .rdp-day_range_start:hover,
+  .rdp-day_range_end:hover,
+  .rdp-day_range_middle:hover,
+  .rdp-day_today:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+  }
+  
+  /* Remove any default teal/cyan background colors */
+  .rdp-day_today:not(.rdp-day_selected) {
+    background-color: transparent !important;
+    color: hsl(var(--foreground)) !important;
+    font-weight: normal !important;
+  }
+  
   /* ONLY selected date should be blue */
   .rdp-day_selected {
     background-color: hsl(var(--primary)) !important;
     color: hsl(var(--primary-foreground)) !important;
+  }
+  
+  /* Override any system/browser defaults that might show teal */
+  .rdp-day_selected:hover {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  
+  /* Ensure no teal anywhere */
+  .rdp *:not(.rdp-day_selected) {
+    background-color: transparent !important;
+  }
+  
+  .rdp *:not(.rdp-day_selected):hover {
+    background-color: transparent !important;
   }
   
   .rdp-day_selected:hover {
