@@ -70,13 +70,13 @@ function TravelRequestForm() {
   const [employeeOpen, setEmployeeOpen] = useState(false);
 
   // Fetch projects for dropdown
-  const { data: projects = [] } = useQuery({
+  const { data: projects = [] } = useQuery<any[]>({
     queryKey: ["/api/zoho/projects"],
     retry: false,
   });
 
   // Fetch Zoho users for employee dropdown
-  const { data: employees = [] } = useQuery({
+  const { data: employees = [] } = useQuery<any[]>({
     queryKey: ["/api/zoho/users"],
     retry: false,
   });
@@ -586,7 +586,7 @@ export default function PMDashboard() {
                                 {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
                               </p>
                               <p className="text-sm text-gray-600 dark:text-gray-300">
-                                {request.project?.name || 'No project'} - {request.status === 'submitted' ? 'Pending Approval' : request.status === 'pm_approved' ? 'Approved' : request.status === 'rejected' ? 'Rejected' : request.status === 'completed' ? 'Completed' : request.status}
+                                {request.project?.name || 'No project'} - {request.status === 'submitted' ? 'Pending Approval' : request.status === 'pm_approved' ? 'Approved' : request.status === 'pm_rejected' ? 'Rejected' : request.status === 'operations_completed' ? 'Completed' : request.status}
                               </p>
                             </div>
                           </div>
