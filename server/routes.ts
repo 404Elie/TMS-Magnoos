@@ -393,17 +393,21 @@ export function registerRoutes(app: Express): Server {
       const validatedData = insertTravelRequestSchema.parse(transformedData);
       
       // Ensure the traveler exists in our local database
-      let traveler = await storage.getUser(validatedData.travelerId);
+      let traveler = await storage.getUserByZohoId(validatedData.travelerId);
       if (!traveler) {
         // Try to find the traveler in Zoho users and create local record
         try {
           const zohoUsers = await zohoService.getUsers();
           const zohoTraveler = zohoUsers.find(user => user.id === validatedData.travelerId);
           if (zohoTraveler) {
-            // Check if user already exists by email to prevent duplicates
+            // Check if user already exists by email or zohoUserId to prevent duplicates
             const existingUserByEmail = await storage.getUserByEmail(zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`);
+            const existingUserByZohoId = await storage.getUserByZohoId(String(zohoTraveler.id));
+            
             if (existingUserByEmail) {
               traveler = existingUserByEmail;
+            } else if (existingUserByZohoId) {
+              traveler = existingUserByZohoId;
             } else {
               // Create the user in our local database
               // Parse the name from Zoho data properly
@@ -412,11 +416,11 @@ export function registerRoutes(app: Express): Server {
               const lastName = nameParts.slice(1).join(' ') || '';
               
               traveler = await storage.createUser({
-                id: String(zohoTraveler.id),
                 email: zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`,
                 firstName,
                 lastName,
-                role: 'manager' // Default role for Zoho users
+                role: 'manager', // Default role for Zoho users
+                zohoUserId: String(zohoTraveler.id)
               });
             }
           } else {
@@ -462,7 +466,11 @@ export function registerRoutes(app: Express): Server {
         }
       }
 
-      const requestData = validatedData;
+      // Update the travel request data to use the local user ID instead of Zoho ID
+      const requestData = {
+        ...validatedData,
+        travelerId: traveler.id  // Use the local database user ID
+      };
       const newRequest = await storage.createTravelRequest(requestData);
       
       // Send email notifications

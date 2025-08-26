@@ -28,6 +28,7 @@ export interface IStorage {
   // User operations - mandatory for Replit Auth
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByZohoId(zohoUserId: string): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
   createUser(userData: UpsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
@@ -111,6 +112,17 @@ export class DatabaseStorage implements IStorage {
       return user;
     } catch (error) {
       console.error('Database error in getUserByEmail:', error);
+      // If connection fails, return undefined to allow graceful degradation
+      return undefined;
+    }
+  }
+
+  async getUserByZohoId(zohoUserId: string): Promise<User | undefined> {
+    try {
+      const [user] = await db.select().from(users).where(eq(users.zohoUserId, zohoUserId));
+      return user;
+    } catch (error) {
+      console.error('Database error in getUserByZohoId:', error);
       // If connection fails, return undefined to allow graceful degradation
       return undefined;
     }
