@@ -412,7 +412,7 @@ export function registerRoutes(app: Express): Server {
               const lastName = nameParts.slice(1).join(' ') || '';
               
               traveler = await storage.createUser({
-                id: zohoTraveler.id,
+                id: String(zohoTraveler.id),
                 email: zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`,
                 firstName,
                 lastName,

@@ -18,7 +18,7 @@
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(175, 100%, 88%); /* Light vivid teal secondary */
   --secondary-foreground: hsl(218, 100%, 11%);
-  --accent: hsl(16, 100%, 66%); /* Orange accent for vibrancy */
+  --accent: hsl(175, 100%, 42%); /* Vivid Teal accent for vibrancy */
   --accent-foreground: hsl(0, 0%, 100%);
   --destructive: hsl(3, 100%, 69%); /* Coral for errors */
   --destructive-foreground: hsl(0, 0%, 100%);
@@ -195,6 +195,20 @@
   .dark .modal-form textarea:not(.auth-page textarea):focus {
     border-color: rgb(147 197 253);
     box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1);
+  }
+  
+  /* Remove orange/accent styling from calendar today date */
+  .rdp-today {
+    background-color: transparent !important;
+    color: inherit !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 6px !important;
+  }
+  
+  .dark .rdp-today {
+    background-color: transparent !important;
+    color: inherit !important;
+    border: 1px solid hsl(var(--border)) !important;
   }
   
   /* Vibrant Light Mode Enhancements */
