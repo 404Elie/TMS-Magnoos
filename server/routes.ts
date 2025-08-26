@@ -368,7 +368,7 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  app.post('/api/travel-requests', isAuthenticated, requireRole(['manager']), async (req: any, res) => {
+  app.post('/api/travel-requests', isAuthenticated, requireRole(['manager', 'pm']), async (req: any, res) => {
     try {
       console.log("Received travel request data:", JSON.stringify(req.body, null, 2));
       
