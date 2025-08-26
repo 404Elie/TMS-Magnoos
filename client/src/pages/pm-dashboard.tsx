@@ -580,23 +580,15 @@ export default function PMDashboard() {
                     ) : allRequests && allRequests.length > 0 ? (
                       <div className="bg-gray-50 dark:bg-magnoos-dark space-y-3">
                         {allRequests.slice(0, 3).map((request) => (
-                          <div key={request.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-[#464646]">
+                          <div key={request.id} className="p-3 rounded-lg bg-gray-100 dark:bg-[#464646]">
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">
-                                {request.destination}
+                                {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
                               </p>
                               <p className="text-sm text-gray-600 dark:text-gray-300">
-                                {request.project?.name} • {getStatusBadge(request.status)}
+                                {request.project?.name || 'No project'} - {request.status === 'submitted' ? 'Pending Approval' : request.status === 'pm_approved' ? 'Approved' : request.status === 'rejected' ? 'Rejected' : request.status === 'completed' ? 'Completed' : request.status}
                               </p>
                             </div>
-                            <Button 
-                              size="sm"
-                              onClick={() => setActiveTab("submit")}
-                              className="text-magnoos-blue hover:text-magnoos-dark-blue"
-                              variant="ghost"
-                            >
-                              View
-                            </Button>
                           </div>
                         ))}
                       </div>
