@@ -882,7 +882,7 @@ export default function ManagerDashboard() {
                                       // Show confirmation toast
                                       if (e.target.value) {
                                         toast({
-                                          title: "Start Date Selected",
+                                          title: "Start Date Confirmed",
                                           description: `Departure: ${departureDate.toLocaleDateString()}`,
                                         });
                                       }
@@ -904,7 +904,10 @@ export default function ManagerDashboard() {
                                   <Input 
                                     type="date" 
                                     {...field} 
-                                    min={form.watch("departureDate") || new Date().toISOString().split('T')[0]}
+                                    min={form.watch("departureDate") ? 
+                                      new Date(new Date(form.watch("departureDate")).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
+                                      : new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+                                    }
                                     onChange={(e) => {
                                       const selectedEndDate = e.target.value;
                                       const startDate = form.getValues("departureDate");
@@ -916,7 +919,9 @@ export default function ManagerDashboard() {
                                           description: "End date must be after start date",
                                           variant: "destructive",
                                         });
-                                        return; // Don't update the field
+                                        // Clear the invalid value
+                                        e.target.value = "";
+                                        return;
                                       }
                                       
                                       field.onChange(e);
@@ -925,7 +930,7 @@ export default function ManagerDashboard() {
                                       if (selectedEndDate) {
                                         const returnDate = new Date(selectedEndDate);
                                         toast({
-                                          title: "End Date Selected",
+                                          title: "End Date Confirmed",
                                           description: `Return: ${returnDate.toLocaleDateString()}`,
                                         });
                                       }
