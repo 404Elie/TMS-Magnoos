@@ -86,10 +86,16 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const { email, password, firstName, lastName, role } = req.body;
       
-      if (!email || !password || !firstName || !lastName) {
+      if (!email || !password || !firstName || !lastName || !role) {
         return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Validate role
+      const validRoles = ['manager', 'pm', 'operations_ksa', 'operations_uae', 'admin'];
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({ message: "Invalid role specified" });
       }
 
       const existingUser = await storage.getUserByEmail(email);
@@ -103,7 +109,7 @@ export function setupAuth(app: Express) {
         password: hashedPassword,
         firstName,
         lastName,
-        role: "manager", // Default role for new users
+        role, // Use the role from the signup form
         annualTravelBudget: "15000"
       });
 
