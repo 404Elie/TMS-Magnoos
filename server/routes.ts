@@ -400,19 +400,25 @@ export function registerRoutes(app: Express): Server {
           const zohoUsers = await zohoService.getUsers();
           const zohoTraveler = zohoUsers.find(user => user.id === validatedData.travelerId);
           if (zohoTraveler) {
-            // Create the user in our local database
-            // Parse the name from Zoho data properly
-            const nameParts = zohoTraveler.name?.split(' ') || [];
-            const firstName = nameParts[0] || zohoTraveler.email?.split('@')[0] || 'User';
-            const lastName = nameParts.slice(1).join(' ') || '';
-            
-            traveler = await storage.createUser({
-              id: zohoTraveler.id,
-              email: zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`,
-              firstName,
-              lastName,
-              role: 'manager' // Default role for Zoho users
-            });
+            // Check if user already exists by email to prevent duplicates
+            const existingUserByEmail = await storage.getUserByEmail(zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`);
+            if (existingUserByEmail) {
+              traveler = existingUserByEmail;
+            } else {
+              // Create the user in our local database
+              // Parse the name from Zoho data properly
+              const nameParts = zohoTraveler.name?.split(' ') || [];
+              const firstName = nameParts[0] || zohoTraveler.email?.split('@')[0] || 'User';
+              const lastName = nameParts.slice(1).join(' ') || '';
+              
+              traveler = await storage.createUser({
+                id: zohoTraveler.id,
+                email: zohoTraveler.email || `${zohoTraveler.id}@magnoos.com`,
+                firstName,
+                lastName,
+                role: 'manager' // Default role for Zoho users
+              });
+            }
           } else {
             return res.status(400).json({ message: "Selected traveler not found" });
           }
@@ -431,15 +437,21 @@ export function registerRoutes(app: Express): Server {
             const zohoProjects = await zohoService.getProjects();
             const zohoProject = zohoProjects.find(p => String(p.id) === validatedData.projectId);
             if (zohoProject) {
-              // Create the project in our local database
-              project = await storage.createProject({
-                zohoProjectId: String(zohoProject.id),
-                name: zohoProject.name,
-                description: zohoProject.description || '',
-                budget: null,
-                travelBudget: null,
-                status: 'active'
-              });
+              // Check if project already exists by zohoProjectId to prevent duplicates
+              const existingProject = await storage.getProjectByZohoId(String(zohoProject.id));
+              if (existingProject) {
+                project = existingProject;
+              } else {
+                // Create the project in our local database
+                project = await storage.createProject({
+                  zohoProjectId: String(zohoProject.id),
+                  name: zohoProject.name,
+                  description: zohoProject.description || '',
+                  budget: null,
+                  travelBudget: null,
+                  status: 'active'
+                });
+              }
             } else {
               return res.status(400).json({ message: "Selected project not found" });
             }

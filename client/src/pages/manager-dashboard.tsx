@@ -33,8 +33,8 @@ const travelRequestFormSchema = z.object({
   destination: z.string().min(1, "Destination is required"),
   purpose: z.string().min(1, "Purpose is required"),
   customPurpose: z.string().optional(),
-  departureDate: z.string().min(1, "Departure date is required"),
-  returnDate: z.string().min(1, "Return date is required"),
+  departureDate: z.string().min(1, "Start date is required"),
+  returnDate: z.string().min(1, "End date is required"),
   notes: z.string().optional(),
 }).refine((data) => {
   // Require project when purpose is delivery
@@ -49,6 +49,23 @@ const travelRequestFormSchema = z.object({
 }, {
   message: "Please complete all required fields for the selected purpose",
   path: ["purpose"], // This will show the error on the purpose field
+}).refine((data) => {
+  // Validate that return date is after departure date
+  const departureDate = new Date(data.departureDate);
+  const returnDate = new Date(data.returnDate);
+  return returnDate > departureDate;
+}, {
+  message: "End date must be after start date",
+  path: ["returnDate"],
+}).refine((data) => {
+  // Validate that departure date is not in the past
+  const departureDate = new Date(data.departureDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return departureDate >= today;
+}, {
+  message: "Start date cannot be in the past",
+  path: ["departureDate"],
 });
 
 type TravelRequestForm = z.infer<typeof travelRequestFormSchema>;
@@ -836,9 +853,31 @@ export default function ManagerDashboard() {
                             name="departureDate"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Departure Date</FormLabel>
+                                <FormLabel>Start Date</FormLabel>
                                 <FormControl>
-                                  <Input type="date" {...field} />
+                                  <Input 
+                                    type="date" 
+                                    {...field} 
+                                    min={new Date().toISOString().split('T')[0]}
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                      const departureDate = new Date(e.target.value);
+                                      const returnDate = new Date(form.getValues("returnDate"));
+                                      
+                                      // Clear return date if it's before the new departure date
+                                      if (returnDate <= departureDate) {
+                                        form.setValue("returnDate", "");
+                                      }
+                                      
+                                      // Show confirmation toast
+                                      if (e.target.value) {
+                                        toast({
+                                          title: "Start Date Selected",
+                                          description: `Departure: ${departureDate.toLocaleDateString()}`,
+                                        });
+                                      }
+                                    }}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -850,9 +889,25 @@ export default function ManagerDashboard() {
                             name="returnDate"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Return Date</FormLabel>
+                                <FormLabel>End Date</FormLabel>
                                 <FormControl>
-                                  <Input type="date" {...field} />
+                                  <Input 
+                                    type="date" 
+                                    {...field} 
+                                    min={form.watch("departureDate") || new Date().toISOString().split('T')[0]}
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                      
+                                      // Show confirmation toast
+                                      if (e.target.value) {
+                                        const returnDate = new Date(e.target.value);
+                                        toast({
+                                          title: "End Date Selected",
+                                          description: `Return: ${returnDate.toLocaleDateString()}`,
+                                        });
+                                      }
+                                    }}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>

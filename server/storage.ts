@@ -196,6 +196,11 @@ export class DatabaseStorage implements IStorage {
     return updatedProject;
   }
 
+  async getProjectByZohoId(zohoProjectId: string): Promise<Project | undefined> {
+    const [project] = await db.select().from(projects).where(eq(projects.zohoProjectId, zohoProjectId));
+    return project;
+  }
+
   // Travel request operations
   async getTravelRequests(filters?: {
     requesterId?: string;
