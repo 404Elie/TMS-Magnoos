@@ -870,7 +870,7 @@ export default function ManagerDashboard() {
                                       const returnDate = new Date(form.getValues("returnDate"));
                                       
                                       // Clear return date if it's before or same as the new departure date
-                                      if (returnDate <= departureDate) {
+                                      if (form.getValues("returnDate") && returnDate <= departureDate) {
                                         form.setValue("returnDate", "");
                                         toast({
                                           title: "End Date Cleared",
@@ -882,7 +882,7 @@ export default function ManagerDashboard() {
                                       // Show confirmation toast
                                       if (e.target.value) {
                                         toast({
-                                          title: "Start Date Confirmed",
+                                          title: "✓ Start Date Confirmed",
                                           description: `Departure: ${departureDate.toLocaleDateString()}`,
                                         });
                                       }
@@ -904,33 +904,46 @@ export default function ManagerDashboard() {
                                   <Input 
                                     type="date" 
                                     {...field} 
-                                    min={form.watch("departureDate") ? 
-                                      new Date(new Date(form.watch("departureDate")).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] 
-                                      : new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-                                    }
+                                    min={(() => {
+                                      const startDate = form.watch("departureDate");
+                                      if (startDate) {
+                                        const nextDay = new Date(startDate);
+                                        nextDay.setDate(nextDay.getDate() + 1);
+                                        return nextDay.toISOString().split('T')[0];
+                                      }
+                                      const tomorrow = new Date();
+                                      tomorrow.setDate(tomorrow.getDate() + 1);
+                                      return tomorrow.toISOString().split('T')[0];
+                                    })()}
                                     onChange={(e) => {
                                       const selectedEndDate = e.target.value;
                                       const startDate = form.getValues("departureDate");
                                       
-                                      // Prevent end date from being before or same as start date
-                                      if (selectedEndDate && startDate && selectedEndDate <= startDate) {
-                                        toast({
-                                          title: "Invalid Date",
-                                          description: "End date must be after start date",
-                                          variant: "destructive",
-                                        });
-                                        // Clear the invalid value
-                                        e.target.value = "";
-                                        return;
+                                      // Strict validation - end date must be after start date
+                                      if (selectedEndDate && startDate) {
+                                        const startDateTime = new Date(startDate).getTime();
+                                        const endDateTime = new Date(selectedEndDate).getTime();
+                                        
+                                        if (endDateTime <= startDateTime) {
+                                          toast({
+                                            title: "Invalid Date Selection",
+                                            description: "End date must be at least one day after start date",
+                                            variant: "destructive",
+                                          });
+                                          // Reset the field value
+                                          form.setValue("returnDate", "");
+                                          return;
+                                        }
                                       }
                                       
+                                      // Only update if valid
                                       field.onChange(e);
                                       
                                       // Show confirmation toast
                                       if (selectedEndDate) {
                                         const returnDate = new Date(selectedEndDate);
                                         toast({
-                                          title: "End Date Confirmed",
+                                          title: "✓ End Date Confirmed",
                                           description: `Return: ${returnDate.toLocaleDateString()}`,
                                         });
                                       }

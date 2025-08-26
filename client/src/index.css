@@ -197,7 +197,7 @@
     box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1);
   }
   
-  /* Remove all accent/teal styling from calendar - only allow blue for selected */
+  /* Completely remove all teal/accent colors from calendar */
   .rdp-today {
     background-color: transparent !important;
     color: inherit !important;
@@ -211,24 +211,37 @@
     border: 1px solid hsl(var(--border)) !important;
   }
   
-  /* Remove all accent colors from date picker - only selected should be blue */
+  /* Remove ALL accent/teal colors from any calendar elements */
   .rdp-day_range_start,
   .rdp-day_range_end,
   .rdp-day_range_middle,
   .rdp-range_start,
   .rdp-range_end,
-  .rdp-range_middle {
+  .rdp-range_middle,
+  .rdp-day:not(.rdp-day_selected) {
     background-color: transparent !important;
     color: inherit !important;
   }
   
-  /* Ensure only selected date is blue */
+  /* Remove hover effects that might show teal */
+  .rdp-day:hover:not(.rdp-day_selected) {
+    background-color: hsl(var(--muted)) !important;
+    color: inherit !important;
+  }
+  
+  /* ONLY selected date should be blue */
   .rdp-day_selected {
     background-color: hsl(var(--primary)) !important;
     color: hsl(var(--primary-foreground)) !important;
   }
   
   .rdp-day_selected:hover {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  
+  /* Override any remaining accent styling */
+  [data-selected] {
     background-color: hsl(var(--primary)) !important;
     color: hsl(var(--primary-foreground)) !important;
   }
