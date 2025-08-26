@@ -851,126 +851,119 @@ export default function ManagerDashboard() {
                           )}
                         </div>
 
-                        {/* Dates */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Travel Dates - Combined Range Picker */}
+                        <div className="space-y-4">
                           <FormField
                             control={form.control}
                             name="departureDate"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Start Date</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    type="date" 
-                                    {...field} 
-                                    min={new Date().toISOString().split('T')[0]}
-                                    onChange={(e) => {
-                                      field.onChange(e);
-                                      const departureDate = new Date(e.target.value);
-                                      const currentEndDate = form.getValues("returnDate");
-                                      
-                                      // Always clear end date when start date changes to prevent invalid states
-                                      if (currentEndDate) {
-                                        const returnDate = new Date(currentEndDate);
-                                        if (returnDate <= departureDate) {
-                                          form.setValue("returnDate", "");
-                                          toast({
-                                            title: "End Date Cleared",
-                                            description: "End date must be after the start date",
-                                            variant: "destructive",
-                                          });
-                                        }
-                                      }
-                                      
-                                      // Show confirmation toast and close picker
-                                      if (e.target.value) {
-                                        toast({
-                                          title: "✓ Start Date Confirmed",
-                                          description: `Departure: ${departureDate.toLocaleDateString()}`,
-                                        });
-                                        // Close the date picker by removing focus
-                                        e.target.blur();
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="returnDate"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>End Date</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    type="date" 
-                                    {...field} 
-                                    min={(() => {
-                                      const startDate = form.watch("departureDate");
-                                      if (startDate) {
-                                        const nextDay = new Date(startDate);
-                                        nextDay.setDate(nextDay.getDate() + 1);
-                                        return nextDay.toISOString().split('T')[0];
-                                      }
-                                      const tomorrow = new Date();
-                                      tomorrow.setDate(tomorrow.getDate() + 1);
-                                      return tomorrow.toISOString().split('T')[0];
-                                    })()}
-                                    onFocus={(e) => {
-                                      // If no start date is selected, don't allow end date selection
-                                      if (!form.getValues("departureDate")) {
-                                        e.target.blur();
-                                        toast({
-                                          title: "Select Start Date First",
-                                          description: "Please select a start date before choosing an end date",
-                                          variant: "destructive",
-                                        });
-                                      }
-                                    }}
-                                    onChange={(e) => {
-                                      const selectedEndDate = e.target.value;
-                                      const startDate = form.getValues("departureDate");
-                                      
-                                      // Strict validation - end date must be after start date
-                                      if (selectedEndDate && startDate) {
-                                        const startDateTime = new Date(startDate).getTime();
-                                        const endDateTime = new Date(selectedEndDate).getTime();
-                                        
-                                        if (endDateTime <= startDateTime) {
-                                          toast({
-                                            title: "Invalid Date Selection",
-                                            description: "End date must be at least one day after start date",
-                                            variant: "destructive",
-                                          });
-                                          // Reset the field value and close picker
-                                          form.setValue("returnDate", "");
-                                          e.target.blur();
-                                          return;
-                                        }
-                                      }
-                                      
-                                      // Only update if valid
-                                      field.onChange(e);
-                                      
-                                      // Show confirmation toast and close picker
-                                      if (selectedEndDate) {
-                                        const returnDate = new Date(selectedEndDate);
-                                        toast({
-                                          title: "✓ End Date Confirmed",
-                                          description: `Return: ${returnDate.toLocaleDateString()}`,
-                                        });
-                                        // Close the date picker by removing focus
-                                        e.target.blur();
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
+                            render={({ field: departureField }) => (
+                              <FormField
+                                control={form.control}
+                                name="returnDate"
+                                render={({ field: returnField }) => (
+                                  <FormItem>
+                                    <FormLabel>Travel Dates *</FormLabel>
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <label className="text-sm text-muted-foreground mb-2 block">Start Date</label>
+                                        <FormControl>
+                                          <Input 
+                                            type="date" 
+                                            value={departureField.value || ''}
+                                            min={new Date().toISOString().split('T')[0]}
+                                            onChange={(e) => {
+                                              departureField.onChange(e.target.value);
+                                              
+                                              // Clear end date if it becomes invalid
+                                              if (returnField.value && e.target.value) {
+                                                const startDate = new Date(e.target.value);
+                                                const endDate = new Date(returnField.value);
+                                                if (endDate <= startDate) {
+                                                  returnField.onChange('');
+                                                  toast({
+                                                    title: "End Date Cleared",
+                                                    description: "End date must be after start date",
+                                                    variant: "destructive",
+                                                  });
+                                                }
+                                              }
+                                              
+                                              if (e.target.value) {
+                                                toast({
+                                                  title: "✓ Start Date Set",
+                                                  description: `Departure: ${new Date(e.target.value).toLocaleDateString()}`,
+                                                });
+                                              }
+                                            }}
+                                          />
+                                        </FormControl>
+                                      </div>
+                                      <div>
+                                        <label className="text-sm text-muted-foreground mb-2 block">End Date</label>
+                                        <FormControl>
+                                          <Input 
+                                            type="date" 
+                                            value={returnField.value || ''}
+                                            min={(() => {
+                                              if (departureField.value) {
+                                                const nextDay = new Date(departureField.value);
+                                                nextDay.setDate(nextDay.getDate() + 1);
+                                                return nextDay.toISOString().split('T')[0];
+                                              }
+                                              const tomorrow = new Date();
+                                              tomorrow.setDate(tomorrow.getDate() + 1);
+                                              return tomorrow.toISOString().split('T')[0];
+                                            })()}
+                                            disabled={!departureField.value}
+                                            placeholder={!departureField.value ? "Select start date first" : ""}
+                                            onChange={(e) => {
+                                              const selectedEndDate = e.target.value;
+                                              const startDate = departureField.value;
+                                              
+                                              if (selectedEndDate && startDate) {
+                                                const startDateTime = new Date(startDate).getTime();
+                                                const endDateTime = new Date(selectedEndDate).getTime();
+                                                
+                                                if (endDateTime <= startDateTime) {
+                                                  toast({
+                                                    title: "Invalid Date",
+                                                    description: "End date must be after start date",
+                                                    variant: "destructive",
+                                                  });
+                                                  return;
+                                                }
+                                              }
+                                              
+                                              returnField.onChange(selectedEndDate);
+                                              
+                                              if (selectedEndDate) {
+                                                toast({
+                                                  title: "✓ End Date Set",
+                                                  description: `Return: ${new Date(selectedEndDate).toLocaleDateString()}`,
+                                                });
+                                              }
+                                            }}
+                                          />
+                                        </FormControl>
+                                      </div>
+                                    </div>
+                                    <div className="text-sm text-muted-foreground mt-2">
+                                      {!departureField.value && (
+                                        <span>Select start date first, then end date will be enabled</span>
+                                      )}
+                                      {departureField.value && !returnField.value && (
+                                        <span className="text-amber-600">Now select your return date</span>
+                                      )}
+                                      {departureField.value && returnField.value && (
+                                        <span className="text-primary font-medium">
+                                          Trip Duration: {Math.ceil((new Date(returnField.value).getTime() - new Date(departureField.value).getTime()) / (1000 * 60 * 60 * 24))} days
+                                        </span>
+                                      )}
+                                    </div>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             )}
                           />
                         </div>
