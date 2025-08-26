@@ -38,14 +38,14 @@ function TravelRequestForm() {
     projectId: true,
     origin: true,
     destination: true,
-    departureDate: true,
-    returnDate: true,
     purpose: true,
     customPurpose: true,
     notes: true,
   }).extend({
     projectId: z.string().optional(),
     customPurpose: z.string().optional(),
+    departureDate: z.string().min(1, "Start date is required"),
+    returnDate: z.string().min(1, "End date is required"),
   });
 
   const form = useForm({
@@ -84,7 +84,13 @@ function TravelRequestForm() {
   // Submit mutation
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "/api/travel-requests", data);
+      // Convert string dates to Date objects for API
+      const payload = {
+        ...data,
+        departureDate: data.departureDate ? new Date(data.departureDate) : null,
+        returnDate: data.returnDate ? new Date(data.returnDate) : null,
+      };
+      const response = await apiRequest("POST", "/api/travel-requests", payload);
       return response.json();
     },
     onSuccess: () => {
