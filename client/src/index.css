@@ -223,10 +223,15 @@
     color: inherit !important;
   }
   
-  /* Remove hover effects that might show teal */
+  /* Remove ALL hover effects */
   .rdp-day:hover:not(.rdp-day_selected) {
-    background-color: hsl(var(--muted)) !important;
+    background-color: transparent !important;
     color: inherit !important;
+  }
+  
+  /* Remove button hover effects */
+  .rdp-button:hover {
+    background-color: transparent !important;
   }
   
   /* ONLY selected date should be blue */

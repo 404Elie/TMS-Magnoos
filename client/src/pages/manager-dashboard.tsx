@@ -867,24 +867,29 @@ export default function ManagerDashboard() {
                                     onChange={(e) => {
                                       field.onChange(e);
                                       const departureDate = new Date(e.target.value);
-                                      const returnDate = new Date(form.getValues("returnDate"));
+                                      const currentEndDate = form.getValues("returnDate");
                                       
-                                      // Clear return date if it's before or same as the new departure date
-                                      if (form.getValues("returnDate") && returnDate <= departureDate) {
-                                        form.setValue("returnDate", "");
-                                        toast({
-                                          title: "End Date Cleared",
-                                          description: "End date must be after the start date",
-                                          variant: "destructive",
-                                        });
+                                      // Always clear end date when start date changes to prevent invalid states
+                                      if (currentEndDate) {
+                                        const returnDate = new Date(currentEndDate);
+                                        if (returnDate <= departureDate) {
+                                          form.setValue("returnDate", "");
+                                          toast({
+                                            title: "End Date Cleared",
+                                            description: "End date must be after the start date",
+                                            variant: "destructive",
+                                          });
+                                        }
                                       }
                                       
-                                      // Show confirmation toast
+                                      // Show confirmation toast and close picker
                                       if (e.target.value) {
                                         toast({
                                           title: "✓ Start Date Confirmed",
                                           description: `Departure: ${departureDate.toLocaleDateString()}`,
                                         });
+                                        // Close the date picker by removing focus
+                                        e.target.blur();
                                       }
                                     }}
                                   />
@@ -915,6 +920,17 @@ export default function ManagerDashboard() {
                                       tomorrow.setDate(tomorrow.getDate() + 1);
                                       return tomorrow.toISOString().split('T')[0];
                                     })()}
+                                    onFocus={(e) => {
+                                      // If no start date is selected, don't allow end date selection
+                                      if (!form.getValues("departureDate")) {
+                                        e.target.blur();
+                                        toast({
+                                          title: "Select Start Date First",
+                                          description: "Please select a start date before choosing an end date",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }}
                                     onChange={(e) => {
                                       const selectedEndDate = e.target.value;
                                       const startDate = form.getValues("departureDate");
@@ -930,8 +946,9 @@ export default function ManagerDashboard() {
                                             description: "End date must be at least one day after start date",
                                             variant: "destructive",
                                           });
-                                          // Reset the field value
+                                          // Reset the field value and close picker
                                           form.setValue("returnDate", "");
+                                          e.target.blur();
                                           return;
                                         }
                                       }
@@ -939,13 +956,15 @@ export default function ManagerDashboard() {
                                       // Only update if valid
                                       field.onChange(e);
                                       
-                                      // Show confirmation toast
+                                      // Show confirmation toast and close picker
                                       if (selectedEndDate) {
                                         const returnDate = new Date(selectedEndDate);
                                         toast({
                                           title: "✓ End Date Confirmed",
                                           description: `Return: ${returnDate.toLocaleDateString()}`,
                                         });
+                                        // Close the date picker by removing focus
+                                        e.target.blur();
                                       }
                                     }}
                                   />
