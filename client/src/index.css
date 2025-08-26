@@ -201,14 +201,14 @@
   .rdp-today {
     background-color: transparent !important;
     color: inherit !important;
-    border: 1px solid hsl(var(--border)) !important;
+    border: none !important;
     border-radius: 6px !important;
   }
   
   .dark .rdp-today {
     background-color: transparent !important;
     color: inherit !important;
-    border: 1px solid hsl(var(--border)) !important;
+    border: none !important;
   }
   
   /* Remove ALL accent/teal colors from any calendar elements */
@@ -687,7 +687,7 @@
   /* Custom clean tab styling - Light theme */
   .custom-tab {
     background: transparent !important;
-    border: 1px solid hsl(var(--border)) !important;
+    border: none !important;
     color: hsl(var(--muted-foreground)) !important;
     font-weight: 500 !important;
     transition: all 0.3s ease !important;
