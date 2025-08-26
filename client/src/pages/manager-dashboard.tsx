@@ -50,12 +50,17 @@ const travelRequestFormSchema = z.object({
   message: "Please complete all required fields for the selected purpose",
   path: ["purpose"], // This will show the error on the purpose field
 }).refine((data) => {
-  // Validate that return date is after departure date
+  // Validate that return date is strictly after departure date (not same day)
   const departureDate = new Date(data.departureDate);
   const returnDate = new Date(data.returnDate);
+  
+  // Reset time to compare only dates
+  departureDate.setHours(0, 0, 0, 0);
+  returnDate.setHours(0, 0, 0, 0);
+  
   return returnDate > departureDate;
 }, {
-  message: "End date must be after start date",
+  message: "End date must be after start date (cannot be the same day)",
   path: ["returnDate"],
 }).refine((data) => {
   // Validate that departure date is not in the past
@@ -864,9 +869,14 @@ export default function ManagerDashboard() {
                                       const departureDate = new Date(e.target.value);
                                       const returnDate = new Date(form.getValues("returnDate"));
                                       
-                                      // Clear return date if it's before the new departure date
+                                      // Clear return date if it's before or same as the new departure date
                                       if (returnDate <= departureDate) {
                                         form.setValue("returnDate", "");
+                                        toast({
+                                          title: "End Date Cleared",
+                                          description: "End date must be after the start date",
+                                          variant: "destructive",
+                                        });
                                       }
                                       
                                       // Show confirmation toast
@@ -896,11 +906,24 @@ export default function ManagerDashboard() {
                                     {...field} 
                                     min={form.watch("departureDate") || new Date().toISOString().split('T')[0]}
                                     onChange={(e) => {
+                                      const selectedEndDate = e.target.value;
+                                      const startDate = form.getValues("departureDate");
+                                      
+                                      // Prevent end date from being before or same as start date
+                                      if (selectedEndDate && startDate && selectedEndDate <= startDate) {
+                                        toast({
+                                          title: "Invalid Date",
+                                          description: "End date must be after start date",
+                                          variant: "destructive",
+                                        });
+                                        return; // Don't update the field
+                                      }
+                                      
                                       field.onChange(e);
                                       
                                       // Show confirmation toast
-                                      if (e.target.value) {
-                                        const returnDate = new Date(e.target.value);
+                                      if (selectedEndDate) {
+                                        const returnDate = new Date(selectedEndDate);
                                         toast({
                                           title: "End Date Selected",
                                           description: `Return: ${returnDate.toLocaleDateString()}`,
