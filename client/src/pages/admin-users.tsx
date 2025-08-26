@@ -21,7 +21,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'manager' | 'pm' | 'operations' | 'admin';
+  role: 'manager' | 'pm' | 'operations_ksa' | 'operations_uae' | 'admin';
   annualTravelBudget: string;
   createdAt: string;
 }
@@ -30,7 +30,7 @@ const userSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  role: z.enum(['manager', 'pm', 'operations', 'admin']),
+  role: z.enum(['manager', 'pm', 'operations_ksa', 'operations_uae', 'admin']),
   annualTravelBudget: z.string().min(1, "Budget is required").default("15000")
 });
 
@@ -364,9 +364,10 @@ export default function AdminUsers() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="manager">Manager</SelectItem>
-                        <SelectItem value="pm">Project Manager</SelectItem>
-                        <SelectItem value="operations">Operations</SelectItem>
+                        <SelectItem value="manager">Project Manager</SelectItem>
+                        <SelectItem value="pm">Business Unit Manager</SelectItem>
+                        <SelectItem value="operations_ksa">Operations KSA</SelectItem>
+                        <SelectItem value="operations_uae">Operations UAE</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
                       </SelectContent>
                     </Select>
@@ -463,9 +464,10 @@ export default function AdminUsers() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="manager">Manager</SelectItem>
-                        <SelectItem value="pm">Project Manager</SelectItem>
-                        <SelectItem value="operations">Operations</SelectItem>
+                        <SelectItem value="manager">Project Manager</SelectItem>
+                        <SelectItem value="pm">Business Unit Manager</SelectItem>
+                        <SelectItem value="operations_ksa">Operations KSA</SelectItem>
+                        <SelectItem value="operations_uae">Operations UAE</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
                       </SelectContent>
                     </Select>

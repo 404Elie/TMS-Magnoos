@@ -26,7 +26,7 @@ const registerSchema = z.object({
   confirmPassword: z.string().min(1, "Please confirm your password"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  role: z.enum(["manager", "pm", "operations"], {
+  role: z.enum(["manager", "pm", "operations_ksa", "operations_uae", "admin"], {
     required_error: "Please select a role",
   }),
 }).refine((data) => data.password === data.confirmPassword, {
