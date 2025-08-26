@@ -29,6 +29,12 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
+// Validate email domain for company restriction
+function validateCompanyEmail(email: string): boolean {
+  const allowedDomains = ['@magnoos.com'];
+  return allowedDomains.some(domain => email.toLowerCase().endsWith(domain.toLowerCase()));
+}
+
 export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   
@@ -90,6 +96,11 @@ export function setupAuth(app: Express) {
       
       if (!email || !password || !firstName || !lastName || !role) {
         return res.status(400).json({ message: "All fields are required" });
+      }
+
+      // Validate company email domain
+      if (!validateCompanyEmail(email)) {
+        return res.status(400).json({ message: "Registration is restricted to company email addresses only" });
       }
 
       // Validate role

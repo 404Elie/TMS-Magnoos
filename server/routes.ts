@@ -7,6 +7,12 @@ import { zohoService } from "./zohoService";
 import { realEmailService } from "./realEmailService";
 import { z } from "zod";
 
+// Validate email domain for company restriction
+function validateCompanyEmail(email: string): boolean {
+  const allowedDomains = ['@magnoos.com'];
+  return allowedDomains.some(domain => email.toLowerCase().endsWith(domain.toLowerCase()));
+}
+
 // Helper function to get or create default projects for sales and events
 async function getOrCreateDefaultProject(type: string, name: string, description: string): Promise<string | null> {
   const projectId = `default-${type}`;
@@ -18,7 +24,6 @@ async function getOrCreateDefaultProject(type: string, name: string, description
     if (!project) {
       // Create the default project
       project = await storage.createProject({
-        id: projectId,
         zohoProjectId: projectId, // Use same ID for Zoho reference
         name: name,
         description: description,
@@ -254,6 +259,11 @@ export function registerRoutes(app: Express): Server {
 
       const userData = userSchema.parse(req.body);
       
+      // Validate company email domain
+      if (!validateCompanyEmail(userData.email)) {
+        return res.status(400).json({ message: "User creation is restricted to company email addresses only" });
+      }
+      
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(userData.email);
       if (existingUser) {
@@ -282,6 +292,12 @@ export function registerRoutes(app: Express): Server {
       });
 
       const updates = userSchema.parse(req.body);
+      
+      // Validate company email domain if email is being updated
+      if (updates.email && !validateCompanyEmail(updates.email)) {
+        return res.status(400).json({ message: "Email updates are restricted to company email addresses only" });
+      }
+      
       const updatedUser = await storage.updateUser(req.params.id, updates);
       res.json(updatedUser);
     } catch (error) {
@@ -650,8 +666,8 @@ export function registerRoutes(app: Express): Server {
           const bookings = await storage.getBookings(id);
           const bookingDetails = bookings.map(booking => ({
             type: booking.type,
-            provider: booking.provider,
-            bookingReference: booking.bookingReference,
+            provider: booking.provider || undefined,
+            bookingReference: booking.bookingReference || undefined,
             cost: Number(booking.cost || 0)
           }));
           
