@@ -234,33 +234,47 @@
     background-color: transparent !important;
   }
   
-  /* Clean calendar - NO colors except selected date */
-  .rdp-day,
+  /* Force remove any teal/cyan colors */
   .rdp-day:hover,
-  .rdp-day_today,
-  .rdp-day_today:hover,
-  .rdp-day_range_start,
-  .rdp-day_range_end,
-  .rdp-day_range_middle,
-  .rdp-day_outside {
+  .rdp-day_range_start:hover,
+  .rdp-day_range_end:hover,
+  .rdp-day_range_middle:hover,
+  .rdp-day_today:hover {
+    background-color: transparent !important;
+    color: inherit !important;
+  }
+  
+  /* Remove any default teal/cyan background colors */
+  .rdp-day_today:not(.rdp-day_selected) {
     background-color: transparent !important;
     color: hsl(var(--foreground)) !important;
     font-weight: normal !important;
   }
   
-  /* ONLY selected date gets blue circle - exactly like your image */
-  .rdp-day_selected,
-  .rdp-day_selected:hover {
+  /* ONLY selected date should be blue */
+  .rdp-day_selected {
     background-color: hsl(var(--primary)) !important;
-    color: white !important;
-    border-radius: 50% !important;
-    font-weight: normal !important;
+    color: hsl(var(--primary-foreground)) !important;
   }
   
-  /* Remove all other styling */
-  .rdp * {
-    border: none !important;
-    outline: none !important;
+  /* Override any system/browser defaults that might show teal */
+  .rdp-day_selected:hover {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  
+  /* Ensure no teal anywhere */
+  .rdp *:not(.rdp-day_selected) {
+    background-color: transparent !important;
+  }
+  
+  .rdp *:not(.rdp-day_selected):hover {
+    background-color: transparent !important;
+  }
+  
+  .rdp-day_selected:hover {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
   }
   
   /* Override any remaining accent styling */
@@ -313,6 +327,7 @@
       hsl(266, 66%, 50%) 100%);
     box-shadow: 0 8px 25px -8px hsl(236, 100%, 60%);
   }
+}
   
   /* Button Animations */
   .animated-button {
@@ -971,5 +986,4 @@
 .dark .ui-select-item {
   color: #E5E7EB !important;
   background-color: transparent !important;
-}
 }
