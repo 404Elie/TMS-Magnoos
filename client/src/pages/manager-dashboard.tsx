@@ -537,7 +537,7 @@ export default function ManagerDashboard() {
                               Route
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                              Project
+                              Purpose
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               Dates
@@ -562,7 +562,9 @@ export default function ManagerDashboard() {
                                 </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                                {request.project?.name}
+                                <span className="capitalize">
+                                  {request.purpose === 'other' && request.customPurpose ? request.customPurpose : request.purpose}
+                                </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
@@ -1051,7 +1053,7 @@ export default function ManagerDashboard() {
                               Destination
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Project
+                              Purpose
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                               Dates
@@ -1087,7 +1089,9 @@ export default function ManagerDashboard() {
                                 {request.destination}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                {request.project?.name}
+                                <span className="capitalize">
+                                  {request.purpose === 'other' && request.customPurpose ? request.customPurpose : request.purpose}
+                                </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
