@@ -576,6 +576,12 @@
   
 
   
+  /* FORCE all operations dashboard stats cards to be the same blue gradient */
+  .operations-stats-card,
+  div[style*="linear-gradient(135deg, #6366f1, #8b5cf6)"] {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  }
+
   /* Override hover for specific button types that were becoming invisible */
   button[type="button"]:hover,
   [role="button"]:hover,

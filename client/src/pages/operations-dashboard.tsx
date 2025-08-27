@@ -712,7 +712,7 @@ export default function OperationsDashboard() {
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Active Bookings */}
-                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white/80">Active {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Bookings</p>
@@ -727,7 +727,7 @@ export default function OperationsDashboard() {
                 </div>
                 
                 {/* Monthly Spend */}
-                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Monthly Spend</p>
@@ -742,7 +742,7 @@ export default function OperationsDashboard() {
                 </div>
                 
                 {/* Pending Tasks */}
-                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Pending Tasks</p>
@@ -757,7 +757,7 @@ export default function OperationsDashboard() {
                 </div>
                 
                 {/* Completion Rate */}
-                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Completion Rate</p>
