@@ -50,6 +50,18 @@ export default function AdminRoleSwitcher() {
 
   const currentRole = (user as any)?.activeRole || 'manager';
 
+  // Function to get display name for roles
+  const getRoleDisplayName = (role: string): string => {
+    const roleNames = {
+      'manager': 'Project Manager',
+      'pm': 'Business Unit Manager', 
+      'operations_ksa': 'Operations KSA',
+      'operations_uae': 'Operations UAE',
+      'admin': 'Admin'
+    };
+    return roleNames[role as keyof typeof roleNames] || role.toUpperCase();
+  };
+
   return (
     <Card className="mb-6 border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20">
       <CardContent className="p-4">
@@ -59,7 +71,7 @@ export default function AdminRoleSwitcher() {
             <div>
               <h3 className="font-medium text-orange-900 dark:text-orange-100">Admin Mode</h3>
               <div className="text-sm text-orange-700 dark:text-orange-300">
-                Currently viewing as: <Badge variant="outline" className="ml-1 border-orange-300 text-orange-800 dark:border-orange-600 dark:text-orange-200">{currentRole.toUpperCase()}</Badge>
+                Currently viewing as: <Badge variant="outline" className="ml-1 border-orange-300 text-orange-800 dark:border-orange-600 dark:text-orange-200">{getRoleDisplayName(currentRole)}</Badge>
               </div>
             </div>
           </div>

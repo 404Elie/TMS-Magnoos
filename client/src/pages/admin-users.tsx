@@ -198,16 +198,18 @@ export default function AdminUsers() {
   const getRoleBadge = (role: string) => {
     const roleColors = {
       admin: "bg-red-100 text-red-800",
-      pm: "bg-blue-100 text-blue-800",
-      operations: "bg-green-100 text-green-800",
+      pm: "bg-blue-100 text-blue-800", 
+      operations_ksa: "bg-green-100 text-green-800",
+      operations_uae: "bg-green-100 text-green-800",
       manager: "bg-gray-100 text-gray-800"
     };
     
     const roleLabels = {
       admin: "Admin",
-      pm: "Project Manager",
-      operations: "Operations",
-      manager: "Manager"
+      pm: "Business Unit Manager",
+      operations_ksa: "Operations KSA",
+      operations_uae: "Operations UAE", 
+      manager: "Project Manager"
     };
 
     return (
