@@ -712,8 +712,8 @@ export default function OperationsDashboard() {
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Active Bookings - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}></div>
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
+                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -732,8 +732,8 @@ export default function OperationsDashboard() {
                 </Card>
                 
                 {/* Monthly Spend - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}></div>
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
+                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -752,8 +752,8 @@ export default function OperationsDashboard() {
                 </Card>
                 
                 {/* Pending Tasks - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}></div>
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
+                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -772,8 +772,8 @@ export default function OperationsDashboard() {
                 </Card>
                 
                 {/* Completion Rate - Same Electric Blue Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90" style={{ background: 'linear-gradient(to bottom right, #0032FF, #8A2BE2) !important' }}></div>
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
+                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
