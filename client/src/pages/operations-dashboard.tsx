@@ -711,85 +711,65 @@ export default function OperationsDashboard() {
 
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Active Bookings - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
-                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
-                  <CardContent className="relative p-6 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/80">Active {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Bookings</p>
-                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
-                          {statsLoading ? (
-                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
-                          ) : stats?.activeBookings || 0}
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <Calendar className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
-                      </div>
+                {/* Active Bookings */}
+                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-white/80">Active {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Bookings</p>
+                      <p className="text-3xl font-bold text-white mt-1">
+                        {statsLoading ? "..." : stats?.activeBookings || 0}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                      <Calendar className="w-6 h-6 text-blue-600" />
+                    </div>
+                  </div>
+                </div>
                 
-                {/* Monthly Spend - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
-                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
-                  <CardContent className="relative p-6 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Monthly Spend</p>
-                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
-                          {statsLoading ? (
-                            <span className="shimmer inline-block w-20 h-8 bg-white/20 rounded"></span>
-                          ) : formatCurrency(stats?.monthlySpend || 0)}
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <DollarSign className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
-                      </div>
+                {/* Monthly Spend */}
+                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Monthly Spend</p>
+                      <p className="text-3xl font-bold text-white mt-1">
+                        {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                      <DollarSign className="w-6 h-6 text-blue-600" />
+                    </div>
+                  </div>
+                </div>
                 
-                {/* Pending Tasks - Electric Blue to Purple Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
-                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
-                  <CardContent className="relative p-6 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Pending Tasks</p>
-                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
-                          {statsLoading ? (
-                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
-                          ) : stats?.pendingTasks || 0}
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <AlertTriangle className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
-                      </div>
+                {/* Pending Tasks */}
+                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Pending Tasks</p>
+                      <p className="text-3xl font-bold text-white mt-1">
+                        {statsLoading ? "..." : stats?.pendingTasks || 0}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                      <AlertTriangle className="w-6 h-6 text-blue-600" />
+                    </div>
+                  </div>
+                </div>
                 
-                {/* Completion Rate - Same Electric Blue Gradient */}
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}>
-                  <div className="absolute inset-0 opacity-90" style={{ background: 'linear-gradient(to bottom right, #4C6EF5, #667EEA) !important' }}></div>
-                  <CardContent className="relative p-6 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Completion Rate</p>
-                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
-                          {statsLoading ? (
-                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
-                          ) : `${stats?.completionRate || '95'}%`}
-                        </p>
-                      </div>
-                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
-                      </div>
+                {/* Completion Rate */}
+                <div className="relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Completion Rate</p>
+                      <p className="text-3xl font-bold text-white mt-1">
+                        {statsLoading ? "..." : `${stats?.completionRate || '95'}%`}
+                      </p>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                      <Check className="w-6 h-6 text-blue-600" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Quick Access - Document Management */}
@@ -814,8 +794,7 @@ export default function OperationsDashboard() {
                         Manage Visas & Passports
                       </Button>
                     </Link>
-                  </CardContent>
-                </Card>
+                </div>
               </div>
 
               {/* Beautiful Charts with Magnoos Colors */}
@@ -873,8 +852,7 @@ export default function OperationsDashboard() {
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                </div>
                 
                 <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 shadow-lg">
                   <CardHeader>
@@ -917,8 +895,7 @@ export default function OperationsDashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                </div>
               </div>
 
               {/* Recent Activity */}
@@ -1464,8 +1441,7 @@ export default function OperationsDashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                </div>
                 
                 {/* Project Spending Chart */}
                 <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
@@ -1515,8 +1491,7 @@ export default function OperationsDashboard() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                  </CardContent>
-                </Card>
+                </div>
               </div>
               
               {/* Project Budget Table */}
@@ -1672,8 +1647,7 @@ export default function OperationsDashboard() {
                       <Plus className="w-4 h-4 mr-2" />
                       Add First Document
                     </Button>
-                  </CardContent>
-                </Card>
+                </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {filteredDocuments.map((document) => {
