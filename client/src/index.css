@@ -341,8 +341,8 @@
   /* Smooth Tab Transitions */
   .futuristic-tabs [data-state="active"] {
     @apply transform transition-all duration-300;
-    background: linear-gradient(135deg, hsl(var(--magnoos-electric-blue)), #1a4aff);
-    box-shadow: 0 4px 15px rgba(0, 50, 255, 0.3);
+    background: linear-gradient(135deg, hsl(var(--magnoos-dark-blue)), #000037);
+    box-shadow: 0 4px 15px rgba(0, 0, 55, 0.3);
   }
   
   /* Table Row Hover Effects */
@@ -698,8 +698,8 @@
   }
   
   .custom-tab[data-state="active"] {
-    background: linear-gradient(135deg, #0032FF, #1a4aff) !important;
-    border: 1px solid #0032FF !important;
+    background: linear-gradient(135deg, #000037, #000037) !important;
+    border: 1px solid #000037 !important;
     color: white !important;
     font-weight: 600 !important;
     outline: none !important;
@@ -719,8 +719,8 @@
   }
   
   .custom-tab:hover:not([data-state="active"]) {
-    background: rgba(0, 50, 255, 0.1) !important;
-    color: #0032FF !important;
+    background: rgba(0, 0, 55, 0.1) !important;
+    color: #000037 !important;
     outline: none !important;
     box-shadow: 0 1px 3px rgba(0, 50, 255, 0.2) !important;
     border-color: rgba(0, 50, 255, 0.3) !important;
