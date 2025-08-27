@@ -1116,7 +1116,7 @@ export default function ManagerDashboard() {
                                     size="sm"
                                     onClick={() => handleApprove(request.id)}
                                     disabled={approveMutation.isPending}
-                                    className="bg-green-100 text-green-800 hover:bg-green-200"
+                                    className="bg-blue-100 text-blue-800 hover:bg-blue-200"
                                   >
                                     {approveMutation.isPending ? "..." : "Approve"}
                                   </Button>
@@ -1125,7 +1125,7 @@ export default function ManagerDashboard() {
                                     variant="outline"
                                     onClick={() => handleReject(request.id)}
                                     disabled={rejectMutation.isPending}
-                                    className="bg-red-100 text-red-800 hover:bg-red-200"
+                                    className="bg-blue-100 text-blue-800 hover:bg-blue-200"
                                   >
                                     {rejectMutation.isPending ? "..." : "Reject"}
                                   </Button>

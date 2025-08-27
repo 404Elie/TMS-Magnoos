@@ -446,9 +446,9 @@ export default function PMDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "submitted":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending Approval</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Pending Approval</Badge>;
       case "pm_approved":
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Approved</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Approved</Badge>;
       case "pm_rejected":
         return <Badge variant="destructive">Rejected</Badge>;
       case "operations_completed":

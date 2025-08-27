@@ -73,19 +73,19 @@ export default function Landing() {
                 </CardDescription>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Submit travel requests</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Track request status</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Select users and projects</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Personal dashboard</span>
                   </li>
                 </ul>
@@ -93,11 +93,11 @@ export default function Landing() {
             </Card>
 
             {/* PM Features */}
-            <Card className="border-l-4 border-l-green-500">
+            <Card className="border-l-4 border-l-blue-500">
               <CardHeader>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-green-600" />
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-blue-600" />
                   </div>
                   <CardTitle className="text-magnoos-dark">PM Dashboard</CardTitle>
                 </div>
@@ -108,19 +108,19 @@ export default function Landing() {
                 </CardDescription>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Approve/reject requests</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Project analytics</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Approval tracking</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Team oversight</span>
                   </li>
                 </ul>
@@ -128,11 +128,11 @@ export default function Landing() {
             </Card>
 
             {/* Operations Features */}
-            <Card className="border-l-4 border-l-purple-500">
+            <Card className="border-l-4 border-l-blue-500">
               <CardHeader>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-purple-600" />
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-blue-600" />
                   </div>
                   <CardTitle className="text-magnoos-dark">Operations Hub</CardTitle>
                 </div>
@@ -143,19 +143,19 @@ export default function Landing() {
                 </CardDescription>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Booking management</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Budget tracking</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Financial analytics</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     <span className="text-sm">Expense management</span>
                   </li>
                 </ul>

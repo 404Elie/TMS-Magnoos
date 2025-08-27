@@ -472,11 +472,11 @@ export default function OperationsDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Pending</Badge>;
       case "in_progress":
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800">In Progress</Badge>;
       case "completed":
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Completed</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Completed</Badge>;
       case "cancelled":
         return <Badge variant="destructive">Cancelled</Badge>;
       default:
@@ -487,9 +487,9 @@ export default function OperationsDashboard() {
   const getTravelStatusBadge = (status: string) => {
     switch (status) {
       case "pm_approved":
-        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Booking in Progress</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Booking in Progress</Badge>;
       case "operations_completed":
-        return <Badge variant="secondary" className="bg-green-100 text-green-800">Completed</Badge>;
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Completed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -1227,7 +1227,7 @@ export default function OperationsDashboard() {
                                         size="sm"
                                         onClick={() => handleCompleteRequest(request)}
                                         disabled={completeRequestMutation.isPending}
-                                        className="bg-green-100 text-green-800 hover:bg-green-200"
+                                        className="bg-blue-100 text-blue-800 hover:bg-blue-200"
                                       >
                                         Complete
                                       </Button>
@@ -1254,8 +1254,8 @@ export default function OperationsDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-16">
-                      <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-lg mx-auto">
-                        <Calendar className="w-20 h-20 text-green-500 dark:text-green-400 mx-auto mb-6" />
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-lg mx-auto">
+                        <Calendar className="w-20 h-20 text-blue-500 dark:text-blue-400 mx-auto mb-6" />
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Ready for Action!</h3>
                         <p className="text-gray-600 dark:text-gray-300 mb-4">
                           No approved travel requests are waiting for processing right now.
@@ -1680,16 +1680,16 @@ export default function OperationsDashboard() {
                     const expiryStatus = getExpiryStatus(document.expiryDate);
                     return (
                       <Card key={document.id} className={`transition-all hover:shadow-lg ${
-                        expiryStatus.status === 'expired' ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20' :
-                        expiryStatus.status === 'expiring-soon' ? 'border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950/20' :
-                        expiryStatus.status === 'warning' ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/20' :
+                        expiryStatus.status === 'expired' ? 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20' :
+                        expiryStatus.status === 'expiring-soon' ? 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20' :
+                        expiryStatus.status === 'warning' ? 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20' :
                         'border-gray-200 dark:border-slate-700'
                       }`}>
                         <CardContent className="p-6">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-2">
                               <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${
-                                document.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'
+                                document.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-blue-100 text-blue-600'
                               }`}>
                                 {document.documentType === 'passport' ? '🛂' : '📋'}
                               </div>
@@ -1741,10 +1741,10 @@ export default function OperationsDashboard() {
                               <Badge 
                                 variant={expiryStatus.color as any}
                                 className={`text-xs ${
-                                  expiryStatus.status === 'expired' ? 'bg-red-100 text-red-700' :
-                                  expiryStatus.status === 'expiring-soon' ? 'bg-orange-100 text-orange-700' :
-                                  expiryStatus.status === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-                                  'bg-green-100 text-green-700'
+                                  expiryStatus.status === 'expired' ? 'bg-blue-100 text-blue-700' :
+                                  expiryStatus.status === 'expiring-soon' ? 'bg-blue-100 text-blue-700' :
+                                  expiryStatus.status === 'warning' ? 'bg-blue-100 text-blue-700' :
+                                  'bg-blue-100 text-blue-700'
                                 }`}
                               >
                                 {expiryStatus.text}
@@ -2172,7 +2172,7 @@ export default function OperationsDashboard() {
                     <div className="py-6 space-y-4">
                       <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-600">
                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl ${
-                          selectedDocument.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'
+                          selectedDocument.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-blue-100 text-blue-600'
                         }`}>
                           {selectedDocument.documentType === 'passport' ? '🛂' : '📋'}
                         </div>
@@ -2432,7 +2432,7 @@ export default function OperationsDashboard() {
                 <Button
                   onClick={handleCompleteWithBookings}
                   disabled={completeRequestMutation.isPending || bookingEntries.every(b => !b.type || !b.cost)}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   {completeRequestMutation.isPending ? "Completing..." : "Complete Request"}
                 </Button>

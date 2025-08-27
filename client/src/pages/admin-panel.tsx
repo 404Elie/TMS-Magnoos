@@ -81,20 +81,20 @@ export default function AdminPanel() {
         </Alert>
 
         {/* Test Data Management */}
-        <Card className="border-orange-200 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
+        <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
               <Trash2 className="h-5 w-5" />
               Test Data Cleanup
             </CardTitle>
-            <CardDescription className="text-orange-700 dark:text-orange-300">
+            <CardDescription className="text-blue-700 dark:text-blue-300">
               Delete all travel requests and bookings for testing purposes. This action cannot be undone.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Alert className="border-red-300 bg-red-100 dark:border-red-700 dark:bg-red-900/50">
+            <Alert className="border-blue-300 bg-blue-100 dark:border-blue-700 dark:bg-blue-900/50">
               <AlertTriangle className="h-4 w-4" />
-              <AlertDescription className="text-red-800 dark:text-red-200">
+              <AlertDescription className="text-blue-800 dark:text-blue-200">
                 <strong>Warning:</strong> This will permanently delete ALL travel requests and bookings in the system. 
                 Only use this for testing before deployment.
               </AlertDescription>
@@ -108,7 +108,7 @@ export default function AdminPanel() {
                 className={`flex-1 ${
                   confirmDelete 
                     ? "bg-red-600 hover:bg-red-700 text-white" 
-                    : "border-red-300 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950"
+                    : "border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-950"
                 }`}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
@@ -132,7 +132,7 @@ export default function AdminPanel() {
             </div>
             
             {confirmDelete && (
-              <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+              <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
                 ⚠️ Click "Delete All Test Data" again within 5 seconds to confirm
               </p>
             )}
