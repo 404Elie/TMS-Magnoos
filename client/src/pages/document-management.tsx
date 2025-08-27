@@ -55,7 +55,7 @@ export default function DocumentManagement() {
   });
 
   // Fetch users for dropdown
-  const { data: users = [] } = useQuery({
+  const { data: users = [] } = useQuery<any[]>({
     queryKey: ["/api/users"],
   });
 
@@ -280,7 +280,7 @@ export default function DocumentManagement() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="issueDate">Issue Date *</Label>
+                  <Label htmlFor="issueDate">Start Date *</Label>
                   <Input
                     id="issueDate"
                     type="date"
@@ -290,12 +290,25 @@ export default function DocumentManagement() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="expiryDate">Expiry Date *</Label>
+                  <Label htmlFor="expiryDate">End Date *</Label>
                   <Input
                     id="expiryDate"
                     type="date"
                     value={formData.expiryDate}
-                    onChange={(e) => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
+                    onChange={(e) => {
+                      const expiryDate = new Date(e.target.value);
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      if (expiryDate <= today) {
+                        toast({
+                          title: "Invalid Date",
+                          description: "Cannot add expired passport - end date must be in the future",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      setFormData(prev => ({ ...prev, expiryDate: e.target.value }));
+                    }}
                   />
                 </div>
               </div>

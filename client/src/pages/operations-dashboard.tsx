@@ -108,8 +108,15 @@ export default function OperationsDashboard() {
     dateOfBirth: z.string().min(1, "Date of birth is required"),
     placeOfBirth: z.string().min(1, "Place of birth is required"),
     gender: z.enum(["Male", "Female", "Other"]),
-    issueDate: z.string().min(1, "Issue date is required"),
-    expiryDate: z.string().min(1, "Expiry date is required"),
+    issueDate: z.string().min(1, "Start date is required"),
+    expiryDate: z.string().min(1, "End date is required").refine((date) => {
+      const expiryDate = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return expiryDate > today;
+    }, {
+      message: "Cannot add expired passport - end date must be in the future",
+    }),
     issuingAuthority: z.string().min(1, "Issuing authority is required"),
     issuingCountry: z.string().min(1, "Issuing country is required"),
     personalNumber: z.string().optional(),
@@ -1780,7 +1787,10 @@ export default function OperationsDashboard() {
                                         className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
                                       >
                                         {field.value
-                                          ? users?.find((user) => user.id === field.value)?.name + " (" + users?.find((user) => user.id === field.value)?.email + ")"
+                                          ? (() => {
+                                              const user = users?.find((user) => user.id === field.value);
+                                              return user ? `${user.firstName} ${user.lastName} (${user.email})` : "Select employee...";
+                                            })()
                                           : "Select employee..."}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                       </Button>
@@ -1917,13 +1927,13 @@ export default function OperationsDashboard() {
                             )}
                           />
 
-                          {/* Issue Date */}
+                          {/* Start Date */}
                           <FormField
                             control={passportForm.control}
                             name="issueDate"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Issue Date *</FormLabel>
+                                <FormLabel className="text-gray-900 dark:text-white">Start Date *</FormLabel>
                                 <FormControl>
                                   <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
                                 </FormControl>
@@ -1932,13 +1942,13 @@ export default function OperationsDashboard() {
                             )}
                           />
 
-                          {/* Expiry Date */}
+                          {/* End Date */}
                           <FormField
                             control={passportForm.control}
                             name="expiryDate"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Expiry Date *</FormLabel>
+                                <FormLabel className="text-gray-900 dark:text-white">End Date *</FormLabel>
                                 <FormControl>
                                   <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
                                 </FormControl>
