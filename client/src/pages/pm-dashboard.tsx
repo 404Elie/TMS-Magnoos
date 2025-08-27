@@ -225,88 +225,87 @@ function TravelRequestForm() {
                 )}
               />
 
-              {/* Travel Dates - Combined Range Picker */}
+              {/* Start Date */}
               <FormField
                 control={form.control}
                 name="departureDate"
-                render={({ field: departureField }) => (
-                  <FormField
-                    control={form.control}
-                    name="returnDate"
-                    render={({ field: returnField }) => (
-                      <FormItem className="flex flex-col h-full">
-                        <FormLabel className="text-gray-900 dark:text-white">Travel Dates *</FormLabel>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-sm text-muted-foreground mb-2 block">Start Date</label>
-                            <FormControl>
-                              <Input 
-                                type="date" 
-                                value={departureField.value || ''}
-                                min={new Date().toISOString().split('T')[0]}
-                                onChange={(e) => {
-                                  departureField.onChange(e.target.value);
-                                  
-                                  // Clear end date if it becomes invalid
-                                  if (returnField.value && e.target.value) {
-                                    const startDate = new Date(e.target.value);
-                                    const endDate = new Date(returnField.value);
-                                    if (endDate <= startDate) {
-                                      returnField.onChange('');
-                                      toast({
-                                        title: "End Date Cleared",
-                                        description: "End date must be after start date",
-                                        variant: "destructive",
-                                      });
-                                    }
-                                  }
-                                  
-                                  if (e.target.value) {
-                                    toast({
-                                      title: "✓ Start Date Set",
-                                      description: `Departure: ${new Date(e.target.value).toLocaleDateString()}`,
-                                    });
-                                  }
-                                }}
-                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                              />
-                            </FormControl>
-                          </div>
-                          <div>
-                            <label className="text-sm text-muted-foreground mb-2 block">End Date</label>
-                            <FormControl>
-                              <Input 
-                                type="date" 
-                                value={returnField.value || ''}
-                                min={departureField.value ? 
-                                  new Date(new Date(departureField.value).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : 
-                                  new Date().toISOString().split('T')[0]
-                                }
-                                disabled={!departureField.value}
-                                onChange={(e) => {
-                                  returnField.onChange(e.target.value);
-                                  
-                                  if (e.target.value && departureField.value) {
-                                    const startDate = new Date(departureField.value);
-                                    const endDate = new Date(e.target.value);
-                                    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                                    
-                                    toast({
-                                      title: "✓ End Date Set",
-                                      description: `Return: ${endDate.toLocaleDateString()} (${diffDays} day${diffDays !== 1 ? 's' : ''} trip)`,
-                                    });
-                                  }
-                                }}
-                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                              />
-                            </FormControl>
-                          </div>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Start Date *</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="date" 
+                        value={field.value || ''}
+                        min={new Date().toISOString().split('T')[0]}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          
+                          // Clear end date if it becomes invalid
+                          const returnDate = form.getValues("returnDate");
+                          if (returnDate && e.target.value) {
+                            const startDate = new Date(e.target.value);
+                            const endDate = new Date(returnDate);
+                            if (endDate <= startDate) {
+                              form.setValue("returnDate", "");
+                              toast({
+                                title: "End Date Cleared",
+                                description: "End date must be after start date",
+                                variant: "destructive",
+                              });
+                            }
+                          }
+                          
+                          if (e.target.value) {
+                            toast({
+                              title: "✓ Start Date Set",
+                              description: `Departure: ${new Date(e.target.value).toLocaleDateString()}`,
+                            });
+                          }
+                        }}
+                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* End Date */}
+              <FormField
+                control={form.control}
+                name="returnDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">End Date *</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="date" 
+                        value={field.value || ''}
+                        min={form.watch("departureDate") ? 
+                          new Date(new Date(form.watch("departureDate")).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : 
+                          new Date().toISOString().split('T')[0]
+                        }
+                        disabled={!form.watch("departureDate")}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          
+                          if (e.target.value && form.watch("departureDate")) {
+                            const startDate = new Date(form.watch("departureDate"));
+                            const endDate = new Date(e.target.value);
+                            const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            toast({
+                              title: "✓ End Date Set",
+                              description: `Return: ${endDate.toLocaleDateString()} (${diffDays} day${diffDays !== 1 ? 's' : ''} trip)`,
+                            });
+                          }
+                        }}
+                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
 
