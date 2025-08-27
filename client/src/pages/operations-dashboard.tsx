@@ -689,7 +689,7 @@ export default function OperationsDashboard() {
 
             <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
               {/* Welcome Banner */}
-              <Card className="bg-gradient-to-r from-electric-blue/10 to-purple/10 dark:from-electric-blue/5 dark:to-purple/5 border-electric-blue/20">
+              <Card className="bg-gradient-to-r from-blue-50/50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/20 border-blue-200/20">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -794,7 +794,7 @@ export default function OperationsDashboard() {
 
               {/* Quick Access - Document Management */}
               <div className="grid grid-cols-1 gap-6">
-                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-teal-200 dark:border-teal-700">
+                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
                       <FileText className="h-5 w-5 text-electric-blue" />
@@ -807,7 +807,7 @@ export default function OperationsDashboard() {
                   <CardContent>
                     <Link href="/documents">
                       <Button 
-                        className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                        className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
                         data-testid="button-manage-documents"
                       >
                         <FileText className="h-4 w-4 mr-2" />
@@ -958,7 +958,7 @@ export default function OperationsDashboard() {
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-md mx-auto">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-md mx-auto">
                         <Calendar className="w-16 h-16 text-blue-500 dark:text-blue-400 mx-auto mb-4" />
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Booking Activities Yet</h3>
                         <p className="text-gray-600 dark:text-gray-300 mb-4">
@@ -1405,8 +1405,8 @@ export default function OperationsDashboard() {
                         </div>
                       ) : (
                         <div className="text-center py-12">
-                          <div className="bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6">
-                            <Users className="w-16 h-16 text-purple-500 dark:text-purple-400 mx-auto mb-4" />
+                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6">
+                            <Users className="w-16 h-16 text-blue-500 dark:text-blue-400 mx-auto mb-4" />
                             <h4 className="font-semibold text-gray-900 dark:text-white mb-2">No Employee Expenses Yet</h4>
                             <p className="text-gray-600 dark:text-gray-300 text-sm">
                               Individual spending data will appear here once travel bookings are completed and processed.
@@ -1580,7 +1580,7 @@ export default function OperationsDashboard() {
             <TabsContent value="documents" className="space-y-8 dark:bg-background light:bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] rounded-lg flex items-center justify-center">
                     <FileText className="w-5 h-5 text-white" />
                   </div>
                   Document Management
@@ -1610,7 +1610,7 @@ export default function OperationsDashboard() {
                           setDocumentType("passport");
                           setEditingDocument(null);
                         }}
-                        className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                        className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
                       >
                         <Plus className="w-4 h-4 mr-2" />
                         Add Passport
@@ -2032,7 +2032,7 @@ export default function OperationsDashboard() {
                           <Button 
                             type="submit" 
                             disabled={createPassportMutation.isPending}
-                            className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                            className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
                           >
                             {createPassportMutation.isPending ? "Creating..." : editingDocument ? "Update Passport" : "Create Passport"}
                           </Button>
@@ -2140,7 +2140,7 @@ export default function OperationsDashboard() {
                           <Button 
                             type="submit" 
                             disabled={createVisaMutation.isPending}
-                            className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                            className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
                           >
                             {createVisaMutation.isPending ? "Creating..." : editingDocument ? "Update Visa" : "Create Visa"}
                           </Button>
