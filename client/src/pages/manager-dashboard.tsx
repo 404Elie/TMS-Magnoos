@@ -1185,7 +1185,7 @@ export default function ManagerDashboard() {
                 </Card>
 
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -1197,14 +1197,14 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <DollarSign className="w-6 h-6 text-[#1ABC3C]" />
+                        <DollarSign className="w-6 h-6 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -1216,14 +1216,14 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <Clock className="w-6 h-6 text-[#FF6F00]" />
+                        <Clock className="w-6 h-6 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#A3E635] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -1235,7 +1235,7 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <Check className="w-6 h-6 text-[#00D9C0]" />
+                        <Check className="w-6 h-6 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
@@ -1296,7 +1296,7 @@ export default function ManagerDashboard() {
                 </Card>
 
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#1ABC3C] to-[#A6E05A] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -1308,14 +1308,14 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <DollarSign className="w-6 h-6 text-[#1ABC3C]" />
+                        <DollarSign className="w-6 h-6 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FF6F00] to-[#FF6F61] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -1327,14 +1327,14 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <Clock className="w-6 h-6 text-[#FF6F00]" />
+                        <Clock className="w-6 h-6 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00D9C0] to-[#A3E635] opacity-90"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
@@ -1346,7 +1346,7 @@ export default function ManagerDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                        <Check className="w-6 h-6 text-[#00D9C0]" />
+                        <Check className="w-6 h-6 text-[#0032FF]" />
                       </div>
                     </div>
                   </CardContent>
