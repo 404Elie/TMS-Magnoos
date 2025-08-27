@@ -794,7 +794,8 @@ export default function OperationsDashboard() {
                         Manage Visas & Passports
                       </Button>
                     </Link>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Beautiful Charts with Magnoos Colors */}
@@ -852,7 +853,8 @@ export default function OperationsDashboard() {
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
-                </div>
+                  </CardContent>
+                </Card>
                 
                 <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 shadow-lg">
                   <CardHeader>
@@ -895,7 +897,8 @@ export default function OperationsDashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Recent Activity */}
@@ -1441,7 +1444,8 @@ export default function OperationsDashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
-                </div>
+                  </CardContent>
+                </Card>
                 
                 {/* Project Spending Chart */}
                 <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
@@ -1491,7 +1495,8 @@ export default function OperationsDashboard() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
               
               {/* Project Budget Table */}
@@ -1647,7 +1652,8 @@ export default function OperationsDashboard() {
                       <Plus className="w-4 h-4 mr-2" />
                       Add First Document
                     </Button>
-                </div>
+                  </CardContent>
+                </Card>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {filteredDocuments.map((document) => {
