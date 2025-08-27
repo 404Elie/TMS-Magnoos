@@ -118,6 +118,7 @@ export const travelRequests = pgTable("travel_requests", {
   pmApprovedBy: varchar("pm_approved_by").references(() => users.id),
   pmApprovedAt: timestamp("pm_approved_at"),
   pmRejectionReason: text("pm_rejection_reason"),
+  assignedOperationsTeam: varchar("assigned_operations_team"), // 'operations_ksa' or 'operations_uae'
   operationsCompletedBy: varchar("operations_completed_by").references(() => users.id),
   operationsCompletedAt: timestamp("operations_completed_at"),
   createdAt: timestamp("created_at").defaultNow(),

@@ -84,6 +84,7 @@ export default function ManagerDashboard() {
   const [projectSearchOpen, setProjectSearchOpen] = useState(false);
   const [purposeValue, setPurposeValue] = useState("");
   const [showCustomPurpose, setShowCustomPurpose] = useState(false);
+  const [selectedOperationsTeams, setSelectedOperationsTeams] = useState<Record<string, string>>({});
 
   const form = useForm<TravelRequestForm>({
     resolver: zodResolver(travelRequestFormSchema),
@@ -309,9 +310,11 @@ export default function ManagerDashboard() {
 
   // Approve mutation
   const approveMutation = useMutation({
-    mutationFn: async (requestId: string) => {
+    mutationFn: async ({ requestId, operationsTeam }: { requestId: string; operationsTeam: string }) => {
       try {
-        const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/approve`);
+        const response = await apiRequest("PATCH", `/api/travel-requests/${requestId}/approve`, {
+          assignedOperationsTeam: operationsTeam
+        });
         // Check if response is ok before parsing JSON
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -385,7 +388,15 @@ export default function ManagerDashboard() {
   });
 
   const handleApprove = (requestId: string) => {
-    approveMutation.mutate(requestId);
+    const operationsTeam = selectedOperationsTeams[requestId] || getSuggestedOperationsTeam(requests?.find(r => r.id === requestId)?.destination || '');
+    approveMutation.mutate({ requestId, operationsTeam });
+  };
+
+  const handleOperationsTeamChange = (requestId: string, team: string) => {
+    setSelectedOperationsTeams(prev => ({
+      ...prev,
+      [requestId]: team
+    }));
   };
 
   const handleReject = (requestId: string) => {
@@ -1114,7 +1125,11 @@ export default function ManagerDashboard() {
                                 )}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                <Select defaultValue={getSuggestedOperationsTeam(request.destination)}>
+                                <Select 
+                                  defaultValue={getSuggestedOperationsTeam(request.destination)}
+                                  value={selectedOperationsTeams[request.id] || getSuggestedOperationsTeam(request.destination)}
+                                  onValueChange={(value) => handleOperationsTeamChange(request.id, value)}
+                                >
                                   <SelectTrigger className="w-32">
                                     <SelectValue />
                                   </SelectTrigger>

@@ -346,8 +346,13 @@ export function registerRoutes(app: Express): Server {
           console.log(`${user?.role.toUpperCase()} filtering for pending approvals only (status=submitted)`);
           filters.status = 'submitted'; // Filter for submitted status only
         }
+      } else if (user?.role === 'operations_ksa' || user?.role === 'operations_uae') {
+        // Operations teams see only requests assigned to their team
+        filters.assignedOperationsTeam = user.role;
+        // Also show only approved requests
+        filters.status = 'pm_approved';
+        console.log(`${user?.role.toUpperCase()} filtering for assigned requests (assignedOperationsTeam=${user.role}, status=pm_approved)`);
       }
-      // Operations see all requests (no additional filters)
 
       if (req.query.projectId) filters.projectId = req.query.projectId;
       if (req.query.status) filters.status = req.query.status;
@@ -534,10 +539,13 @@ export function registerRoutes(app: Express): Server {
   app.patch('/api/travel-requests/:id/approve', isAuthenticated, requireRole(['pm', 'admin']), async (req: any, res) => {
     try {
       const { id } = req.params;
+      const { assignedOperationsTeam } = req.body;
+      
       const updates = {
         status: "pm_approved" as const,
         pmApprovedBy: req.user.id,
         pmApprovedAt: new Date(),
+        assignedOperationsTeam: assignedOperationsTeam || null,
       };
 
       const updatedRequest = await storage.updateTravelRequest(id, updates);
