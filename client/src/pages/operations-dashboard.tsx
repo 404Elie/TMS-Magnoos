@@ -710,14 +710,14 @@ export default function OperationsDashboard() {
               </Card>
 
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Active Bookings - Electric Blue to Purple Gradient */}
                 <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/80">Active Bookings</p>
+                        <p className="text-sm font-medium text-white/80">Active {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Bookings</p>
                         <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
                           {statsLoading ? (
                             <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
@@ -737,7 +737,7 @@ export default function OperationsDashboard() {
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/80">Monthly Spend</p>
+                        <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Monthly Spend</p>
                         <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
                           {statsLoading ? (
                             <span className="shimmer inline-block w-20 h-8 bg-white/20 rounded"></span>
@@ -757,7 +757,7 @@ export default function OperationsDashboard() {
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-white/80">Pending Tasks</p>
+                        <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Pending Tasks</p>
                         <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
                           {statsLoading ? (
                             <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
@@ -765,7 +765,27 @@ export default function OperationsDashboard() {
                         </p>
                       </div>
                       <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
-                        <CheckSquare className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
+                        <AlertTriangle className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Completion Rate - Same Electric Blue Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Completion Rate</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : `${stats?.completionRate || '95'}%`}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Check className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
                       </div>
                     </div>
                   </CardContent>
