@@ -563,7 +563,12 @@ export default function ManagerDashboard() {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                                 <span className="capitalize">
-                                  {request.purpose === 'other' && request.customPurpose ? request.customPurpose : request.purpose}
+                                  {request.purpose === 'delivery' && request.project?.name ? 
+                                    request.project.name : 
+                                    request.purpose === 'other' && request.customPurpose ? 
+                                      request.customPurpose : 
+                                      request.purpose
+                                  }
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
@@ -1090,7 +1095,12 @@ export default function ManagerDashboard() {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 <span className="capitalize">
-                                  {request.purpose === 'other' && request.customPurpose ? request.customPurpose : request.purpose}
+                                  {request.purpose === 'delivery' && request.project?.name ? 
+                                    request.project.name : 
+                                    request.purpose === 'other' && request.customPurpose ? 
+                                      request.customPurpose : 
+                                      request.purpose
+                                  }
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
