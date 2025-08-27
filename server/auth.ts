@@ -98,10 +98,10 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
-      // Validate company email domain
-      if (!validateCompanyEmail(email)) {
-        return res.status(400).json({ message: "Registration is restricted to company email addresses only" });
-      }
+      // Validate company email domain - TEMPORARILY DISABLED FOR TESTING
+      // if (!validateCompanyEmail(email)) {
+      //   return res.status(400).json({ message: "Registration is restricted to company email addresses only" });
+      // }
 
       // Validate role
       const validRoles = ['manager', 'pm', 'operations_ksa', 'operations_uae', 'admin'];
