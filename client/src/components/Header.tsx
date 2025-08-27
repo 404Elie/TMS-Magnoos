@@ -34,8 +34,8 @@ export default function Header({ currentRole, userName, userImage }: HeaderProps
     switch (role) {
       case 'manager': return 'Project Manager';
       case 'pm': return 'Business Unit Manager';
-      case 'operations_ksa': return 'Operations KSA';
-      case 'operations_uae': return 'Operations UAE';
+      case 'operations_ksa': return 'Operations - KSA';
+      case 'operations_uae': return 'Operations - UAE';
       case 'admin': return 'Admin';
       default: return role;
     }
