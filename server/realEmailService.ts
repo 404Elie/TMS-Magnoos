@@ -165,7 +165,10 @@ class RealEmailService {
     },
     recipients: { email: string; role: string }[]
   ): Promise<boolean> {
-    const targetEmail = 'e.radi@magnoos.com'; // Always send to your email for testing
+    if (recipients.length === 0) {
+      console.log('No recipients found for travel request notification');
+      return false;
+    }
     
     console.log('\n' + '='.repeat(80));
     console.log('📧 NEW TRAVEL REQUEST NOTIFICATION');
@@ -176,9 +179,8 @@ class RealEmailService {
     console.log(`Dates: ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}`);
     console.log(`Purpose: ${request.purpose}`);
     if (request.projectName) console.log(`Project: ${request.projectName}`);
-    console.log('\nOriginal Recipients:');
+    console.log('\nRecipients:');
     recipients.forEach(r => console.log(`  • ${r.email} (${r.role})`));
-    console.log(`\n📨 EMAIL SENT TO: ${targetEmail}`);
     console.log('='.repeat(80) + '\n');
 
     const emailContent = `
@@ -208,17 +210,27 @@ class RealEmailService {
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          Original recipients: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}<br>
-          Test routing: All notifications sent to e.radi@magnoos.com
+          This email was sent to: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}
         </p>
       </div>
     `;
 
-    return await this.sendEmail({
-      to: targetEmail,
-      subject: `Travel Request Submitted - ${request.travelerName} to ${request.destination}`,
-      html: emailContent
-    });
+    // Send email to each recipient
+    let allSuccessful = true;
+    for (const recipient of recipients) {
+      const success = await this.sendEmail({
+        to: recipient.email,
+        subject: `Travel Request Submitted - ${request.travelerName} to ${request.destination}`,
+        html: emailContent
+      });
+      if (!success) {
+        allSuccessful = false;
+        console.error(`Failed to send email to ${recipient.email}`);
+      } else {
+        console.log(`✅ Email sent successfully to ${recipient.email} (${recipient.role})`);
+      }
+    }
+    return allSuccessful;
   }
 
   async sendTravelRequestApprovalNotification(
@@ -236,7 +248,10 @@ class RealEmailService {
     },
     recipients: { email: string; role: string }[]
   ): Promise<boolean> {
-    const targetEmail = 'e.radi@magnoos.com';
+    if (recipients.length === 0) {
+      console.log('No recipients found for travel request approval notification');
+      return false;
+    }
     
     console.log('\n' + '='.repeat(80));
     console.log('✅ TRAVEL REQUEST APPROVED NOTIFICATION');
@@ -246,9 +261,8 @@ class RealEmailService {
     console.log(`Route: ${request.origin} → ${request.destination}`);
     console.log(`Dates: ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}`);
     if (request.projectName) console.log(`Project: ${request.projectName}`);
-    console.log('\nOriginal Recipients:');
+    console.log('\nRecipients:');
     recipients.forEach(r => console.log(`  • ${r.email} (${r.role})`));
-    console.log(`\n📨 EMAIL SENT TO: ${targetEmail}`);
     console.log('='.repeat(80) + '\n');
 
     const emailContent = `
@@ -276,17 +290,27 @@ class RealEmailService {
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          Original recipients: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}<br>
-          Test routing: All notifications sent to e.radi@magnoos.com
+          This email was sent to: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}
         </p>
       </div>
     `;
 
-    return await this.sendEmail({
-      to: targetEmail,
-      subject: `Travel Approved - ${request.travelerName} to ${request.destination}`,
-      html: emailContent
-    });
+    // Send email to each recipient
+    let allSuccessful = true;
+    for (const recipient of recipients) {
+      const success = await this.sendEmail({
+        to: recipient.email,
+        subject: `Travel Approved - ${request.travelerName} to ${request.destination}`,
+        html: emailContent
+      });
+      if (!success) {
+        allSuccessful = false;
+        console.error(`Failed to send approval email to ${recipient.email}`);
+      } else {
+        console.log(`✅ Approval email sent successfully to ${recipient.email} (${recipient.role})`);
+      }
+    }
+    return allSuccessful;
   }
 
   async sendBookingCompletionNotification(
@@ -312,7 +336,10 @@ class RealEmailService {
     },
     recipients: { email: string; role: string }[]
   ): Promise<boolean> {
-    const targetEmail = 'e.radi@magnoos.com';
+    if (recipients.length === 0) {
+      console.log('No recipients found for booking completion notification');
+      return false;
+    }
     
     console.log('\n' + '='.repeat(80));
     console.log('🎯 TRAVEL BOOKINGS COMPLETED NOTIFICATION');
@@ -328,9 +355,8 @@ class RealEmailService {
       console.log(`  • ${booking.type}: $${cost} ${booking.provider ? `(${booking.provider})` : ''}`);
       if (booking.bookingReference) console.log(`    Reference: ${booking.bookingReference}`);
     });
-    console.log('\nOriginal Recipients:');
+    console.log('\nRecipients:');
     recipients.forEach(r => console.log(`  • ${r.email} (${r.role})`));
-    console.log(`\n📨 EMAIL SENT TO: ${targetEmail}`);
     console.log('='.repeat(80) + '\n');
 
     const bookingDetailsHtml = request.bookingDetails.map(booking => {
@@ -385,17 +411,27 @@ class RealEmailService {
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          Original recipients: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}<br>
-          Test routing: All notifications sent to e.radi@magnoos.com
+          This email was sent to: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}
         </p>
       </div>
     `;
 
-    return await this.sendEmail({
-      to: targetEmail,
-      subject: `Travel Arrangements Confirmed - ${request.travelerName} to ${request.destination}`,
-      html: emailContent
-    });
+    // Send email to each recipient
+    let allSuccessful = true;
+    for (const recipient of recipients) {
+      const success = await this.sendEmail({
+        to: recipient.email,
+        subject: `Travel Arrangements Confirmed - ${request.travelerName} to ${request.destination}`,
+        html: emailContent
+      });
+      if (!success) {
+        allSuccessful = false;
+        console.error(`Failed to send completion email to ${recipient.email}`);
+      } else {
+        console.log(`✅ Completion email sent successfully to ${recipient.email} (${recipient.role})`);
+      }
+    }
+    return allSuccessful;
   }
 }
 

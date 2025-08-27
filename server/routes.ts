@@ -48,39 +48,31 @@ async function getRoleBasedRecipients(eventType: 'request_submitted' | 'request_
 
   switch (eventType) {
     case 'request_submitted':
-      // When Manager submits request: PM and Operations get notified
+      // When PROJECT MANAGER (role: 'manager') submits request: BUSINESS UNIT MANAGERS (role: 'pm') get notified
       recipients.push(
         ...allUsers
-          .filter(user => user.role === 'pm' || user.role === 'operations_ksa' || user.role === 'operations_uae')
+          .filter(user => user.role === 'pm')
           .filter(user => user.email)
           .map(user => ({ email: user.email!, role: user.role }))
       );
       break;
 
     case 'request_approved':
-      // When PM approves request: Operations get notified
-      recipients.push(
-        ...allUsers
-          .filter(user => user.role === 'operations_ksa' || user.role === 'operations_uae')
-          .filter(user => user.email)
-          .map(user => ({ email: user.email!, role: user.role }))
-      );
-      // Also notify the requester and traveler
-      if (request?.requester?.email) {
-        recipients.push({ email: request.requester.email, role: 'requester' });
-      }
-      if (request?.traveler?.email) {
-        recipients.push({ email: request.traveler.email, role: 'traveler' });
+      // When BUSINESS UNIT MANAGER approves request: ASSIGNED OPERATIONS TEAM gets notified
+      if (request?.assignedOperationsTeam) {
+        recipients.push(
+          ...allUsers
+            .filter(user => user.role === request.assignedOperationsTeam)
+            .filter(user => user.email)
+            .map(user => ({ email: user.email!, role: user.role }))
+        );
       }
       break;
 
     case 'booking_completed':
-      // When Operations completes booking: Only the specific Manager who created request + traveler + PM who approved
+      // When Operations completes booking: BOTH Business Unit Manager who approved AND Project Manager who created get notified
       if (request?.requester?.email) {
         recipients.push({ email: request.requester.email, role: 'requester' });
-      }
-      if (request?.traveler?.email) {
-        recipients.push({ email: request.traveler.email, role: 'traveler' });
       }
       if (request?.pmApprovedBy) {
         const pmUser = await storage.getUser(request.pmApprovedBy);
