@@ -234,7 +234,7 @@ function TravelRequestForm() {
                     control={form.control}
                     name="returnDate"
                     render={({ field: returnField }) => (
-                      <FormItem>
+                      <FormItem className="flex flex-col h-full">
                         <FormLabel className="text-gray-900 dark:text-white">Travel Dates *</FormLabel>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
@@ -315,7 +315,7 @@ function TravelRequestForm() {
                 control={form.control}
                 name="purpose"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col h-full">
                     <FormLabel className="text-gray-900 dark:text-white">Purpose *</FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
