@@ -116,7 +116,7 @@ function TravelRequestForm() {
   };
 
   return (
-    <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
+    <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-gray-900 dark:text-white">Submit Travel Request</CardTitle>
         <CardDescription className="text-gray-600 dark:text-gray-300">
@@ -567,7 +567,7 @@ export default function PMDashboard() {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
+                <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white">My Recent Requests</CardTitle>
                   </CardHeader>
@@ -602,7 +602,7 @@ export default function PMDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-white dark:bg-magnoos-dark border-gray-200 dark:border-magnoos-dark">
+                <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white">Project Travel Summary</CardTitle>
                   </CardHeader>

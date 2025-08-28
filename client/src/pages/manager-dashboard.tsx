@@ -525,7 +525,7 @@ export default function ManagerDashboard() {
               </div>
 
               {/* Recent Requests */}
-              <Card className="bg-card border-border shadow-lg dark:bg-card dark:border-border light:bg-gradient-to-br light:from-[hsl(0,0%,100%)] light:to-[hsl(175,100%,99%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
+              <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="text-foreground">My Travel Requests</CardTitle>
                 </CardHeader>

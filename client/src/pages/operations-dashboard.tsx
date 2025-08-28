@@ -807,7 +807,7 @@ export default function OperationsDashboard() {
 
               {/* Beautiful Charts with Magnoos Colors */}
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 shadow-lg">
+                <Card className="bg-transparent border-border/20 backdrop-blur-sm shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-[#00D9C0]" />
@@ -863,7 +863,7 @@ export default function OperationsDashboard() {
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 shadow-lg">
+                <Card className="bg-transparent border-border/20 backdrop-blur-sm shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-[#0032FF]" />
@@ -909,7 +909,7 @@ export default function OperationsDashboard() {
               </div>
 
               {/* Recent Activity */}
-              <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+              <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="text-gray-900 dark:text-white">Recent Booking Activities</CardTitle>
                 </CardHeader>
@@ -968,7 +968,7 @@ export default function OperationsDashboard() {
             </TabsContent>
 
             <TabsContent value="bookings" className="space-y-8 bg-transparent">
-              <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+              <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-gray-900 dark:text-white">Active Travel Bookings</CardTitle>
@@ -1277,7 +1277,7 @@ export default function OperationsDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Summary Cards */}
                 <div className="lg:col-span-1 space-y-6">
-                  <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+                  <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                     <CardHeader>
                       <CardTitle className="text-gray-900 dark:text-white">Top Spenders</CardTitle>
                     </CardHeader>
@@ -1312,7 +1312,7 @@ export default function OperationsDashboard() {
                     </CardContent>
                   </Card>
                   
-                  <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+                  <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                     <CardHeader>
                       <CardTitle className="text-gray-900 dark:text-white">Recent Activity</CardTitle>
                     </CardHeader>
@@ -1342,7 +1342,7 @@ export default function OperationsDashboard() {
                 
                 {/* Budget Table */}
                 <div className="lg:col-span-2">
-                  <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+                  <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                     <CardHeader>
                       <CardTitle className="text-gray-900 dark:text-white">Individual Expense Overview</CardTitle>
                     </CardHeader>
@@ -1415,7 +1415,7 @@ export default function OperationsDashboard() {
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 {/* Project Expense Distribution Chart */}
-                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+                <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white">Project Expense Distribution</CardTitle>
                   </CardHeader>
@@ -1455,7 +1455,7 @@ export default function OperationsDashboard() {
                 </Card>
                 
                 {/* Project Spending Chart */}
-                <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+                <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-gray-900 dark:text-white">Project Spending Overview</CardTitle>
                   </CardHeader>
@@ -1507,7 +1507,7 @@ export default function OperationsDashboard() {
               </div>
               
               {/* Project Budget Table */}
-              <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+              <Card className="bg-transparent border-border/20 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="text-gray-900 dark:text-white">Project Expense Overview</CardTitle>
                 </CardHeader>
