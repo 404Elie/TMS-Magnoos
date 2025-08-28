@@ -9,7 +9,7 @@ export default function ModernLayout({ children }: ModernLayoutProps) {
     <div className="flex h-screen bg-background overflow-hidden">
       <ModernSidebar />
       <main className="flex-1 overflow-y-auto">
-        <div className="min-h-full bg-gradient-to-br from-background to-muted/20">
+        <div className="min-h-full bg-gradient-to-br from-background to-muted/10">
           {children}
         </div>
       </main>

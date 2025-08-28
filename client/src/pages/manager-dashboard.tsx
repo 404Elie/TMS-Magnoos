@@ -7,6 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ModernLayout from "@/components/ModernLayout";
 import ModernDashboardCard from "@/components/ModernDashboardCard";
+import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -406,49 +407,56 @@ export default function ManagerDashboard() {
   return (
     <ProtectedRoute allowedRoles={["pm"]}>
       <ModernLayout>
-        <div className="p-8 space-y-8">
+        <div className="p-6 space-y-6">
+          {/* Admin Role Switcher - Show at top of main content */}
+          {(user as any)?.role === 'admin' && (
+            <div className="flex justify-end">
+              <AdminRoleSwitcher />
+            </div>
+          )}
+          
           {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Business Unit Manager Dashboard</h1>
-            <p className="text-muted-foreground">Manage travel requests, approvals, and operations teams</p>
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-foreground mb-1">Dashboard</h1>
+            <p className="text-sm text-muted-foreground">Business Unit Manager</p>
           </div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-5 bg-muted/50 border border-border rounded-xl p-1">
+            <TabsList className="grid w-full grid-cols-5 bg-primary/10 border-0 rounded-lg p-1 mb-6">
               <TabsTrigger 
                 value="dashboard"
-                className="custom-tab"
+                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
               >
                 Dashboard
               </TabsTrigger>
               <TabsTrigger 
                 value="submit"
-                className="custom-tab"
+                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
               >
                 Submit Request
               </TabsTrigger>
               <TabsTrigger 
                 value="approvals"
-                className="custom-tab"
+                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
               >
                 Approvals
               </TabsTrigger>
               <TabsTrigger 
                 value="operations-ksa"
-                className="custom-tab"
+                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
               >
                 Operations KSA
               </TabsTrigger>
               <TabsTrigger 
                 value="operations-uae"
-                className="custom-tab"
+                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
               >
                 Operations UAE
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="dashboard" className="space-y-6">
               {/* Modern Stats Overview */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
                 <ModernDashboardCard
                   title="Total Requests"
                   value={statsLoading ? "..." : stats?.totalRequests || 0}

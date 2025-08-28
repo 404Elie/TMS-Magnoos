@@ -110,20 +110,20 @@ export default function ModernSidebar() {
   );
 
   return (
-    <div className="w-64 h-screen sidebar-bg border-r border-border flex flex-col">
+    <div className="w-56 h-screen sidebar-bg border-r border-border flex flex-col">
       {/* Logo Section */}
-      <div className="p-6 border-b border-border">
-        <div className="flex items-center space-x-3">
-          <img src={logoPath} alt="Magnoos Logo" className="w-8 h-8 object-contain" />
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center space-x-2">
+          <img src={logoPath} alt="Magnoos Logo" className="w-6 h-6 object-contain" />
           <div>
-            <h1 className="text-lg font-bold text-foreground">Magnoos</h1>
-            <p className="text-xs text-muted-foreground">Travel Management</p>
+            <h1 className="text-sm font-bold text-foreground">Magnoos</h1>
+            <p className="text-xs text-muted-foreground">Travel Mgmt</p>
           </div>
         </div>
       </div>
 
       {/* Navigation Items */}
-      <div className="flex-1 p-4 space-y-2">
+      <div className="flex-1 p-3 space-y-1">
         {visibleItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.path;
@@ -133,44 +133,32 @@ export default function ModernSidebar() {
               key={item.label}
               onClick={() => setLocation(item.path)}
               className={`
-                w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200
+                w-full flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200
                 ${isActive 
-                  ? 'sidebar-active shadow-lg' 
+                  ? 'sidebar-active shadow-md' 
                   : 'sidebar-text hover:bg-muted hover:text-foreground'
                 }
               `}
             >
-              <Icon className="w-5 h-5" />
-              <span className="font-medium">{item.label}</span>
+              <Icon className="w-4 h-4" />
+              <span className="text-sm font-medium">{item.label}</span>
             </button>
           );
         })}
       </div>
 
       {/* User Profile & Controls */}
-      <div className="border-t border-border p-4 space-y-4">
-        {/* Admin Role Switcher */}
-        {typedUser && typedUser.role === 'admin' && (
-          <div className="mb-4">
-            <AdminRoleSwitcher />
-          </div>
-        )}
-        
-        {/* Theme Toggle */}
-        <div className="flex justify-center">
-          <ThemeToggle />
-        </div>
-        
+      <div className="border-t border-border p-4 space-y-3">
         {/* User Profile */}
-        <div className="flex items-center space-x-3 p-3 rounded-xl bg-muted/50">
-          <Avatar className="w-10 h-10">
+        <div className="flex items-center space-x-3 p-2 rounded-lg bg-muted/30">
+          <Avatar className="w-8 h-8">
             <AvatarImage src={typedUser?.profileImageUrl || undefined} alt="User Avatar" />
-            <AvatarFallback className="modern-gradient-primary text-white text-sm">
+            <AvatarFallback className="modern-gradient-primary text-white text-xs">
               {typedUser ? getInitials(`${typedUser.firstName || ''} ${typedUser.lastName || ''}`.trim() || typedUser.email || 'U') : 'U'}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">
+            <p className="text-xs font-medium text-foreground truncate">
               {`${typedUser?.firstName || ''} ${typedUser?.lastName || ''}`.trim() || typedUser?.email || 'User'}
             </p>
             <p className="text-xs text-muted-foreground truncate">
@@ -179,16 +167,19 @@ export default function ModernSidebar() {
           </div>
         </div>
         
-        {/* Logout Button */}
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={handleLogout}
-          className="w-full flex items-center space-x-2"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>Logout</span>
-        </Button>
+        {/* Controls */}
+        <div className="flex items-center justify-between">
+          <ThemeToggle />
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={handleLogout}
+            className="flex items-center space-x-1 text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-xs">Logout</span>
+          </Button>
+        </div>
       </div>
     </div>
   );
