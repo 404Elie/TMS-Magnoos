@@ -440,7 +440,7 @@ export default function ManagerDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8 bg-transparent">
+            <TabsContent value="dashboard" className="space-y-8 bg-[transparent]">
               {/* Stats Cards with Beautiful Gradients */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Total Requests - Electric Blue to Purple Gradient */}
@@ -538,7 +538,7 @@ export default function ManagerDashboard() {
                   ) : requests && requests.length > 0 ? (
                     <div className="overflow-x-auto">
                       <table className="min-w-full divide-y divide-border">
-                        <thead className="bg-muted">
+                        <thead className="bg-transparent">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                               Route
@@ -557,7 +557,7 @@ export default function ManagerDashboard() {
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-background divide-y divide-border">
+                        <tbody className="bg-transparent divide-y divide-border">
                           {requests.map((request) => (
                             <tr key={request.id} className="hover:bg-muted/50 transition-colors">
                               <td className="px-6 py-4 whitespace-nowrap">
