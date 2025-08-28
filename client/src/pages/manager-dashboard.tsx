@@ -440,7 +440,7 @@ export default function ManagerDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent bg-[transparent]">
               {/* Stats Cards with Beautiful Gradients */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Total Requests - Electric Blue to Purple Gradient */}
