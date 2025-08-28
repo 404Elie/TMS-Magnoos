@@ -4,9 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
-import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
+import ModernLayout from "@/components/ModernLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -405,11 +404,8 @@ export default function ManagerDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["pm"]}>
-      <div className="min-h-screen dark:bg-background light:bg-transparent manager-dashboard">
-        <Header currentRole="pm" />
-        
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
-          <AdminRoleSwitcher />
+      <ModernLayout>
+        <div className="p-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-5 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
@@ -1403,7 +1399,7 @@ export default function ManagerDashboard() {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
+      </ModernLayout>
     </ProtectedRoute>
   );
 }
