@@ -613,7 +613,7 @@ export default function ManagerDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="submit" className="space-y-8 bg-transparent">
+            <TabsContent value="submit" className="space-y-8 bg-[transparent]">
               <div className="max-w-4xl mx-auto">
                 <Card className="bg-card border-border shadow-lg dark:bg-card dark:border-border light:bg-gradient-to-br light:from-[hsl(0,0%,100%)] light:to-[hsl(175,100%,99%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
                   <CardHeader>
