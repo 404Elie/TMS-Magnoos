@@ -656,10 +656,10 @@ export default function OperationsDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-      <div className="min-h-screen dark:bg-background light:bg-transparent operations-dashboard">
+      <div className="min-h-screen bg-transparent operations-dashboard">
         <Header />
         
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-transparent">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-5 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
@@ -694,7 +694,7 @@ export default function OperationsDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="dashboard" className="space-y-8 bg-transparent">
               {/* Welcome Banner */}
               <Card className="bg-gradient-to-r from-blue-50/50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/20 border-blue-200/20">
                 <CardContent className="p-6">
@@ -967,7 +967,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="bookings" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="bookings" className="space-y-8 bg-transparent">
               <Card className="bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
@@ -1268,7 +1268,7 @@ export default function OperationsDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="budget-person" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="budget-person" className="space-y-8 bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Travel Expense Tracking by Person</h2>
                 <p className="text-gray-600 dark:text-gray-300">Monitor individual travel expenses and spending patterns</p>
@@ -1407,7 +1407,7 @@ export default function OperationsDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="budget-project" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="budget-project" className="space-y-8 bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Expense Tracking</h2>
                 <p className="text-gray-600 dark:text-gray-300">Monitor project-based travel expenses and spending patterns</p>
@@ -1564,7 +1564,7 @@ export default function OperationsDashboard() {
             </TabsContent>
 
             {/* Documents Management Tab */}
-            <TabsContent value="documents" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="documents" className="space-y-8 bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] rounded-lg flex items-center justify-center">
@@ -2430,6 +2430,7 @@ export default function OperationsDashboard() {
             </div>
           </div>
         )}
+        </div>
       </div>
     </ProtectedRoute>
   );

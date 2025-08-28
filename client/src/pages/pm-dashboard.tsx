@@ -497,7 +497,7 @@ export default function PMDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
+            <TabsContent value="dashboard" className="space-y-8 bg-transparent">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
@@ -623,7 +623,7 @@ export default function PMDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="submit" className="space-y-8 dark:bg-magnoos-dark light:bg-transparent">
+            <TabsContent value="submit" className="space-y-8 bg-transparent">
               <TravelRequestForm />
             </TabsContent>
           </Tabs>

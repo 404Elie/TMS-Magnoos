@@ -405,7 +405,7 @@ export default function ManagerDashboard() {
   return (
     <ProtectedRoute allowedRoles={["pm"]}>
       <ModernLayout>
-        <div className="p-8">
+        <div className="p-8 bg-transparent">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
             <TabsList className="grid w-full grid-cols-5 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
@@ -440,7 +440,7 @@ export default function ManagerDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent bg-[transparent]">
+            <TabsContent value="dashboard" className="space-y-8 bg-transparent">
               {/* Stats Cards with Beautiful Gradients */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Total Requests - Electric Blue to Purple Gradient */}
@@ -613,7 +613,7 @@ export default function ManagerDashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="submit" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="submit" className="space-y-8 bg-transparent">
               <div className="max-w-4xl mx-auto">
                 <Card className="bg-card border-border shadow-lg dark:bg-card dark:border-border light:bg-gradient-to-br light:from-[hsl(0,0%,100%)] light:to-[hsl(175,100%,99%)] light:border-[hsl(175,100%,85%)] light:shadow-[0_4px_20px_-4px_hsl(175,100%,80%)]">
                   <CardHeader>
@@ -1030,7 +1030,7 @@ export default function ManagerDashboard() {
             </TabsContent>
 
             {/* Approvals Tab */}
-            <TabsContent value="approvals" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="approvals" className="space-y-8 bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
@@ -1177,7 +1177,7 @@ export default function ManagerDashboard() {
             </TabsContent>
 
             {/* Operations KSA Tab */}
-            <TabsContent value="operations-ksa" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="operations-ksa" className="space-y-8 bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
@@ -1288,7 +1288,7 @@ export default function ManagerDashboard() {
             </TabsContent>
 
             {/* Operations UAE Tab */}
-            <TabsContent value="operations-uae" className="space-y-8 dark:bg-background light:bg-transparent">
+            <TabsContent value="operations-uae" className="space-y-8 bg-transparent">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-electric-blue to-purple rounded-lg flex items-center justify-center">
