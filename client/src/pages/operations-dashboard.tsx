@@ -2430,7 +2430,6 @@ export default function OperationsDashboard() {
             </div>
           </div>
         )}
-        </div>
       </div>
     </ProtectedRoute>
   );
