@@ -4,9 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
+import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import ModernLayout from "@/components/ModernLayout";
-import ModernDashboardCard from "@/components/ModernDashboardCard";
 import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -406,88 +405,127 @@ export default function ManagerDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["pm"]}>
-      <ModernLayout>
-        <div className="p-6 space-y-6">
-          {/* Admin Role Switcher - Show at top of main content */}
-          {(user as any)?.role === 'admin' && (
-            <div className="flex justify-end">
-              <AdminRoleSwitcher />
-            </div>
-          )}
-          
-          {/* Page Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-foreground mb-1">Dashboard</h1>
-            <p className="text-sm text-muted-foreground">Business Unit Manager</p>
-          </div>
+      <div className="min-h-screen dark:bg-background light:bg-transparent manager-dashboard">
+        <Header currentRole="pm" />
+        
+        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-background light:bg-transparent">
+          <AdminRoleSwitcher />
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-5 bg-primary/10 border-0 rounded-lg p-1 mb-6">
+            <TabsList className="grid w-full grid-cols-5 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
               <TabsTrigger 
                 value="dashboard"
-                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                className="custom-tab"
               >
                 Dashboard
               </TabsTrigger>
               <TabsTrigger 
                 value="submit"
-                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                className="custom-tab"
               >
                 Submit Request
               </TabsTrigger>
               <TabsTrigger 
                 value="approvals"
-                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                className="custom-tab"
               >
                 Approvals
               </TabsTrigger>
               <TabsTrigger 
                 value="operations-ksa"
-                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                className="custom-tab"
               >
                 Operations KSA
               </TabsTrigger>
               <TabsTrigger 
                 value="operations-uae"
-                className="rounded-md text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm"
+                className="custom-tab"
               >
                 Operations UAE
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-6">
-              {/* Modern Stats Overview */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
-                <ModernDashboardCard
-                  title="Total Requests"
-                  value={statsLoading ? "..." : stats?.totalRequests || 0}
-                  variant="primary"
-                >
-                  <Plane className="w-8 h-8" />
-                </ModernDashboardCard>
+            <TabsContent value="dashboard" className="space-y-8 dark:bg-background light:bg-transparent">
+              {/* Stats Cards with Beautiful Gradients */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Total Requests - Electric Blue to Purple Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">Total Requests</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.totalRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Plane className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <ModernDashboardCard
-                  title="Pending Approval"
-                  value={statsLoading ? "..." : stats?.pendingRequests || 0}
-                  variant="secondary"
-                >
-                  <Clock className="w-8 h-8" />
-                </ModernDashboardCard>
+                {/* Pending Approval - Electric Blue to Purple Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">Pending Approval</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.pendingRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Clock className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <ModernDashboardCard
-                  title="Approved"
-                  value={statsLoading ? "..." : stats?.approvedRequests || 0}
-                  variant="accent"
-                >
-                  <Check className="w-8 h-8" />
-                </ModernDashboardCard>
+                {/* Approved - Electric Blue to Purple Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">Approved</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.approvedRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Check className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <ModernDashboardCard
-                  title="Completed"
-                  value={statsLoading ? "..." : stats?.completedRequests || 0}
-                  variant="stats"
-                >
-                  <Flag className="w-8 h-8" />
-                </ModernDashboardCard>
+                {/* Completed - Electric Blue to Purple Gradient */}
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+                  <CardContent className="relative p-6 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white/80">Completed</p>
+                        <p className="text-3xl font-bold text-white mt-1 transition-all duration-300">
+                          {statsLoading ? (
+                            <span className="shimmer inline-block w-16 h-8 bg-white/20 rounded"></span>
+                          ) : stats?.completedRequests || 0}
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm transition-all duration-300 group-hover:bg-white">
+                        <Flag className="w-6 h-6 text-[#0032FF] transition-transform duration-300 hover:scale-110" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Recent Requests */}
@@ -1365,7 +1403,7 @@ export default function ManagerDashboard() {
             </TabsContent>
           </Tabs>
         </div>
-      </ModernLayout>
+      </div>
     </ProtectedRoute>
   );
 }

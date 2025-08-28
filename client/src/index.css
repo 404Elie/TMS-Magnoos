@@ -3,85 +3,85 @@
 @tailwind utilities;
 
 :root {
-  /* Modern Dashboard Light Theme */
-  --background: hsl(240, 20%, 98%); /* Very light purple-gray */
-  --foreground: hsl(240, 15%, 15%); /* Dark text */
-  --muted: hsl(240, 10%, 95%); /* Light gray muted areas */
-  --muted-foreground: hsl(240, 5%, 45%); /* Muted text */
+  /* Light theme colors - Vibrant Magnoos Company Palette */
+  --background: hsl(0, 0%, 98%); /* Slightly off-white for better vibrancy */
+  --foreground: hsl(218, 100%, 11%); /* Magnoos Dark Blue */
+  --muted: hsl(175, 100%, 95%); /* Very light vivid teal for vibrancy */
+  --muted-foreground: hsl(218, 100%, 25%); /* Lighter dark blue for better readability */
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(240, 15%, 15%);
+  --popover-foreground: hsl(218, 100%, 11%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(240, 15%, 15%);
-  --border: hsl(240, 10%, 90%); /* Light borders */
-  --input: hsl(240, 10%, 96%); /* Light input backgrounds */
-  --primary: hsl(250, 85%, 60%); /* Modern purple primary */
+  --card-foreground: hsl(218, 100%, 11%);
+  --border: hsl(175, 100%, 85%); /* Light vivid teal borders */
+  --input: hsl(175, 100%, 92%); /* Very light teal for inputs */
+  --primary: hsl(236, 100%, 58%); /* Magnoos Electric Blue */
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(240, 10%, 94%); /* Light secondary */
-  --secondary-foreground: hsl(240, 15%, 25%);
-  --accent: hsl(260, 75%, 65%); /* Purple accent */
+  --secondary: hsl(175, 100%, 88%); /* Light vivid teal secondary */
+  --secondary-foreground: hsl(218, 100%, 11%);
+  --accent: hsl(175, 100%, 42%); /* Vivid Teal accent for vibrancy */
   --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 84%, 60%); /* Red for errors */
+  --destructive: hsl(3, 100%, 69%); /* Coral for errors */
   --destructive-foreground: hsl(0, 0%, 100%);
-  --ring: hsl(250, 85%, 60%);
+  --ring: hsl(236, 100%, 58%);
   --radius: 0.75rem;
   
-  /* Modern Dashboard Colors - Light theme */
-  --gradient-primary-start: hsl(250, 85%, 60%); /* Purple */
-  --gradient-primary-end: hsl(260, 75%, 70%); /* Light purple */
-  --gradient-secondary-start: hsl(220, 70%, 50%); /* Blue */
-  --gradient-secondary-end: hsl(250, 85%, 60%); /* Purple */
-  --gradient-accent-start: hsl(280, 80%, 55%); /* Deep purple */
-  --gradient-accent-end: hsl(290, 70%, 65%); /* Light purple */
-  --sidebar-bg: hsl(240, 15%, 95%); /* Light sidebar */
-  --sidebar-text: hsl(240, 10%, 40%); /* Sidebar text */
-  --sidebar-active: hsl(250, 85%, 60%); /* Active sidebar item */
-  --card-gradient-start: hsl(250, 85%, 60%);
-  --card-gradient-end: hsl(260, 75%, 70%);
-  --analytics-gradient-start: hsl(280, 80%, 55%);
-  --analytics-gradient-end: hsl(290, 70%, 65%);
-  --stats-gradient-start: hsl(220, 70%, 50%);
-  --stats-gradient-end: hsl(250, 85%, 60%);
+  /* Magnoos Brand Colors - Light theme */
+  --magnoos-electric-blue: hsl(236, 100%, 58%); /* #0032FF */
+  --magnoos-black: hsl(0, 0%, 0%); /* #000000 */
+  --magnoos-dark-blue: hsl(218, 100%, 11%); /* #000037 */
+  --magnoos-dark-gray: hsl(214, 16%, 40%); /* #464646 */
+  --magnoos-light-gray: hsl(207, 13%, 85%); /* #DADADA */
+  --magnoos-white: hsl(0, 0%, 100%); /* #FFFFFF */
+  --magnoos-orange: hsl(16, 100%, 66%); /* #FF6F00 */
+  --magnoos-coral: hsl(3, 100%, 69%); /* #FF6F61 */
+  --magnoos-teal: hsl(175, 39%, 55%); /* #1ABC3C */
+  --magnoos-vivid-teal: hsl(175, 100%, 42%); /* #00D9C0 */
+  --magnoos-lime: hsl(75, 69%, 61%); /* #A3E635 */
+  --magnoos-lime-mint: hsl(75, 69%, 69%); /* #A6E05A */
+  --magnoos-yellow: hsl(47, 84%, 68%); /* #F8C94E */
+  --magnoos-sunny-yellow: hsl(51, 100%, 62%); /* #FFD700 */
+  --magnoos-purple: hsl(266, 66%, 58%); /* #8A2BE2 */
 }
 
 .dark {
-  /* Modern Dashboard Dark Theme */
-  --background: hsl(240, 15%, 8%); /* Dark purple-gray */
-  --foreground: hsl(0, 0%, 95%); /* Light text */
-  --muted: hsl(240, 15%, 15%); /* Dark muted areas */
-  --muted-foreground: hsl(240, 5%, 65%); /* Muted text */
-  --popover: hsl(240, 15%, 12%);
-  --popover-foreground: hsl(0, 0%, 95%);
-  --card: hsl(240, 15%, 12%);
-  --card-foreground: hsl(0, 0%, 95%);
-  --border: hsl(240, 10%, 20%);
-  --input: hsl(240, 15%, 15%);
-  --primary: hsl(250, 85%, 60%); /* Modern purple primary */
+  /* Dark theme colors - Magnoos Company Palette */
+  --background: hsl(0, 0%, 0%); /* Magnoos Black */
+  --foreground: hsl(0, 0%, 100%); /* Magnoos White */
+  --muted: hsl(218, 100%, 11%); /* Magnoos Dark Blue */
+  --muted-foreground: hsl(207, 13%, 85%); /* Magnoos Light Gray */
+  --popover: hsl(218, 100%, 11%);
+  --popover-foreground: hsl(0, 0%, 100%);
+  --card: hsl(218, 100%, 11%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --border: hsl(214, 16%, 40%);
+  --input: hsl(218, 100%, 11%);
+  --primary: hsl(236, 100%, 58%); /* Magnoos Electric Blue */
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(240, 15%, 18%);
-  --secondary-foreground: hsl(0, 0%, 90%);
-  --accent: hsl(260, 75%, 65%); /* Purple accent */
+  --secondary: hsl(214, 16%, 40%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --accent: hsl(175, 100%, 42%); /* Vivid Teal */
   --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 84%, 60%); /* Red for errors */
+  --destructive: hsl(3, 100%, 69%); /* Coral */
   --destructive-foreground: hsl(0, 0%, 100%);
-  --ring: hsl(250, 85%, 60%);
+  --ring: hsl(236, 100%, 58%);
   --radius: 0.75rem;
 
-  /* Modern Dashboard Colors - Dark theme */
-  --gradient-primary-start: hsl(250, 85%, 55%);
-  --gradient-primary-end: hsl(260, 75%, 65%);
-  --gradient-secondary-start: hsl(220, 70%, 45%);
-  --gradient-secondary-end: hsl(250, 85%, 55%);
-  --gradient-accent-start: hsl(280, 80%, 50%);
-  --gradient-accent-end: hsl(290, 70%, 60%);
-  --sidebar-bg: hsl(240, 15%, 10%); /* Dark sidebar */
-  --sidebar-text: hsl(240, 5%, 70%); /* Sidebar text */
-  --sidebar-active: hsl(250, 85%, 60%); /* Active sidebar item */
-  --card-gradient-start: hsl(250, 85%, 55%);
-  --card-gradient-end: hsl(260, 75%, 65%);
-  --analytics-gradient-start: hsl(280, 80%, 50%);
-  --analytics-gradient-end: hsl(290, 70%, 60%);
-  --stats-gradient-start: hsl(220, 70%, 45%);
-  --stats-gradient-end: hsl(250, 85%, 55%);
+  /* Magnoos Dark Theme Brand Colors */
+  --magnoos-electric-blue: hsl(236, 100%, 58%); /* #0032FF */
+  --magnoos-black: hsl(0, 0%, 0%); /* #000000 */
+  --magnoos-dark-blue: hsl(218, 100%, 11%); /* #000037 */
+  --magnoos-dark-gray: hsl(214, 16%, 40%); /* #464646 */
+  --magnoos-light-gray: hsl(207, 13%, 85%); /* #DADADA */
+  --magnoos-white: hsl(0, 0%, 100%); /* #FFFFFF */
+  --magnoos-orange: hsl(16, 100%, 66%); /* #FF6F00 */
+  --magnoos-coral: hsl(3, 100%, 69%); /* #FF6F61 */
+  --magnoos-teal: hsl(175, 39%, 55%); /* #1ABC3C */
+  --magnoos-vivid-teal: hsl(175, 100%, 42%); /* #00D9C0 */
+  --magnoos-lime: hsl(75, 69%, 61%); /* #A3E635 */
+  --magnoos-lime-mint: hsl(75, 69%, 69%); /* #A6E05A */
+  --magnoos-yellow: hsl(47, 84%, 68%); /* #F8C94E */
+  --magnoos-sunny-yellow: hsl(51, 100%, 62%); /* #FFD700 */
+  --magnoos-purple: hsl(266, 66%, 58%); /* #8A2BE2 */
 }
 
 @layer base {
@@ -110,60 +110,18 @@
 }
 
 @layer utilities {
-  /* Modern Dashboard Gradients */
-  .modern-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--gradient-primary-start)), hsl(var(--gradient-primary-end)));
+  .magnoos-gradient {
+    background: linear-gradient(135deg, var(--magnoos-gradient-start), var(--magnoos-gradient-end));
   }
   
-  .modern-gradient-secondary {
-    background: linear-gradient(135deg, hsl(var(--gradient-secondary-start)), hsl(var(--gradient-secondary-end)));
-  }
-  
-  .modern-gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--gradient-accent-start)), hsl(var(--gradient-accent-end)));
-  }
-  
-  .modern-card-gradient {
-    background: linear-gradient(135deg, hsl(var(--card-gradient-start)), hsl(var(--card-gradient-end)));
-    box-shadow: 0 4px 20px -4px hsl(var(--card-gradient-start) / 0.3);
-  }
-  
-  .analytics-card-gradient {
-    background: linear-gradient(135deg, hsl(var(--analytics-gradient-start)), hsl(var(--analytics-gradient-end)));
-    box-shadow: 0 4px 20px -4px hsl(var(--analytics-gradient-start) / 0.3);
-  }
-  
-  .stats-card-gradient {
-    background: linear-gradient(135deg, hsl(var(--stats-gradient-start)), hsl(var(--stats-gradient-end)));
-    box-shadow: 0 4px 20px -4px hsl(var(--stats-gradient-start) / 0.3);
-  }
-  
-  /* Modern Card Animations */
-  .modern-card {
+  /* Beautiful Card Animations */
+  .gradient-card {
     @apply transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
-    border-radius: 16px;
-    border: none;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
   
-  .modern-card:hover {
+  .gradient-card:hover {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
                 0 0 0 1px rgba(255, 255, 255, 0.1);
-  }
-  
-  /* Sidebar Styles */
-  .sidebar-bg {
-    background: hsl(var(--sidebar-bg));
-  }
-  
-  .sidebar-text {
-    color: hsl(var(--sidebar-text));
-  }
-  
-  .sidebar-active {
-    background: linear-gradient(135deg, hsl(var(--gradient-primary-start)), hsl(var(--gradient-primary-end)));
-    color: white;
   }
   
   /* Dialog Override - Ensure clean white/dark backgrounds */
