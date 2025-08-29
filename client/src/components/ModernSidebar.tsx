@@ -67,12 +67,12 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
     
     if (activeRole === 'pm' || activeRole === 'admin') {
       return [
-        { icon: LayoutDashboard, label: "Dashboard", href: "/manager-dashboard", section: "main" },
-        { icon: PlusCircle, label: "New Request", href: "/manager-dashboard?tab=new-request", section: "main" },
-        { icon: CheckSquare, label: "Approvals", href: "/manager-dashboard?tab=approvals", section: "main" },
-        { icon: Calendar, label: "My Requests", href: "/manager-dashboard?tab=my-requests", section: "main" },
-        { icon: DollarSign, label: "Budget", href: "/manager-dashboard?tab=budget", section: "reports" },
-        { icon: FileText, label: "Reports", href: "/manager-dashboard?tab=reports", section: "reports" },
+        { icon: LayoutDashboard, label: "Dashboard", href: "/manager/dashboard", section: "main" },
+        { icon: PlusCircle, label: "New Request", href: "/manager/new-request", section: "main" },
+        { icon: CheckSquare, label: "Approvals", href: "/manager/approvals", section: "main" },
+        { icon: Calendar, label: "My Requests", href: "/manager/my-requests", section: "main" },
+        { icon: DollarSign, label: "Budget", href: "/manager/budget", section: "reports" },
+        { icon: FileText, label: "Reports", href: "/manager/reports", section: "reports" },
       ];
     } else if (activeRole === 'manager') {
       return [

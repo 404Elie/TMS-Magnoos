@@ -13,6 +13,13 @@ import OperationsDashboard from "@/pages/operations-dashboard";
 import DocumentManagement from "@/pages/document-management";
 import AdminUsers from "@/pages/admin-users";
 import AdminPanel from "@/pages/admin-panel";
+// Business Unit Manager Pages
+import BUManagerDashboard from "@/pages/manager/dashboard";
+import NewRequest from "@/pages/manager/new-request";
+import Approvals from "@/pages/manager/approvals";
+import MyRequests from "@/pages/manager/my-requests";
+import Budget from "@/pages/manager/budget";
+import Reports from "@/pages/manager/reports";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import type { User } from "@shared/schema";
@@ -66,7 +73,7 @@ function Router() {
               return <PMDashboard />;
             }
             if (currentRole === 'pm') {
-              return <ManagerDashboard />;
+              return <BUManagerDashboard />;
             }
             if (currentRole === 'operations_ksa' || currentRole === 'operations_uae') {
               return <OperationsDashboard />;
@@ -97,6 +104,31 @@ function Router() {
       {/* Role-specific routes with admin access control */}
       <Route path="/manager">
         {(currentRole === 'manager' || typedUser?.role === 'admin') ? <ManagerDashboard /> : <NotFound />}
+      </Route>
+      
+      {/* Business Unit Manager Routes */}
+      <Route path="/manager/dashboard">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <BUManagerDashboard /> : <NotFound />}
+      </Route>
+      
+      <Route path="/manager/new-request">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <NewRequest /> : <NotFound />}
+      </Route>
+      
+      <Route path="/manager/approvals">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <Approvals /> : <NotFound />}
+      </Route>
+      
+      <Route path="/manager/my-requests">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <MyRequests /> : <NotFound />}
+      </Route>
+      
+      <Route path="/manager/budget">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <Budget /> : <NotFound />}
+      </Route>
+      
+      <Route path="/manager/reports">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <Reports /> : <NotFound />}
       </Route>
       
       <Route path="/pm">
