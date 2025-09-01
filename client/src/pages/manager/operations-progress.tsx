@@ -75,62 +75,74 @@ export default function OperationsProgress() {
 
         {/* Combined Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="relative overflow-hidden border-none shadow-xl bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] text-white">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-            <CardContent className="relative p-6">
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/90">Total Active</p>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : ksaStats.activeBookings + uaeStats.activeBookings}
                   </p>
                 </div>
-                <Calendar className="w-8 h-8 text-white/80" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <Calendar className="w-6 h-6 text-[#2563eb]" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden border-none shadow-xl bg-gradient-to-br from-[#059669] via-[#10b981] to-[#047857] text-white">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#16a34a] via-[#22c55e] to-[#15803d] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-            <CardContent className="relative p-6">
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/90">Completed</p>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : ksaStats.completedThisMonth + uaeStats.completedThisMonth}
                   </p>
                 </div>
-                <CheckCircle className="w-8 h-8 text-white/80" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <CheckCircle className="w-6 h-6 text-[#16a34a]" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden border-none shadow-xl bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] text-white">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-            <CardContent className="relative p-6">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/90">Pending Tasks</p>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : ksaStats.pendingTasks + uaeStats.pendingTasks}
                   </p>
                 </div>
-                <AlertTriangle className="w-8 h-8 text-white/80" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <AlertTriangle className="w-6 h-6 text-[#f59e0b]" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden border-none shadow-xl bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] text-white">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-            <CardContent className="relative p-6">
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-white/90">Total Spend</p>
-                  <p className="text-3xl font-bold text-white">
+                  <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : formatCurrency(ksaStats.monthlySpend + uaeStats.monthlySpend)}
                   </p>
                 </div>
-                <DollarSign className="w-8 h-8 text-white/80" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <DollarSign className="w-6 h-6 text-[#0ea5e9]" />
+                </div>
               </div>
             </CardContent>
           </Card>
