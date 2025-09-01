@@ -81,8 +81,19 @@ export default function OperationsDashboard() {
   
   // Update activeTab when URL changes
   useEffect(() => {
-    setActiveTab(getActiveView());
+    const newActiveView = getActiveView();
+    setActiveTab(newActiveView);
   }, [location]);
+  
+  // Also listen for browser navigation changes
+  useEffect(() => {
+    const handlePopState = () => {
+      setActiveTab(getActiveView());
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
