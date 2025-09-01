@@ -63,7 +63,221 @@ import {
   Legend, 
   ResponsiveContainer 
 } from "recharts";
-import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget, ProjectWithBudget } from "@shared/schema";
+import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget, ProjectWithBudget, InsertEmployeeDocument } from "@shared/schema";
+
+// Document Form Component
+function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'visa' | null, onClose: () => void }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  type DocumentFormData = {
+    userId: string;
+    documentType: 'passport' | 'visa';
+    documentNumber: string;
+    issuingCountry: string;
+    issueDate: string;
+    expiryDate: string;
+    notes?: string;
+  };
+  
+  const form = useForm<DocumentFormData>({
+    resolver: zodResolver(z.object({
+      userId: z.string().min(1, "Employee is required"),
+      documentType: z.enum(["passport", "visa"]),
+      documentNumber: z.string().min(1, "Document number is required"),
+      issuingCountry: z.string().min(1, "Issuing country is required"),
+      issueDate: z.string().min(1, "Issue date is required"),
+      expiryDate: z.string().min(1, "Expiry date is required"),
+      notes: z.string().optional(),
+    })),
+    defaultValues: {
+      documentType: documentType || 'passport',
+      userId: '',
+      documentNumber: '',
+      issuingCountry: '',
+      issueDate: '',
+      expiryDate: '',
+      notes: '',
+    }
+  });
+
+  // Fetch users for dropdown
+  const { data: users } = useQuery<any[]>({
+    queryKey: ["/api/zoho/users"],
+    retry: false,
+  });
+
+  const addDocumentMutation = useMutation({
+    mutationFn: async (data: DocumentFormData) => {
+      const formattedData: InsertEmployeeDocument = {
+        ...data,
+        issueDate: new Date(data.issueDate),
+        expiryDate: new Date(data.expiryDate),
+      };
+      
+      const response = await fetch('/api/employee-documents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formattedData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to add document');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: `${documentType === 'passport' ? 'Passport' : 'Visa'} document added successfully`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/employee-documents"] });
+      form.reset();
+      onClose();
+    },
+    onError: (error: any) => {
+      console.error(`Error adding ${documentType}:`, error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || `Failed to add ${documentType} document`,
+      });
+    },
+  });
+
+  const onSubmit = (data: DocumentFormData) => {
+    addDocumentMutation.mutate(data);
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="userId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Employee</FormLabel>
+              <FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select employee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users?.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.firstName} {user.lastName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="documentNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{documentType === 'passport' ? 'Passport' : 'Visa'} Number</FormLabel>
+              <FormControl>
+                <Input placeholder={documentType === 'passport' ? 'Enter passport number' : 'Enter visa number'} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="issuingCountry"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Issuing Country</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter issuing country" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="issueDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Issue Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="expiryDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Expiry Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Notes (Optional)</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Add any additional notes..."
+                  className="resize-none"
+                  rows={3}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <div className="flex gap-4 pt-4">
+          <Button 
+            type="submit" 
+            className="flex-1 bg-blue-600 hover:bg-blue-700"
+            disabled={addDocumentMutation.isPending}
+          >
+            {addDocumentMutation.isPending ? "Adding..." : `Add ${documentType === 'passport' ? 'Passport' : 'Visa'}`}
+          </Button>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onClose}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
 
 export default function OperationsDashboard() {
   const [location] = useLocation();
@@ -88,6 +302,9 @@ export default function OperationsDashboard() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
+  const [documentTypeDialogOpen, setDocumentTypeDialogOpen] = useState(false);
+  const [documentFormOpen, setDocumentFormOpen] = useState(false);
+  const [selectedDocumentType, setSelectedDocumentType] = useState<'passport' | 'visa' | null>(null);
   const [bookingEntries, setBookingEntries] = useState([{
     type: "",
     provider: "",
@@ -395,13 +612,70 @@ export default function OperationsDashboard() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   Manage employee passports and visas for travel requirements
                 </p>
-                <Button className="bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={() => setDocumentTypeDialogOpen(true)}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Document
                 </Button>
               </CardContent>
             </Card>
           </div>
+          
+          {/* Document Type Selection Dialog */}
+          <Dialog open={documentTypeDialogOpen} onOpenChange={setDocumentTypeDialogOpen}>
+            <DialogContent className="max-w-md bg-white dark:bg-gray-800">
+              <DialogHeader>
+                <DialogTitle className="text-gray-900 dark:text-white">Choose Document Type</DialogTitle>
+                <DialogDescription className="text-gray-600 dark:text-gray-300">
+                  What type of document would you like to add?
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Button 
+                  className="w-full justify-start bg-blue-600 hover:bg-blue-700"
+                  onClick={() => {
+                    setSelectedDocumentType('passport');
+                    setDocumentTypeDialogOpen(false);
+                    setDocumentFormOpen(true);
+                  }}
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Passport
+                </Button>
+                <Button 
+                  className="w-full justify-start bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    setSelectedDocumentType('visa');
+                    setDocumentTypeDialogOpen(false);
+                    setDocumentFormOpen(true);
+                  }}
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Visa
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Document Form Dialog */}
+          <Dialog open={documentFormOpen} onOpenChange={setDocumentFormOpen}>
+            <DialogContent className="max-w-2xl bg-white dark:bg-gray-800">
+              <DialogHeader>
+                <DialogTitle className="text-gray-900 dark:text-white">
+                  Add {selectedDocumentType === 'passport' ? 'Passport' : 'Visa'} Document
+                </DialogTitle>
+                <DialogDescription className="text-gray-600 dark:text-gray-300">
+                  Enter the {selectedDocumentType} details for the employee
+                </DialogDescription>
+              </DialogHeader>
+              <DocumentForm 
+                documentType={selectedDocumentType}
+                onClose={() => setDocumentFormOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
         </ModernLayout>
       </ProtectedRoute>
     );
