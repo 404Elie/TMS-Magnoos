@@ -470,11 +470,25 @@ export class DatabaseStorage implements IStorage {
     }
 
     if (role === "pm") {
-      // PM stats - all requests needing approval and project analytics
-      const pendingApprovals = await db
+      // PM stats - all requests in the system (since PM approves all)
+      const totalRequests = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(travelRequests);
+
+      const pendingRequests = await db
         .select({ count: sql<number>`count(*)` })
         .from(travelRequests)
         .where(eq(travelRequests.status, "submitted"));
+
+      const approvedRequests = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(travelRequests)
+        .where(eq(travelRequests.status, "pm_approved"));
+
+      const completedRequests = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(travelRequests)
+        .where(eq(travelRequests.status, "operations_completed"));
 
       const approvedMonth = await db
         .select({ count: sql<number>`count(*)` })
@@ -491,7 +505,11 @@ export class DatabaseStorage implements IStorage {
         .where(eq(projects.status, "active"));
 
       return {
-        pendingApprovals: pendingApprovals[0]?.count || 0,
+        totalRequests: totalRequests[0]?.count || 0,
+        pendingRequests: pendingRequests[0]?.count || 0,
+        approvedRequests: approvedRequests[0]?.count || 0,
+        completedRequests: completedRequests[0]?.count || 0,
+        pendingApprovals: pendingRequests[0]?.count || 0, // Same as pendingRequests for backward compatibility
         approvedMonth: approvedMonth[0]?.count || 0,
         activeProjects: activeProjects[0]?.count || 0,
         avgApprovalTime: "2.3h", // This would need more complex calculation
