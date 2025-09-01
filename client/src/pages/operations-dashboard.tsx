@@ -494,6 +494,209 @@ export default function OperationsDashboard() {
     );
   }
 
+  // Handle requests tab
+  if (activeTab === "requests") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <CheckSquare className="w-8 h-8 text-blue-600" />
+                Travel Requests
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                View and manage approved travel requests that need operations handling
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              {requestsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="text-gray-600 dark:text-gray-300 mt-2">Loading requests...</p>
+                </div>
+              ) : operationsRequests && operationsRequests.length > 0 ? (
+                operationsRequests.map((request) => (
+                  <Card key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                            </h3>
+                            {getTravelStatusBadge(request.status)}
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">
+                            {request.purpose} • {new Date(request.departureDate).toLocaleDateString()}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Project: {request.project?.name || 'No project assigned'}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            ${(Number(request.estimatedFlightCost || 0) + Number(request.estimatedHotelCost || 0) + Number(request.estimatedOtherCost || 0)).toLocaleString()}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Estimated Total</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Card className="bg-white dark:bg-gray-800">
+                  <CardContent className="p-8 text-center">
+                    <p className="text-gray-500 dark:text-gray-300">No requests assigned to operations</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
+
+  // Handle employees tab
+  if (activeTab === "employees") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <Users className="w-8 h-8 text-blue-600" />
+                Employee Management
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Manage employee travel documents, profiles, and travel history
+              </p>
+            </div>
+            
+            <div className="grid gap-6">
+              {users?.map((user) => (
+                <Card key={user.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                          {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            {user.firstName} {user.lastName}
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Role: {user.role}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          Budget: ${user.annualTravelBudget || '15,000'}
+                        </p>
+                        <Button size="sm" variant="outline" className="mt-2">
+                          View Documents
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
+
+  // Handle budget tab (general budget overview)
+  if (activeTab === "budget") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <DollarSign className="w-8 h-8 text-blue-600" />
+                Budget Overview
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Complete budget tracking for employees and projects
+              </p>
+            </div>
+            
+            {/* Quick Navigation */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <CardContent className="p-6 text-center">
+                  <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Employee Budgets</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Track individual employee travel spending and budget utilization
+                  </p>
+                  <Button asChild className="w-full">
+                    <Link href="/operations-dashboard?tab=budget-person">
+                      View Employee Budgets
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <CardContent className="p-6 text-center">
+                  <BarChart3 className="w-12 h-12 mx-auto mb-4 text-purple-600" />
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Project Budgets</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Track project-based travel spending and budget allocation
+                  </p>
+                  <Button asChild className="w-full" variant="outline">
+                    <Link href="/operations-dashboard?tab=budget-project">
+                      View Project Budgets
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Summary Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="bg-white dark:bg-gray-800">
+                <CardContent className="p-6 text-center">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Total Monthly Spend</h4>
+                  <p className="text-2xl font-bold text-blue-600 mt-2">
+                    {formatCurrency(stats?.monthlySpend || 0)}
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800">
+                <CardContent className="p-6 text-center">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Budget Remaining</h4>
+                  <p className="text-2xl font-bold text-green-600 mt-2">
+                    {formatCurrency(stats?.budgetRemaining || 0)}
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800">
+                <CardContent className="p-6 text-center">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Active Projects</h4>
+                  <p className="text-2xl font-bold text-purple-600 mt-2">
+                    {projects?.length || 0}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
       <ModernLayout currentRole="operations">
