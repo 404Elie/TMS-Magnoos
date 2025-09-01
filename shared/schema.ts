@@ -53,15 +53,6 @@ export const documentTypeEnum = pgEnum("document_type", [
   "iqama"
 ]);
 
-// Notification type enum
-export const notificationTypeEnum = pgEnum("notification_type", [
-  "travel_request_submitted",
-  "travel_request_approved", 
-  "travel_request_rejected",
-  "booking_completed",
-  "general"
-]);
-
 // User storage table
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -163,20 +154,6 @@ export const budgetTracking = pgTable("budget_tracking", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Notifications table
-export const notifications = pgTable("notifications", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  type: notificationTypeEnum("type").notNull(),
-  title: varchar("title").notNull(),
-  message: text("message").notNull(),
-  data: jsonb("data"), // Store additional notification data
-  isRead: varchar("is_read").default("false").notNull(),
-  relatedRequestId: varchar("related_request_id").references(() => travelRequests.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   requestsAsRequester: many(travelRequests, { relationName: "requester" }),
@@ -249,16 +226,6 @@ export const employeeDocumentsRelations = relations(employeeDocuments, ({ one })
   }),
 }));
 
-export const notificationsRelations = relations(notifications, ({ one }) => ({
-  user: one(users, {
-    fields: [notifications.userId],
-    references: [users.id],
-  }),
-  relatedRequest: one(travelRequests, {
-    fields: [notifications.relatedRequestId],
-    references: [travelRequests.id],
-  }),
-}));
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -307,11 +274,6 @@ export const insertEmployeeDocumentSchema = createInsertSchema(employeeDocuments
   updatedAt: true,
 });
 
-export const insertNotificationSchema = createInsertSchema(notifications).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
 
 // Types
 export type UpsertUser = typeof users.$inferInsert;
@@ -326,8 +288,6 @@ export type BudgetTracking = typeof budgetTracking.$inferSelect;
 export type InsertBudgetTracking = z.infer<typeof insertBudgetTrackingSchema>;
 export type EmployeeDocument = typeof employeeDocuments.$inferSelect;
 export type InsertEmployeeDocument = z.infer<typeof insertEmployeeDocumentSchema>;
-export type Notification = typeof notifications.$inferSelect;
-export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 
 // Extended types with relations
 export type TravelRequestWithDetails = TravelRequest & {
