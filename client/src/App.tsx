@@ -159,10 +159,6 @@ function Router() {
         {(currentRole === 'operations_ksa' || currentRole === 'operations_uae' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
       </Route>
       
-      <Route path="/operations-dashboard">
-        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
-      </Route>
-      
       <Route path="/documents">
         {(currentRole === 'operations_ksa' || currentRole === 'operations_uae' || typedUser?.role === 'admin') ? <DocumentManagement /> : <NotFound />}
       </Route>

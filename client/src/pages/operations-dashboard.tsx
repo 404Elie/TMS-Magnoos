@@ -310,7 +310,7 @@ export default function OperationsDashboard() {
   if (activeTab === "bookings") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -375,7 +375,7 @@ export default function OperationsDashboard() {
   if (activeTab === "documents") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -408,7 +408,7 @@ export default function OperationsDashboard() {
   if (activeTab === "budget-person") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -455,7 +455,7 @@ export default function OperationsDashboard() {
   if (activeTab === "budget-project") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -503,7 +503,7 @@ export default function OperationsDashboard() {
   if (activeTab === "requests") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -568,7 +568,7 @@ export default function OperationsDashboard() {
   if (activeTab === "employees") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -622,7 +622,7 @@ export default function OperationsDashboard() {
   if (activeTab === "budget") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -706,7 +706,7 @@ export default function OperationsDashboard() {
   if (activeTab === "dashboard") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-        <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
+        <ModernLayout currentRole="operations">
         <div className="p-8 space-y-8">
           {/* Header */}
           <div>
