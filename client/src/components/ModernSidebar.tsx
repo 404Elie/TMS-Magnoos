@@ -163,11 +163,11 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
             .map((item) => (
             <Link key={item.href} href={item.href}>
               <Button
-                variant="ghost"
+                variant={isActive(item.href) ? "default" : "ghost"}
                 className={`w-full justify-start ${isCollapsed ? 'p-2' : 'p-3'} ${
                   isActive(item.href) 
-                    ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-400' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white'
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'
                 }`}
               >
                 <item.icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'}`} />
@@ -194,11 +194,11 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
                 .map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
-                    variant="ghost"
+                    variant={isActive(item.href) ? "default" : "ghost"}
                     className={`w-full justify-start ${isCollapsed ? 'p-2' : 'p-3'} ${
                       isActive(item.href) 
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-400' 
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'
                     }`}
                   >
                     <item.icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'}`} />
@@ -227,11 +227,11 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
                 .map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
-                    variant="ghost"
+                    variant={isActive(item.href) ? "default" : "ghost"}
                     className={`w-full justify-start ${isCollapsed ? 'p-2' : 'p-3'} ${
                       isActive(item.href) 
-                        ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-400' 
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-300'
                     }`}
                   >
                     <item.icon className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'}`} />

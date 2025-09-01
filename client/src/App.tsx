@@ -140,14 +140,6 @@ function Router() {
         {(currentRole === 'pm' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
       </Route>
       
-      <Route path="/pm-dashboard">
-        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
-      </Route>
-      
-      <Route path="/operations-dashboard">
-        {(currentRole === 'operations_ksa' || currentRole === 'operations_uae' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
-      </Route>
-      
       <Route path="/operations">
         {(currentRole === 'operations_ksa' || currentRole === 'operations_uae' || typedUser?.role === 'admin') ? <OperationsDashboard /> : <NotFound />}
       </Route>
