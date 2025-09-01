@@ -98,20 +98,21 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
   const navigationItems = getNavigationItems();
 
   const isActive = (href: string) => {
+    const currentParams = new URLSearchParams(window.location.search);
+    const currentTab = currentParams.get('tab');
+    const [currentBasePath] = location.split('?');
+    
     if (href.includes('?')) {
       // For URLs with query parameters, check exact match including params
-      const currentParams = new URLSearchParams(window.location.search);
       const hrefParams = new URLSearchParams(href.split('?')[1] || '');
-      const currentTab = currentParams.get('tab');
       const hrefTab = hrefParams.get('tab');
-      
-      const [currentBasePath] = location.split('?');
       const [hrefBasePath] = href.split('?');
       
-      // Check if base paths match and tabs match (or both are null for dashboard)
       return currentBasePath === hrefBasePath && currentTab === hrefTab;
+    } else {
+      // For URLs without query parameters (like dashboard), only match if no tab is active
+      return location === href && !currentTab;
     }
-    return location === href || location.startsWith(href);
   };
 
   return (
