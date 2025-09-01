@@ -1,442 +1,481 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import ModernLayout from "@/components/ModernLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, ChevronsUpDown } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { insertTravelRequestSchema } from "@shared/schema";
-import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { format } from "date-fns";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import type { User } from "@shared/schema";
 
-// Travel Request Form Component
-function TravelRequestForm() {
+const requestSchema = z.object({
+  travelerId: z.string().min(1, "Please select a traveler"),
+  origin: z.string().min(1, "Origin is required"),
+  destination: z.string().min(1, "Destination is required"),
+  departureDate: z.string().min(1, "Departure date is required"),
+  returnDate: z.string().min(1, "Return date is required"),
+  purpose: z.enum(["delivery", "sales", "event", "other"]),
+  projectId: z.string().optional(),
+  customPurpose: z.string().optional(),
+  estimatedFlightCost: z.string().optional(),
+  estimatedHotelCost: z.string().optional(),
+  estimatedOtherCost: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+type RequestForm = z.infer<typeof requestSchema>;
+
+export default function PMNewRequest() {
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [travelerSearchOpen, setTravelerSearchOpen] = useState(false);
+  const [projectSearchOpen, setProjectSearchOpen] = useState(false);
+  const [showCustomPurpose, setShowCustomPurpose] = useState(false);
 
-  // Form validation schema
-  const formSchema = insertTravelRequestSchema.pick({
-    travelerId: true,
-    projectId: true,
-    origin: true,
-    destination: true,
-    purpose: true,
-    customPurpose: true,
-    notes: true,
-  }).extend({
-    projectId: z.string().optional(),
-    customPurpose: z.string().optional(),
-    departureDate: z.string().min(1, "Start date is required"),
-    returnDate: z.string().min(1, "End date is required"),
-  });
-
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const form = useForm<RequestForm>({
+    resolver: zodResolver(requestSchema),
     defaultValues: {
       travelerId: "",
-      projectId: "",
       origin: "",
       destination: "",
       departureDate: "",
       returnDate: "",
-      purpose: "",
+      purpose: "delivery",
+      projectId: "",
       customPurpose: "",
+      estimatedFlightCost: "",
+      estimatedHotelCost: "",
+      estimatedOtherCost: "",
       notes: "",
     },
   });
 
-  // Watch purpose field to conditionally show project and custom purpose fields
-  const selectedPurpose = form.watch("purpose");
-  
-  // State for controlling employee dropdown
-  const [employeeOpen, setEmployeeOpen] = useState(false);
+  const purposeValue = form.watch("purpose");
 
-  // Fetch projects for dropdown
-  const { data: projects = [] } = useQuery<any[]>({
-    queryKey: ["/api/zoho/projects"],
-    retry: false,
-  });
-
-  // Fetch employees for dropdown
-  const { data: employees = [] } = useQuery<any[]>({
+  // Fetch users for traveler selection
+  const { data: users } = useQuery({
     queryKey: ["/api/zoho/users"],
-    retry: false,
   });
 
-  // Departure date
-  const [departureDate, setDepartureDate] = useState<Date>();
-  const [departureDateOpen, setDepartureDateOpen] = useState(false);
+  // Fetch projects
+  const { data: projects } = useQuery({
+    queryKey: ["/api/zoho/projects"],
+  });
 
-  // Return date  
-  const [returnDate, setReturnDate] = useState<Date>();
-  const [returnDateOpen, setReturnDateOpen] = useState(false);
-
-  // Project combobox state
-  const [projectOpen, setProjectOpen] = useState(false);
-
-  // Submit mutation
-  const createRequestMutation = useMutation({
-    mutationFn: async (data: any) => {
-      return apiRequest("POST", "/api/travel-requests", data);
+  const submitRequestMutation = useMutation({
+    mutationFn: async (data: RequestForm) => {
+      return await apiRequest("POST", "/api/travel-requests", data);
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Travel request submitted successfully!",
+        description: "Travel request submitted successfully",
       });
       form.reset();
-      setDepartureDate(undefined);
-      setReturnDate(undefined);
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to submit travel request",
+        description: error.message || "Failed to submit travel request",
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = (data: any) => {
-    const submitData = {
-      ...data,
-      departureDate: departureDate?.toISOString(),
-      returnDate: returnDate?.toISOString(),
-    };
-    createRequestMutation.mutate(submitData);
+  const onSubmit = (data: RequestForm) => {
+    submitRequestMutation.mutate(data);
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-      <CardHeader>
-        <CardTitle className="text-gray-900 dark:text-white">New Travel Request</CardTitle>
-        <CardDescription className="text-gray-600 dark:text-gray-300">
-          Submit a new travel request for approval
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Employee Selection */}
-            <FormField
-              control={form.control}
-              name="travelerId"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="text-gray-900 dark:text-white">Traveler *</FormLabel>
-                  <Popover open={employeeOpen} onOpenChange={setEmployeeOpen}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "justify-between text-gray-900 dark:text-white bg-white dark:bg-gray-800",
-                            !field.value && "text-gray-500 dark:text-gray-400"
-                          )}
-                        >
-                          {field.value
-                            ? employees.find((employee) => employee.id === field.value)?.firstName + " " + employees.find((employee) => employee.id === field.value)?.lastName
-                            : "Select traveler..."}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="p-0 bg-white dark:bg-gray-800">
-                      <Command>
-                        <CommandInput placeholder="Search employees..." className="text-gray-900 dark:text-white" />
-                        <CommandEmpty className="text-gray-600 dark:text-gray-300">No employee found.</CommandEmpty>
-                        <CommandGroup>
-                          {employees.map((employee) => (
-                            <CommandItem
-                              key={employee.id}
-                              value={employee.id}
-                              onSelect={(currentValue) => {
-                                form.setValue("travelerId", currentValue === field.value ? "" : currentValue);
-                                setEmployeeOpen(false);
-                              }}
-                              className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                              {employee.firstName} {employee.lastName} - {employee.email}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Purpose */}
-            <FormField
-              control={form.control}
-              name="purpose"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-900 dark:text-white">Purpose *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                        <SelectValue placeholder="Select travel purpose" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="bg-white dark:bg-gray-800">
-                      <SelectItem value="Client Meeting" className="text-gray-900 dark:text-white">Client Meeting</SelectItem>
-                      <SelectItem value="Sales Activities" className="text-gray-900 dark:text-white">Sales Activities</SelectItem>
-                      <SelectItem value="Training" className="text-gray-900 dark:text-white">Training</SelectItem>
-                      <SelectItem value="Project Management" className="text-gray-900 dark:text-white">Project Management</SelectItem>
-                      <SelectItem value="Other" className="text-gray-900 dark:text-white">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Project Selection - Show if purpose involves client work */}
-            {(selectedPurpose === "Client Meeting" || selectedPurpose === "Project Management") && (
-              <FormField
-                control={form.control}
-                name="projectId"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel className="text-gray-900 dark:text-white">Project</FormLabel>
-                    <Popover open={projectOpen} onOpenChange={setProjectOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "justify-between text-gray-900 dark:text-white bg-white dark:bg-gray-800",
-                              !field.value && "text-gray-500 dark:text-gray-400"
-                            )}
-                          >
-                            {field.value
-                              ? projects.find((project) => String(project.id) === field.value)?.name
-                              : "Select project..."}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0 bg-white dark:bg-gray-800">
-                        <Command>
-                          <CommandInput placeholder="Search projects..." className="text-gray-900 dark:text-white" />
-                          <CommandEmpty className="text-gray-600 dark:text-gray-300">No project found.</CommandEmpty>
-                          <CommandGroup>
-                            {projects.map((project) => (
-                              <CommandItem
-                                key={project.id}
-                                value={String(project.id)}
-                                onSelect={(currentValue) => {
-                                  form.setValue("projectId", currentValue === field.value ? "" : currentValue);
-                                  setProjectOpen(false);
-                                }}
-                                className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                {project.name}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {/* Custom Purpose - Show if purpose is "Other" */}
-            {selectedPurpose === "Other" && (
-              <FormField
-                control={form.control}
-                name="customPurpose"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Custom Purpose *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Describe your travel purpose" 
-                        {...field} 
-                        className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {/* Origin */}
-            <FormField
-              control={form.control}
-              name="origin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-900 dark:text-white">Origin *</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Where are you traveling from?" 
-                      {...field} 
-                      className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Destination */}
-            <FormField
-              control={form.control}
-              name="destination"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-900 dark:text-white">Destination *</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Where are you traveling to?" 
-                      {...field} 
-                      className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Date Selection */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Departure Date */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900 dark:text-white">Departure Date *</label>
-                <Popover open={departureDateOpen} onOpenChange={setDepartureDateOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal bg-white dark:bg-gray-800 text-gray-900 dark:text-white",
-                        !departureDate && "text-gray-500 dark:text-gray-400"
-                      )}
-                    >
-                      {departureDate ? format(departureDate, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={departureDate}
-                      onSelect={(date) => {
-                        setDepartureDate(date);
-                        form.setValue("departureDate", date?.toISOString() || "");
-                        setDepartureDateOpen(false);
-                      }}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {/* Return Date */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900 dark:text-white">Return Date *</label>
-                <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal bg-white dark:bg-gray-800 text-gray-900 dark:text-white",
-                        !returnDate && "text-gray-500 dark:text-gray-400"
-                      )}
-                    >
-                      {returnDate ? format(returnDate, "PPP") : "Pick a date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={returnDate}
-                      onSelect={(date) => {
-                        setReturnDate(date);
-                        form.setValue("returnDate", date?.toISOString() || "");
-                        setReturnDateOpen(false);
-                      }}
-                      disabled={(date) => date < (departureDate || new Date())}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-
-            {/* Notes */}
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-900 dark:text-white">Additional Notes</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Any additional information or special requirements"
-                      className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button 
-              type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-              disabled={createRequestMutation.isPending}
-            >
-              {createRequestMutation.isPending ? "Submitting..." : "Submit Travel Request"}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
-  );
-}
-
-export default function PMNewRequest() {
-  return (
     <ProtectedRoute allowedRoles={["manager"]}>
       <ModernLayout currentRole="manager">
-        <div className="p-8 space-y-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <PlusCircle className="w-8 h-8 text-blue-600" />
-              Submit New Travel Request
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Complete the form below to submit a new travel request for approval
-            </p>
-          </div>
-          <div className="max-w-4xl">
-            <TravelRequestForm />
+        <div className="p-8">
+          <div className="max-w-4xl mx-auto">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <PlusCircle className="w-8 h-8 text-blue-600" />
+                Submit New Travel Request
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Create a new travel request for team members
+              </p>
+            </div>
+
+            {/* Form */}
+            <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Travel Request Details</CardTitle>
+                <CardDescription>
+                  Fill out all required information for the travel request
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Traveler Selection */}
+                    <FormField
+                      control={form.control}
+                      name="travelerId"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Traveler *</FormLabel>
+                          <Popover open={travelerSearchOpen} onOpenChange={setTravelerSearchOpen}>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={travelerSearchOpen}
+                                  className={cn(
+                                    "w-full justify-between",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value
+                                    ? (() => {
+                                        const selectedUser = users?.find((user: any) => user.id === field.value);
+                                        if (!selectedUser) return "Select traveler...";
+                                        return `${selectedUser.firstName || ''} ${selectedUser.lastName || ''}`.trim() || selectedUser.email || 'Unknown User';
+                                      })()
+                                    : "Select traveler..."}
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0" align="start">
+                              <Command>
+                                <CommandInput placeholder="Search travelers..." className="h-9" />
+                                <CommandList>
+                                  <CommandEmpty>No traveler found.</CommandEmpty>
+                                  <CommandGroup>
+                                    {users?.map((travelerUser: any) => (
+                                      <CommandItem
+                                        key={travelerUser.id}
+                                        value={`${travelerUser.firstName || ''} ${travelerUser.lastName || ''} ${travelerUser.email || ''}`}
+                                        onSelect={() => {
+                                          field.onChange(travelerUser.id);
+                                          setTravelerSearchOpen(false);
+                                        }}
+                                      >
+                                        <div className="flex flex-col">
+                                          <span className="font-medium">
+                                            {`${travelerUser.firstName || ''} ${travelerUser.lastName || ''}`.trim() || travelerUser.email || 'Unknown User'}
+                                          </span>
+                                          {travelerUser.email && (
+                                            <span className="text-sm text-muted-foreground">
+                                              {travelerUser.email}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <Check
+                                          className={cn(
+                                            "ml-auto h-4 w-4",
+                                            field.value === travelerUser.id ? "opacity-100" : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Travel Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="origin"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Origin *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter departure city" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="destination"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Destination *</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter destination city" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="departureDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Departure Date *</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                min={new Date().toISOString().split('T')[0]}
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="returnDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Return Date *</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                min={form.watch("departureDate") || new Date().toISOString().split('T')[0]}
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Purpose */}
+                    <FormField
+                      control={form.control}
+                      name="purpose"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Purpose *</FormLabel>
+                          <Select 
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              setShowCustomPurpose(value === "other");
+                              if (value !== "delivery") {
+                                form.setValue("projectId", "");
+                              }
+                            }} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select purpose..." />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="delivery">Delivery</SelectItem>
+                              <SelectItem value="sales">Sales</SelectItem>
+                              <SelectItem value="event">Event</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Custom Purpose */}
+                    {showCustomPurpose && (
+                      <FormField
+                        control={form.control}
+                        name="customPurpose"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Custom Purpose</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Please specify the purpose..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {/* Project Selection - Only for Delivery */}
+                    {purposeValue === "delivery" && (
+                      <FormField
+                        control={form.control}
+                        name="projectId"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Project</FormLabel>
+                            <Popover open={projectSearchOpen} onOpenChange={setProjectSearchOpen}>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={projectSearchOpen}
+                                    className={cn(
+                                      "w-full justify-between",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value
+                                      ? (() => {
+                                          const selectedProject = projects?.find((project: any) => String(project.id) === field.value);
+                                          return selectedProject?.name || "Select project...";
+                                        })()
+                                      : "Select project..."}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-full p-0" align="start">
+                                <Command>
+                                  <CommandInput placeholder="Search projects..." className="h-9" />
+                                  <CommandList>
+                                    <CommandEmpty>No project found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {projects?.map((project: any) => (
+                                        <CommandItem
+                                          key={project.id}
+                                          value={project.name}
+                                          onSelect={() => {
+                                            field.onChange(String(project.id));
+                                            setProjectSearchOpen(false);
+                                          }}
+                                        >
+                                          <div className="flex flex-col">
+                                            <span className="font-medium">{project.name}</span>
+                                            {project.description && (
+                                              <span className="text-sm text-muted-foreground">
+                                                {project.description}
+                                              </span>
+                                            )}
+                                          </div>
+                                          <Check
+                                            className={cn(
+                                              "ml-auto h-4 w-4",
+                                              field.value === String(project.id) ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {/* Cost Estimates */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="estimatedFlightCost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Estimated Flight Cost</FormLabel>
+                            <FormControl>
+                              <Input placeholder="0.00" type="number" step="0.01" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="estimatedHotelCost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Estimated Hotel Cost</FormLabel>
+                            <FormControl>
+                              <Input placeholder="0.00" type="number" step="0.01" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="estimatedOtherCost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Estimated Other Cost</FormLabel>
+                            <FormControl>
+                              <Input placeholder="0.00" type="number" step="0.01" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Notes */}
+                    <FormField
+                      control={form.control}
+                      name="notes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Additional Notes</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Any additional information or special requests..."
+                              rows={4}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Submit Button */}
+                    <div className="flex justify-end space-x-4 pt-6">
+                      <Button 
+                        type="button" 
+                        variant="outline"
+                        onClick={() => form.reset()}
+                      >
+                        Clear Form
+                      </Button>
+                      <Button 
+                        type="submit" 
+                        disabled={submitRequestMutation.isPending}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        {submitRequestMutation.isPending ? "Submitting..." : "Submit Request"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </ModernLayout>
