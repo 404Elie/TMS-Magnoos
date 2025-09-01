@@ -719,61 +719,65 @@ export default function OperationsDashboard() {
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Active Bookings */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
-                  <div className="flex items-center justify-between">
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6, #1d4ed8)', minHeight: '120px' }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                  <div className="flex items-center justify-between relative z-10">
                     <div>
-                      <p className="text-sm font-medium text-white/80">Active {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Bookings</p>
+                      <p className="text-sm font-medium text-white/90">Active {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Bookings</p>
                       <p className="text-3xl font-bold text-white mt-1">
                         {statsLoading ? "..." : stats?.activeBookings || 0}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <Calendar className="w-6 h-6 text-blue-600" />
+                      <Calendar className="w-6 h-6 text-[#2563eb]" />
                     </div>
                   </div>
                 </div>
                 
                 {/* Monthly Spend */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
-                  <div className="flex items-center justify-between">
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #7c3aed, #8b5cf6, #6d28d9)', minHeight: '120px' }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                  <div className="flex items-center justify-between relative z-10">
                     <div>
-                      <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Monthly Spend</p>
+                      <p className="text-sm font-medium text-white/90">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Monthly Spend</p>
                       <p className="text-3xl font-bold text-white mt-1">
                         {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <DollarSign className="w-6 h-6 text-blue-600" />
+                      <DollarSign className="w-6 h-6 text-[#7c3aed]" />
                     </div>
                   </div>
                 </div>
                 
                 {/* Pending Tasks */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
-                  <div className="flex items-center justify-between">
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444, #b91c1c)', minHeight: '120px' }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                  <div className="flex items-center justify-between relative z-10">
                     <div>
-                      <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Pending Tasks</p>
+                      <p className="text-sm font-medium text-white/90">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Pending Tasks</p>
                       <p className="text-3xl font-bold text-white mt-1">
                         {statsLoading ? "..." : stats?.pendingTasks || 0}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <AlertTriangle className="w-6 h-6 text-blue-600" />
+                      <AlertTriangle className="w-6 h-6 text-[#dc2626]" />
                     </div>
                   </div>
                 </div>
                 
                 {/* Completion Rate */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', minHeight: '120px' }}>
-                  <div className="flex items-center justify-between">
+                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #1f2937, #374151, #111827)', minHeight: '120px' }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+                  <div className="flex items-center justify-between relative z-10">
                     <div>
-                      <p className="text-sm font-medium text-white/80">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Completion Rate</p>
+                      <p className="text-sm font-medium text-white/90">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Completion Rate</p>
                       <p className="text-3xl font-bold text-white mt-1">
                         {statsLoading ? "..." : `${stats?.completionRate || '95'}%`}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <Check className="w-6 h-6 text-blue-600" />
+                      <Check className="w-6 h-6 text-[#10b981]" />
                     </div>
                   </div>
                 </div>

@@ -36,17 +36,18 @@ export default function ManagerDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Total Requests */}
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-white/80">Total Requests</p>
+                  <p className="text-sm font-medium text-white/90">Total Requests</p>
                   <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : stats?.totalRequests || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <Plane className="w-6 h-6 text-[#0032FF]" />
+                  <Plane className="w-6 h-6 text-[#2563eb]" />
                 </div>
               </div>
             </CardContent>
@@ -54,17 +55,18 @@ export default function ManagerDashboard() {
 
           {/* Pending Approvals */}
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-white/80">Pending Approvals</p>
+                  <p className="text-sm font-medium text-white/90">Pending Approvals</p>
                   <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : stats?.pendingRequests || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <Clock className="w-6 h-6 text-[#0032FF]" />
+                  <Clock className="w-6 h-6 text-[#7c3aed]" />
                 </div>
               </div>
             </CardContent>
@@ -72,17 +74,18 @@ export default function ManagerDashboard() {
 
           {/* Approved This Month */}
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-white/80">Approved</p>
+                  <p className="text-sm font-medium text-white/90">Approved</p>
                   <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : stats?.approvedRequests || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <Check className="w-6 h-6 text-[#0032FF]" />
+                  <Check className="w-6 h-6 text-[#16a34a]" />
                 </div>
               </div>
             </CardContent>
@@ -90,17 +93,18 @@ export default function ManagerDashboard() {
 
           {/* Completed */}
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-white/80">Completed</p>
+                  <p className="text-sm font-medium text-white/90">Completed</p>
                   <p className="text-3xl font-bold text-white mt-1">
                     {statsLoading ? "..." : stats?.completedRequests || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <Flag className="w-6 h-6 text-[#0032FF]" />
+                  <Flag className="w-6 h-6 text-[#0ea5e9]" />
                 </div>
               </div>
             </CardContent>

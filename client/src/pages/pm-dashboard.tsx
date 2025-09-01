@@ -500,8 +500,9 @@ export default function PMDashboard() {
             <TabsContent value="dashboard" className="space-y-8 bg-transparent">
               {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
-                  <CardContent className="p-6">
+                <Card className="bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] border-none shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                  <CardContent className="p-6 relative z-10">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-white/90">My Requests</p>
@@ -510,14 +511,15 @@ export default function PMDashboard() {
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Clock className="w-7 h-7 text-[#0032FF]" />
+                        <Clock className="w-7 h-7 text-[#2563eb]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
-                  <CardContent className="p-6">
+                <Card className="bg-gradient-to-br from-[#059669] via-[#10b981] to-[#047857] border-none shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                  <CardContent className="p-6 relative z-10">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-white/90">Approved</p>
@@ -526,14 +528,15 @@ export default function PMDashboard() {
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-7 h-7 text-[#0032FF]" />
+                        <Check className="w-7 h-7 text-[#059669]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
-                  <CardContent className="p-6">
+                <Card className="bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] border-none shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                  <CardContent className="p-6 relative z-10">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-white/90">Pending</p>
@@ -542,14 +545,15 @@ export default function PMDashboard() {
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <TrendingUp className="w-7 h-7 text-[#0032FF]" />
+                        <TrendingUp className="w-7 h-7 text-[#dc2626]" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card className="bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] border-[#0032FF] shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105">
-                  <CardContent className="p-6">
+                <Card className="bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] border-none shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+                  <CardContent className="p-6 relative z-10">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-white/90">Completed</p>
@@ -558,7 +562,7 @@ export default function PMDashboard() {
                         </p>
                       </div>
                       <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-7 h-7 text-[#0032FF]" />
+                        <Check className="w-7 h-7 text-[#10b981]" />
                       </div>
                     </div>
                   </CardContent>
