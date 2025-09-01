@@ -162,18 +162,53 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
             <FormItem>
               <FormLabel>Employee</FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select employee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {users?.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {user.firstName} {user.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? users?.find((user) => user.id === field.value)?.firstName + " " + users?.find((user) => user.id === field.value)?.lastName
+                        : "Search and select employee..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search employees..." />
+                      <CommandEmpty>No employee found.</CommandEmpty>
+                      <CommandGroup className="max-h-64 overflow-auto">
+                        {users?.map((user) => (
+                          <CommandItem
+                            key={user.id}
+                            value={`${user.firstName} ${user.lastName}`}
+                            onSelect={() => {
+                              field.onChange(user.id);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                user.id === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {user.firstName} {user.lastName}
+                            <span className="ml-auto text-xs text-gray-500">
+                              {user.email}
+                            </span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </FormControl>
               <FormMessage />
             </FormItem>
