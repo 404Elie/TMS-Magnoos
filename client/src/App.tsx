@@ -21,6 +21,9 @@ import MyRequests from "@/pages/manager/my-requests";
 import Budget from "@/pages/manager/budget";
 import Reports from "@/pages/manager/reports";
 import OperationsProgress from "@/pages/manager/operations-progress";
+// Project Manager Pages  
+import PMNewRequest from "@/pages/pm-new-request";
+import PMMyRequests from "@/pages/pm-my-requests";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import type { User } from "@shared/schema";
@@ -134,6 +137,18 @@ function Router() {
       
       <Route path="/manager/operations-progress">
         {(currentRole === 'pm' || typedUser?.role === 'admin') ? <OperationsProgress /> : <NotFound />}
+      </Route>
+      
+      <Route path="/pm-dashboard">
+        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <PMDashboard /> : <NotFound />}
+      </Route>
+      
+      <Route path="/pm-new-request">
+        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <PMNewRequest /> : <NotFound />}
+      </Route>
+      
+      <Route path="/pm-my-requests">
+        {(currentRole === 'manager' || typedUser?.role === 'admin') ? <PMMyRequests /> : <NotFound />}
       </Route>
       
       <Route path="/pm">

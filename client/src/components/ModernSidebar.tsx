@@ -79,8 +79,8 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
     } else if (activeRole === 'manager') {
       return [
         { icon: LayoutDashboard, label: "Dashboard", href: "/pm-dashboard", section: "main" },
-        { icon: PlusCircle, label: "New Request", href: "/pm-dashboard?tab=new-request", section: "main" },
-        { icon: Calendar, label: "My Requests", href: "/pm-dashboard?tab=my-requests", section: "main" },
+        { icon: PlusCircle, label: "New Request", href: "/pm-new-request", section: "main" },
+        { icon: Calendar, label: "My Requests", href: "/pm-my-requests", section: "main" },
       ];
     } else if (activeRole === 'operations_ksa' || activeRole === 'operations_uae') {
       return [
