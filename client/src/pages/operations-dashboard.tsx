@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -67,33 +67,24 @@ import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget,
 
 export default function OperationsDashboard() {
   const [location] = useLocation();
+  const search = useSearch();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
   // Determine which tab to show based on URL or default
   const getActiveView = () => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(search);
     return params.get('tab') || 'dashboard';
   };
   
   const [activeTab, setActiveTab] = useState(getActiveView());
   
-  // Update activeTab when URL changes
+  // Update activeTab when search parameters change
   useEffect(() => {
     const newActiveView = getActiveView();
     setActiveTab(newActiveView);
-  }, [location]);
-  
-  // Also listen for browser navigation changes
-  useEffect(() => {
-    const handlePopState = () => {
-      setActiveTab(getActiveView());
-    };
-    
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [search]);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
