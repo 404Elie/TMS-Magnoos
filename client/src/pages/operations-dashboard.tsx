@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -78,6 +78,11 @@ export default function OperationsDashboard() {
   };
   
   const [activeTab, setActiveTab] = useState(getActiveView());
+  
+  // Update activeTab when URL changes
+  useEffect(() => {
+    setActiveTab(getActiveView());
+  }, [location]);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
@@ -727,7 +732,7 @@ export default function OperationsDashboard() {
                       {statsLoading ? "..." : stats?.activeBookings || 0}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
                     <Calendar className="w-6 h-6 text-[#2563eb]" />
                   </div>
                 </div>
@@ -746,7 +751,7 @@ export default function OperationsDashboard() {
                       {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
                     <DollarSign className="w-6 h-6 text-[#7c3aed]" />
                   </div>
                 </div>
@@ -755,8 +760,8 @@ export default function OperationsDashboard() {
             
             {/* Pending Tasks */}
             <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] opacity-95"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
               <CardContent className="relative p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
@@ -765,7 +770,7 @@ export default function OperationsDashboard() {
                       {statsLoading ? "..." : stats?.pendingTasks || 0}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
                     <AlertTriangle className="w-6 h-6 text-[#dc2626]" />
                   </div>
                 </div>
@@ -774,8 +779,8 @@ export default function OperationsDashboard() {
             
             {/* Completion Rate */}
             <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
               <CardContent className="relative p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
@@ -784,8 +789,8 @@ export default function OperationsDashboard() {
                       {statsLoading ? "..." : `${stats?.completionRate || '95'}%`}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                    <CheckSquare className="w-6 h-6 text-[#10b981]" />
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <CheckSquare className="w-6 h-6 text-[#0ea5e9]" />
                   </div>
                 </div>
               </CardContent>
@@ -834,25 +839,25 @@ export default function OperationsDashboard() {
                 <CardTitle className="text-gray-900 dark:text-white">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700" asChild>
+                <Button className="w-full justify-start bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600" asChild>
                   <Link href="/operations-dashboard?tab=bookings">
                     <Bed className="w-4 h-4 mr-2" />
                     Manage Bookings
                   </Link>
                 </Button>
-                <Button className="w-full justify-start bg-purple-600 hover:bg-purple-700" asChild>
+                <Button className="w-full justify-start bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600" asChild>
                   <Link href="/operations-dashboard?tab=documents">
                     <FileText className="w-4 h-4 mr-2" />
                     Document Management
                   </Link>
                 </Button>
-                <Button className="w-full justify-start bg-green-600 hover:bg-green-700" asChild>
+                <Button className="w-full justify-start bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600" asChild>
                   <Link href="/operations-dashboard?tab=budget-person">
                     <Users className="w-4 h-4 mr-2" />
                     Budget by Person
                   </Link>
                 </Button>
-                <Button className="w-full justify-start bg-orange-600 hover:bg-orange-700" asChild>
+                <Button className="w-full justify-start bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600" asChild>
                   <Link href="/operations-dashboard?tab=budget-project">
                     <BarChart3 className="w-4 h-4 mr-2" />
                     Budget by Project
