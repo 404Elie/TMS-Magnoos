@@ -113,7 +113,7 @@ export default function ManagerDashboard() {
 
         {/* Hero Analytics Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Travel Management Hero */}
+          {/* Active Operations Hub */}
           <Card className="relative overflow-hidden border-none shadow-2xl col-span-1 lg:col-span-1 h-48">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827]"></div>
             <div className="absolute inset-0 opacity-20">
@@ -134,42 +134,46 @@ export default function ManagerDashboard() {
             </div>
             <CardContent className="relative p-6 h-full flex flex-col justify-between text-white">
               <div>
-                <h3 className="text-xl font-bold mb-2">Travel Hub</h3>
-                <p className="text-white/80 text-sm">Managing Operations</p>
+                <h3 className="text-xl font-bold mb-2">Active Operations</h3>
+                <p className="text-white/80 text-sm">
+                  {statsLoading ? "Loading..." : `${stats?.totalRequests || 0} Travelers • ${stats?.pendingApprovals || 0} Pending`}
+                </p>
               </div>
               <div className="flex gap-3">
                 <button className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium hover:bg-white/30 transition-all">
-                  Core View
+                  View Details
                 </button>
                 <button className="px-4 py-2 bg-white rounded-lg text-sm font-medium text-gray-900 hover:bg-white/90 transition-all">
-                  Core View
+                  Manage
                 </button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Budget Analytics */}
+          {/* Monthly Budget */}
           <Card className="relative overflow-hidden border-none shadow-2xl h-48">
             <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8]"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
             <CardContent className="relative p-6 h-full flex flex-col justify-between text-white">
               <div>
-                <h3 className="text-4xl font-bold">4750</h3>
-                <p className="text-white/90 text-sm mt-1">Spendings</p>
+                <h3 className="text-4xl font-bold">
+                  ${statsLoading ? "..." : "75,400"}
+                </h3>
+                <p className="text-white/90 text-sm mt-1">Monthly Budget Used</p>
               </div>
               <div className="flex gap-3">
                 <button className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium hover:bg-white/30 transition-all flex items-center gap-2">
                   <DollarSign className="w-4 h-4" />
-                  Core View
+                  Budget Details
                 </button>
                 <button className="px-4 py-2 bg-white rounded-lg text-sm font-medium text-gray-900 hover:bg-white/90 transition-all">
-                  Core View
+                  Reports
                 </button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Performance Analytics */}
+          {/* Approval Efficiency */}
           <Card className="relative overflow-hidden border-none shadow-2xl h-48">
             <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827]"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
@@ -183,8 +187,10 @@ export default function ManagerDashboard() {
             </div>
             <CardContent className="relative p-6 h-full flex flex-col justify-between text-white">
               <div>
-                <h3 className="text-4xl font-bold">500%</h3>
-                <p className="text-white/90 text-sm mt-1">Simentics</p>
+                <h3 className="text-4xl font-bold">
+                  {statsLoading ? "..." : "94%"}
+                </h3>
+                <p className="text-white/90 text-sm mt-1">Approval Efficiency</p>
               </div>
             </CardContent>
           </Card>
@@ -192,59 +198,67 @@ export default function ManagerDashboard() {
 
         {/* Analytics Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Approval Rate */}
+          {/* Processing Time */}
           <Card className="relative overflow-hidden border-none shadow-xl bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] text-white">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6">
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2">34%</div>
-                <div className="text-white/80 text-sm">26NO</div>
+                <div className="text-3xl font-bold mb-2">
+                  {statsLoading ? "..." : "2.3"}
+                </div>
+                <div className="text-white/80 text-sm">Avg. Days Processing</div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Processing Efficiency */}
+          {/* Cost Efficiency */}
           <Card className="relative overflow-hidden border-none shadow-xl bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] text-white">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6">
               <div className="text-center">
-                <div className="text-3xl font-bold mb-2">96%</div>
-                <div className="text-white/80 text-sm">Analytics</div>
+                <div className="text-3xl font-bold mb-2">
+                  {statsLoading ? "..." : "87%"}
+                </div>
+                <div className="text-white/80 text-sm">Budget Efficiency</div>
               </div>
             </CardContent>
           </Card>
 
-          {/* System Health */}
+          {/* Operations Status */}
           <Card className="relative overflow-hidden border-none shadow-xl bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] text-white">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
             <CardContent className="relative p-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">Status</span>
+                  <span className="text-sm">System Status</span>
                 </div>
-                <div className="text-xl font-bold">300%</div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-white/20 rounded"></div>
-                  <span className="text-xs text-white/70">Revenue</span>
+                <div className="text-xl font-bold">
+                  {statsLoading ? "..." : `${(parseInt(stats?.approvedMonth || "0") / parseInt(stats?.totalRequests || "1") * 100).toFixed(0)}%`}
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-white/20 rounded"></div>
-                  <span className="text-xs text-white/70">300%</span>
+                  <span className="text-xs text-white/70">Operations KSA</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-white/20 rounded"></div>
+                  <span className="text-xs text-white/70">Operations UAE</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Activity Analytics */}
+          {/* Team Analytics */}
           <div className="space-y-4">
             <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-slate-600">
               <CardContent className="p-4">
                 <div className="flex justify-between items-center mb-3">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Analytics</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Team Performance</h4>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">340</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">#00322F</div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                  {statsLoading ? "..." : stats?.approvedMonth || "0"}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">This Month Approvals</div>
                 <div className="mt-3 h-8 bg-gray-100 dark:bg-slate-700 rounded flex items-center">
                   <div className="flex space-x-1 px-2">
                     <div className="w-1 h-4 bg-blue-400 rounded"></div>
@@ -263,20 +277,20 @@ export default function ManagerDashboard() {
             <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-slate-600">
               <CardContent className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Recent Activity</h4>
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Team Activity</h4>
                 </div>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-300">Mertlems</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">12000</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Operations KSA</span>
+                    <span className="text-sm font-medium text-green-600">Excellent</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-300">Amato Spence</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">2500%</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Operations UAE</span>
+                    <span className="text-sm font-medium text-green-600">Good</span>
                   </div>
                 </div>
                 <button className="mt-3 px-3 py-1 bg-blue-600 text-white text-xs rounded-full hover:bg-blue-700 transition-all">
-                  Mehr
+                  View Reports
                 </button>
               </CardContent>
             </Card>
