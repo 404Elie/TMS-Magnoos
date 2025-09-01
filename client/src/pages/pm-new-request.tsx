@@ -29,9 +29,6 @@ const requestSchema = z.object({
   purpose: z.enum(["delivery", "sales", "event", "other"]),
   projectId: z.string().optional(),
   customPurpose: z.string().optional(),
-  estimatedFlightCost: z.string().optional(),
-  estimatedHotelCost: z.string().optional(),
-  estimatedOtherCost: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -56,9 +53,6 @@ export default function PMNewRequest() {
       purpose: "delivery",
       projectId: "",
       customPurpose: "",
-      estimatedFlightCost: "",
-      estimatedHotelCost: "",
-      estimatedOtherCost: "",
       notes: "",
     },
   });
@@ -391,50 +385,6 @@ export default function PMNewRequest() {
                       />
                     )}
 
-                    {/* Cost Estimates */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="estimatedFlightCost"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Estimated Flight Cost</FormLabel>
-                            <FormControl>
-                              <Input placeholder="0.00" type="number" step="0.01" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="estimatedHotelCost"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Estimated Hotel Cost</FormLabel>
-                            <FormControl>
-                              <Input placeholder="0.00" type="number" step="0.01" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="estimatedOtherCost"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Estimated Other Cost</FormLabel>
-                            <FormControl>
-                              <Input placeholder="0.00" type="number" step="0.01" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
 
                     {/* Notes */}
                     <FormField
