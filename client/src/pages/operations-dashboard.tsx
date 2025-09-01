@@ -69,6 +69,7 @@ import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget,
 function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'visa' | null, onClose: () => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isEmployeeDropdownOpen, setIsEmployeeDropdownOpen] = useState(false);
   
   type DocumentFormData = {
     userId: string;
@@ -162,7 +163,7 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
             <FormItem>
               <FormLabel>Employee</FormLabel>
               <FormControl>
-                <Popover>
+                <Popover open={isEmployeeDropdownOpen} onOpenChange={setIsEmployeeDropdownOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -189,6 +190,7 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
                             value={`${user.firstName} ${user.lastName}`}
                             onSelect={() => {
                               field.onChange(user.id);
+                              setIsEmployeeDropdownOpen(false);
                             }}
                           >
                             <Check
