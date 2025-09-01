@@ -697,9 +697,11 @@ export default function OperationsDashboard() {
     );
   }
 
-  return (
-    <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-      <ModernLayout currentRole="operations">
+  // Default dashboard view
+  if (activeTab === "dashboard") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
         <div className="p-8 space-y-8">
           {/* Header */}
           <div>
@@ -976,7 +978,11 @@ export default function OperationsDashboard() {
             </div>
           </DialogContent>
         </Dialog>
-      </ModernLayout>
-    </ProtectedRoute>
-  );
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
+
+  // Fallback - should not reach here
+  return null;
 }
