@@ -20,6 +20,7 @@ import Approvals from "@/pages/manager/approvals";
 import MyRequests from "@/pages/manager/my-requests";
 import Budget from "@/pages/manager/budget";
 import Reports from "@/pages/manager/reports";
+import OperationsProgress from "@/pages/manager/operations-progress";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import type { User } from "@shared/schema";
@@ -129,6 +130,10 @@ function Router() {
       
       <Route path="/manager/reports">
         {(currentRole === 'pm' || typedUser?.role === 'admin') ? <Reports /> : <NotFound />}
+      </Route>
+      
+      <Route path="/manager/operations-progress">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <OperationsProgress /> : <NotFound />}
       </Route>
       
       <Route path="/pm">

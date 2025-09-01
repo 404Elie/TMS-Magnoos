@@ -10,7 +10,8 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Globe2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -71,6 +72,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
         { icon: PlusCircle, label: "New Request", href: "/manager/new-request", section: "main" },
         { icon: CheckSquare, label: "Approvals", href: "/manager/approvals", section: "main" },
         { icon: Calendar, label: "My Requests", href: "/manager/my-requests", section: "main" },
+        { icon: Globe2, label: "Operations Progress", href: "/manager/operations-progress", section: "main" },
         { icon: DollarSign, label: "Budget", href: "/manager/budget", section: "reports" },
         { icon: FileText, label: "Reports", href: "/manager/reports", section: "reports" },
       ];
