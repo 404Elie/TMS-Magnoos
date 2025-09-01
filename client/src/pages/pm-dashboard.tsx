@@ -1,18 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Header from "@/components/Header";
+import ModernLayout from "@/components/ModernLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, Check, TrendingUp, ChevronsUpDown } from "lucide-react";
-import type { TravelRequestWithDetails } from "@shared/schema";
+import { Clock, Check, TrendingUp, ChevronsUpDown, Plane, CalendarIcon, PlusCircle } from "lucide-react";
+import type { TravelRequestWithDetails, User } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,9 +22,9 @@ import { insertTravelRequestSchema } from "@shared/schema";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useLocation } from "wouter";
 
 // Travel Request Form Component
 function TravelRequestForm() {
@@ -75,130 +74,234 @@ function TravelRequestForm() {
     retry: false,
   });
 
-  // Fetch Zoho users for employee dropdown
+  // Fetch employees for dropdown
   const { data: employees = [] } = useQuery<any[]>({
     queryKey: ["/api/zoho/users"],
     retry: false,
   });
 
+  // Departure date
+  const [departureDate, setDepartureDate] = useState<Date>();
+  const [departureDateOpen, setDepartureDateOpen] = useState(false);
+
+  // Return date  
+  const [returnDate, setReturnDate] = useState<Date>();
+  const [returnDateOpen, setReturnDateOpen] = useState(false);
+
+  // Project combobox state
+  const [projectOpen, setProjectOpen] = useState(false);
+
   // Submit mutation
-  const submitMutation = useMutation({
+  const createRequestMutation = useMutation({
     mutationFn: async (data: any) => {
-      // Convert string dates to Date objects for API
-      const payload = {
-        ...data,
-        departureDate: data.departureDate ? new Date(data.departureDate) : null,
-        returnDate: data.returnDate ? new Date(data.returnDate) : null,
-      };
-      const response = await apiRequest("POST", "/api/travel-requests", payload);
-      return response.json();
+      return apiRequest("POST", "/api/travel-requests", data);
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Travel request submitted successfully",
+        description: "Travel request submitted successfully!",
       });
+      form.reset();
+      setDepartureDate(undefined);
+      setReturnDate(undefined);
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
-      form.reset();
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to submit request",
+        description: error.response?.data?.message || "Failed to submit travel request",
         variant: "destructive",
       });
     },
   });
 
   const onSubmit = (data: any) => {
-    submitMutation.mutate(data);
+    const submitData = {
+      ...data,
+      departureDate: departureDate?.toISOString(),
+      returnDate: returnDate?.toISOString(),
+    };
+    createRequestMutation.mutate(submitData);
   };
 
   return (
-    <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
+    <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
       <CardHeader>
-        <CardTitle className="text-gray-900 dark:text-white">Submit Travel Request</CardTitle>
+        <CardTitle className="text-gray-900 dark:text-white">New Travel Request</CardTitle>
         <CardDescription className="text-gray-600 dark:text-gray-300">
-          Fill out the details for your travel request
+          Submit a new travel request for approval
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Employee Selection */}
+            {/* Employee Selection */}
+            <FormField
+              control={form.control}
+              name="travelerId"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-gray-900 dark:text-white">Traveler *</FormLabel>
+                  <Popover open={employeeOpen} onOpenChange={setEmployeeOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between text-gray-900 dark:text-white bg-white dark:bg-gray-800",
+                            !field.value && "text-gray-500 dark:text-gray-400"
+                          )}
+                        >
+                          {field.value
+                            ? employees.find((employee) => employee.id === field.value)?.firstName + " " + employees.find((employee) => employee.id === field.value)?.lastName
+                            : "Select traveler..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 bg-white dark:bg-gray-800">
+                      <Command>
+                        <CommandInput placeholder="Search employees..." className="text-gray-900 dark:text-white" />
+                        <CommandEmpty className="text-gray-600 dark:text-gray-300">No employee found.</CommandEmpty>
+                        <CommandGroup>
+                          {employees.map((employee) => (
+                            <CommandItem
+                              key={employee.id}
+                              value={employee.id}
+                              onSelect={(currentValue) => {
+                                form.setValue("travelerId", currentValue === field.value ? "" : currentValue);
+                                setEmployeeOpen(false);
+                              }}
+                              className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              {employee.firstName} {employee.lastName} - {employee.email}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Purpose */}
+            <FormField
+              control={form.control}
+              name="purpose"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-900 dark:text-white">Purpose *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                        <SelectValue placeholder="Select travel purpose" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-white dark:bg-gray-800">
+                      <SelectItem value="Client Meeting" className="text-gray-900 dark:text-white">Client Meeting</SelectItem>
+                      <SelectItem value="Sales Activities" className="text-gray-900 dark:text-white">Sales Activities</SelectItem>
+                      <SelectItem value="Training" className="text-gray-900 dark:text-white">Training</SelectItem>
+                      <SelectItem value="Project Management" className="text-gray-900 dark:text-white">Project Management</SelectItem>
+                      <SelectItem value="Other" className="text-gray-900 dark:text-white">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Project Selection - Show if purpose involves client work */}
+            {(selectedPurpose === "Client Meeting" || selectedPurpose === "Project Management") && (
               <FormField
                 control={form.control}
-                name="travelerId"
+                name="projectId"
                 render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
-                    <FormControl>
-                      <Popover open={employeeOpen} onOpenChange={setEmployeeOpen}>
-                        <PopoverTrigger asChild>
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-gray-900 dark:text-white">Project</FormLabel>
+                    <Popover open={projectOpen} onOpenChange={setProjectOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
                           <Button
                             variant="outline"
                             role="combobox"
-                            aria-expanded={employeeOpen}
-                            className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                            className={cn(
+                              "justify-between text-gray-900 dark:text-white bg-white dark:bg-gray-800",
+                              !field.value && "text-gray-500 dark:text-gray-400"
+                            )}
                           >
                             {field.value
-                              ? (() => {
-                                  const selectedEmp = employees?.find((emp: any) => emp.id === field.value);
-                                  return selectedEmp ? `${selectedEmp.firstName} ${selectedEmp.lastName} (${selectedEmp.email})` : "Select employee...";
-                                })()
-                              : "Select employee..."}
+                              ? projects.find((project) => String(project.id) === field.value)?.name
+                              : "Select project..."}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0 bg-white dark:bg-slate-700">
-                          <Command>
-                            <CommandInput placeholder="Search employees..." className="h-9" />
-                            <CommandEmpty>No employee found.</CommandEmpty>
-                            <CommandGroup className="max-h-60 overflow-y-auto">
-                              {employees?.map((emp: any) => (
-                                <CommandItem
-                                  key={emp.id}
-                                  value={`${emp.firstName} ${emp.lastName} ${emp.email}`}
-                                  onSelect={() => {
-                                    field.onChange(emp.id);
-                                    setEmployeeOpen(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      field.value === emp.id ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  {emp.firstName} {emp.lastName} ({emp.email})
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 bg-white dark:bg-gray-800">
+                        <Command>
+                          <CommandInput placeholder="Search projects..." className="text-gray-900 dark:text-white" />
+                          <CommandEmpty className="text-gray-600 dark:text-gray-300">No project found.</CommandEmpty>
+                          <CommandGroup>
+                            {projects.map((project) => (
+                              <CommandItem
+                                key={project.id}
+                                value={String(project.id)}
+                                onSelect={(currentValue) => {
+                                  form.setValue("projectId", currentValue === field.value ? "" : currentValue);
+                                  setProjectOpen(false);
+                                }}
+                                className="text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                              >
+                                {project.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {/* Custom Purpose - Show if purpose is "Other" */}
+            {selectedPurpose === "Other" && (
+              <FormField
+                control={form.control}
+                name="customPurpose"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-900 dark:text-white">Custom Purpose *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Describe the purpose of your travel"
+                        className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            )}
 
-
-
-              {/* Origin */}
+            {/* Travel Details Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="origin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Traveling From (Origin) *</FormLabel>
+                    <FormLabel className="text-gray-900 dark:text-white">Origin *</FormLabel>
                     <FormControl>
                       <Input
+                        placeholder="e.g., Riyadh, KSA"
+                        className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         {...field}
-                        placeholder="Enter departure location"
-                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
                       />
                     </FormControl>
                     <FormMessage />
@@ -206,189 +309,117 @@ function TravelRequestForm() {
                 )}
               />
 
-              {/* Destination */}
               <FormField
                 control={form.control}
                 name="destination"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Traveling To (Destination) *</FormLabel>
+                    <FormLabel className="text-gray-900 dark:text-white">Destination *</FormLabel>
                     <FormControl>
                       <Input
+                        placeholder="e.g., Dubai, UAE"
+                        className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                         {...field}
-                        placeholder="Enter destination"
-                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
 
-              {/* Start Date */}
+            {/* Date Selection */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="departureDate"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">Start Date *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="date" 
-                        value={field.value || ''}
-                        min={new Date().toISOString().split('T')[0]}
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          
-                          // Clear end date if it becomes invalid
-                          const returnDate = form.getValues("returnDate");
-                          if (returnDate && e.target.value) {
-                            const startDate = new Date(e.target.value);
-                            const endDate = new Date(returnDate);
-                            if (endDate <= startDate) {
-                              form.setValue("returnDate", "");
-                              toast({
-                                title: "End Date Cleared",
-                                description: "End date must be after start date",
-                                variant: "destructive",
-                              });
-                            }
-                          }
-                          
-                          if (e.target.value) {
-                            toast({
-                              title: "✓ Start Date Set",
-                              description: `Departure: ${new Date(e.target.value).toLocaleDateString()}`,
-                            });
-                          }
-                        }}
-                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                      />
-                    </FormControl>
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-gray-900 dark:text-white">Departure Date *</FormLabel>
+                    <Popover open={departureDateOpen} onOpenChange={setDepartureDateOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "pl-3 text-left font-normal bg-white dark:bg-gray-800 text-gray-900 dark:text-white",
+                              !departureDate && "text-gray-500 dark:text-gray-400"
+                            )}
+                          >
+                            {departureDate ? (
+                              format(departureDate, "PPP")
+                            ) : (
+                              <span>Pick departure date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={departureDate}
+                          onSelect={(date) => {
+                            setDepartureDate(date);
+                            form.setValue("departureDate", date?.toISOString() || "");
+                            setDepartureDateOpen(false);
+                          }}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* End Date */}
               <FormField
                 control={form.control}
                 name="returnDate"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-900 dark:text-white">End Date *</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="date" 
-                        value={field.value || ''}
-                        min={form.watch("departureDate") ? 
-                          new Date(new Date(form.watch("departureDate")).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : 
-                          new Date().toISOString().split('T')[0]
-                        }
-                        disabled={!form.watch("departureDate")}
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          
-                          if (e.target.value && form.watch("departureDate")) {
-                            const startDate = new Date(form.watch("departureDate"));
-                            const endDate = new Date(e.target.value);
-                            const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                            
-                            toast({
-                              title: "✓ End Date Set",
-                              description: `Return: ${endDate.toLocaleDateString()} (${diffDays} day${diffDays !== 1 ? 's' : ''} trip)`,
-                            });
-                          }
-                        }}
-                        className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Purpose */}
-              <FormField
-                control={form.control}
-                name="purpose"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col h-full">
-                    <FormLabel className="text-gray-900 dark:text-white">Purpose *</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                          <SelectValue placeholder="Select purpose" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-slate-700">
-                          <SelectItem value="delivery">Delivery</SelectItem>
-                          <SelectItem value="sales">Sales</SelectItem>
-                          <SelectItem value="event">Event</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Project Selection - Only show when purpose is "delivery" */}
-              {selectedPurpose === "delivery" && (
-                <FormField
-                  control={form.control}
-                  name="projectId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-white">Project *</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                            <SelectValue placeholder="Select project" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-slate-700">
-                            {projects?.map((project: any) => (
-                              <SelectItem key={project.id} value={project.id.toString()}>
-                                {project.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {/* Custom Purpose - Only show when purpose is "other" */}
-              {selectedPurpose === "other" && (
-                <FormField
-                  control={form.control}
-                  name="customPurpose"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-white">Specify Purpose *</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Please specify the purpose of travel"
-                          className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-gray-900 dark:text-white">Return Date *</FormLabel>
+                    <Popover open={returnDateOpen} onOpenChange={setReturnDateOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "pl-3 text-left font-normal bg-white dark:bg-gray-800 text-gray-900 dark:text-white",
+                              !returnDate && "text-gray-500 dark:text-gray-400"
+                            )}
+                          >
+                            {returnDate ? (
+                              format(returnDate, "PPP")
+                            ) : (
+                              <span>Pick return date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={returnDate}
+                          onSelect={(date) => {
+                            setReturnDate(date);
+                            form.setValue("returnDate", date?.toISOString() || "");
+                            setReturnDateOpen(false);
+                          }}
+                          disabled={(date) => date < (departureDate || new Date())}
+                          initialFocus
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-
-
-
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            {/* Notes */}
+            {/* Additional Notes */}
             <FormField
               control={form.control}
               name="notes"
@@ -397,10 +428,9 @@ function TravelRequestForm() {
                   <FormLabel className="text-gray-900 dark:text-white">Additional Notes</FormLabel>
                   <FormControl>
                     <Textarea
+                      placeholder="Any special requirements or additional information..."
+                      className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       {...field}
-                      placeholder="Any additional information or special requests..."
-                      rows={4}
-                      className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
                     />
                   </FormControl>
                   <FormMessage />
@@ -408,16 +438,13 @@ function TravelRequestForm() {
               )}
             />
 
-            {/* Submit Button */}
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                disabled={submitMutation.isPending}
-                className="hover:bg-magnoos-primary/90 text-white min-w-[120px] bg-[#8e2fe6]"
-              >
-                {submitMutation.isPending ? "Submitting..." : "Submit Request"}
-              </Button>
-            </div>
+            <Button 
+              type="submit" 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={createRequestMutation.isPending}
+            >
+              {createRequestMutation.isPending ? "Submitting..." : "Submit Travel Request"}
+            </Button>
           </form>
         </Form>
       </CardContent>
@@ -426,8 +453,21 @@ function TravelRequestForm() {
 }
 
 export default function PMDashboard() {
+  const [location] = useLocation();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const typedUser = user as User | undefined;
+  
+  // Determine which tab to show based on URL
+  const getActiveView = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'dashboard';
+  };
+  
+  const [activeTab, setActiveTab] = useState(getActiveView());
+  
+  useEffect(() => {
+    setActiveTab(getActiveView());
+  }, [location]);
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -447,26 +487,21 @@ export default function PMDashboard() {
       case "submitted":
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Pending Approval</Badge>;
       case "pm_approved":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Approved</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800">Approved</Badge>;
       case "pm_rejected":
-        return <Badge variant="destructive">Rejected</Badge>;
+        return <Badge variant="secondary" className="bg-red-100 text-red-800">Rejected</Badge>;
       case "operations_completed":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Completed</Badge>;
+        return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Completed</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
-  // Calculate project analytics
+  // Project analytics
   const projectAnalytics = allRequests?.reduce((acc, request) => {
-    const projectName = request.project?.name || 'Unknown';
+    const projectName = request.project?.name || 'Unassigned';
     if (!acc[projectName]) {
-      acc[projectName] = {
-        total: 0,
-        approved: 0,
-        pending: 0,
-        completed: 0,
-      };
+      acc[projectName] = { total: 0, approved: 0, pending: 0, completed: 0 };
     }
     acc[projectName].total++;
     if (request.status === 'pm_approved') acc[projectName].approved++;
@@ -475,167 +510,256 @@ export default function PMDashboard() {
     return acc;
   }, {} as Record<string, any>) || {};
 
+  // Show new request form when tab=new-request
+  if (activeTab === 'new-request') {
+    return (
+      <ProtectedRoute allowedRoles={["manager"]}>
+        <ModernLayout currentRole="manager">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <PlusCircle className="w-8 h-8 text-blue-600" />
+                Submit New Travel Request
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Complete the form below to submit a new travel request for approval
+              </p>
+            </div>
+            <div className="max-w-4xl">
+              <TravelRequestForm />
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
+  
+  // Show my requests when tab=my-requests
+  if (activeTab === 'my-requests') {
+    return (
+      <ProtectedRoute allowedRoles={["manager"]}>
+        <ModernLayout currentRole="manager">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                <CalendarIcon className="w-8 h-8 text-blue-600" />
+                My Travel Requests
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                View and track the status of your submitted travel requests
+              </p>
+            </div>
+            
+            {/* My Requests List */}
+            <div className="space-y-4">
+              {requestsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="text-gray-600 dark:text-gray-300 mt-2">Loading your requests...</p>
+                </div>
+              ) : allRequests && allRequests.length > 0 ? (
+                allRequests.map((request) => (
+                  <Card key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                            </h3>
+                            {getStatusBadge(request.status)}
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">
+                            {request.purpose} • {format(new Date(request.departureDate), 'MMM dd, yyyy')}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Project: {request.project?.name || 'No project assigned'}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            ${(Number(request.estimatedFlightCost || 0) + Number(request.estimatedHotelCost || 0) + Number(request.estimatedOtherCost || 0)).toLocaleString()}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Total Estimated
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                  <CardContent className="p-8 text-center">
+                    <CalendarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-2">No requests found</h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">
+                      You haven't submitted any travel requests yet.
+                    </p>
+                    <Button className="bg-blue-600 hover:bg-blue-700">
+                      <PlusCircle className="w-4 h-4 mr-2" />
+                      Submit Your First Request
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute allowedRoles={["manager"]}>
-      <div className="min-h-screen dark:bg-magnoos-dark light:bg-transparent pm-dashboard">
-        <Header currentRole="manager" />
-        
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 dark:bg-magnoos-dark light:bg-transparent">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-2 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
-              <TabsTrigger 
-                value="dashboard"
-                className="custom-tab"
-              >
-                Dashboard
-              </TabsTrigger>
-              <TabsTrigger 
-                value="submit"
-                className="custom-tab"
-              >
-                Submit Request
-              </TabsTrigger>
-            </TabsList>
+      <ModernLayout currentRole="manager">
+        <div className="p-8 space-y-8">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Project Manager Dashboard
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              Overview of your travel requests and project activities
+            </p>
+          </div>
 
-            <TabsContent value="dashboard" className="space-y-8 bg-transparent">
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                  <CardContent className="p-6 relative z-10 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/90">My Requests</p>
-                        <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : allRequests?.length || 0}
-                        </p>
-                      </div>
-                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Clock className="w-7 h-7 text-[#2563eb]" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#16a34a] via-[#22c55e] to-[#15803d] opacity-95"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                  <CardContent className="p-6 relative z-10 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/90">Approved</p>
-                        <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : allRequests?.filter(r => r.status === 'pm_approved').length || 0}
-                        </p>
-                      </div>
-                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-7 h-7 text-[#16a34a]" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                  <CardContent className="p-6 relative z-10 text-white">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/90">Pending</p>
-                        <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : allRequests?.filter(r => r.status === 'submitted').length || 0}
-                        </p>
-                      </div>
-                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <TrendingUp className="w-7 h-7 text-[#7c3aed]" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] border-none shadow-lg hover:shadow-xl transition-all duration-200 group hover:scale-105 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
-                  <CardContent className="p-6 relative z-10">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-white/90">Completed</p>
-                        <p className="text-3xl font-bold text-white">
-                          {statsLoading ? "..." : allRequests?.filter(r => r.status === 'operations_completed').length || 0}
-                        </p>
-                      </div>
-                      <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white">
-                        <Check className="w-7 h-7 text-[#10b981]" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/90">My Requests</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : allRequests?.length || 0}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <Plane className="w-6 h-6 text-[#2563eb]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/90">Pending</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : allRequests?.filter(r => r.status === 'submitted').length || 0}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <Clock className="w-6 h-6 text-[#7c3aed]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-              {/* Quick Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">My Recent Requests</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {requestsLoading ? (
-                      <div className="text-center py-4">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
-                      </div>
-                    ) : allRequests && allRequests.length > 0 ? (
-                      <div className="bg-gray-50 dark:bg-magnoos-dark space-y-3">
-                        {allRequests.slice(0, 3).map((request) => (
-                          <div key={request.id} className="p-3 rounded-lg bg-gray-100 dark:bg-[#464646]">
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">
-                                {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
-                              </p>
-                              <p className="text-sm text-gray-600 dark:text-gray-300">
-                                {request.project?.name || 'No project'} - {request.status === 'submitted' ? 'Pending Approval' : request.status === 'pm_approved' ? 'Approved' : request.status === 'pm_rejected' ? 'Rejected' : request.status === 'operations_completed' ? 'Completed' : request.status}
-                              </p>
-                            </div>
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/90">Approved</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : allRequests?.filter(r => r.status === 'pm_approved').length || 0}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <Check className="w-6 h-6 text-[#16a34a]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/90">Completed</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : allRequests?.filter(r => r.status === 'operations_completed').length || 0}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <Check className="w-6 h-6 text-[#0ea5e9]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Requests Overview */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white">Recent Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {requestsLoading ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                  </div>
+                ) : allRequests && allRequests.length > 0 ? (
+                  <div className="space-y-3">
+                    {allRequests.slice(0, 3).map((request) => (
+                      <div key={request.id} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white text-sm">
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                            </p>
+                            <p className="text-xs text-gray-600 dark:text-gray-300">
+                              {request.purpose} • {format(new Date(request.departureDate), 'MMM dd')}
+                            </p>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-gray-500 dark:text-gray-300 mb-3">No travel requests yet</p>
-                        <Button onClick={() => setActiveTab("submit")} size="sm">
-                          Submit First Request
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">Project Travel Summary</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="bg-gray-50 dark:bg-magnoos-dark space-y-3">
-                      {Object.entries(projectAnalytics).slice(0, 3).map(([projectName, data]) => (
-                        <div key={projectName} className="flex items-center justify-between">
-                          <span className="text-gray-600 dark:text-gray-300">{projectName}</span>
-                          <span className="font-medium text-gray-900 dark:text-white">{data.total} trips</span>
+                          {getStatusBadge(request.status)}
                         </div>
-                      ))}
-                      {Object.keys(projectAnalytics).length === 0 && (
-                        <p className="text-gray-500 dark:text-gray-300 text-center py-4">No travel data yet</p>
-                      )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 dark:text-gray-300 mb-3">No travel requests yet</p>
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                      Submit First Request
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white">Project Travel Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {Object.entries(projectAnalytics).slice(0, 3).map(([projectName, data]) => (
+                    <div key={projectName} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <span className="text-gray-600 dark:text-gray-300 text-sm">{projectName}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{data.total} trips</span>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="submit" className="space-y-8 bg-transparent">
-              <TravelRequestForm />
-            </TabsContent>
-          </Tabs>
+                  ))}
+                  {Object.keys(projectAnalytics).length === 0 && (
+                    <p className="text-gray-500 dark:text-gray-300 text-center py-4 text-sm">No travel data yet</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      </ModernLayout>
     </ProtectedRoute>
   );
 }

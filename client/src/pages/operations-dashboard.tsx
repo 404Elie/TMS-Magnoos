@@ -4,18 +4,17 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import Header from "@/components/Header";
+import ModernLayout from "@/components/ModernLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,10 +66,18 @@ import {
 import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget, ProjectWithBudget } from "@shared/schema";
 
 export default function OperationsDashboard() {
+  const [location] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState("dashboard");
+  
+  // Determine which tab to show based on URL or default
+  const getActiveView = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'dashboard';
+  };
+  
+  const [activeTab, setActiveTab] = useState(getActiveView());
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
@@ -82,106 +89,6 @@ export default function OperationsDashboard() {
     perDiemRate: "",
     details: "",
   }]);
-  const [newBooking, setNewBooking] = useState({
-    type: "",
-    provider: "",
-    bookingReference: "",
-    cost: "",
-    perDiemRate: "",
-    details: "",
-  });
-
-  // Document management state
-  const [documentModalOpen, setDocumentModalOpen] = useState(false);
-  const [documentType, setDocumentType] = useState<"passport" | "visa">("passport");
-  const [selectedDocument, setSelectedDocument] = useState<any>(null);
-  const [editingDocument, setEditingDocument] = useState<any>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [employeeComboboxOpen, setEmployeeComboboxOpen] = useState(false);
-
-  // Form schemas for passport and visa
-  const passportSchema = z.object({
-    userId: z.string().min(1, "Employee is required"),
-    passportNumber: z.string().min(1, "Passport number is required"),
-    fullName: z.string().min(1, "Full name is required"),
-    nationality: z.string().min(1, "Nationality is required"),
-    dateOfBirth: z.string().min(1, "Date of birth is required"),
-    placeOfBirth: z.string().min(1, "Place of birth is required"),
-    gender: z.enum(["Male", "Female", "Other"]),
-    issueDate: z.string().min(1, "Start date is required"),
-    expiryDate: z.string().min(1, "End date is required").refine((date) => {
-      const expiryDate = new Date(date);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return expiryDate > today;
-    }, {
-      message: "Cannot add expired passport - end date must be in the future",
-    }),
-    issuingAuthority: z.string().min(1, "Issuing authority is required"),
-    issuingCountry: z.string().min(1, "Issuing country is required"),
-    personalNumber: z.string().optional(),
-    notes: z.string().optional(),
-  });
-
-  const visaSchema = z.object({
-    userId: z.string().min(1, "Employee is required"),
-    passportId: z.string().min(1, "Passport is required"),
-    visaNumber: z.string().min(1, "Visa number is required"),
-    visaType: z.string().min(1, "Visa type is required"),
-    issuingCountry: z.string().min(1, "Issuing country is required"),
-    destinationCountry: z.string().min(1, "Destination country is required"),
-    issueDate: z.string().min(1, "Issue date is required"),
-    expiryDate: z.string().min(1, "Expiry date is required"),
-    entryType: z.enum(["Single Entry", "Multiple Entry", "Transit"]),
-    duration: z.string().optional(),
-    issuingConsulate: z.string().optional(),
-    applicationDate: z.string().optional(),
-    approvalDate: z.string().optional(),
-    feeAmount: z.string().optional(),
-    feeCurrency: z.string().default("USD"),
-    notes: z.string().optional(),
-  });
-
-  const passportForm = useForm({
-    resolver: zodResolver(passportSchema),
-    defaultValues: {
-      userId: "",
-      passportNumber: "",
-      fullName: "",
-      nationality: "",
-      dateOfBirth: "",
-      placeOfBirth: "",
-      gender: "Male" as const,
-      issueDate: "",
-      expiryDate: "",
-      issuingAuthority: "",
-      issuingCountry: "",
-      personalNumber: "",
-      notes: "",
-    },
-  });
-
-  const visaForm = useForm({
-    resolver: zodResolver(visaSchema),
-    defaultValues: {
-      userId: "",
-      passportId: "",
-      visaNumber: "",
-      visaType: "",
-      issuingCountry: "",
-      destinationCountry: "",
-      issueDate: "",
-      expiryDate: "",
-      entryType: "Single Entry" as const,
-      duration: "",
-      issuingConsulate: "",
-      applicationDate: "",
-      approvalDate: "",
-      feeAmount: "",
-      feeCurrency: "USD",
-      notes: "",
-    },
-  });
 
   // Fetch dashboard stats
   const { data: stats, isLoading: statsLoading } = useQuery<any>({
@@ -195,17 +102,9 @@ export default function OperationsDashboard() {
     retry: false,
   });
 
-
-
   // Fetch all bookings
   const { data: bookings, isLoading: bookingsLoading } = useQuery<Booking[]>({
     queryKey: ["/api/bookings"],
-    retry: false,
-  });
-
-  // Fetch budget tracking data
-  const { data: budgetData, isLoading: budgetLoading } = useQuery<BudgetTracking[]>({
-    queryKey: ["/api/budget-tracking"],
     retry: false,
   });
 
@@ -219,72 +118,6 @@ export default function OperationsDashboard() {
   const { data: projects } = useQuery<any[]>({
     queryKey: ["/api/zoho/projects"],
     retry: false,
-  });
-
-  // Fetch employee documents (passports and visas)
-  const { data: documents, isLoading: documentsLoading } = useQuery<any[]>({
-    queryKey: ["/api/employee-documents"],
-    retry: false,
-  });
-
-  // Fetch all employee passports
-  const { data: passports } = useQuery<any[]>({
-    queryKey: ["/api/passports"],
-    retry: false,
-  });
-
-  // Fetch all employee visas
-  const { data: visas } = useQuery<any[]>({
-    queryKey: ["/api/visas"],
-    retry: false,
-  });
-
-  // Fetch all users for dropdown
-  const { data: allUsers } = useQuery<any[]>({
-    queryKey: ["/api/users"],
-    retry: false,
-  });
-
-  // Create booking mutation
-  const createBookingMutation = useMutation({
-    mutationFn: async (bookingData: any) => {
-      return await apiRequest("POST", "/api/bookings", bookingData);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Booking created successfully!",
-      });
-      setNewBooking({
-        type: "",
-        provider: "",
-        bookingReference: "",
-        cost: "",
-        perDiemRate: "",
-        details: "",
-      });
-      setSelectedRequestId(null);
-      queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
-    },
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Error",
-        description: "Failed to create booking. Please try again.",
-        variant: "destructive",
-      });
-    },
   });
 
   // Complete travel request mutation (enhanced with bookings)
@@ -344,67 +177,6 @@ export default function OperationsDashboard() {
     },
   });
 
-  // Create passport mutation
-  const createPassportMutation = useMutation({
-    mutationFn: async (passportData: any) => {
-      return await apiRequest("POST", "/api/passports", passportData);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Passport added successfully",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/passports"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/employee-documents"] });
-      setDocumentModalOpen(false);
-      passportForm.reset();
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Create visa mutation
-  const createVisaMutation = useMutation({
-    mutationFn: async (visaData: any) => {
-      return await apiRequest("POST", "/api/visas", visaData);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Visa added successfully",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/visas"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/employee-documents"] });
-      setDocumentModalOpen(false);
-      visaForm.reset();
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleCreateBooking = () => {
-    if (selectedRequestId && newBooking.type && newBooking.cost) {
-      createBookingMutation.mutate({
-        requestId: selectedRequestId,
-        type: newBooking.type,
-        provider: newBooking.provider,
-        bookingReference: newBooking.bookingReference,
-        cost: parseFloat(newBooking.cost),
-        details: newBooking.details ? JSON.parse(newBooking.details) : null,
-      });
-    }
-  };
-
   const handleCompleteRequest = (request: TravelRequestWithDetails) => {
     setSelectedRequest(request);
     setCompletionModalOpen(true);
@@ -445,49 +217,9 @@ export default function OperationsDashboard() {
     setBookingEntries(updated);
   };
 
-  // Helper function to check document expiry status
-  const getExpiryStatus = (expiryDate: string) => {
-    const today = new Date();
-    const expiry = new Date(expiryDate);
-    const daysUntilExpiry = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-    if (daysUntilExpiry < 0) {
-      return { status: "expired", color: "destructive", text: "Expired", days: Math.abs(daysUntilExpiry) };
-    } else if (daysUntilExpiry <= 30) {
-      return { status: "expiring-soon", color: "destructive", text: `${daysUntilExpiry} days left`, days: daysUntilExpiry };
-    } else if (daysUntilExpiry <= 90) {
-      return { status: "warning", color: "secondary", text: `${daysUntilExpiry} days left`, days: daysUntilExpiry };
-    } else {
-      return { status: "valid", color: "default", text: `${daysUntilExpiry} days left`, days: daysUntilExpiry };
-    }
-  };
-
-  // Filter documents based on search term
-  const filteredDocuments = documents?.filter(doc =>
-    doc.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.user?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.documentNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.documentType?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
-
   const removeBookingEntry = (index: number) => {
     if (bookingEntries.length > 1) {
       setBookingEntries(bookingEntries.filter((_, i) => i !== index));
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Pending</Badge>;
-      case "in_progress":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">In Progress</Badge>;
-      case "completed":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Completed</Badge>;
-      case "cancelled":
-        return <Badge variant="destructive">Cancelled</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
     }
   };
 
@@ -496,7 +228,7 @@ export default function OperationsDashboard() {
       case "pm_approved":
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Booking in Progress</Badge>;
       case "operations_completed":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Completed</Badge>;
+        return <Badge variant="secondary" className="bg-green-100 text-green-800">Completed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -518,8 +250,6 @@ export default function OperationsDashboard() {
   const operationsRequests = requests?.filter(req => 
     req.status === 'pm_approved' || req.status === 'operations_completed'
   ) || [];
-
-  // Debug logging removed after issue resolution
 
   // Calculate user budget summaries
   const userBudgetSummaries = users?.map(user => {
@@ -543,8 +273,6 @@ export default function OperationsDashboard() {
 
   // Calculate project budget summaries
   const projectBudgetSummaries = projects?.map(project => {
-    // Filter for completed travel requests that have actual costs
-    // Try both direct ID matching and zohoProjectId matching
     const projectRequests = requests?.filter(req => {
       const projectIdMatch = String(req.projectId) === String(project.id);
       const zohoIdMatch = String(req.projectId) === String(project.zohoProjectId);
@@ -573,1868 +301,479 @@ export default function OperationsDashboard() {
     };
   }) || [];
 
-  // Chart data preparation functions
-  const prepareMonthlyTrendData = () => {
-    if (!bookings || !bookings.length) {
-      // Return sample months with zero data for better UX
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-      return months.map(month => ({ month, amount: 0 }));
-    }
+  // Handle different tab views
+  if (activeTab === "bookings") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Active Bookings
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Manage and track active travel bookings for approved requests
+              </p>
+            </div>
+            
+            <div className="grid gap-6">
+              {requestsLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="text-gray-600 dark:text-gray-300 mt-2">Loading bookings...</p>
+                </div>
+              ) : operationsRequests && operationsRequests.length > 0 ? (
+                operationsRequests.map((request) => (
+                  <Card key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900 dark:text-white">
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                            </h3>
+                            {getTravelStatusBadge(request.status)}
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">
+                            {request.purpose} • Departure: {new Date(request.departureDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleCompleteRequest(request)}
+                            disabled={request.status === 'operations_completed'}
+                            data-testid={`complete-request-${request.id}`}
+                          >
+                            {request.status === 'operations_completed' ? 'Completed' : 'Complete Booking'}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Card className="bg-white dark:bg-gray-800">
+                  <CardContent className="p-8 text-center">
+                    <p className="text-gray-500 dark:text-gray-300">No approved requests waiting for bookings</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
 
-    const monthlyData: { [key: string]: number } = {};
-    bookings.forEach(booking => {
-      if (!booking.createdAt) return;
-      const date = new Date(booking.createdAt);
-      const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
-      const cost = parseFloat(String(booking.cost || 0));
-      monthlyData[monthKey] = (monthlyData[monthKey] || 0) + cost;
-    });
+  if (activeTab === "documents") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Document Management
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Manage employee passports and visas
+              </p>
+            </div>
+            
+            <Card className="bg-white dark:bg-gray-800">
+              <CardContent className="p-8 text-center">
+                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="font-medium text-gray-900 dark:text-white mb-2">Document Management</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Manage employee passports and visas for travel requirements
+                </p>
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Document
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
 
-    return Object.entries(monthlyData)
-      .map(([month, amount]) => ({ month, amount }))
-      .slice(0, 6); // Show last 6 months
-  };
+  if (activeTab === "budget-person") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Budget by Person
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Track individual employee travel spending and budget utilization
+              </p>
+            </div>
+            
+            <div className="grid gap-4">
+              {userBudgetSummaries.map(user => (
+                <Card key={user.id} className="bg-white dark:bg-gray-800">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          {user.firstName} {user.lastName}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{user.email}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {formatCurrency(user.totalSpent)} / {formatCurrency(user.annualBudget)}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          {user.utilization.toFixed(1)}% utilized
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <Progress value={user.utilization} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
 
-  const prepareExpenseBreakdownData = () => {
-    if (!bookings || !bookings.length) {
-      // Return sample data for better UX
-      return [
-        { name: 'Flights', value: 0, color: '#0032FF' },
-        { name: 'Hotels', value: 0, color: '#FF6F00' },
-        { name: 'Other', value: 0, color: '#1ABC3C' }
-      ];
-    }
-
-    const typeData: { [key: string]: number } = {};
-    bookings.forEach(booking => {
-      const type = booking.type.charAt(0).toUpperCase() + booking.type.slice(1) + 's';
-      const cost = parseFloat(String(booking.cost || 0));
-      typeData[type] = (typeData[type] || 0) + cost;
-    });
-
-    const colors = ['#0032FF', '#FF6F00', '#1ABC3C', '#8A2BE2', '#FF6F61'];
-    return Object.entries(typeData)
-      .map(([name, value], index) => ({ 
-        name, 
-        value, 
-        color: colors[index % colors.length] 
-      }));
-  };
-
-  const prepareProjectBudgetData = () => {
-    if (!projectBudgetSummaries || !projectBudgetSummaries.length) {
-      return [
-        { name: 'No Projects', value: 0, color: '#374151' }
-      ];
-    }
-
-    const colors = ['#0032FF', '#FF6F00', '#1ABC3C', '#8A2BE2', '#FF6F61', '#00D9C0', '#A3E635'];
-    return projectBudgetSummaries
-      .filter(project => project.totalSpent > 0)
-      .slice(0, 7)
-      .map((project, index) => ({
-        name: project.name?.length > 20 ? project.name.substring(0, 20) + '...' : project.name,
-        value: project.totalSpent,
-        color: colors[index % colors.length]
-      }));
-  };
-
-  const prepareProjectSpendingData = () => {
-    if (!projectBudgetSummaries || !projectBudgetSummaries.length) {
-      return [];
-    }
-
-    return projectBudgetSummaries
-      .filter(project => project.totalSpent > 0)
-      .slice(0, 10)
-      .map(project => ({
-        name: project.name?.length > 15 ? project.name.substring(0, 15) + '...' : project.name,
-        spent: project.totalSpent,
-        trips: project.tripCount
-      }));
-  };
+  if (activeTab === "budget-project") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Budget by Project
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Track project-based travel spending and budget allocation
+              </p>
+            </div>
+            
+            <div className="grid gap-4">
+              {projectBudgetSummaries.map(project => (
+                <Card key={project.id} className="bg-white dark:bg-gray-800">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          {project.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{project.tripCount} trips</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {formatCurrency(project.totalSpent)} / {formatCurrency(project.allocatedBudget)}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          {project.utilization.toFixed(1)}% utilized
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <Progress value={project.utilization} className="h-2" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
-      <div className="min-h-screen bg-transparent operations-dashboard">
-        <Header />
-        
-        <div className="w-full mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 py-8 bg-transparent">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full futuristic-tabs">
-            <TabsList className="grid w-full grid-cols-5 bg-muted border border-border backdrop-blur-md pt-[0px] pb-[0px] pl-[0px] pr-[0px]">
-              <TabsTrigger 
-                value="dashboard" 
-                className="custom-tab"
-              >
-                Dashboard
-              </TabsTrigger>
-              <TabsTrigger 
-                value="bookings"
-                className="custom-tab"
-              >
-                Active Bookings
-              </TabsTrigger>
-              <TabsTrigger 
-                value="documents"
-                className="custom-tab"
-              >
-                Documents
-              </TabsTrigger>
-              <TabsTrigger 
-                value="budget-person"
-                className="custom-tab"
-              >
-                Budget by Person
-              </TabsTrigger>
-              <TabsTrigger 
-                value="budget-project"
-                className="custom-tab"
-              >
-                Budget by Project
-              </TabsTrigger>
-            </TabsList>
+      <ModernLayout currentRole="operations">
+        <div className="p-8 space-y-8">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Operations Dashboard - {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              Manage travel bookings, track expenses, and handle document processing for approved requests
+            </p>
+          </div>
 
-            <TabsContent value="dashboard" className="space-y-8 bg-transparent">
-              {/* Welcome Banner */}
-              <Card className="bg-gradient-to-r from-blue-50/50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/20 border-blue-200/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                        Welcome to Operations {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'}
-                      </h2>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        Manage travel bookings, track expenses, and handle document processing for approved requests
-                      </p>
-                    </div>
-                    <div className="hidden md:block">
-                      <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center">
-                        <MapPin className="w-8 h-8 text-electric-blue" />
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Active Bookings */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6, #1d4ed8)', minHeight: '120px' }}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                  <div className="flex items-center justify-between relative z-10">
-                    <div>
-                      <p className="text-sm font-medium text-white/90">Active {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Bookings</p>
-                      <p className="text-3xl font-bold text-white mt-1">
-                        {statsLoading ? "..." : stats?.activeBookings || 0}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <Calendar className="w-6 h-6 text-[#2563eb]" />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Monthly Spend */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #7c3aed, #8b5cf6, #6d28d9)', minHeight: '120px' }}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                  <div className="flex items-center justify-between relative z-10">
-                    <div>
-                      <p className="text-sm font-medium text-white/90">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Monthly Spend</p>
-                      <p className="text-3xl font-bold text-white mt-1">
-                        {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <DollarSign className="w-6 h-6 text-[#7c3aed]" />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Pending Tasks */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444, #b91c1c)', minHeight: '120px' }}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                  <div className="flex items-center justify-between relative z-10">
-                    <div>
-                      <p className="text-sm font-medium text-white/90">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Pending Tasks</p>
-                      <p className="text-3xl font-bold text-white mt-1">
-                        {statsLoading ? "..." : stats?.pendingTasks || 0}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <AlertTriangle className="w-6 h-6 text-[#dc2626]" />
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Completion Rate */}
-                <div className="operations-stats-card relative overflow-hidden shadow-2xl rounded-lg p-6 text-white" style={{ background: 'linear-gradient(135deg, #1f2937, #374151, #111827)', minHeight: '120px' }}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
-                  <div className="flex items-center justify-between relative z-10">
-                    <div>
-                      <p className="text-sm font-medium text-white/90">{(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'} Completion Rate</p>
-                      <p className="text-3xl font-bold text-white mt-1">
-                        {statsLoading ? "..." : `${stats?.completionRate || '95'}%`}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
-                      <Check className="w-6 h-6 text-[#10b981]" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Access - Document Management */}
-              <div className="grid grid-cols-1 gap-6">
-                <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-blue-200 dark:border-blue-700">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
-                      <FileText className="h-5 w-5 text-electric-blue" />
-                      Document Management
-                    </CardTitle>
-                    <CardDescription>
-                      Manage employee visas, passports, and other travel documents
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Link href="/documents">
-                      <Button 
-                        className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
-                        data-testid="button-manage-documents"
-                      >
-                        <FileText className="h-4 w-4 mr-2" />
-                        Manage Visas & Passports
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Beautiful Charts with Magnoos Colors */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-                <Card className="bg-transparent border-border/20 backdrop-blur-sm shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-[#00D9C0]" />
-                      Monthly Expense Trend
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={prepareMonthlyTrendData()}>
-                          <defs>
-                            <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#00D9C0" stopOpacity={0.8}/>
-                              <stop offset="95%" stopColor="#A3E635" stopOpacity={0.3}/>
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-slate-600" />
-                          <XAxis 
-                            dataKey="month" 
-                            axisLine={false}
-                            tickLine={false}
-                            className="fill-gray-700 dark:fill-white"
-                            tick={{ fontSize: 12, fontWeight: 600 }}
-                          />
-                          <YAxis 
-                            axisLine={false}
-                            tickLine={false}
-                            className="fill-gray-700 dark:fill-white"
-                            tick={{ fontSize: 12, fontWeight: 600 }}
-                            tickFormatter={(value) => `$${value.toLocaleString()}`}
-                          />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'white', 
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '8px',
-                              color: '#111827',
-                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
-                            }}
-                            formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
-                          />
-                          <Area 
-                            type="monotone" 
-                            dataKey="amount" 
-                            stroke="#00D9C0" 
-                            strokeWidth={3}
-                            fillOpacity={1} 
-                            fill="url(#colorAmount)" 
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="bg-transparent border-border/20 backdrop-blur-sm shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-[#0032FF]" />
-                      Expense Breakdown
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={prepareExpenseBreakdownData()}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={80}
-                            dataKey="value"
-                            label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
-                            className="text-gray-900 dark:text-white"
-                          >
-                            {prepareExpenseBreakdownData().map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'white', 
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '8px',
-                              color: '#111827',
-                              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
-                            }}
-                            formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
-                          />
-                          <Legend 
-                            wrapperStyle={{ fontWeight: 600 }}
-                            className="text-gray-900 dark:text-white"
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Recent Activity */}
-              <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-white">Recent Booking Activities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {bookingsLoading ? (
-                    <div className="text-center py-4">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-magnoos-blue mx-auto"></div>
-                    </div>
-                  ) : bookings && bookings.length > 0 ? (
-                    <div className="bg-gray-50 dark:bg-slate-800 space-y-4">
-                      {bookings.slice(0, 5).map((booking) => (
-                        <div key={booking.id} className="flex items-center space-x-4 p-4 bg-gray-100 dark:bg-slate-700 rounded-lg">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                            {booking.type === 'flight' ? (
-                              <Plane className="w-4 h-4 text-white" />
-                            ) : booking.type === 'hotel' ? (
-                              <Bed className="w-4 h-4 text-white" />
-                            ) : (
-                              <MapPin className="w-4 h-4 text-white" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900 dark:text-white">
-                              {booking.type.charAt(0).toUpperCase() + booking.type.slice(1)} booking
-                            </p>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                              {booking.provider} • {formatCurrency(booking.cost)} • {booking.bookingReference}
-                            </p>
-                          </div>
-                          {getStatusBadge(booking.status)}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-md mx-auto">
-                        <Calendar className="w-16 h-16 text-blue-500 dark:text-blue-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No Booking Activities Yet</h3>
-                        <p className="text-gray-600 dark:text-gray-300 mb-4">
-                          Travel requests are processed here once they're approved by project managers.
-                        </p>
-                        <div className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                          <p>📋 When new requests arrive, you'll be able to:</p>
-                          <ul className="text-left space-y-1 mt-2">
-                            <li>• Create flight and hotel bookings</li>
-                            <li>• Calculate per diem allowances</li>
-                            <li>• Track expenses and budgets</li>
-                            <li>• Manage visa and passport documents</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="bookings" className="space-y-8 bg-transparent">
-              <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                <CardHeader className="flex flex-row items-center justify-between">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Active Bookings */}
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-gray-900 dark:text-white">Active Travel Bookings</CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-300">Manage bookings for approved travel requests</CardDescription>
+                    <p className="text-sm font-medium text-white/90">Active Bookings</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : stats?.activeBookings || 0}
+                    </p>
                   </div>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="bg-magnoos-blue hover:bg-slate-800-blue">
-                        <Plus className="w-4 h-4 mr-2" />
-                        New Booking
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Create New Booking</DialogTitle>
-                        <DialogDescription>
-                          Add a new booking for an approved travel request
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="bg-gray-50 dark:bg-slate-800 space-y-4">
-                        <div>
-                          <Label htmlFor="request-select">Travel Request</Label>
-                          <Select onValueChange={setSelectedRequestId}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select travel request..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {operationsRequests
-                                ?.filter(req => req.status === 'pm_approved')
-                                .map((request) => (
-                                <SelectItem key={request.id} value={request.id}>
-                                  {request.traveler.firstName} {request.traveler.lastName} - {request.destination}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="booking-type">Booking Type</Label>
-                          <Select onValueChange={(value) => setNewBooking({...newBooking, type: value})}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select booking type..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="flight">Flight</SelectItem>
-                              <SelectItem value="hotel">Hotel</SelectItem>
-                              <SelectItem value="car_rental">Car Rental</SelectItem>
-                              <SelectItem value="per_diem">Per Diem</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="provider">Provider</Label>
-                          <Input
-                            id="provider"
-                            value={newBooking.provider}
-                            onChange={(e) => setNewBooking({...newBooking, provider: e.target.value})}
-                            placeholder="Airline, hotel, etc."
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="reference">Booking Reference</Label>
-                          <Input
-                            id="reference"
-                            value={newBooking.bookingReference}
-                            onChange={(e) => setNewBooking({...newBooking, bookingReference: e.target.value})}
-                            placeholder="Confirmation number"
-                          />
-                        </div>
-                        
-                        {newBooking.type === 'per_diem' ? (
-                          <>
-                            <div>
-                              <Label htmlFor="per-diem-rate">Per Diem Rate ($/day)</Label>
-                              <Input
-                                id="per-diem-rate"
-                                type="number"
-                                step="0.01"
-                                value={newBooking.perDiemRate}
-                                onChange={(e) => {
-                                  const rate = e.target.value;
-                                  setNewBooking({...newBooking, perDiemRate: rate});
-                                  
-                                  // Auto-calculate total if we have a selected request and rate
-                                  if (selectedRequestId && parseFloat(rate) > 0) {
-                                    const selectedReq = operationsRequests?.find(req => req.id === selectedRequestId);
-                                    if (selectedReq) {
-                                      const departureDate = new Date(selectedReq.departureDate);
-                                      const returnDate = new Date(selectedReq.returnDate);
-                                      const timeDifference = returnDate.getTime() - departureDate.getTime();
-                                      const daysDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
-                                      const totalCost = parseFloat(rate) * daysDifference;
-                                      setNewBooking(prev => ({...prev, cost: totalCost.toFixed(2)}));
-                                    }
-                                  }
-                                }}
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="cost">
-                                Total Cost ({selectedRequestId && operationsRequests ? 
-                                  Math.ceil((new Date(operationsRequests.find(req => req.id === selectedRequestId)?.returnDate || 0).getTime() - 
-                                           new Date(operationsRequests.find(req => req.id === selectedRequestId)?.departureDate || 0).getTime()) / (1000 * 3600 * 24)) : 0} days)
-                              </Label>
-                              <Input
-                                id="cost"
-                                type="number"
-                                step="0.01"
-                                value={newBooking.cost}
-                                onChange={(e) => setNewBooking({...newBooking, cost: e.target.value})}
-                                placeholder="0.00"
-                                readOnly={newBooking.type === 'per_diem'}
-                              />
-                            </div>
-                          </>
-                        ) : (
-                          <div>
-                            <Label htmlFor="cost">Cost</Label>
-                            <Input
-                              id="cost"
-                              type="number"
-                              step="0.01"
-                              value={newBooking.cost}
-                              onChange={(e) => setNewBooking({...newBooking, cost: e.target.value})}
-                              placeholder="0.00"
-                            />
-                          </div>
-                        )}
-                        
-                        <div className="flex justify-end space-x-2">
-                          <Button variant="outline" onClick={() => {
-                            setNewBooking({
-                              type: "",
-                              provider: "",
-                              bookingReference: "",
-                              cost: "",
-                              perDiemRate: "",
-                              details: "",
-                            });
-                            setSelectedRequestId(null);
-                          }}>
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={handleCreateBooking}
-                            disabled={!selectedRequestId || !newBooking.type || !newBooking.cost || createBookingMutation.isPending}
-                            className="bg-magnoos-blue hover:bg-slate-800-blue"
-                          >
-                            {createBookingMutation.isPending ? "Creating..." : "Create Booking"}
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </CardHeader>
-                <CardContent>
-                  {requestsLoading ? (
-                    <div className="text-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-magnoos-blue mx-auto mb-4"></div>
-                      <p className="text-gray-600 dark:text-gray-300">Loading travel requests...</p>
-                    </div>
-                  ) : operationsRequests.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                        <thead className="bg-gray-100 dark:bg-slate-800">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Traveler
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Destination
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Project
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Dates
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Total Cost
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Status
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
-                          {operationsRequests.map((request) => {
-                            const totalEstimated = (
-                              parseFloat(request.estimatedFlightCost || "0") +
-                              parseFloat(request.estimatedHotelCost || "0") +
-                              parseFloat(request.estimatedOtherCost || "0")
-                            );
-                            const actualCost = parseFloat(request.actualTotalCost || "0");
-                            
-                            return (
-                              <tr key={request.id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center">
-                                    <Avatar className="w-8 h-8 mr-3">
-                                      <AvatarImage src={request.traveler?.profileImageUrl || undefined} />
-                                      <AvatarFallback className="bg-magnoos-blue text-white text-xs">
-                                        {getInitials(
-                                          request.traveler?.firstName, 
-                                          request.traveler?.lastName
-                                        )}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
-                                      {request.traveler?.firstName && request.traveler?.lastName 
-                                        ? `${request.traveler.firstName} ${request.traveler.lastName}` 
-                                        : request.traveler?.email || 'Unknown User'}
-                                    </span>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                                  {request.destination}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                  {request.project?.name}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                  {new Date(request.departureDate).toLocaleDateString()} - {new Date(request.returnDate).toLocaleDateString()}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                  {actualCost > 0 ? formatCurrency(actualCost) : formatCurrency(totalEstimated)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  {getTravelStatusBadge(request.status)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                  {request.status === 'pm_approved' ? (
-                                    <div className="flex space-x-2">
-                                      <Button
-                                        size="sm"
-                                        onClick={() => handleCompleteRequest(request)}
-                                        disabled={completeRequestMutation.isPending}
-                                        className="bg-blue-100 text-blue-800 hover:bg-blue-200"
-                                      >
-                                        Complete
-                                      </Button>
-                                    </div>
-                                  ) : (
-                                    <Button 
-                                      size="sm" 
-                                      variant="ghost" 
-                                      className="text-magnoos-blue hover:text-magnoos-dark-blue"
-                                      onClick={() => {
-                                        setSelectedRequest(request);
-                                        setCompletionModalOpen(true);
-                                      }}
-                                    >
-                                      View Details
-                                    </Button>
-                                  )}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-16">
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-8 max-w-lg mx-auto">
-                        <Calendar className="w-20 h-20 text-blue-500 dark:text-blue-400 mx-auto mb-6" />
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Ready for Action!</h3>
-                        <p className="text-gray-600 dark:text-gray-300 mb-4">
-                          No approved travel requests are waiting for processing right now.
-                        </p>
-                        <div className="text-sm text-gray-500 dark:text-gray-400 space-y-3">
-                          <div className="bg-white dark:bg-slate-600 rounded-lg p-4">
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">How the process works:</h4>
-                            <ol className="text-left space-y-1">
-                              <li>1️⃣ Managers submit travel requests</li>
-                              <li>2️⃣ Project managers approve requests</li>
-                              <li>3️⃣ <strong>You handle bookings and logistics</strong></li>
-                              <li>4️⃣ Travelers receive booking confirmations</li>
-                            </ol>
-                          </div>
-                          <p className="text-xs text-gray-400">
-                            This dashboard will populate with new requests as they get approved
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-[#2563eb]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Monthly Spend */}
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/90">Monthly Spend</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : formatCurrency(stats?.monthlySpend || 0)}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                    <DollarSign className="w-6 h-6 text-[#7c3aed]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Pending Tasks */}
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/90">Pending Tasks</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : stats?.pendingTasks || 0}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                    <AlertTriangle className="w-6 h-6 text-[#dc2626]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Completion Rate */}
+            <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+              <CardContent className="relative p-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-white/90">Completion Rate</p>
+                    <p className="text-3xl font-bold text-white mt-1">
+                      {statsLoading ? "..." : `${stats?.completionRate || '95'}%`}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-white/90 rounded-lg flex items-center justify-center">
+                    <CheckSquare className="w-6 h-6 text-[#10b981]" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-            <TabsContent value="budget-person" className="space-y-8 bg-transparent">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Travel Expense Tracking by Person</h2>
-                <p className="text-gray-600 dark:text-gray-300">Monitor individual travel expenses and spending patterns</p>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Summary Cards */}
-                <div className="lg:col-span-1 space-y-6">
-                  <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-gray-900 dark:text-white">Top Spenders</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {userBudgetSummaries.length > 0 ? (
-                        <div className="bg-gray-50 dark:bg-slate-800 space-y-3">
-                          {userBudgetSummaries
-                            .sort((a, b) => b.totalSpent - a.totalSpent)
-                            .slice(0, 5)
-                            .map((user) => (
-                            <div key={user.id} className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                <Avatar className="w-8 h-8">
-                                  <AvatarImage src={user.profileImageUrl} />
-                                  <AvatarFallback className="bg-magnoos-blue text-white text-xs">
-                                    {getInitials(user.firstName, user.lastName)}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {user.firstName} {user.lastName}
-                                </span>
-                              </div>
-                              <span className="text-sm font-bold text-gray-900 dark:text-white">
-                                {formatCurrency(user.totalSpent)}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-gray-500 dark:text-gray-300 text-center py-4">No spending data available</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-gray-900 dark:text-white">Recent Activity</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="bg-gray-50 dark:bg-slate-800 space-y-3">
-                        {userBudgetSummaries
-                          .filter(user => user.totalSpent > 0)
-                          .sort((a, b) => b.totalSpent - a.totalSpent)
-                          .slice(0, 3)
-                          .map((user) => (
-                          <div key={user.id} className="p-3 border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-100 dark:bg-slate-700">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
-                              {user.firstName} {user.lastName}
+          {/* Analytics Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white">Recent Approved Requests</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {requestsLoading ? (
+                  <div className="text-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+                  </div>
+                ) : operationsRequests && operationsRequests.length > 0 ? (
+                  <div className="space-y-3">
+                    {operationsRequests.slice(0, 3).map((request) => (
+                      <div key={request.id} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white text-sm">
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
                             </p>
                             <p className="text-xs text-gray-600 dark:text-gray-300">
-                              Latest expense: {formatCurrency(user.totalSpent)}
+                              {request.purpose} • Departure: {new Date(request.departureDate).toLocaleDateString()}
                             </p>
                           </div>
-                        ))}
-                        {userBudgetSummaries.filter(user => user.totalSpent > 0).length === 0 && (
-                          <p className="text-gray-500 dark:text-gray-300 text-center py-4">No recent activity</p>
-                        )}
+                          {getTravelStatusBadge(request.status)}
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                {/* Budget Table */}
-                <div className="lg:col-span-2">
-                  <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-gray-900 dark:text-white">Individual Expense Overview</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {userBudgetSummaries.length > 0 ? (
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                            <thead className="bg-gray-100 dark:bg-slate-800">
-                              <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                  Employee
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                  Total Spent
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                                  Trips
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
-                              {userBudgetSummaries.map((user) => (
-                                <tr key={user.id}>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                      <Avatar className="w-8 h-8 mr-3">
-                                        <AvatarImage src={user.profileImageUrl} />
-                                        <AvatarFallback className="bg-magnoos-blue text-white text-xs">
-                                          {getInitials(user.firstName, user.lastName)}
-                                        </AvatarFallback>
-                                      </Avatar>
-                                      <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
-                                        {user.firstName} {user.lastName}
-                                      </span>
-                                    </div>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                                    {formatCurrency(user.totalSpent)}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                    {user.tripCount}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      ) : (
-                        <div className="text-center py-12">
-                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6">
-                            <Users className="w-16 h-16 text-blue-500 dark:text-blue-400 mx-auto mb-4" />
-                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">No Employee Expenses Yet</h4>
-                            <p className="text-gray-600 dark:text-gray-300 text-sm">
-                              Individual spending data will appear here once travel bookings are completed and processed.
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="budget-project" className="space-y-8 bg-transparent">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Project Expense Tracking</h2>
-                <p className="text-gray-600 dark:text-gray-300">Monitor project-based travel expenses and spending patterns</p>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                {/* Project Expense Distribution Chart */}
-                <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">Project Expense Distribution</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={prepareProjectBudgetData()}
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={80}
-                            dataKey="value"
-                            label={({ name, value }) => value > 0 ? `${name}: $${value.toLocaleString()}` : ''}
-                          >
-                            {prepareProjectBudgetData().map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'white', 
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '8px',
-                              color: '#111827'
-                            }}
-                            formatter={(value: any) => [`$${value.toLocaleString()}`, 'Amount']}
-                          />
-                          <Legend 
-                            wrapperStyle={{ fontWeight: 600 }}
-                            className="text-gray-900 dark:text-white"
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Project Spending Chart */}
-                <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">Project Spending Overview</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={prepareProjectSpendingData()}>
-                          <CartesianGrid strokeDasharray="3 3" className="stroke-gray-300 dark:stroke-slate-600" />
-                          <XAxis 
-                            dataKey="name" 
-                            axisLine={false}
-                            tickLine={false}
-                            className="fill-gray-700 dark:fill-gray-300"
-                            tick={{ fontSize: 11 }}
-                            angle={-45}
-                            textAnchor="end"
-                            height={80}
-                          />
-                          <YAxis 
-                            axisLine={false}
-                            tickLine={false}
-                            className="fill-gray-700 dark:fill-gray-300"
-                            tick={{ fontSize: 12 }}
-                            tickFormatter={(value) => `$${value.toLocaleString()}`}
-                          />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'white', 
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '8px',
-                              color: '#111827'
-                            }}
-                            formatter={(value: any, name: string) => {
-                              if (name === 'spent') return [`$${value.toLocaleString()}`, 'Total Spent'];
-                              if (name === 'trips') return [value, 'Trips'];
-                              return [value, name];
-                            }}
-                          />
-                          <Bar 
-                            dataKey="spent" 
-                            fill="#0032FF" 
-                            radius={[4, 4, 0, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              {/* Project Budget Table */}
-              <Card className="bg-transparent border-border/20 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-white">Project Expense Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {projectBudgetSummaries.length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                        <thead className="bg-gray-100 dark:bg-slate-800">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Project
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Total Spent
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Total Trips
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                              Avg Cost/Trip
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-gray-700">
-                          {projectBudgetSummaries.map((project, index) => (
-                            <tr key={`project-${project.id}-${index}`}>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-900 dark:text-gray-200">{project.name}</div>
-                                <div className="text-sm text-gray-600 dark:text-gray-300">{project.description}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                                {formatCurrency(project.totalSpent)}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                {project.tripCount}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                {formatCurrency(project.avgCostPerTrip)}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <BarChart3 className="w-12 h-12 text-gray-400 dark:text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-600 dark:text-gray-300">No project expense data available</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-300 mt-2">Expense information will appear once travel requests are processed</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Documents Management Tab */}
-            <TabsContent value="documents" className="space-y-8 bg-transparent">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] rounded-lg flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-white" />
+                    ))}
                   </div>
-                  Document Management
-                </h2>
-                <p className="text-gray-600 dark:text-gray-300 mt-2">
-                  Manage employee passports, visas, and travel documents with expiry tracking
-                </p>
-              </div>
-
-              {/* Action Bar */}
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search documents, employees, or numbers..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-600"
-                  />
-                </div>
-                
-                <div className="flex gap-2">
-                  <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
-                    <DialogTrigger asChild>
-                      <Button 
-                        onClick={() => {
-                          setDocumentType("passport");
-                          setEditingDocument(null);
-                        }}
-                        className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Passport
-                      </Button>
-                    </DialogTrigger>
-                  </Dialog>
-                  
-                  <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
-                    <DialogTrigger asChild>
-                      <Button 
-                        onClick={() => {
-                          setDocumentType("visa");
-                          setEditingDocument(null);
-                        }}
-                        variant="outline"
-                        className="border-electric-blue text-electric-blue hover:bg-electric-blue/10"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Visa
-                      </Button>
-                    </DialogTrigger>
-                  </Dialog>
-                </div>
-              </div>
-
-              {/* Documents Grid */}
-              {documentsLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <Card key={i} className="animate-pulse">
-                      <CardContent className="p-6">
-                        <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-300 rounded w-1/2 mb-4"></div>
-                        <div className="space-y-2">
-                          <div className="h-3 bg-gray-300 rounded"></div>
-                          <div className="h-3 bg-gray-300 rounded w-2/3"></div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : filteredDocuments.length === 0 ? (
-                <Card className="text-center py-12">
-                  <CardContent>
-                    <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                      No Documents Found
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-6">
-                      {searchTerm ? "No documents match your search criteria" : "Start by adding employee passports and visas"}
-                    </p>
-                    <Button 
-                      onClick={() => {
-                        setDocumentType("passport");
-                        setDocumentModalOpen(true);
-                      }}
-                      className="bg-gradient-to-r from-electric-blue to-purple text-white"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add First Document
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredDocuments.map((document) => {
-                    const expiryStatus = getExpiryStatus(document.expiryDate);
-                    return (
-                      <Card key={document.id} className={`transition-all hover:shadow-lg ${
-                        expiryStatus.status === 'expired' ? 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20' :
-                        expiryStatus.status === 'expiring-soon' ? 'border-blue-300 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20' :
-                        expiryStatus.status === 'warning' ? 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20' :
-                        'border-gray-200 dark:border-slate-700'
-                      }`}>
-                        <CardContent className="p-6">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${
-                                document.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-blue-100 text-blue-600'
-                              }`}>
-                                {document.documentType === 'passport' ? '🛂' : '📋'}
-                              </div>
-                              <div>
-                                <h3 className="font-medium text-gray-900 dark:text-white capitalize">
-                                  {document.documentType}
-                                </h3>
-                                <p className="text-sm text-gray-600 dark:text-gray-300">
-                                  {document.user?.firstName} {document.user?.lastName}
-                                </p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex gap-1">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => setSelectedDocument(document)}
-                                className="text-gray-600 hover:text-gray-900"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  setEditingDocument(document);
-                                  setDocumentType(document.documentType as "passport" | "visa");
-                                  setDocumentModalOpen(true);
-                                }}
-                                className="text-gray-600 hover:text-gray-900"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-300">Number:</span>
-                              <span className="font-medium">{document.documentNumber}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600 dark:text-gray-300">Country:</span>
-                              <span>{document.issuingCountry}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-600 dark:text-gray-300">Expires:</span>
-                              <Badge 
-                                variant={expiryStatus.color as any}
-                                className={`text-xs ${
-                                  expiryStatus.status === 'expired' ? 'bg-blue-100 text-blue-700' :
-                                  expiryStatus.status === 'expiring-soon' ? 'bg-blue-100 text-blue-700' :
-                                  expiryStatus.status === 'warning' ? 'bg-blue-100 text-blue-700' :
-                                  'bg-blue-100 text-blue-700'
-                                }`}
-                              >
-                                {expiryStatus.text}
-                              </Badge>
-                            </div>
-                            {document.notes && (
-                              <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
-                                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                                  {document.notes}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Document Form Modal */}
-              <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900">
-                  <DialogHeader>
-                    <DialogTitle className="text-gray-900 dark:text-white">
-                      {editingDocument ? `Edit ${documentType}` : `Add New ${documentType}`}
-                    </DialogTitle>
-                    <DialogDescription className="text-gray-600 dark:text-gray-300">
-                      {documentType === "passport" 
-                        ? "Enter passport details for the employee" 
-                        : "Enter visa details for the employee"}
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  {documentType === "passport" ? (
-                    <Form {...passportForm}>
-                      <form onSubmit={passportForm.handleSubmit((data) => createPassportMutation.mutate(data))} className="space-y-6 py-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {/* Employee Selection */}
-                          <FormField
-                            control={passportForm.control}
-                            name="userId"
-                            render={({ field }) => (
-                              <FormItem className="md:col-span-2">
-                                <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
-                                <FormControl>
-                                  <Popover open={employeeComboboxOpen} onOpenChange={setEmployeeComboboxOpen}>
-                                    <PopoverTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        aria-expanded={employeeComboboxOpen}
-                                        className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                                      >
-                                        {field.value
-                                          ? (() => {
-                                              const user = users?.find((user) => user.id === field.value);
-                                              return user ? `${user.firstName} ${user.lastName} (${user.email})` : "Select employee...";
-                                            })()
-                                          : "Select employee..."}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-full p-0 bg-white dark:bg-slate-700">
-                                      <Command>
-                                        <CommandInput placeholder="Search employees..." className="h-9" />
-                                        <CommandEmpty>No employee found.</CommandEmpty>
-                                        <CommandGroup className="max-h-60 overflow-y-auto">
-                                          {users?.map((user) => (
-                                            <CommandItem
-                                              key={user.id}
-                                              value={`${user.firstName} ${user.lastName} ${user.email}`}
-                                              onSelect={() => {
-                                                field.onChange(user.id);
-                                                setEmployeeComboboxOpen(false);
-                                              }}
-                                            >
-                                              <Check
-                                                className={cn(
-                                                  "mr-2 h-4 w-4",
-                                                  field.value === user.id ? "opacity-100" : "opacity-0"
-                                                )}
-                                              />
-                                              {user.firstName} {user.lastName} ({user.email})
-                                            </CommandItem>
-                                          ))}
-                                        </CommandGroup>
-                                      </Command>
-                                    </PopoverContent>
-                                  </Popover>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Passport Number */}
-                          <FormField
-                            control={passportForm.control}
-                            name="passportNumber"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Passport Number *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Enter passport number" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Full Name */}
-                          <FormField
-                            control={passportForm.control}
-                            name="fullName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Full Name *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Enter full name as on passport" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Nationality */}
-                          <FormField
-                            control={passportForm.control}
-                            name="nationality"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Nationality *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Enter nationality" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Date of Birth */}
-                          <FormField
-                            control={passportForm.control}
-                            name="dateOfBirth"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Date of Birth *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Place of Birth */}
-                          <FormField
-                            control={passportForm.control}
-                            name="placeOfBirth"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Place of Birth *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Enter place of birth" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Gender */}
-                          <FormField
-                            control={passportForm.control}
-                            name="gender"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Gender *</FormLabel>
-                                <FormControl>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      <SelectValue placeholder="Select gender" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      <SelectItem value="Male">Male</SelectItem>
-                                      <SelectItem value="Female">Female</SelectItem>
-                                      <SelectItem value="Other">Other</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Start Date */}
-                          <FormField
-                            control={passportForm.control}
-                            name="issueDate"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Issue Date *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* End Date */}
-                          <FormField
-                            control={passportForm.control}
-                            name="expiryDate"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Expiry Date *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} type="date" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Issuing Authority */}
-                          <FormField
-                            control={passportForm.control}
-                            name="issuingAuthority"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Issuing Authority *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Enter issuing authority" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Issuing Country */}
-                          <FormField
-                            control={passportForm.control}
-                            name="issuingCountry"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Issuing Country *</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Enter issuing country" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Personal Number */}
-                          <FormField
-                            control={passportForm.control}
-                            name="personalNumber"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Personal Number</FormLabel>
-                                <FormControl>
-                                  <Input {...field} placeholder="Enter personal number (optional)" className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Notes */}
-                          <FormField
-                            control={passportForm.control}
-                            name="notes"
-                            render={({ field }) => (
-                              <FormItem className="md:col-span-2">
-                                <FormLabel className="text-gray-900 dark:text-white">Additional Notes</FormLabel>
-                                <FormControl>
-                                  <Textarea {...field} placeholder="Enter any additional notes..." rows={3} className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-slate-600">
-                          <Button 
-                            type="submit" 
-                            disabled={createPassportMutation.isPending}
-                            className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
-                          >
-                            {createPassportMutation.isPending ? "Creating..." : editingDocument ? "Update Passport" : "Create Passport"}
-                          </Button>
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => setDocumentModalOpen(false)}
-                            className="border-gray-300 dark:border-slate-600"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </form>
-                    </Form>
-                  ) : (
-                    <Form {...visaForm}>
-                      <form onSubmit={visaForm.handleSubmit((data) => createVisaMutation.mutate(data))} className="space-y-6 py-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {/* Employee Selection */}
-                          <FormField
-                            control={visaForm.control}
-                            name="userId"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Employee *</FormLabel>
-                                <FormControl>
-                                  <Popover>
-                                    <PopoverTrigger asChild>
-                                      <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        className="w-full justify-between bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600"
-                                      >
-                                        {field.value
-                                          ? users?.find((user) => user.id === field.value)?.name + " (" + users?.find((user) => user.id === field.value)?.email + ")"
-                                          : "Select employee..."}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-full p-0 bg-white dark:bg-slate-700">
-                                      <Command>
-                                        <CommandInput placeholder="Search employees..." className="h-9" />
-                                        <CommandEmpty>No employee found.</CommandEmpty>
-                                        <CommandGroup className="max-h-60 overflow-y-auto">
-                                          {users?.map((user) => (
-                                            <CommandItem
-                                              key={user.id}
-                                              value={`${user.name} ${user.email}`}
-                                              onSelect={() => {
-                                                field.onChange(user.id);
-                                              }}
-                                            >
-                                              <Check
-                                                className={cn(
-                                                  "mr-2 h-4 w-4",
-                                                  field.value === user.id ? "opacity-100" : "opacity-0"
-                                                )}
-                                              />
-                                              {user.name} ({user.email})
-                                            </CommandItem>
-                                          ))}
-                                        </CommandGroup>
-                                      </Command>
-                                    </PopoverContent>
-                                  </Popover>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Passport Selection */}
-                          <FormField
-                            control={visaForm.control}
-                            name="passportId"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-gray-900 dark:text-white">Associated Passport *</FormLabel>
-                                <FormControl>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      <SelectValue placeholder="Select passport" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                      {passports?.map((passport) => (
-                                        <SelectItem key={passport.id} value={passport.id}>
-                                          {passport.passportNumber} ({passport.user?.firstName} {passport.user?.lastName})
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          {/* Continue with visa fields... */}
-                          <div className="md:col-span-2 text-center text-gray-600 dark:text-gray-300">
-                            <p>Visa form fields will be completed in the next step...</p>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-slate-600">
-                          <Button 
-                            type="submit" 
-                            disabled={createVisaMutation.isPending}
-                            className="bg-gradient-to-r from-[#0032FF] to-[#8A2BE2] hover:from-[#0032FF]/90 hover:to-[#8A2BE2]/90 text-white"
-                          >
-                            {createVisaMutation.isPending ? "Creating..." : editingDocument ? "Update Visa" : "Create Visa"}
-                          </Button>
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => setDocumentModalOpen(false)}
-                            className="border-gray-300 dark:border-slate-600"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </form>
-                    </Form>
-                  )}
-                </DialogContent>
-              </Dialog>
-
-              {/* Document Detail Modal */}
-              <Dialog open={!!selectedDocument} onOpenChange={() => setSelectedDocument(null)}>
-                <DialogContent className="max-w-lg bg-white dark:bg-slate-900">
-                  <DialogHeader>
-                    <DialogTitle className="text-gray-900 dark:text-white capitalize">
-                      {selectedDocument?.documentType} Details
-                    </DialogTitle>
-                  </DialogHeader>
-                  
-                  {selectedDocument && (
-                    <div className="py-6 space-y-4">
-                      <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-600">
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-xl ${
-                          selectedDocument.documentType === 'passport' ? 'bg-blue-100 text-blue-600' : 'bg-blue-100 text-blue-600'
-                        }`}>
-                          {selectedDocument.documentType === 'passport' ? '🛂' : '📋'}
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-gray-900 dark:text-white">
-                            {selectedDocument.user?.firstName} {selectedDocument.user?.lastName}
-                          </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">
-                            {selectedDocument.user?.email}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-600 dark:text-gray-300">Document Number</span>
-                          <p className="font-medium text-gray-900 dark:text-white">{selectedDocument.documentNumber}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-600 dark:text-gray-300">Issuing Country</span>
-                          <p className="font-medium text-gray-900 dark:text-white">{selectedDocument.issuingCountry}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-600 dark:text-gray-300">Issue Date</span>
-                          <p className="font-medium text-gray-900 dark:text-white">
-                            {new Date(selectedDocument.issueDate).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-gray-600 dark:text-gray-300">Expiry Date</span>
-                          <p className="font-medium text-gray-900 dark:text-white">
-                            {new Date(selectedDocument.expiryDate).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      {selectedDocument.notes && (
-                        <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
-                          <span className="text-gray-600 dark:text-gray-300 text-sm">Notes</span>
-                          <p className="text-gray-900 dark:text-white mt-1">{selectedDocument.notes}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </DialogContent>
-              </Dialog>
-            </TabsContent>
-          </Tabs>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 dark:text-gray-300">No approved requests waiting for bookings</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-white">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700" asChild>
+                  <Link href="/operations-dashboard?tab=bookings">
+                    <Bed className="w-4 h-4 mr-2" />
+                    Manage Bookings
+                  </Link>
+                </Button>
+                <Button className="w-full justify-start bg-purple-600 hover:bg-purple-700" asChild>
+                  <Link href="/operations-dashboard?tab=documents">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Document Management
+                  </Link>
+                </Button>
+                <Button className="w-full justify-start bg-green-600 hover:bg-green-700" asChild>
+                  <Link href="/operations-dashboard?tab=budget-person">
+                    <Users className="w-4 h-4 mr-2" />
+                    Budget by Person
+                  </Link>
+                </Button>
+                <Button className="w-full justify-start bg-orange-600 hover:bg-orange-700" asChild>
+                  <Link href="/operations-dashboard?tab=budget-project">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Budget by Project
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Custom Completion Modal - No Radix Components */}
-        {completionModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div 
-              className="fixed inset-0 bg-black/50"
-              onClick={() => setCompletionModalOpen(false)}
-            />
-            
-            {/* Modal Content */}
-            <div className="relative z-50 w-full max-w-4xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Complete Travel Request</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                    Add booking details for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}'s trip to {selectedRequest?.destination}
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCompletionModalOpen(false)}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-
-              {/* Content */}
-              <div className="modal-form p-6 overflow-y-auto max-h-[calc(90vh-180px)] bg-white dark:bg-slate-900">
-                <div className="space-y-6">
-                  {/* Travel Request Summary */}
-                  <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Trip Summary</h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="text-gray-600 dark:text-gray-300">
-                        <span className="font-medium">Destination:</span> {selectedRequest?.destination}
-                      </div>
-                      <div className="text-gray-600 dark:text-gray-300">
-                        <span className="font-medium">Dates:</span> {selectedRequest && new Date(selectedRequest.departureDate).toLocaleDateString()} - {selectedRequest && new Date(selectedRequest.returnDate).toLocaleDateString()}
-                      </div>
-                      <div className="text-gray-600 dark:text-gray-300">
-                        <span className="font-medium">Project:</span> {selectedRequest?.project?.name || 'N/A'}
-                      </div>
-                      <div className="text-gray-600 dark:text-gray-300">
-                        <span className="font-medium">Purpose:</span> {selectedRequest?.purpose}
-                      </div>
+        {/* Complete Request Modal */}
+        <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
+          <DialogContent className="max-w-4xl bg-white dark:bg-gray-800">
+            <DialogHeader>
+              <DialogTitle className="text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-300">
+                Add booking details to complete the travel request for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+              {bookingEntries.map((booking, index) => (
+                <Card key={index} className="bg-gray-50 dark:bg-gray-700">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-medium text-gray-900 dark:text-white">Booking #{index + 1}</h4>
+                      {bookingEntries.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeBookingEntry(index)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
-                  </div>
-
-                  {/* Booking Entries */}
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Booking Details</h3>
-                      <Button
-                        onClick={addBookingEntry}
-                        size="sm"
-                        className="bg-magnoos-blue hover:bg-magnoos-dark-blue text-white"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Booking
-                      </Button>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      {bookingEntries.map((booking, index) => (
-                        <div key={index} className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
-                          <div className="flex justify-between items-center mb-4">
-                            <h4 className="font-medium text-gray-900 dark:text-white">Booking {index + 1}</h4>
-                            {bookingEntries.length > 1 && (
-                              <Button
-                                onClick={() => removeBookingEntry(index)}
-                                size="sm"
-                                variant="outline"
-                                className="text-gray-600 dark:text-gray-400 border-gray-300 dark:border-slate-600 hover:bg-gray-100 dark:hover:bg-slate-700"
-                              >
-                                Remove
-                              </Button>
-                            )}
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <Label htmlFor={`type-${index}`} className="text-gray-700 dark:text-gray-300">Type</Label>
-                              <Select 
-                                value={booking.type} 
-                                onValueChange={(value) => updateBookingEntry(index, 'type', value)}
-                              >
-                                <SelectTrigger className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white">
-                                  <SelectValue placeholder="Select booking type" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600">
-                                  <SelectItem value="accommodation">Accommodation</SelectItem>
-                                  <SelectItem value="car_rental">Car Rental</SelectItem>
-                                  <SelectItem value="per_diem">Per Diem</SelectItem>
-                                  <SelectItem value="ticket">Ticket</SelectItem>
-                                  <SelectItem value="other">Other</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            
-                            {booking.type === 'per_diem' ? (
-                              <>
-                                <div>
-                                  <Label htmlFor={`rate-${index}`} className="text-gray-700 dark:text-gray-300">Per Diem Rate ($/day)</Label>
-                                  <Input
-                                    id={`rate-${index}`}
-                                    type="number"
-                                    step="0.01"
-                                    value={booking.perDiemRate}
-                                    onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
-                                    className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                    placeholder="0.00"
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">
-                                    Total Cost (${selectedRequest ? Math.ceil((new Date(selectedRequest.returnDate).getTime() - new Date(selectedRequest.departureDate).getTime()) / (1000 * 3600 * 24)) : 0} days)
-                                  </Label>
-                                  <Input
-                                    id={`cost-${index}`}
-                                    type="number"
-                                    step="0.01"
-                                    value={booking.cost}
-                                    onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                                    className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                    placeholder="0.00"
-                                    readOnly={booking.type === 'per_diem'}
-                                  />
-                                </div>
-                              </>
-                            ) : (
-                              <div>
-                                <Label htmlFor={`cost-${index}`} className="text-gray-700 dark:text-gray-300">Cost ($)</Label>
-                                <Input
-                                  id={`cost-${index}`}
-                                  type="number"
-                                  step="0.01"
-                                  value={booking.cost}
-                                  onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                                  className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                  placeholder="0.00"
-                                />
-                              </div>
-                            )}
-                            
-                            <div>
-                              <Label htmlFor={`provider-${index}`} className="text-gray-700 dark:text-gray-300">Provider</Label>
-                              <Input
-                                id={`provider-${index}`}
-                                value={booking.provider}
-                                onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
-                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                placeholder="e.g., Hotel Name, Airline"
-                              />
-                            </div>
-                            
-                            <div>
-                              <Label htmlFor={`reference-${index}`} className="text-gray-700 dark:text-gray-300">Reference</Label>
-                              <Input
-                                id={`reference-${index}`}
-                                value={booking.bookingReference}
-                                onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
-                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                placeholder="Booking reference/confirmation"
-                              />
-                            </div>
-                            
-                            <div className="col-span-2">
-                              <Label htmlFor={`details-${index}`} className="text-gray-700 dark:text-gray-300">Details</Label>
-                              <Input
-                                id={`details-${index}`}
-                                value={booking.details}
-                                onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
-                                className="bg-white dark:bg-slate-700 border-gray-300 dark:border-slate-600 text-gray-900 dark:text-white"
-                                placeholder="Additional details"
-                              />
-                            </div>
-                          </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Type</Label>
+                        <Select
+                          value={booking.type}
+                          onValueChange={(value) => updateBookingEntry(index, 'type', value)}
+                        >
+                          <SelectTrigger className="bg-white dark:bg-gray-800">
+                            <SelectValue placeholder="Select booking type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white dark:bg-gray-800">
+                            <SelectItem value="flight">Flight</SelectItem>
+                            <SelectItem value="hotel">Hotel</SelectItem>
+                            <SelectItem value="car_rental">Car Rental</SelectItem>
+                            <SelectItem value="per_diem">Per Diem</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Provider</Label>
+                        <Input
+                          value={booking.provider}
+                          onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
+                          placeholder="e.g., Emirates, Hilton"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Booking Reference</Label>
+                        <Input
+                          value={booking.bookingReference}
+                          onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
+                          placeholder="Confirmation number"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Cost ($)</Label>
+                        <Input
+                          type="number"
+                          value={booking.cost}
+                          onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
+                          placeholder="0.00"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      {booking.type === 'per_diem' && (
+                        <div>
+                          <Label className="text-gray-900 dark:text-white">Per Diem Rate ($/day)</Label>
+                          <Input
+                            type="number"
+                            value={booking.perDiemRate}
+                            onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
+                            placeholder="Daily allowance"
+                            className="bg-white dark:bg-gray-800"
+                          />
                         </div>
-                      ))}
+                      )}
+                      <div className="md:col-span-2">
+                        <Label className="text-gray-900 dark:text-white">Details</Label>
+                        <Textarea
+                          value={booking.details}
+                          onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
+                          placeholder="Additional booking details..."
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Total Cost Summary */}
-                  <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-lg border border-gray-300 dark:border-slate-700">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-gray-900 dark:text-white">Total Cost:</span>
-                      <span className="text-xl font-bold text-gray-900 dark:text-white">
-                        ${bookingEntries.reduce((sum, booking) => sum + (parseFloat(booking.cost) || 0), 0).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="flex justify-end space-x-4 p-6 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                <Button
-                  onClick={() => setCompletionModalOpen(false)}
-                  variant="outline"
-                  className="border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
-                >
-                  Cancel
+                  </CardContent>
+                </Card>
+              ))}
+              
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={addBookingEntry} className="flex-1">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Another Booking
                 </Button>
-                <Button
+                <Button 
                   onClick={handleCompleteWithBookings}
-                  disabled={completeRequestMutation.isPending || bookingEntries.every(b => !b.type || !b.cost)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  disabled={completeRequestMutation.isPending || !bookingEntries.some(b => b.type && b.cost)}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
                 >
                   {completeRequestMutation.isPending ? "Completing..." : "Complete Request"}
                 </Button>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          </DialogContent>
+        </Dialog>
+      </ModernLayout>
     </ProtectedRoute>
   );
 }

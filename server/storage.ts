@@ -214,11 +214,6 @@ export class DatabaseStorage implements IStorage {
     return updatedProject;
   }
 
-  async getProjectByZohoId(zohoProjectId: string): Promise<Project | undefined> {
-    const [project] = await db.select().from(projects).where(eq(projects.zohoProjectId, zohoProjectId));
-    return project;
-  }
-
   // Travel request operations
   async getTravelRequests(filters?: {
     requesterId?: string;
@@ -571,7 +566,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteBookingsByTravelRequestId(requestId: string): Promise<void> {
     try {
-      await db.delete(bookings).where(eq(bookings.travelRequestId, requestId));
+      await db.delete(bookings).where(eq(bookings.requestId, requestId));
     } catch (error) {
       console.error("Error deleting bookings by travel request ID:", error);
       throw error;
@@ -601,7 +596,6 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(employeeDocuments)
-      .leftJoin(users, eq(employeeDocuments.userId, users.id))
       .orderBy(desc(employeeDocuments.expiryDate));
   }
 
@@ -639,7 +633,6 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(employeeDocuments)
-      .leftJoin(users, eq(employeeDocuments.userId, users.id))
       .where(eq(employeeDocuments.documentType, 'passport'))
       .orderBy(desc(employeeDocuments.expiryDate));
   }
@@ -648,7 +641,6 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(employeeDocuments)
-      .leftJoin(users, eq(employeeDocuments.userId, users.id))
       .where(eq(employeeDocuments.documentType, 'visa'))
       .orderBy(desc(employeeDocuments.expiryDate));
   }

@@ -62,7 +62,7 @@ export default function ManagerDashboard() {
                 <div>
                   <p className="text-sm font-medium text-white/90">Pending Approvals</p>
                   <p className="text-3xl font-bold text-white mt-1">
-                    {statsLoading ? "..." : stats?.pendingRequests || 0}
+                    {statsLoading ? "..." : stats?.pendingApprovals || 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
