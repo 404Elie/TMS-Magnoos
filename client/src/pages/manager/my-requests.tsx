@@ -13,7 +13,7 @@ export default function MyRequests() {
   const typedUser = user as UserType | undefined;
 
   // Fetch user's own requests
-  const { data: requests, isLoading } = useQuery({
+  const { data: requests, isLoading } = useQuery<any[]>({
     queryKey: ["/api/travel-requests", { userId: typedUser?.id }],
   });
 
@@ -96,50 +96,66 @@ export default function MyRequests() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
-            <CardContent className="p-6">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#ea580c] via-[#f97316] to-[#c2410c] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Pending</p>
-                  <p className="text-2xl font-bold text-orange-600">{pendingRequests.length}</p>
+                  <p className="text-sm font-medium text-white/90">Pending</p>
+                  <p className="text-3xl font-bold text-white mt-1">{pendingRequests.length}</p>
                 </div>
-                <Calendar className="w-8 h-8 text-orange-600" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <Calendar className="w-6 h-6 text-[#ea580c]" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
-            <CardContent className="p-6">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">In Progress</p>
-                  <p className="text-2xl font-bold text-blue-600">{approvedRequests.length}</p>
+                  <p className="text-sm font-medium text-white/90">In Progress</p>
+                  <p className="text-3xl font-bold text-white mt-1">{approvedRequests.length}</p>
                 </div>
-                <MapPin className="w-8 h-8 text-blue-600" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <MapPin className="w-6 h-6 text-[#2563eb]" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
-            <CardContent className="p-6">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#16a34a] via-[#22c55e] to-[#15803d] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Completed</p>
-                  <p className="text-2xl font-bold text-green-600">{completedRequests.length}</p>
+                  <p className="text-sm font-medium text-white/90">Completed</p>
+                  <p className="text-3xl font-bold text-white mt-1">{completedRequests.length}</p>
                 </div>
-                <FileText className="w-8 h-8 text-green-600" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <FileText className="w-6 h-6 text-[#16a34a]" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
-            <CardContent className="p-6">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Rejected</p>
-                  <p className="text-2xl font-bold text-red-600">{rejectedRequests.length}</p>
+                  <p className="text-sm font-medium text-white/90">Rejected</p>
+                  <p className="text-3xl font-bold text-white mt-1">{rejectedRequests.length}</p>
                 </div>
-                <User className="w-8 h-8 text-red-600" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <User className="w-6 h-6 text-[#dc2626]" />
+                </div>
               </div>
             </CardContent>
           </Card>
