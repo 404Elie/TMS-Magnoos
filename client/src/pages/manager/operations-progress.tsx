@@ -316,72 +316,70 @@ export default function OperationsProgress() {
         </div>
 
         {/* Comparative Analytics */}
-        <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-          <CardContent className="relative p-6 text-white">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                <BarChart3 className="w-6 h-6 text-[#2563eb]" />
-              </div>
-              <h3 className="text-xl font-bold text-white">Performance Comparison</h3>
-            </div>
+        <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+              <BarChart3 className="w-5 h-5 text-purple-600" />
+              Performance Comparison
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                <h4 className="font-semibold text-white mb-4">Efficiency Metrics</h4>
+              <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Efficiency Metrics</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-sm text-white/90">KSA Processing Speed</span>
-                    <span className="text-sm font-medium text-green-300">{ksaStats.avgProcessingDays}d</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">KSA Processing Speed</span>
+                    <span className="text-sm font-medium text-green-600">{ksaStats.avgProcessingDays}d</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-white/90">UAE Processing Speed</span>
-                    <span className="text-sm font-medium text-orange-300">{uaeStats.avgProcessingDays}d</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">UAE Processing Speed</span>
+                    <span className="text-sm font-medium text-orange-600">{uaeStats.avgProcessingDays}d</span>
                   </div>
-                  <div className="pt-2 border-t border-white/20">
+                  <div className="pt-2 border-t">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-white">Best Performer</span>
-                      <span className="text-sm font-bold text-cyan-300">KSA</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">Best Performer</span>
+                      <span className="text-sm font-bold text-blue-600">KSA</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                <h4 className="font-semibold text-white mb-4">Success Rates</h4>
+              <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Success Rates</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-sm text-white/90">KSA Success Rate</span>
-                    <span className="text-sm font-medium text-green-300">{ksaStats.completionRate}%</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">KSA Success Rate</span>
+                    <span className="text-sm font-medium text-green-600">{ksaStats.completionRate}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-white/90">UAE Success Rate</span>
-                    <span className="text-sm font-medium text-orange-300">{uaeStats.completionRate}%</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">UAE Success Rate</span>
+                    <span className="text-sm font-medium text-orange-600">{uaeStats.completionRate}%</span>
                   </div>
-                  <div className="pt-2 border-t border-white/20">
+                  <div className="pt-2 border-t">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-white">Difference</span>
-                      <span className="text-sm font-bold text-cyan-300">+{ksaStats.completionRate - uaeStats.completionRate}%</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">Difference</span>
+                      <span className="text-sm font-bold text-blue-600">+{ksaStats.completionRate - uaeStats.completionRate}%</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                <h4 className="font-semibold text-white mb-4">Cost Efficiency</h4>
+              <div className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Cost Efficiency</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-sm text-white/90">KSA Monthly Cost</span>
-                    <span className="text-sm font-medium text-cyan-300">{formatCurrency(ksaStats.monthlySpend)}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">KSA Monthly Cost</span>
+                    <span className="text-sm font-medium text-blue-600">{formatCurrency(ksaStats.monthlySpend)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-white/90">UAE Monthly Cost</span>
-                    <span className="text-sm font-medium text-orange-300">{formatCurrency(uaeStats.monthlySpend)}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">UAE Monthly Cost</span>
+                    <span className="text-sm font-medium text-orange-600">{formatCurrency(uaeStats.monthlySpend)}</span>
                   </div>
-                  <div className="pt-2 border-t border-white/20">
+                  <div className="pt-2 border-t">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-white">Total Combined</span>
-                      <span className="text-sm font-bold text-purple-300">{formatCurrency(ksaStats.monthlySpend + uaeStats.monthlySpend)}</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">Total Combined</span>
+                      <span className="text-sm font-bold text-purple-600">{formatCurrency(ksaStats.monthlySpend + uaeStats.monthlySpend)}</span>
                     </div>
                   </div>
                 </div>
