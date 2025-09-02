@@ -203,7 +203,7 @@ class ZohoService {
           'Accept': 'application/json'
         };
         
-        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=200`;
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?status=active&page=${page}&per_page=200`;
         console.log(`Fetching projects from: ${apiUrl} (Page: ${page}/${maxPages})`);
 
         const response = await fetch(apiUrl, { headers });
@@ -244,8 +244,15 @@ class ZohoService {
         retryCount = 0; // Reset retry count for next page
       }
 
-      console.log(`Successfully retrieved ${allProjectsData.length} project records.`);
-      return allProjectsData;
+      // Filter out any duplicates and ensure only active projects
+      const uniqueProjects = allProjectsData.filter((project, index, self) => 
+        index === self.findIndex(p => p.id === project.id)
+      ).filter(project => 
+        project.status === 'active' || project.status === 'Active'
+      );
+      
+      console.log(`Successfully retrieved ${uniqueProjects.length} active project records (filtered from ${allProjectsData.length} total).`);
+      return uniqueProjects;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
       // Return empty array instead of throwing to allow graceful fallback
