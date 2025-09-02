@@ -67,17 +67,15 @@ export default function Budget() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
-              <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between">
+                <div>
                   <p className="text-sm font-medium text-white/90">Total Budget</p>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                    <DollarSign className="w-5 h-5 text-[#2563eb]" />
-                  </div>
-                </div>
-                <div className="flex-1 flex items-end">
-                  <p className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
+                  <p className="text-2xl font-bold text-white mt-1">
                     {formatCurrency(180000)}
                   </p>
+                </div>
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <DollarSign className="w-6 h-6 text-[#2563eb]" />
                 </div>
               </div>
             </CardContent>
@@ -87,17 +85,15 @@ export default function Budget() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
-              <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between">
+                <div>
                   <p className="text-sm font-medium text-white/90">Spent This Year</p>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                    <TrendingUp className="w-5 h-5 text-[#0ea5e9]" />
-                  </div>
-                </div>
-                <div className="flex-1 flex items-end">
-                  <p className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
+                  <p className="text-2xl font-bold text-white mt-1">
                     {formatCurrency(94600)}
                   </p>
+                </div>
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <TrendingUp className="w-6 h-6 text-[#0ea5e9]" />
                 </div>
               </div>
             </CardContent>
@@ -107,30 +103,32 @@ export default function Budget() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
-              <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between">
+                <div>
                   <p className="text-sm font-medium text-white/90">Remaining</p>
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                    <TrendingDown className="w-5 h-5 text-[#7c3aed]" />
-                  </div>
-                </div>
-                <div className="flex-1 flex items-end">
-                  <p className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
+                  <p className="text-2xl font-bold text-white mt-1">
                     {formatCurrency(85400)}
                   </p>
+                </div>
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <TrendingDown className="w-6 h-6 text-[#7c3aed]" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
-            <CardContent className="p-6">
+          <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+            <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Budget Used</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">52.6%</p>
+                  <p className="text-sm font-medium text-white/90">Budget Used</p>
+                  <p className="text-2xl font-bold text-white mt-1">52.6%</p>
                 </div>
-                <PieChart className="w-8 h-8 text-blue-600" />
+                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                  <PieChart className="w-6 h-6 text-[#16a34a]" />
+                </div>
               </div>
               <Progress value={52.6} className="mt-3" />
             </CardContent>
