@@ -36,7 +36,7 @@ class ZohoService {
   private readonly AUTH_URL = "https://accounts.zoho.com/oauth/v2/token";
 
   private async getUsersAccessToken(): Promise<string> {
-    if (this.usersAccessToken && Date.now() < this.usersTokenExpiry) {
+    if (this.usersAccessToken && new Date() < this.usersTokenExpiry) {
       return this.usersAccessToken;
     }
 
@@ -70,7 +70,7 @@ class ZohoService {
 
       const data = await response.json() as ZohoTokenResponse;
       this.usersAccessToken = data.access_token;
-      this.usersTokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 minute early
+      this.usersTokenExpiry = new Date(Date.now() + (data.expires_in * 1000) - 60000); // Refresh 1 minute early
 
       return this.usersAccessToken;
     } catch (error) {
@@ -80,7 +80,7 @@ class ZohoService {
   }
 
   private async getProjectsAccessToken(): Promise<string> {
-    if (this.projectsAccessToken && Date.now() < this.projectsTokenExpiry) {
+    if (this.projectsAccessToken && new Date() < this.projectsTokenExpiry) {
       return this.projectsAccessToken;
     }
 
@@ -114,7 +114,7 @@ class ZohoService {
 
       const data = await response.json() as ZohoTokenResponse;
       this.projectsAccessToken = data.access_token;
-      this.projectsTokenExpiry = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 minute early
+      this.projectsTokenExpiry = new Date(Date.now() + (data.expires_in * 1000) - 60000); // Refresh 1 minute early
 
       return this.projectsAccessToken;
     } catch (error) {
@@ -233,11 +233,8 @@ class ZohoService {
           console.log(`Found ${projects.length} projects on page ${page}`);
           allProjectsData.push(...projects);
           
-          // If we got fewer than 200 projects, this is likely the last page
-          if (projects.length < 200) {
-            console.log("Received fewer than 200 projects, assuming last page.");
-            break;
-          }
+          // Continue to next page unless we get exactly 0 projects
+          // Don't stop just because we got fewer than 200 - Zoho might limit per page differently
         } else {
           console.log("Invalid response structure or no projects array found");
           break;
