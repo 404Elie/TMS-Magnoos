@@ -2,6 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ModernLayout from "@/components/ModernLayout";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { Plane, Clock, Check, Flag, TrendingUp, Users, DollarSign, Calendar } from "lucide-react";
 import type { User } from "@shared/schema";
 
@@ -10,17 +11,18 @@ export default function ManagerDashboard() {
   const typedUser = user as User | undefined;
 
   // Fetch dashboard statistics
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading } = useQuery<any>({
     queryKey: ["/api/dashboard/stats"],
   });
 
   // Fetch recent requests for preview
-  const { data: requests, isLoading: requestsLoading } = useQuery({
+  const { data: requests, isLoading: requestsLoading } = useQuery<any[]>({
     queryKey: ["/api/travel-requests"],
   });
 
   return (
-    <ModernLayout>
+    <ProtectedRoute allowedRoles={["pm"]}>
+      <ModernLayout>
       <div className="p-8 space-y-8">
         {/* Header */}
         <div>
@@ -298,5 +300,6 @@ export default function ManagerDashboard() {
         </div>
       </div>
     </ModernLayout>
+    </ProtectedRoute>
   );
 }
