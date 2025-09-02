@@ -1,12 +1,14 @@
 import nodemailer from 'nodemailer';
 import { Resend } from 'resend';
+import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
 
 class RealEmailService {
   private transporter: nodemailer.Transporter | null = null;
   private resend: Resend | null = null;
+  private mailerSend: MailerSend | null = null;
   private initialized = false;
   private initPromise: Promise<void>;
-  private emailMethod: 'resend' | 'smtp' | 'ethereal' = 'ethereal';
+  private emailMethod: 'mailersend' | 'resend' | 'smtp' | 'ethereal' = 'ethereal';
 
   constructor() {
     this.initPromise = this.setupEmailService();
@@ -14,7 +16,21 @@ class RealEmailService {
 
   private async setupEmailService() {
     try {
-      // Option 1: Use Resend API (free tier: 100 emails/day, no personal credentials needed)
+      // Option 1: Use MailerSend API (free tier: 3,000 emails/month, best option)
+      if (process.env.MAILERSEND_API_KEY) {
+        this.mailerSend = new MailerSend({
+          apiKey: process.env.MAILERSEND_API_KEY,
+        });
+        this.emailMethod = 'mailersend';
+        this.initialized = true;
+        console.log("✅ Email service initialized with MailerSend API");
+        console.log("- Service: MailerSend (mailersend.com)");
+        console.log("- Limit: 3,000 emails/month (free tier)");
+        console.log("- Real emails will be delivered to recipients");
+        return;
+      }
+
+      // Option 2: Use Resend API (free tier: 100 emails/day, no personal credentials needed)
       if (process.env.RESEND_API_KEY) {
         this.resend = new Resend(process.env.RESEND_API_KEY);
         this.emailMethod = 'resend';
@@ -46,8 +62,9 @@ class RealEmailService {
       // Fallback: Ethereal for preview only
       console.log("⚠️  No real email service configured");
       console.log("📧 Available options for real email delivery:");
-      console.log("   1. RESEND_API_KEY - Free at resend.com (100 emails/day)");
-      console.log("   2. EMAIL_USER + EMAIL_PASS - Gmail app password");
+      console.log("   1. MAILERSEND_API_KEY - Free at mailersend.com (3,000 emails/month) [RECOMMENDED]");
+      console.log("   2. RESEND_API_KEY - Free at resend.com (100 emails/day)");
+      console.log("   3. EMAIL_USER + EMAIL_PASS - Gmail app password");
       console.log("");
       console.log("🔄 Falling back to Ethereal for preview only...");
       
@@ -92,6 +109,33 @@ class RealEmailService {
       await this.ensureInitialized();
       
       const fromAddress = emailData.from || '"Magnoos Travel System" <noreply@magnoos.com>';
+      
+      if (this.emailMethod === 'mailersend' && this.mailerSend) {
+        // Use MailerSend API for real email delivery
+        try {
+          const sentFrom = new Sender('noreply@magnoos.com', 'Magnoos Travel System');
+          const recipients = [new Recipient(emailData.to)];
+
+          const emailParams = new EmailParams()
+            .setFrom(sentFrom)
+            .setTo(recipients)
+            .setSubject(emailData.subject)
+            .setHtml(emailData.html);
+
+          const response = await this.mailerSend.email.send(emailParams);
+          console.log(`✅ Email sent via MailerSend to ${emailData.to}`);
+          return true;
+        } catch (error: any) {
+          console.error('❌ MailerSend error:', error);
+          
+          if (error.message && error.message.includes('domain') || error.message.includes('verify')) {
+            console.log(`🔄 Domain verification issue detected, check MailerSend dashboard`);
+            console.log(`ℹ️  For testing, use a verified domain or add your domain to MailerSend`);
+          }
+          
+          return false;
+        }
+      }
       
       if (this.emailMethod === 'resend' && this.resend) {
         // Use Resend API for real email delivery
