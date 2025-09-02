@@ -244,15 +244,27 @@ class ZohoService {
         retryCount = 0; // Reset retry count for next page
       }
 
-      // Filter out any duplicates and ensure only active projects
+      // Filter out any duplicates and log status values to debug
       const uniqueProjects = allProjectsData.filter((project, index, self) => 
         index === self.findIndex(p => p.id === project.id)
-      ).filter(project => 
-        project.status === 'active' || project.status === 'Active'
       );
       
-      console.log(`Successfully retrieved ${uniqueProjects.length} active project records (filtered from ${allProjectsData.length} total).`);
-      return uniqueProjects;
+      // Log all unique status values to understand what Zoho returns
+      const statusValues = [...new Set(uniqueProjects.map(p => p.status))];
+      console.log(`Found status values in Zoho projects: ${statusValues.join(', ')}`);
+      
+      // Filter for active projects with all possible status variations
+      const activeProjects = uniqueProjects.filter(project => 
+        project.status && (
+          project.status.toLowerCase() === 'active' ||
+          project.status.toLowerCase() === 'open' ||
+          project.status.toLowerCase() === 'in progress' ||
+          project.status.toLowerCase() === 'ongoing'
+        )
+      );
+      
+      console.log(`Successfully retrieved ${activeProjects.length} active project records (filtered from ${allProjectsData.length} total).`);
+      return activeProjects;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
       // Return empty array instead of throwing to allow graceful fallback
