@@ -94,7 +94,7 @@ export default function OperationsProgress() {
           </Card>
 
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#16a34a] via-[#22c55e] to-[#15803d] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
@@ -105,7 +105,7 @@ export default function OperationsProgress() {
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <CheckCircle className="w-6 h-6 text-[#16a34a]" />
+                  <CheckCircle className="w-6 h-6 text-[#0ea5e9]" />
                 </div>
               </div>
             </CardContent>
@@ -130,7 +130,7 @@ export default function OperationsProgress() {
           </Card>
 
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
@@ -141,7 +141,7 @@ export default function OperationsProgress() {
                   </p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <DollarSign className="w-6 h-6 text-[#0ea5e9]" />
+                  <DollarSign className="w-6 h-6 text-[#7c3aed]" />
                 </div>
               </div>
             </CardContent>
