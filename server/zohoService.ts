@@ -203,7 +203,7 @@ class ZohoService {
           'Accept': 'application/json'
         };
         
-        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?status=active&page=${page}&per_page=200`;
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=200`;
         console.log(`Fetching projects from: ${apiUrl} (Page: ${page}/${maxPages})`);
 
         const response = await fetch(apiUrl, { headers });
@@ -244,27 +244,13 @@ class ZohoService {
         retryCount = 0; // Reset retry count for next page
       }
 
-      // Filter out any duplicates and log status values to debug
+      // Filter out any duplicates (keep all projects regardless of status)
       const uniqueProjects = allProjectsData.filter((project, index, self) => 
         index === self.findIndex(p => p.id === project.id)
       );
       
-      // Log all unique status values to understand what Zoho returns
-      const statusValues = [...new Set(uniqueProjects.map(p => p.status))];
-      console.log(`Found status values in Zoho projects: ${statusValues.join(', ')}`);
-      
-      // Filter for active projects with all possible status variations
-      const activeProjects = uniqueProjects.filter(project => 
-        project.status && (
-          project.status.toLowerCase() === 'active' ||
-          project.status.toLowerCase() === 'open' ||
-          project.status.toLowerCase() === 'in progress' ||
-          project.status.toLowerCase() === 'ongoing'
-        )
-      );
-      
-      console.log(`Successfully retrieved ${activeProjects.length} active project records (filtered from ${allProjectsData.length} total).`);
-      return activeProjects;
+      console.log(`Successfully retrieved ${uniqueProjects.length} project records (all statuses).`);
+      return uniqueProjects;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
       // Return empty array instead of throwing to allow graceful fallback
