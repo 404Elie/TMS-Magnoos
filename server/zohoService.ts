@@ -193,7 +193,7 @@ class ZohoService {
       const allProjectsData: ZohoProject[] = [];
       let page = 1;
 
-      const maxPages = 5; // Since user confirmed only 2 pages exist, limit to 5 for safety
+      const maxPages = 2; // User confirmed exactly 2 pages with 131 projects total
       let retryCount = 0;
       
       while (page <= maxPages) {
@@ -203,7 +203,7 @@ class ZohoService {
           'Accept': 'application/json'
         };
         
-        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=100`;
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=70`;
         console.log(`Fetching projects from: ${apiUrl} (Page: ${page}/${maxPages})`);
 
         const response = await fetch(apiUrl, { headers });
