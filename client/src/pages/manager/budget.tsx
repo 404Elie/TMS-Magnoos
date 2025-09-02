@@ -67,15 +67,17 @@ export default function Budget() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb] via-[#3b82f6] to-[#1d4ed8] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-medium text-white/90">Total Budget</p>
-                  <p className="text-3xl font-bold text-white mt-1">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <DollarSign className="w-5 h-5 text-[#2563eb]" />
+                  </div>
+                </div>
+                <div className="flex-1 flex items-end">
+                  <p className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
                     {formatCurrency(180000)}
                   </p>
-                </div>
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <DollarSign className="w-6 h-6 text-[#2563eb]" />
                 </div>
               </div>
             </CardContent>
@@ -85,15 +87,17 @@ export default function Budget() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-medium text-white/90">Spent This Year</p>
-                  <p className="text-3xl font-bold text-white mt-1">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <TrendingUp className="w-5 h-5 text-[#0ea5e9]" />
+                  </div>
+                </div>
+                <div className="flex-1 flex items-end">
+                  <p className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
                     {formatCurrency(94600)}
                   </p>
-                </div>
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <TrendingUp className="w-6 h-6 text-[#0ea5e9]" />
                 </div>
               </div>
             </CardContent>
@@ -103,15 +107,17 @@ export default function Budget() {
             <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex flex-col h-full">
+                <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-medium text-white/90">Remaining</p>
-                  <p className="text-3xl font-bold text-white mt-1">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
+                    <TrendingDown className="w-5 h-5 text-[#7c3aed]" />
+                  </div>
+                </div>
+                <div className="flex-1 flex items-end">
+                  <p className="text-2xl lg:text-3xl font-bold text-white leading-tight break-all">
                     {formatCurrency(85400)}
                   </p>
-                </div>
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <TrendingDown className="w-6 h-6 text-[#7c3aed]" />
                 </div>
               </div>
             </CardContent>
