@@ -188,35 +188,50 @@ class ZohoService {
 
   async getProjects(): Promise<ZohoProject[]> {
     try {
-      console.log("Fetching projects from Zoho Projects API (simplified approach)...");
+      console.log("Fetching projects from Zoho Projects API with pagination...");
       
-      const accessToken = await this.getProjectsAccessToken();
-      const headers = {
-        'Authorization': `Zoho-oauthtoken ${accessToken}`,
-        'Accept': 'application/json'
-      };
+      const allProjects: ZohoProject[] = [];
+      let page = 1;
       
-      // Simple API call like your working Python code
-      const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/`;
-      console.log(`Fetching all projects from: ${apiUrl}`);
+      while (true) {
+        const accessToken = await this.getProjectsAccessToken();
+        const headers = {
+          'Authorization': `Zoho-oauthtoken ${accessToken}`,
+          'Accept': 'application/json'
+        };
+        
+        // Add pagination parameters to the simple URL structure
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=100`;
+        console.log(`Fetching projects from page ${page}: ${apiUrl}`);
 
-      const response = await fetch(apiUrl, { headers });
+        const response = await fetch(apiUrl, { headers });
 
-      if (!response.ok) {
-        throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json() as any;
+        
+        // Check if this is a proper projects response
+        if (data.projects && Array.isArray(data.projects)) {
+          const projects = data.projects;
+          
+          if (projects.length === 0) {
+            console.log(`No more projects found on page ${page}. Stopping pagination.`);
+            break;
+          }
+          
+          console.log(`Found ${projects.length} projects on page ${page}`);
+          allProjects.push(...projects);
+          page++;
+        } else {
+          console.log("Invalid response structure or no projects array found");
+          break;
+        }
       }
-
-      const data = await response.json() as any;
       
-      // Check if this is a proper projects response
-      if (data.projects && Array.isArray(data.projects)) {
-        const projects = data.projects;
-        console.log(`Successfully retrieved ${projects.length} project records from single API call.`);
-        return projects;
-      } else {
-        console.log("Invalid response structure:", data);
-        return [];
-      }
+      console.log(`Successfully retrieved ${allProjects.length} total project records.`);
+      return allProjects;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
       return [];
