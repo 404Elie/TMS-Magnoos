@@ -193,39 +193,49 @@ class ZohoService {
       const allProjects: ZohoProject[] = [];
       let page = 1;
       
-      while (true) {
+      // Continue fetching pages until we get less than 100 projects or hit max safety limit
+      const maxPages = 10; // Safety limit to prevent infinite loops
+      
+      for (let currentPage = 1; currentPage <= maxPages; currentPage++) {
         const accessToken = await this.getProjectsAccessToken();
         const headers = {
           'Authorization': `Zoho-oauthtoken ${accessToken}`,
           'Accept': 'application/json'
         };
         
-        // Add pagination parameters to the simple URL structure
-        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=100`;
-        console.log(`Fetching projects from page ${page}: ${apiUrl}`);
+        // Add pagination parameters
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${currentPage}&per_page=100`;
+        console.log(`Fetching projects from page ${currentPage}: ${apiUrl}`);
 
         const response = await fetch(apiUrl, { headers });
 
         if (!response.ok) {
-          throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
+          console.log(`API error on page ${currentPage}: ${response.status}`);
+          break;
         }
 
         const data = await response.json() as any;
         
-        // Check if this is a proper projects response
+        // Check response structure
         if (data.projects && Array.isArray(data.projects)) {
           const projects = data.projects;
           
+          console.log(`Found ${projects.length} projects on page ${currentPage}`);
+          
           if (projects.length === 0) {
-            console.log(`No more projects found on page ${page}. Stopping pagination.`);
+            console.log(`No projects found on page ${currentPage}. Stopping pagination.`);
             break;
           }
           
-          console.log(`Found ${projects.length} projects on page ${page}`);
           allProjects.push(...projects);
-          page++;
+          
+          // If we got less than 100 projects, this is likely the last page
+          if (projects.length < 100) {
+            console.log(`Got ${projects.length} projects (less than 100). Likely last page.`);
+            break;
+          }
         } else {
-          console.log("Invalid response structure or no projects array found");
+          console.log(`Invalid response structure on page ${currentPage}:`, data);
           break;
         }
       }
