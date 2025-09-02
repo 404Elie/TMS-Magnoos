@@ -97,7 +97,7 @@ export default function MyRequests() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#ea580c] via-[#f97316] to-[#c2410c] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
@@ -106,7 +106,7 @@ export default function MyRequests() {
                   <p className="text-3xl font-bold text-white mt-1">{pendingRequests.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <Calendar className="w-6 h-6 text-[#ea580c]" />
+                  <Calendar className="w-6 h-6 text-[#7c3aed]" />
                 </div>
               </div>
             </CardContent>
@@ -129,7 +129,7 @@ export default function MyRequests() {
           </Card>
 
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#16a34a] via-[#22c55e] to-[#15803d] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
@@ -138,15 +138,15 @@ export default function MyRequests() {
                   <p className="text-3xl font-bold text-white mt-1">{completedRequests.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <FileText className="w-6 h-6 text-[#16a34a]" />
+                  <FileText className="w-6 h-6 text-[#0ea5e9]" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] opacity-95"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -154,7 +154,7 @@ export default function MyRequests() {
                   <p className="text-3xl font-bold text-white mt-1">{rejectedRequests.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <User className="w-6 h-6 text-[#dc2626]" />
+                  <User className="w-6 h-6 text-[#ef4444]" />
                 </div>
               </div>
             </CardContent>
