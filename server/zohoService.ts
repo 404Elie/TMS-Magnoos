@@ -188,72 +188,37 @@ class ZohoService {
 
   async getProjects(): Promise<ZohoProject[]> {
     try {
-      console.log("Fetching projects from Zoho Projects API...");
+      console.log("Fetching projects from Zoho Projects API (simplified approach)...");
       
-      const allProjectsData: ZohoProject[] = [];
-      let page = 1;
-
-      const maxPages = 2; // User confirmed exactly 2 pages with 131 projects total
-      let retryCount = 0;
+      const accessToken = await this.getProjectsAccessToken();
+      const headers = {
+        'Authorization': `Zoho-oauthtoken ${accessToken}`,
+        'Accept': 'application/json'
+      };
       
-      while (page <= maxPages) {
-        const accessToken = await this.getProjectsAccessToken();
-        const headers = {
-          'Authorization': `Zoho-oauthtoken ${accessToken}`,
-          'Accept': 'application/json'
-        };
-        
-        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/?page=${page}&per_page=70`;
-        console.log(`Fetching projects from: ${apiUrl} (Page: ${page}/${maxPages})`);
+      // Simple API call like your working Python code
+      const apiUrl = `https://projectsapi.zoho.com/restapi/portal/${this.PORTAL_ID}/projects/`;
+      console.log(`Fetching all projects from: ${apiUrl}`);
 
-        const response = await fetch(apiUrl, { headers });
+      const response = await fetch(apiUrl, { headers });
 
-        if (!response.ok) {
-          if (response.status === 401 && retryCount < 3) {
-            console.log("Authentication failed (401). Retrying with new token...");
-            this.projectsAccessToken = null;
-            this.projectsTokenExpiry = new Date(0);
-            retryCount++;
-            continue;
-          }
-          throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json() as any;
-        
-        // Check if this is a proper projects response with projects array
-        if (data.projects && Array.isArray(data.projects)) {
-          const projects = data.projects;
-          
-          if (projects.length === 0) {
-            console.log("No more projects found. End of pagination.");
-            break;
-          }
-          
-          console.log(`Found ${projects.length} projects on page ${page}`);
-          allProjectsData.push(...projects);
-          
-          // Continue to next page unless we get exactly 0 projects
-          // Don't stop just because we got fewer than 200 - Zoho might limit per page differently
-        } else {
-          console.log("Invalid response structure or no projects array found");
-          break;
-        }
-        
-        page++;
-        retryCount = 0; // Reset retry count for next page
+      if (!response.ok) {
+        throw new Error(`Zoho Projects API error: ${response.status} ${response.statusText}`);
       }
 
-      // Filter out any duplicates (keep all projects regardless of status)
-      const uniqueProjects = allProjectsData.filter((project, index, self) => 
-        index === self.findIndex(p => p.id === project.id)
-      );
+      const data = await response.json() as any;
       
-      console.log(`Successfully retrieved ${uniqueProjects.length} project records (all statuses).`);
-      return uniqueProjects;
+      // Check if this is a proper projects response
+      if (data.projects && Array.isArray(data.projects)) {
+        const projects = data.projects;
+        console.log(`Successfully retrieved ${projects.length} project records from single API call.`);
+        return projects;
+      } else {
+        console.log("Invalid response structure:", data);
+        return [];
+      }
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
-      // Return empty array instead of throwing to allow graceful fallback
       return [];
     }
   }
