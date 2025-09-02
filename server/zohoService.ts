@@ -240,8 +240,19 @@ class ZohoService {
         }
       }
       
+      // Remove duplicates based on project ID
+      const uniqueProjects = allProjects.filter((project, index, self) => 
+        index === self.findIndex(p => p.id === project.id)
+      );
+      
       console.log(`Successfully retrieved ${allProjects.length} total project records.`);
-      return allProjects;
+      console.log(`After removing duplicates: ${uniqueProjects.length} unique projects.`);
+      
+      if (allProjects.length !== uniqueProjects.length) {
+        console.log(`Found ${allProjects.length - uniqueProjects.length} duplicate projects!`);
+      }
+      
+      return uniqueProjects;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
       return [];
