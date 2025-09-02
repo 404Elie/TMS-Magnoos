@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -65,9 +65,14 @@ export default function PMNewRequest() {
   });
 
   // Fetch projects
-  const { data: projects } = useQuery({
+  const { data: projects, refetch: refetchProjects } = useQuery({
     queryKey: ["/api/zoho/projects"],
   });
+
+  // Force refresh projects data on component mount to get latest changes
+  React.useEffect(() => {
+    refetchProjects();
+  }, []);
 
   const submitRequestMutation = useMutation({
     mutationFn: async (data: RequestForm) => {
