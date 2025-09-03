@@ -439,10 +439,8 @@ export default function OperationsDashboard() {
   });
 
   const handleCompleteRequest = (request: TravelRequestWithDetails) => {
-    console.log('Complete request clicked for:', request.id);
     setSelectedRequest(request);
     setCompletionModalOpen(true);
-    console.log('Modal should now be open:', true);
   };
 
   const handleCompleteWithBookings = () => {
@@ -625,6 +623,122 @@ export default function OperationsDashboard() {
               )}
             </div>
           </div>
+
+        {/* Complete Request Modal */}
+        <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
+          <DialogContent className="max-w-4xl bg-white dark:bg-gray-800">
+            <DialogHeader>
+              <DialogTitle className="text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-300">
+                Add booking details to complete the travel request for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
+              {bookingEntries.map((booking, index) => (
+                <Card key={index} className="bg-gray-50 dark:bg-gray-700">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-medium text-gray-900 dark:text-white">Booking #{index + 1}</h4>
+                      {bookingEntries.length > 1 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeBookingEntry(index)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Type</Label>
+                        <Select
+                          value={booking.type}
+                          onValueChange={(value) => updateBookingEntry(index, 'type', value)}
+                        >
+                          <SelectTrigger className="bg-white dark:bg-gray-800">
+                            <SelectValue placeholder="Select booking type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white dark:bg-gray-800">
+                            <SelectItem value="flight">Flight</SelectItem>
+                            <SelectItem value="hotel">Hotel</SelectItem>
+                            <SelectItem value="car_rental">Car Rental</SelectItem>
+                            <SelectItem value="per_diem">Per Diem</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Provider</Label>
+                        <Input
+                          value={booking.provider}
+                          onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
+                          placeholder="e.g., Emirates, Hilton"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Booking Reference</Label>
+                        <Input
+                          value={booking.bookingReference}
+                          onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
+                          placeholder="Confirmation number"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-900 dark:text-white">Cost ($)</Label>
+                        <Input
+                          type="number"
+                          value={booking.cost}
+                          onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
+                          placeholder="0.00"
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      {booking.type === 'per_diem' && (
+                        <div>
+                          <Label className="text-gray-900 dark:text-white">Per Diem Rate ($/day)</Label>
+                          <Input
+                            type="number"
+                            value={booking.perDiemRate}
+                            onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
+                            placeholder="Daily allowance"
+                            className="bg-white dark:bg-gray-800"
+                          />
+                        </div>
+                      )}
+                      <div className="md:col-span-2">
+                        <Label className="text-gray-900 dark:text-white">Details</Label>
+                        <Textarea
+                          value={booking.details}
+                          onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
+                          placeholder="Additional booking details..."
+                          className="bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={addBookingEntry} className="flex-1">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Another Booking
+                </Button>
+                <Button 
+                  onClick={handleCompleteWithBookings}
+                  disabled={completeRequestMutation.isPending || !bookingEntries.some(b => b.type && b.cost)}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  {completeRequestMutation.isPending ? "Completing..." : "Complete Request"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
         </ModernLayout>
       </ProtectedRoute>
     );
@@ -1183,121 +1297,6 @@ export default function OperationsDashboard() {
           </div>
         </div>
 
-        {/* Complete Request Modal */}
-        <Dialog open={completionModalOpen} onOpenChange={setCompletionModalOpen}>
-          <DialogContent className="max-w-4xl bg-white dark:bg-gray-800">
-            <DialogHeader>
-              <DialogTitle className="text-gray-900 dark:text-white">Complete Travel Request</DialogTitle>
-              <DialogDescription className="text-gray-600 dark:text-gray-300">
-                Add booking details to complete the travel request for {selectedRequest?.traveler?.firstName} {selectedRequest?.traveler?.lastName}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-              {bookingEntries.map((booking, index) => (
-                <Card key={index} className="bg-gray-50 dark:bg-gray-700">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-medium text-gray-900 dark:text-white">Booking #{index + 1}</h4>
-                      {bookingEntries.length > 1 && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeBookingEntry(index)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-gray-900 dark:text-white">Type</Label>
-                        <Select
-                          value={booking.type}
-                          onValueChange={(value) => updateBookingEntry(index, 'type', value)}
-                        >
-                          <SelectTrigger className="bg-white dark:bg-gray-800">
-                            <SelectValue placeholder="Select booking type" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white dark:bg-gray-800">
-                            <SelectItem value="flight">Flight</SelectItem>
-                            <SelectItem value="hotel">Hotel</SelectItem>
-                            <SelectItem value="car_rental">Car Rental</SelectItem>
-                            <SelectItem value="per_diem">Per Diem</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label className="text-gray-900 dark:text-white">Provider</Label>
-                        <Input
-                          value={booking.provider}
-                          onChange={(e) => updateBookingEntry(index, 'provider', e.target.value)}
-                          placeholder="e.g., Emirates, Hilton"
-                          className="bg-white dark:bg-gray-800"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-gray-900 dark:text-white">Booking Reference</Label>
-                        <Input
-                          value={booking.bookingReference}
-                          onChange={(e) => updateBookingEntry(index, 'bookingReference', e.target.value)}
-                          placeholder="Confirmation number"
-                          className="bg-white dark:bg-gray-800"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-gray-900 dark:text-white">Cost ($)</Label>
-                        <Input
-                          type="number"
-                          value={booking.cost}
-                          onChange={(e) => updateBookingEntry(index, 'cost', e.target.value)}
-                          placeholder="0.00"
-                          className="bg-white dark:bg-gray-800"
-                        />
-                      </div>
-                      {booking.type === 'per_diem' && (
-                        <div>
-                          <Label className="text-gray-900 dark:text-white">Per Diem Rate ($/day)</Label>
-                          <Input
-                            type="number"
-                            value={booking.perDiemRate}
-                            onChange={(e) => updateBookingEntry(index, 'perDiemRate', e.target.value)}
-                            placeholder="Daily allowance"
-                            className="bg-white dark:bg-gray-800"
-                          />
-                        </div>
-                      )}
-                      <div className="md:col-span-2">
-                        <Label className="text-gray-900 dark:text-white">Details</Label>
-                        <Textarea
-                          value={booking.details}
-                          onChange={(e) => updateBookingEntry(index, 'details', e.target.value)}
-                          placeholder="Additional booking details..."
-                          className="bg-white dark:bg-gray-800"
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={addBookingEntry} className="flex-1">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Another Booking
-                </Button>
-                <Button 
-                  onClick={handleCompleteWithBookings}
-                  disabled={completeRequestMutation.isPending || !bookingEntries.some(b => b.type && b.cost)}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                >
-                  {completeRequestMutation.isPending ? "Completing..." : "Complete Request"}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
         </ModernLayout>
       </ProtectedRoute>
     );
