@@ -221,6 +221,7 @@ export class DatabaseStorage implements IStorage {
     projectId?: string;
     status?: string;
     pmId?: string;
+    assignedOperationsTeam?: string;
   }): Promise<TravelRequestWithDetails[]> {
     let query = db
       .select()
@@ -244,6 +245,9 @@ export class DatabaseStorage implements IStorage {
     if (filters?.pmId) {
       // For PM role, show requests that need approval (submitted status)
       conditions.push(eq(travelRequests.status, "submitted"));
+    }
+    if (filters?.assignedOperationsTeam) {
+      conditions.push(eq(travelRequests.assignedOperationsTeam, filters.assignedOperationsTeam));
     }
 
     if (conditions.length > 0) {
