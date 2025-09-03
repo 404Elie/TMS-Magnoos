@@ -21,6 +21,10 @@ export default function Approvals() {
   // Fetch pending approval requests
   const { data: pendingRequests, isLoading } = useQuery({
     queryKey: ["/api/travel-requests", { needsApproval: true }],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/travel-requests?needsApproval=true");
+      return response.json();
+    },
   });
 
   // Ensure pendingRequests is always an array
