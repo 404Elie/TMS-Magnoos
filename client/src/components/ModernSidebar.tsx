@@ -65,6 +65,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
   // Navigation items based on role
   const getNavigationItems = () => {
     const activeRole = typedUser?.activeRole || typedUser?.role;
+    const userRole = typedUser?.role; // Use actual role for operations teams
     
     if (activeRole === 'pm' || activeRole === 'admin') {
       return [
@@ -82,7 +83,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
         { icon: PlusCircle, label: "New Request", href: "/pm-new-request", section: "main" },
         { icon: Calendar, label: "My Requests", href: "/pm-my-requests", section: "main" },
       ];
-    } else if (activeRole === 'operations_ksa' || activeRole === 'operations_uae') {
+    } else if (userRole === 'operations_ksa' || userRole === 'operations_uae') {
       return [
         { icon: LayoutDashboard, label: "Dashboard", href: "/operations-dashboard", section: "main" },
         { icon: Calendar, label: "Bookings", href: "/operations-dashboard?tab=bookings", section: "main" },
