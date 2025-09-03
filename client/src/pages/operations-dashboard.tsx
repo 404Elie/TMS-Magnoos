@@ -1024,7 +1024,7 @@ export default function OperationsDashboard() {
           {/* Header */}
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Operations Dashboard - {(user as any)?.activeRole === 'operations_ksa' ? 'KSA' : 'UAE'}
+              Operations Dashboard - {(user as any)?.role === 'operations_ksa' ? 'KSA' : 'UAE'}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mt-2">
               Manage travel bookings, track expenses, and handle document processing for approved requests
