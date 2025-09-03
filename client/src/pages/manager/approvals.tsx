@@ -23,6 +23,9 @@ export default function Approvals() {
     queryKey: ["/api/travel-requests", { needsApproval: true }],
   });
 
+  // Ensure pendingRequests is always an array
+  const requestsArray = Array.isArray(pendingRequests) ? pendingRequests : [];
+
   const approveMutation = useMutation({
     mutationFn: async (data: { requestId: string; action: 'approve' | 'reject'; comments?: string; assignedOperationsTeam?: string }) => {
       return await apiRequest("PATCH", `/api/travel-requests/${data.requestId}/${data.action}`, {
@@ -39,8 +42,11 @@ export default function Approvals() {
       setActionType(null);
       setComments("");
       setOperationsTeam('');
+      // Invalidate all travel request queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      // Force refetch of pending approvals specifically
+      queryClient.refetchQueries({ queryKey: ["/api/travel-requests", { needsApproval: true }] });
     },
     onError: (error: any) => {
       toast({
@@ -105,7 +111,7 @@ export default function Approvals() {
               Pending Approvals
             </CardTitle>
             <CardDescription>
-              {isLoading ? "Loading..." : `${pendingRequests?.length || 0} request(s) awaiting your approval`}
+              {isLoading ? "Loading..." : `${requestsArray.length || 0} request(s) awaiting your approval`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -114,9 +120,9 @@ export default function Approvals() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
                 <p className="text-gray-600 dark:text-gray-300">Loading requests...</p>
               </div>
-            ) : pendingRequests && pendingRequests.length > 0 ? (
+            ) : requestsArray.length > 0 ? (
               <div className="space-y-6">
-                {pendingRequests.map((request: any) => (
+                {requestsArray.map((request: any) => (
                   <div key={request.id} className="border border-border/30 rounded-lg p-6 bg-background/50">
                     {/* Request Header */}
                     <div className="flex justify-between items-start mb-4">
