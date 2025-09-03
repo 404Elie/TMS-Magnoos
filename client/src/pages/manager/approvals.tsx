@@ -42,11 +42,10 @@ export default function Approvals() {
       setActionType(null);
       setComments("");
       setOperationsTeam('');
-      // Invalidate all travel request queries to refresh the data
+      // Force immediate cache clearing and refresh
+      queryClient.removeQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
-      // Force refetch of pending approvals specifically
-      queryClient.refetchQueries({ queryKey: ["/api/travel-requests", { needsApproval: true }] });
     },
     onError: (error: any) => {
       toast({
