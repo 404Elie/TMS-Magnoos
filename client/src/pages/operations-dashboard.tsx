@@ -439,8 +439,10 @@ export default function OperationsDashboard() {
   });
 
   const handleCompleteRequest = (request: TravelRequestWithDetails) => {
+    console.log('Complete request clicked for:', request.id);
     setSelectedRequest(request);
     setCompletionModalOpen(true);
+    console.log('Modal should now be open:', true);
   };
 
   const handleCompleteWithBookings = () => {
