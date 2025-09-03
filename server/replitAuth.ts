@@ -57,12 +57,17 @@ function updateUserSession(
 async function upsertUser(
   claims: any,
 ) {
+  // Check if user already exists to preserve their existing role
+  const existingUser = await storage.getUser(claims["sub"]);
+  
   await storage.upsertUser({
     id: claims["sub"],
     email: claims["email"],
     firstName: claims["first_name"],
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
+    // Only set default role if user doesn't exist, otherwise preserve existing role
+    role: existingUser?.role || 'manager', // Default role for new Replit Auth users
   });
 }
 
