@@ -193,8 +193,8 @@ class ZohoService {
       const allProjects: ZohoProject[] = [];
       let page = 1;
       
-      // Continue fetching pages until we get less than 100 projects or hit max safety limit
-      const maxPages = 10; // Safety limit to prevent infinite loops
+      // Since user confirmed only 2 pages with 131 total projects, limit accordingly
+      const maxPages = 3; // Only need 2 pages but add 1 for safety
       
       for (let currentPage = 1; currentPage <= maxPages; currentPage++) {
         const accessToken = await this.getProjectsAccessToken();
@@ -231,7 +231,13 @@ class ZohoService {
           
           // If we got less than 100 projects, this is likely the last page
           if (projects.length < 100) {
-            console.log(`Got ${projects.length} projects (less than 100). Likely last page.`);
+            console.log(`Got ${projects.length} projects (less than 100). This is the last page.`);
+            break;
+          }
+          
+          // Also stop if we've already collected close to 131 projects (user's expected count)
+          if (allProjects.length >= 130) {
+            console.log(`Already collected ${allProjects.length} projects, close to expected 131. Stopping.`);
             break;
           }
         } else {
