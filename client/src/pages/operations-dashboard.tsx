@@ -380,7 +380,7 @@ export default function OperationsDashboard() {
     queryKey: ["/api/travel-requests", "completed-rejected", (user as any)?.role, activeTab],
     queryFn: async () => {
       const response = await apiRequest("GET", `/api/travel-requests?status=completed-rejected&team=${(user as any)?.role}`);
-      return response as TravelRequestWithDetails[];
+      return response;
     },
     enabled: !!(user as any)?.role && activeTab === "requests",
   });
@@ -956,7 +956,7 @@ export default function OperationsDashboard() {
                   <p className="text-gray-600 dark:text-gray-300 mt-2">Loading requests...</p>
                 </div>
               ) : completedAndRejectedRequests && completedAndRejectedRequests.length > 0 ? (
-                completedAndRejectedRequests.map((request: TravelRequestWithDetails) => (
+                (completedAndRejectedRequests || []).map((request: TravelRequestWithDetails) => (
                   <Card key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
