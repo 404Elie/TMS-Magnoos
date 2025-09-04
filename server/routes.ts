@@ -908,20 +908,12 @@ export function registerRoutes(app: Express): Server {
         return res.status(403).json({ message: "Access denied. Operations role required." });
       }
 
-      // Debug and convert date strings back to Date objects
-      console.log('Raw request body:', JSON.stringify(req.body, null, 2));
-      
+      // Convert date strings (YYYY-MM-DD) to proper Date objects for PostgreSQL
       const documentData = {
         ...req.body,
-        issueDate: req.body.issueDate ? new Date(req.body.issueDate) : new Date(),
-        expiryDate: req.body.expiryDate ? new Date(req.body.expiryDate) : new Date(),
+        issueDate: req.body.issueDate ? new Date(req.body.issueDate + 'T00:00:00.000Z') : new Date(),
+        expiryDate: req.body.expiryDate ? new Date(req.body.expiryDate + 'T00:00:00.000Z') : new Date(),
       };
-      
-      console.log('Processed document data:', JSON.stringify({
-        ...documentData,
-        issueDate: documentData.issueDate.toISOString(),
-        expiryDate: documentData.expiryDate.toISOString()
-      }, null, 2));
       
       const document = await storage.createEmployeeDocument(documentData);
       res.status(201).json(document);
