@@ -549,13 +549,13 @@ export class DatabaseStorage implements IStorage {
 
       // Monthly spend - total cost of requests completed by this team this month
       const monthlySpend = await db
-        .select({ total: sql<number>`COALESCE(SUM(CAST(${travelRequests.actualTotalCost} AS DECIMAL)), 0)` })
+        .select({ total: sql<number>`COALESCE(SUM(CAST(actual_total_cost AS NUMERIC)), 0)` })
         .from(travelRequests)
         .where(and(
           eq(travelRequests.assignedOperationsTeam, teamFilter),
           eq(travelRequests.status, "operations_completed"),
-          sql`EXTRACT(YEAR FROM ${travelRequests.completedAt}) = ${currentYear}`,
-          sql`EXTRACT(MONTH FROM ${travelRequests.completedAt}) = ${currentMonth}`
+          sql`EXTRACT(YEAR FROM completed_at) = ${currentYear}`,
+          sql`EXTRACT(MONTH FROM completed_at) = ${currentMonth}`
         ));
 
       // Calculate completion rate

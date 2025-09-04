@@ -383,9 +383,12 @@ export default function OperationsDashboard() {
 
   // Get completed and rejected requests for this operations team
   const { data: completedAndRejectedRequests, isLoading: completedRequestsLoading } = useQuery<TravelRequestWithDetails[]>({
-    queryKey: ["/api/travel-requests", "completed-rejected", user?.role, activeTab],
-    queryFn: () => apiRequest("GET", `/api/travel-requests?status=completed-rejected&team=${user?.role}`),
-    enabled: !!user?.role && activeTab === "requests",
+    queryKey: ["/api/travel-requests", "completed-rejected", (user as any)?.role, activeTab],
+    queryFn: async () => {
+      const response = await apiRequest("GET", `/api/travel-requests?status=completed-rejected&team=${(user as any)?.role}`);
+      return response as TravelRequestWithDetails[];
+    },
+    enabled: !!(user as any)?.role && activeTab === "requests",
   });
 
   // Complete travel request mutation (enhanced with bookings)
@@ -984,7 +987,7 @@ export default function OperationsDashboard() {
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
-                            Handled by: {user?.role === 'operations_ksa' ? 'Operations KSA' : 'Operations UAE'}
+                            Handled by: {(user as any)?.role === 'operations_ksa' ? 'Operations KSA' : 'Operations UAE'}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             {request.status === 'operations_completed' ? 'Completed' : 'Rejected'}
@@ -1049,7 +1052,22 @@ export default function OperationsDashboard() {
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
                           Budget: ${user.annualTravelBudget || '15,000'}
                         </p>
-                        <Button size="sm" variant="outline" className="mt-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="mt-2"
+                          onClick={() => {
+                            // Navigate to employee documents view
+                            const currentUrl = new URL(window.location.href);
+                            currentUrl.searchParams.set('tab', 'documents');
+                            currentUrl.searchParams.set('employee', user.id);
+                            window.history.pushState({}, '', currentUrl.toString());
+                            // Trigger a re-render by updating the location
+                            window.location.reload();
+                          }}
+                          data-testid={`view-documents-${user.id}`}
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
                           View Documents
                         </Button>
                       </div>
