@@ -329,6 +329,13 @@ export default function OperationsDashboard() {
   useEffect(() => {
     const newActiveView = getActiveView();
     setActiveTab(newActiveView);
+    
+    // Handle employee parameter from URL
+    const params = new URLSearchParams(search);
+    const employee = params.get('employee');
+    if (employee) {
+      setSelectedEmployeeId(employee);
+    }
   }, [search]);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
@@ -336,6 +343,8 @@ export default function OperationsDashboard() {
   const [documentTypeDialogOpen, setDocumentTypeDialogOpen] = useState(false);
   const [documentFormOpen, setDocumentFormOpen] = useState(false);
   const [selectedDocumentType, setSelectedDocumentType] = useState<'passport' | 'visa' | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const [bookingEntries, setBookingEntries] = useState([{
     type: "",
     provider: "",
@@ -372,6 +381,12 @@ export default function OperationsDashboard() {
   // Fetch projects for budget tracking
   const { data: projects } = useQuery<any[]>({
     queryKey: ["/api/zoho/projects"],
+    retry: false,
+  });
+
+  // Fetch employee documents
+  const { data: employeeDocuments, isLoading: documentsLoading } = useQuery<any[]>({
+    queryKey: ["/api/employee-documents"],
     retry: false,
   });
 
@@ -749,26 +764,48 @@ export default function OperationsDashboard() {
   }
 
   if (activeTab === "documents") {
+    // Filter documents by selected employee if specified
+    const filteredDocuments = employeeDocuments?.filter(doc => 
+      selectedEmployeeId ? doc.userId === selectedEmployeeId : true
+    ) || [];
+
+    // Get employee name for filtered view
+    const selectedEmployee = selectedEmployeeId ? 
+      users?.find(user => user.id === selectedEmployeeId) : null;
+
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
         <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Document Management
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Manage employee passports and visas
-              </p>
-            </div>
-            
-            <Card className="bg-white dark:bg-gray-800">
-              <CardContent className="p-8 text-center">
-                <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="font-medium text-gray-900 dark:text-white mb-2">Document Management</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Manage employee passports and visas for travel requirements
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  Document Management
+                  {selectedEmployee && (
+                    <span className="text-blue-600"> - {selectedEmployee.firstName} {selectedEmployee.lastName}</span>
+                  )}
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">
+                  {selectedEmployee 
+                    ? `Viewing documents for ${selectedEmployee.firstName} ${selectedEmployee.lastName}`
+                    : "Manage employee passports and visas"
+                  }
                 </p>
+              </div>
+              <div className="flex gap-3">
+                {selectedEmployee && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedEmployeeId(null);
+                      const url = new URL(window.location.href);
+                      url.searchParams.delete('employee');
+                      window.history.pushState({}, '', url.toString());
+                    }}
+                  >
+                    View All Documents
+                  </Button>
+                )}
                 <Button 
                   className="bg-blue-600 hover:bg-blue-700"
                   onClick={() => setDocumentTypeDialogOpen(true)}
@@ -776,8 +813,91 @@ export default function OperationsDashboard() {
                   <Plus className="w-4 h-4 mr-2" />
                   Add Document
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+            
+            {/* Documents Grid */}
+            {documentsLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">Loading documents...</p>
+              </div>
+            ) : filteredDocuments.length > 0 ? (
+              <div className="grid gap-6">
+                {filteredDocuments.map((document) => {
+                  const employee = users?.find(user => user.id === document.userId);
+                  const isExpiringSoon = new Date(document.expiryDate) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+                  const isExpired = new Date(document.expiryDate) <= new Date();
+                  
+                  return (
+                    <Card key={document.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold ${
+                              document.documentType === 'passport' ? 'bg-blue-600' : 'bg-green-600'
+                            }`}>
+                              <FileText className="w-6 h-6" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-gray-900 dark:text-white">
+                                {document.documentType === 'passport' ? 'Passport' : 'Visa'} - {employee?.firstName} {employee?.lastName}
+                              </h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
+                                Document #: {document.documentNumber}
+                              </p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
+                                Issued by: {document.issuingCountry}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                Issue Date: {new Date(document.issueDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge variant={isExpired ? "destructive" : isExpiringSoon ? "secondary" : "default"}>
+                                {isExpired ? "Expired" : isExpiringSoon ? "Expiring Soon" : "Valid"}
+                              </Badge>
+                            </div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              Expires: {new Date(document.expiryDate).toLocaleDateString()}
+                            </p>
+                            {document.notes && (
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Notes: {document.notes}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : (
+              <Card className="bg-white dark:bg-gray-800">
+                <CardContent className="p-8 text-center">
+                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+                    {selectedEmployee ? `No Documents for ${selectedEmployee.firstName}` : "No Documents Found"}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    {selectedEmployee 
+                      ? `${selectedEmployee.firstName} ${selectedEmployee.lastName} doesn't have any documents yet.`
+                      : "No employee documents have been added yet."
+                    }
+                  </p>
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700"
+                    onClick={() => setDocumentTypeDialogOpen(true)}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add First Document
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
           
           {/* Document Type Selection Dialog */}
@@ -1023,8 +1143,24 @@ export default function OperationsDashboard() {
               </p>
             </div>
             
+            {/* Search Box */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Search employees by name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-white dark:bg-gray-800"
+                data-testid="employee-search-input"
+              />
+            </div>
+            
             <div className="grid gap-6">
-              {users?.map((user) => (
+              {users?.filter(user => 
+                searchQuery === "" || 
+                `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+              ).map((user) => (
                 <Card key={user.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
@@ -1043,9 +1179,6 @@ export default function OperationsDashboard() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          Budget: ${user.annualTravelBudget || '15,000'}
-                        </p>
                         <Button 
                           size="sm" 
                           variant="outline" 
