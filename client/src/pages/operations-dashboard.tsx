@@ -381,6 +381,13 @@ export default function OperationsDashboard() {
     retry: false,
   });
 
+  // Get completed and rejected requests for this operations team
+  const { data: completedAndRejectedRequests, isLoading: completedRequestsLoading } = useQuery<TravelRequestWithDetails[]>({
+    queryKey: ["/api/travel-requests", "completed-rejected", user?.role, activeTab],
+    queryFn: () => apiRequest("GET", `/api/travel-requests?status=completed-rejected&team=${user?.role}`),
+    enabled: !!user?.role && activeTab === "requests",
+  });
+
   // Complete travel request mutation (enhanced with bookings)
   const completeRequestMutation = useMutation({
     mutationFn: async ({ requestId, bookings }: { requestId: string; bookings: typeof bookingEntries }) => {
@@ -928,30 +935,31 @@ export default function OperationsDashboard() {
     );
   }
 
-  // Handle requests tab
+  // Handle requests tab - Show completed and rejected requests
   if (activeTab === "requests") {
+
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
         <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                <CheckSquare className="w-8 h-8 text-blue-600" />
-                Travel Requests
+                <CheckSquare className="w-8 h-8 text-green-600" />
+                Completed & Rejected Requests
               </h1>
               <p className="text-gray-600 dark:text-gray-300 mt-2">
-                View and manage approved travel requests that need operations handling
+                View completed and rejected travel requests handled by your operations team
               </p>
             </div>
             
             <div className="space-y-4">
-              {requestsLoading ? (
+              {completedRequestsLoading ? (
                 <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
                   <p className="text-gray-600 dark:text-gray-300 mt-2">Loading requests...</p>
                 </div>
-              ) : operationsRequests && operationsRequests.length > 0 ? (
-                operationsRequests.map((request) => (
+              ) : completedAndRejectedRequests && completedAndRejectedRequests.length > 0 ? (
+                completedAndRejectedRequests.map((request: TravelRequestWithDetails) => (
                   <Card key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
@@ -968,12 +976,19 @@ export default function OperationsDashboard() {
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             Project: {request.project?.name || 'No project assigned'}
                           </p>
+                          {request.actualTotalCost && (
+                            <p className="text-sm font-medium text-green-600">
+                              Final Cost: ${Number(request.actualTotalCost).toLocaleString()}
+                            </p>
+                          )}
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
-                            ${(Number(request.estimatedFlightCost || 0) + Number(request.estimatedHotelCost || 0) + Number(request.estimatedOtherCost || 0)).toLocaleString()}
+                            Handled by: {user?.role === 'operations_ksa' ? 'Operations KSA' : 'Operations UAE'}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Estimated Total</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {request.status === 'operations_completed' ? 'Completed' : 'Rejected'}
+                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -982,7 +997,9 @@ export default function OperationsDashboard() {
               ) : (
                 <Card className="bg-white dark:bg-gray-800">
                   <CardContent className="p-8 text-center">
-                    <p className="text-gray-500 dark:text-gray-300">No requests assigned to operations</p>
+                    <CheckSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-2">No Completed Requests</h3>
+                    <p className="text-gray-500 dark:text-gray-300">No completed or rejected requests found for your operations team</p>
                   </CardContent>
                 </Card>
               )}
@@ -1187,20 +1204,20 @@ export default function OperationsDashboard() {
               </CardContent>
             </Card>
             
-            {/* Pending Tasks */}
+            {/* Completed Bookings */}
             <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
               <CardContent className="relative p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-white/90">Pending Tasks</p>
+                    <p className="text-sm font-medium text-white/90">Completed Bookings</p>
                     <p className="text-3xl font-bold text-white mt-1">
-                      {statsLoading ? "..." : stats?.pendingTasks || 0}
+                      {statsLoading ? "..." : stats?.completedBookings || 0}
                     </p>
                   </div>
                   <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                    <AlertTriangle className="w-6 h-6 text-[#dc2626]" />
+                    <CheckSquare className="w-6 h-6 text-[#22c55e]" />
                   </div>
                 </div>
               </CardContent>

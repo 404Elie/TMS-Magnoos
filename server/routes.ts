@@ -341,13 +341,26 @@ export function registerRoutes(app: Express): Server {
       } else if (user?.role === 'operations_ksa' || user?.role === 'operations_uae') {
         // Operations teams see only requests assigned to their team
         filters.assignedOperationsTeam = user.role;
-        // Also show only approved requests
-        filters.status = 'pm_approved';
-        console.log(`${user?.role.toUpperCase()} filtering for assigned requests (assignedOperationsTeam=${user.role}, status=pm_approved)`);
+        
+        // Special handling for completed-rejected status query
+        if (req.query.status === 'completed-rejected') {
+          // Show both completed and rejected requests
+          filters.status = 'completed-rejected';
+          console.log(`${user?.role.toUpperCase()} filtering for completed/rejected requests (assignedOperationsTeam=${user.role})`);
+        } else {
+          // Default: show only approved requests waiting for operations
+          filters.status = 'pm_approved';
+          console.log(`${user?.role.toUpperCase()} filtering for assigned requests (assignedOperationsTeam=${user.role}, status=pm_approved)`);
+        }
       }
 
       if (req.query.projectId) filters.projectId = req.query.projectId;
-      if (req.query.status) filters.status = req.query.status;
+      if (req.query.status && req.query.status !== 'completed-rejected') {
+        filters.status = req.query.status;
+      } else if (req.query.status === 'completed-rejected') {
+        // Pass the special flag to storage but don't set status filter
+        filters.status = 'completed-rejected'; 
+      }
 
       console.log(`Applied filters:`, filters);
       const requests = await storage.getTravelRequests(filters);

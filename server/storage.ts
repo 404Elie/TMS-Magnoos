@@ -22,7 +22,7 @@ import {
   type UserWithBudget,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, asc, sql, gte, lte } from "drizzle-orm";
+import { eq, and, desc, asc, sql, gte, lte, or } from "drizzle-orm";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
@@ -240,7 +240,17 @@ export class DatabaseStorage implements IStorage {
       conditions.push(eq(travelRequests.projectId, filters.projectId));
     }
     if (filters?.status) {
-      conditions.push(eq(travelRequests.status, filters.status as any));
+      // Special handling for completed-rejected status
+      if (filters.status === 'completed-rejected') {
+        conditions.push(
+          or(
+            eq(travelRequests.status, "operations_completed"),
+            eq(travelRequests.status, "pm_rejected")
+          )
+        );
+      } else {
+        conditions.push(eq(travelRequests.status, filters.status as any));
+      }
     }
     if (filters?.pmId) {
       // For PM role, show requests that need approval (submitted status)
@@ -515,32 +525,54 @@ export class DatabaseStorage implements IStorage {
       };
     }
 
-    if (role === "operations") {
-      // Operations stats - booking and budget data
+    if (role === "operations_ksa" || role === "operations_uae") {
+      // Operations stats - team-specific booking and budget data
+      const teamFilter = role === "operations_ksa" ? "operations_ksa" : "operations_uae";
+      
+      // Active bookings - requests assigned to this team that are approved but not completed
       const activeBookings = await db
         .select({ count: sql<number>`count(*)` })
-        .from(bookings)
-        .where(eq(bookings.status, "in_progress"));
-
-      const monthlySpend = await db
-        .select({ total: sql<number>`COALESCE(SUM(${bookings.cost}), 0)` })
-        .from(bookings)
+        .from(travelRequests)
         .where(and(
-          sql`EXTRACT(YEAR FROM ${bookings.createdAt}) = ${currentYear}`,
-          sql`EXTRACT(MONTH FROM ${bookings.createdAt}) = ${currentMonth}`
+          eq(travelRequests.assignedOperationsTeam, teamFilter),
+          eq(travelRequests.status, "pm_approved")
         ));
 
-      const pendingTasks = await db
+      // Completed bookings - requests this team has completed
+      const completedBookings = await db
         .select({ count: sql<number>`count(*)` })
         .from(travelRequests)
-        .where(eq(travelRequests.status, "pm_approved"));
+        .where(and(
+          eq(travelRequests.assignedOperationsTeam, teamFilter),
+          eq(travelRequests.status, "operations_completed")
+        ));
+
+      // Monthly spend - total cost of requests completed by this team this month
+      const monthlySpend = await db
+        .select({ total: sql<number>`COALESCE(SUM(CAST(${travelRequests.actualTotalCost} AS DECIMAL)), 0)` })
+        .from(travelRequests)
+        .where(and(
+          eq(travelRequests.assignedOperationsTeam, teamFilter),
+          eq(travelRequests.status, "operations_completed"),
+          sql`EXTRACT(YEAR FROM ${travelRequests.completedAt}) = ${currentYear}`,
+          sql`EXTRACT(MONTH FROM ${travelRequests.completedAt}) = ${currentMonth}`
+        ));
+
+      // Calculate completion rate
+      const totalAssigned = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(travelRequests)
+        .where(eq(travelRequests.assignedOperationsTeam, teamFilter));
+      
+      const completionRate = totalAssigned[0]?.count > 0 
+        ? Math.round((completedBookings[0]?.count || 0) / totalAssigned[0].count * 100)
+        : 0;
 
       return {
         activeBookings: activeBookings[0]?.count || 0,
         monthlySpend: monthlySpend[0]?.total || 0,
-        budgetRemaining: 124680, // This would need budget calculation
-        pendingTasks: pendingTasks[0]?.count || 0,
-        costSavings: 8540, // This would need savings calculation
+        completedBookings: completedBookings[0]?.count || 0,
+        completionRate: `${completionRate}%`,
       };
     }
 
