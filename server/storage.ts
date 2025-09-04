@@ -261,7 +261,7 @@ export class DatabaseStorage implements IStorage {
     }
 
     if (conditions.length > 0) {
-      query = query.where(and(...conditions));
+      query = query.where(and(...conditions)) as any;
     }
 
     const results = await query.orderBy(desc(travelRequests.createdAt));
@@ -282,7 +282,7 @@ export class DatabaseStorage implements IStorage {
           ...request,
           requester,
           traveler,
-          project: project || null,
+          project: project as any,
           pmApprover,
           operationsCompleter,
           bookings,
@@ -299,7 +299,7 @@ export class DatabaseStorage implements IStorage {
 
     const requester = await this.getUser(request.requesterId);
     const traveler = await this.getUser(request.travelerId);
-    const [project] = await db.select().from(projects).where(eq(projects.id, request.projectId));
+    const [project] = request.projectId ? await db.select().from(projects).where(eq(projects.id, request.projectId)) : [null];
     const pmApprover = request.pmApprovedBy ? await this.getUser(request.pmApprovedBy) : undefined;
     const operationsCompleter = request.operationsCompletedBy ? await this.getUser(request.operationsCompletedBy) : undefined;
     const requestBookings = await this.getBookings(request.id);
@@ -310,7 +310,7 @@ export class DatabaseStorage implements IStorage {
       ...request,
       requester,
       traveler,
-      project: project || null,
+      project: project as any,
       pmApprover,
       operationsCompleter,
       bookings: requestBookings,
@@ -333,13 +333,14 @@ export class DatabaseStorage implements IStorage {
 
   // Booking operations
   async getBookings(requestId?: string): Promise<Booking[]> {
-    let query = db.select().from(bookings);
-    
     if (requestId) {
-      query = query.where(eq(bookings.requestId, requestId));
+      return await db.select().from(bookings)
+        .where(eq(bookings.requestId, requestId))
+        .orderBy(desc(bookings.createdAt));
+    } else {
+      return await db.select().from(bookings)
+        .orderBy(desc(bookings.createdAt));
     }
-
-    return await query.orderBy(desc(bookings.createdAt));
   }
 
   async createBooking(booking: InsertBooking): Promise<Booking> {
@@ -363,8 +364,6 @@ export class DatabaseStorage implements IStorage {
     year?: number;
     month?: number;
   }): Promise<BudgetTracking[]> {
-    let query = db.select().from(budgetTracking);
-
     const conditions = [];
     if (filters?.userId) {
       conditions.push(eq(budgetTracking.userId, filters.userId));
@@ -380,10 +379,13 @@ export class DatabaseStorage implements IStorage {
     }
 
     if (conditions.length > 0) {
-      query = query.where(and(...conditions));
+      return await db.select().from(budgetTracking)
+        .where(and(...conditions))
+        .orderBy(desc(budgetTracking.year), desc(budgetTracking.month));
+    } else {
+      return await db.select().from(budgetTracking)
+        .orderBy(desc(budgetTracking.year), desc(budgetTracking.month));
     }
-
-    return await query.orderBy(desc(budgetTracking.year), desc(budgetTracking.month));
   }
 
   async createBudgetTracking(tracking: InsertBudgetTracking): Promise<BudgetTracking> {
@@ -572,7 +574,7 @@ export class DatabaseStorage implements IStorage {
         activeBookings: activeBookings[0]?.count || 0,
         monthlySpend: monthlySpend[0]?.total || 0,
         completedBookings: completedBookings[0]?.count || 0,
-        completionRate: `${completionRate}%`,
+        completionRate: completionRate,
       };
     }
 

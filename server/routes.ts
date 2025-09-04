@@ -909,40 +909,47 @@ export function registerRoutes(app: Express): Server {
         return res.status(403).json({ message: "Access denied. Operations role required." });
       }
 
-      // Check if userId exists in local database or create from Zoho data
+      // Check if userId exists in local database or find by Zoho ID
       let localUserId = req.body.userId;
       
-      // Check if this user exists in local database
-      const existingUser = await storage.getUser(localUserId);
+      // First check if this is already a local user ID
+      let existingUser = await storage.getUser(localUserId);
       
       if (!existingUser) {
-        // This might be a Zoho user ID, try to find and create local user
-        console.log(`User ${localUserId} not found in local database, checking Zoho...`);
+        // This might be a Zoho user ID, try to find existing user by Zoho ID first
+        console.log(`User ${localUserId} not found as local ID, checking if it's a Zoho ID...`);
         
         try {
-          // Get Zoho users to find the user data
-          const zohoUsers = await zohoService.getUsers();
-          const zohoUser = zohoUsers.find(u => u.id === localUserId);
+          // Check if we have a user with this Zoho ID
+          existingUser = await storage.getUserByZohoId(localUserId);
           
-          if (zohoUser) {
-            console.log(`Found Zoho user: ${zohoUser.name}, creating local user...`);
-            
-            // Create local user from Zoho data
-            const newLocalUser = await storage.createUser({
-              email: zohoUser.email || `${zohoUser.name?.replace(/\s+/g, '.')}@magnoos.com`,
-              firstName: zohoUser.name?.split(' ')[0] || 'Unknown',
-              lastName: zohoUser.name?.split(' ').slice(1).join(' ') || '',
-              role: 'manager', // Default role
-              zohoUserId: zohoUser.id, // Store Zoho ID for reference
-            });
-            
-            localUserId = newLocalUser.id;
-            console.log(`Created local user with ID: ${localUserId}`);
+          if (existingUser) {
+            localUserId = existingUser.id;
+            console.log(`Found existing user by Zoho ID: ${existingUser.firstName} ${existingUser.lastName} (${localUserId})`);
           } else {
-            throw new Error(`User ${localUserId} not found in Zoho either`);
+            // If not found by Zoho ID, create a new user from Zoho data
+            const zohoUsers = await zohoService.getUsers();
+            const zohoUser = zohoUsers.find(u => u.id === localUserId);
+            
+            if (zohoUser) {
+              console.log(`Found Zoho user: ${zohoUser.name}, creating local user...`);
+              
+              const newLocalUser = await storage.createUser({
+                email: zohoUser.email || `${zohoUser.name?.replace(/\s+/g, '.')}@magnoos.com`,
+                firstName: zohoUser.name?.split(' ')[0] || 'Unknown',
+                lastName: zohoUser.name?.split(' ').slice(1).join(' ') || '',
+                role: 'manager', // Default role
+                zohoUserId: zohoUser.id, // Store Zoho ID for reference
+              });
+              
+              localUserId = newLocalUser.id;
+              console.log(`Created local user with ID: ${localUserId}`);
+            } else {
+              throw new Error(`User ${localUserId} not found in Zoho either`);
+            }
           }
         } catch (zohoError) {
-          console.error('Error creating user from Zoho:', zohoError);
+          console.error('Error finding/creating user from Zoho:', zohoError);
           return res.status(400).json({ 
             message: 'Selected user not found. Please refresh and try again.' 
           });

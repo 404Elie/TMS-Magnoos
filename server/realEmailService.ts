@@ -113,7 +113,7 @@ class RealEmailService {
       if (this.emailMethod === 'mailersend' && this.mailerSend) {
         // Use MailerSend API for real email delivery
         try {
-          const sentFrom = new Sender('noreply@magnoos.com', 'Magnoos Travel System');
+          const sentFrom = new Sender('noreply@trial-z3m5jgrjr8vg2k68.mlsender.net', 'Magnoos Travel System');
           const recipients = [new Recipient(emailData.to)];
 
           const emailParams = new EmailParams()
