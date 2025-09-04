@@ -154,16 +154,52 @@ class RealEmailService {
       }
       
       if (this.emailMethod === 'resend' && this.resend) {
-        // Use Resend API - can send to any email address
+        // Use Resend API 
         try {
           const result = await this.resend.emails.send({
             from: 'Magnoos Travel <onboarding@resend.dev>', // Resend verified domain
-            to: [emailData.to], // Send to actual recipient
+            to: [emailData.to], // Try sending to actual recipient first
             subject: emailData.subject,
             html: emailData.html,
           });
           
           if (result.error) {
+            // Check if it's a domain verification error (trial restriction)
+            const errorMessage = result.error.message || '';
+            if (errorMessage.includes('testing emails') || errorMessage.includes('verify a domain') || errorMessage.includes('own email address')) {
+              console.log(`🔄 Resend trial mode detected for ${emailData.to}, routing to verified address...`);
+              
+              // Retry with verified address and modified content
+              const trialModeHtml = `
+                <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+                  <h3 style="color: #d97706; margin: 0 0 10px 0;">📧 Email Routing Notice</h3>
+                  <p style="margin: 0; color: #92400e;">
+                    <strong>Original Recipient:</strong> ${emailData.to}<br>
+                    <strong>Reason:</strong> Email routed to verified address during Resend trial period.<br>
+                    <strong>Note:</strong> In production, this email would be delivered directly to ${emailData.to}.
+                  </p>
+                </div>
+                ${emailData.html}
+              `;
+
+              const retryResult = await this.resend.emails.send({
+                from: 'Magnoos Travel <onboarding@resend.dev>',
+                to: ['e.radi@magnoos.com'], // Verified address
+                subject: `[FOR: ${emailData.to}] ${emailData.subject}`,
+                html: trialModeHtml,
+              });
+
+              if (retryResult.error) {
+                console.error(`❌ Failed to send even to verified address:`, retryResult.error);
+                return false;
+              }
+
+              console.log(`✅ Email routed to verified address: e.radi@magnoos.com`);
+              console.log(`📧 Original recipient: ${emailData.to}`);
+              console.log(`📧 Message ID: ${retryResult.data?.id}`);
+              return true;
+            }
+            
             console.error(`❌ Resend API error:`, result.error);
             return false;
           }
