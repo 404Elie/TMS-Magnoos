@@ -111,26 +111,42 @@ class RealEmailService {
       const fromAddress = emailData.from || '"Magnoos Travel System" <noreply@magnoos.com>';
       
       if (this.emailMethod === 'mailersend' && this.mailerSend) {
-        // Use MailerSend API for real email delivery
+        // Use MailerSend API - handle trial account limitations
         try {
           const sentFrom = new Sender('noreply@trial-z3m5jgrjr8vg2k68.mlsender.net', 'Magnoos Travel System');
-          const recipients = [new Recipient(emailData.to)];
+          
+          // For trial accounts, route all emails to the verified admin address
+          const verifiedEmail = 'e.radi@magnoos.com'; // Your verified admin email
+          const recipients = [new Recipient(verifiedEmail)];
+
+          // Add original recipient info to email content for trial mode
+          const trialModeHtml = `
+            <div style="background: #e0f2fe; border: 2px solid #0288d1; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+              <h3 style="color: #01579b; margin: 0 0 10px 0;">📧 Trial Mode Email Routing</h3>
+              <p style="margin: 0; color: #0277bd;">
+                <strong>Original Recipient:</strong> ${emailData.to}<br>
+                <strong>Note:</strong> This email was routed to your verified address due to MailerSend trial account limitations.
+              </p>
+            </div>
+            ${emailData.html}
+          `;
 
           const emailParams = new EmailParams()
             .setFrom(sentFrom)
             .setTo(recipients)
-            .setSubject(emailData.subject)
-            .setHtml(emailData.html);
+            .setSubject(`[TRIAL] ${emailData.subject}`)
+            .setHtml(trialModeHtml);
 
           const response = await this.mailerSend.email.send(emailParams);
-          console.log(`✅ Email sent via MailerSend to ${emailData.to}`);
+          console.log(`✅ Email sent via MailerSend (trial mode) to verified address: ${verifiedEmail}`);
+          console.log(`📧 Original intended recipient: ${emailData.to}`);
           return true;
         } catch (error: any) {
           console.error('❌ MailerSend error:', error);
           
-          if (error.message && error.message.includes('domain') || error.message.includes('verify')) {
-            console.log(`🔄 Domain verification issue detected, check MailerSend dashboard`);
-            console.log(`ℹ️  For testing, use a verified domain or add your domain to MailerSend`);
+          if (error.message && (error.message.includes('domain') || error.message.includes('verify') || error.message.includes('Trial'))) {
+            console.log(`🔄 MailerSend trial limitation or domain issue detected`);
+            console.log(`ℹ️  Trial accounts can only send to verified administrator email`);
           }
           
           return false;
