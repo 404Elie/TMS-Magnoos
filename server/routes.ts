@@ -908,7 +908,12 @@ export function registerRoutes(app: Express): Server {
         return res.status(403).json({ message: "Access denied. Operations role required." });
       }
 
-      const documentData = req.body;
+      // Convert date strings back to Date objects
+      const documentData = {
+        ...req.body,
+        issueDate: req.body.issueDate ? new Date(req.body.issueDate) : new Date(),
+        expiryDate: req.body.expiryDate ? new Date(req.body.expiryDate) : new Date(),
+      };
       const document = await storage.createEmployeeDocument(documentData);
       res.status(201).json(document);
     } catch (error) {

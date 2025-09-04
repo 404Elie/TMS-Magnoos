@@ -110,22 +110,12 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
 
   const addDocumentMutation = useMutation({
     mutationFn: async (data: DocumentFormData) => {
-      // Ensure dates are properly formatted
-      const issueDate = data.issueDate ? new Date(data.issueDate + 'T00:00:00.000Z') : new Date();
-      const expiryDate = data.expiryDate ? new Date(data.expiryDate + 'T00:00:00.000Z') : new Date();
-      
-      const formattedData: InsertEmployeeDocument = {
-        ...data,
-        issueDate,
-        expiryDate,
-      };
-      
       const response = await fetch('/api/employee-documents', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formattedData),
+        body: JSON.stringify(data),
       });
       
       if (!response.ok) {
