@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./auth";
 import { insertTravelRequestSchema, insertBookingSchema, insertBudgetTrackingSchema } from "@shared/schema";
+import { sql } from "drizzle-orm";
 import { zohoService } from "./zohoService";
 import { realEmailService } from "./realEmailService";
 import { z } from "zod";
@@ -908,9 +909,50 @@ export function registerRoutes(app: Express): Server {
         return res.status(403).json({ message: "Access denied. Operations role required." });
       }
 
+      // Check if userId exists in local database or create from Zoho data
+      let localUserId = req.body.userId;
+      
+      // Check if this user exists in local database
+      const existingUser = await storage.getUser(localUserId);
+      
+      if (!existingUser) {
+        // This might be a Zoho user ID, try to find and create local user
+        console.log(`User ${localUserId} not found in local database, checking Zoho...`);
+        
+        try {
+          // Get Zoho users to find the user data
+          const zohoUsers = await zohoService.getUsers();
+          const zohoUser = zohoUsers.find(u => u.id === localUserId);
+          
+          if (zohoUser) {
+            console.log(`Found Zoho user: ${zohoUser.name}, creating local user...`);
+            
+            // Create local user from Zoho data
+            const newLocalUser = await storage.createUser({
+              email: zohoUser.email || `${zohoUser.name?.replace(/\s+/g, '.')}@magnoos.com`,
+              firstName: zohoUser.name?.split(' ')[0] || 'Unknown',
+              lastName: zohoUser.name?.split(' ').slice(1).join(' ') || '',
+              role: 'manager', // Default role
+              zohoUserId: zohoUser.id, // Store Zoho ID for reference
+            });
+            
+            localUserId = newLocalUser.id;
+            console.log(`Created local user with ID: ${localUserId}`);
+          } else {
+            throw new Error(`User ${localUserId} not found in Zoho either`);
+          }
+        } catch (zohoError) {
+          console.error('Error creating user from Zoho:', zohoError);
+          return res.status(400).json({ 
+            message: 'Selected user not found. Please refresh and try again.' 
+          });
+        }
+      }
+
       // Convert date strings (YYYY-MM-DD) to proper Date objects for PostgreSQL
       const documentData = {
         ...req.body,
+        userId: localUserId, // Use the local user ID
         issueDate: req.body.issueDate ? new Date(req.body.issueDate + 'T00:00:00.000Z') : new Date(),
         expiryDate: req.body.expiryDate ? new Date(req.body.expiryDate + 'T00:00:00.000Z') : new Date(),
       };
