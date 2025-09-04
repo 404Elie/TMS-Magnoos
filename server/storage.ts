@@ -554,8 +554,8 @@ export class DatabaseStorage implements IStorage {
         .where(and(
           eq(travelRequests.assignedOperationsTeam, teamFilter),
           eq(travelRequests.status, "operations_completed"),
-          sql`EXTRACT(YEAR FROM completed_at) = ${currentYear}`,
-          sql`EXTRACT(MONTH FROM completed_at) = ${currentMonth}`
+          sql`EXTRACT(YEAR FROM operations_completed_at) = ${currentYear}`,
+          sql`EXTRACT(MONTH FROM operations_completed_at) = ${currentMonth}`
         ));
 
       // Calculate completion rate
