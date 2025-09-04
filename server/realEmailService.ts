@@ -16,7 +16,19 @@ class RealEmailService {
 
   private async setupEmailService() {
     try {
-      // Option 1: Use MailerSend API (free tier: 3,000 emails/month, best option)
+      // Option 1: Use Resend API (free tier: 100 emails/day, can send to any email address)
+      if (process.env.RESEND_API_KEY) {
+        this.resend = new Resend(process.env.RESEND_API_KEY);
+        this.emailMethod = 'resend';
+        this.initialized = true;
+        console.log("✅ Email service initialized with Resend API");
+        console.log("- Service: Resend (resend.com)");
+        console.log("- Limit: 100 emails/day (free tier)");
+        console.log("- ✅ CAN SEND TO ANY EMAIL ADDRESS (no trial restrictions)");
+        return;
+      }
+
+      // Option 2: Use MailerSend API (free tier: 3,000 emails/month, trial limitations)
       if (process.env.MAILERSEND_API_KEY) {
         this.mailerSend = new MailerSend({
           apiKey: process.env.MAILERSEND_API_KEY,
@@ -26,19 +38,7 @@ class RealEmailService {
         console.log("✅ Email service initialized with MailerSend API");
         console.log("- Service: MailerSend (mailersend.com)");
         console.log("- Limit: 3,000 emails/month (free tier)");
-        console.log("- Real emails will be delivered to recipients");
-        return;
-      }
-
-      // Option 2: Use Resend API (free tier: 100 emails/day, no personal credentials needed)
-      if (process.env.RESEND_API_KEY) {
-        this.resend = new Resend(process.env.RESEND_API_KEY);
-        this.emailMethod = 'resend';
-        this.initialized = true;
-        console.log("✅ Email service initialized with Resend API");
-        console.log("- Service: Resend (resend.com)");
-        console.log("- Limit: 100 emails/day (free tier)");
-        console.log("- Real emails will be delivered to recipients");
+        console.log("- ⚠️  TRIAL LIMITATION: Can only send to verified admin email");
         return;
       }
 
@@ -154,101 +154,30 @@ class RealEmailService {
       }
       
       if (this.emailMethod === 'resend' && this.resend) {
-        // Use Resend API for real email delivery
+        // Use Resend API - can send to any email address
         try {
           const result = await this.resend.emails.send({
             from: 'Magnoos Travel <onboarding@resend.dev>', // Resend verified domain
-            to: [emailData.to],
+            to: [emailData.to], // Send to actual recipient
             subject: emailData.subject,
             html: emailData.html,
           });
           
           if (result.error) {
-            // Check if it's a testing mode limitation
-            const errorMessage = result.error.message || '';
-            if (errorMessage.includes('testing') || errorMessage.includes('verify') || errorMessage.includes('domain')) {
-              console.log(`🔄 Resend testing mode detected for ${emailData.to}, routing to verified address...`);
-              
-              // Retry with verified address and modified content
-              const testModeHtml = `
-                <div style="background: #fffbeb; border: 2px solid #f59e0b; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
-                  <h3 style="color: #d97706; margin: 0 0 10px 0;">🧪 Testing Mode Email Redirect</h3>
-                  <p style="margin: 0; color: #92400e;">
-                    <strong>Original Recipient:</strong> ${emailData.to}<br>
-                    <strong>Note:</strong> This email was redirected because Resend is in testing mode and can only send to verified addresses.
-                  </p>
-                </div>
-                ${emailData.html}
-              `;
-
-              const retryResult = await this.resend.emails.send({
-                from: 'Magnoos Travel <onboarding@resend.dev>',
-                to: ['e.radi@magnoos.com'], // Verified address
-                subject: `[TEST MODE] ${emailData.subject}`,
-                html: testModeHtml,
-              });
-
-              if (retryResult.error) {
-                console.error(`❌ Failed to send even to verified address:`, retryResult.error);
-                return false;
-              }
-
-              console.log(`✅ Email redirected to verified address: e.radi@magnoos.com`);
-              console.log(`📧 Message ID: ${retryResult.data?.id}`);
-              return true;
-            }
-            
             console.error(`❌ Resend API error:`, result.error);
             return false;
           }
           
-          console.log(`✅ Real email sent via Resend to: ${emailData.to}`);
+          console.log(`✅ Email sent via Resend to: ${emailData.to}`);
           console.log(`📧 Message ID: ${result.data?.id}`);
           return true;
         } catch (error: any) {
-          // Handle network or other errors that might indicate testing mode
-          if (error?.message?.includes('401') || error?.message?.includes('testing') || error?.message?.includes('verify')) {
-            console.log(`🔄 Resend error detected for ${emailData.to}, trying verified address...`);
-            
-            try {
-              const testModeHtml = `
-                <div style="background: #fffbeb; border: 2px solid #f59e0b; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
-                  <h3 style="color: #d97706; margin: 0 0 10px 0;">🧪 Testing Mode Email Redirect</h3>
-                  <p style="margin: 0; color: #92400e;">
-                    <strong>Original Recipient:</strong> ${emailData.to}<br>
-                    <strong>Error:</strong> ${error.message}<br>
-                    <strong>Note:</strong> This email was redirected because Resend is in testing mode.
-                  </p>
-                </div>
-                ${emailData.html}
-              `;
-
-              const retryResult = await this.resend.emails.send({
-                from: 'Magnoos Travel <onboarding@resend.dev>',
-                to: ['e.radi@magnoos.com'], // Verified address
-                subject: `[TEST MODE] ${emailData.subject}`,
-                html: testModeHtml,
-              });
-
-              if (retryResult.error) {
-                console.error(`❌ Failed to send even to verified address:`, retryResult.error);
-                return false;
-              }
-
-              console.log(`✅ Email redirected to verified address due to error: e.radi@magnoos.com`);
-              console.log(`📧 Message ID: ${retryResult.data?.id}`);
-              return true;
-            } catch (retryError) {
-              console.error(`❌ Failed retry to verified address:`, retryError);
-              return false;
-            }
-          }
-          
-          console.error(`❌ Unexpected Resend error:`, error);
+          console.error('❌ Resend delivery error:', error);
           return false;
         }
-        
-      } else if (this.emailMethod === 'smtp' && this.transporter) {
+      }
+      
+      if (this.emailMethod === 'smtp' && this.transporter) {
         // Use SMTP for real email delivery
         await this.transporter.sendMail({
           from: fromAddress,
