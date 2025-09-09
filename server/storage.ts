@@ -630,11 +630,49 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Employee documents operations
-  async getAllEmployeeDocuments(): Promise<EmployeeDocument[]> {
-    return await db
-      .select()
+  async getAllEmployeeDocuments(): Promise<any[]> {
+    const results = await db
+      .select({
+        // Document fields
+        id: employeeDocuments.id,
+        userId: employeeDocuments.userId,
+        documentType: employeeDocuments.documentType,
+        documentNumber: employeeDocuments.documentNumber,
+        issuingCountry: employeeDocuments.issuingCountry,
+        issueDate: employeeDocuments.issueDate,
+        expiryDate: employeeDocuments.expiryDate,
+        notes: employeeDocuments.notes,
+        attachmentUrl: employeeDocuments.attachmentUrl,
+        createdAt: employeeDocuments.createdAt,
+        updatedAt: employeeDocuments.updatedAt,
+        // User fields
+        userFirstName: users.firstName,
+        userLastName: users.lastName,
+        userEmail: users.email,
+      })
       .from(employeeDocuments)
+      .leftJoin(users, eq(employeeDocuments.userId, users.id))
       .orderBy(desc(employeeDocuments.expiryDate));
+
+    // Transform results to include user object
+    return results.map(result => ({
+      id: result.id,
+      userId: result.userId,
+      documentType: result.documentType,
+      documentNumber: result.documentNumber,
+      issuingCountry: result.issuingCountry,
+      issueDate: result.issueDate,
+      expiryDate: result.expiryDate,
+      notes: result.notes,
+      attachmentUrl: result.attachmentUrl,
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
+      user: result.userFirstName ? {
+        firstName: result.userFirstName,
+        lastName: result.userLastName,
+        email: result.userEmail,
+      } : null,
+    }));
   }
 
   async getEmployeeDocument(id: string): Promise<EmployeeDocument | undefined> {
