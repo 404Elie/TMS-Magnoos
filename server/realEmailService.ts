@@ -16,7 +16,60 @@ class RealEmailService {
 
   private async setupEmailService() {
     try {
-      // Option 1: Use Resend API (free tier: 100 emails/day, can send to any email address)
+      // Option 1: Use SMTP with provided credentials (HIGHEST PRIORITY - Direct email delivery)
+      if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        // Auto-detect email service based on email domain
+        let service = 'gmail'; // Default to Gmail
+        const emailDomain = process.env.EMAIL_USER.split('@')[1]?.toLowerCase();
+        
+        if (emailDomain?.includes('outlook') || emailDomain?.includes('hotmail') || emailDomain?.includes('live')) {
+          service = 'hotmail';
+        } else if (emailDomain?.includes('yahoo')) {
+          service = 'yahoo';
+        } else if (emailDomain?.includes('icloud')) {
+          service = 'icloud';
+        }
+
+        // Enhanced SMTP configuration with robust settings
+        this.transporter = nodemailer.createTransport({
+          service: service,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+          // Enhanced settings for better reliability
+          pool: true, // Use connection pooling
+          maxConnections: 5, // Limit concurrent connections
+          maxMessages: 100, // Limit messages per connection
+          timeout: 60000, // 60 second timeout
+          connectionTimeout: 60000, // 60 second connection timeout
+          greetingTimeout: 30000, // 30 second greeting timeout
+          socketTimeout: 60000, // 60 second socket timeout
+          debug: process.env.NODE_ENV === 'development', // Enable debug in development
+          logger: process.env.NODE_ENV === 'development', // Enable logging in development
+        });
+        
+        // Verify SMTP connection at startup
+        console.log("🔄 Verifying SMTP connection...");
+        try {
+          await this.transporter.verify();
+          console.log("✅ SMTP connection verified successfully");
+        } catch (verifyError: any) {
+          console.error("❌ SMTP verification failed:", verifyError.message);
+          console.error("   Check your EMAIL_USER and EMAIL_PASS credentials");
+          throw new Error(`SMTP verification failed: ${verifyError.message}`);
+        }
+        
+        this.emailMethod = 'smtp';
+        this.initialized = true;
+        console.log("✅ Email service initialized with Direct SMTP");
+        console.log(`- From Address: ${process.env.EMAIL_USER}`);
+        console.log(`- Service: ${service.toUpperCase()} SMTP (your email account)`);
+        console.log("- ✅ DIRECT DELIVERY: Emails sent from your account to real users");
+        console.log("- ✅ NO LIMITATIONS: Send to any email address");
+        return;
+      }
+      // Option 2: Use Resend API (fallback - has trial restrictions)
       if (process.env.RESEND_API_KEY) {
         this.resend = new Resend(process.env.RESEND_API_KEY);
         this.emailMethod = 'resend';
@@ -24,11 +77,11 @@ class RealEmailService {
         console.log("✅ Email service initialized with Resend API");
         console.log("- Service: Resend (resend.com)");
         console.log("- Limit: 100 emails/day (free tier)");
-        console.log("- ✅ CAN SEND TO ANY EMAIL ADDRESS (no trial restrictions)");
+        console.log("- ⚠️  TRIAL LIMITATION: May route emails to verified address");
         return;
       }
 
-      // Option 2: Use MailerSend API (free tier: 3,000 emails/month, trial limitations)
+      // Option 3: Use MailerSend API (fallback - has trial limitations)
       if (process.env.MAILERSEND_API_KEY) {
         this.mailerSend = new MailerSend({
           apiKey: process.env.MAILERSEND_API_KEY,
@@ -39,23 +92,6 @@ class RealEmailService {
         console.log("- Service: MailerSend (mailersend.com)");
         console.log("- Limit: 3,000 emails/month (free tier)");
         console.log("- ⚠️  TRIAL LIMITATION: Can only send to verified admin email");
-        return;
-      }
-
-      // Option 2: Use SMTP with provided credentials
-      if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-        this.transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-          }
-        });
-        this.emailMethod = 'smtp';
-        this.initialized = true;
-        console.log("✅ Email service initialized with SMTP");
-        console.log(`- From: ${process.env.EMAIL_USER}`);
-        console.log("- Real emails will be delivered to recipients");
         return;
       }
 
@@ -108,7 +144,11 @@ class RealEmailService {
     try {
       await this.ensureInitialized();
       
-      const fromAddress = emailData.from || '"Magnoos Travel System" <noreply@magnoos.com>';
+      // Fix From address mismatch: Use EMAIL_USER for SMTP to match authentication
+      const defaultFromAddress = this.emailMethod === 'smtp' && process.env.EMAIL_USER 
+        ? `"Magnoos Travel System" <${process.env.EMAIL_USER}>`
+        : '"Magnoos Travel System" <noreply@magnoos.com>';
+      const fromAddress = emailData.from || defaultFromAddress;
       
       if (this.emailMethod === 'mailersend' && this.mailerSend) {
         // Use MailerSend API - handle trial account limitations
@@ -116,7 +156,7 @@ class RealEmailService {
           const sentFrom = new Sender('noreply@trial-z3m5jgrjr8vg2k68.mlsender.net', 'Magnoos Travel System');
           
           // For trial accounts, route all emails to the verified admin address
-          const verifiedEmail = 'e.radi@magnoos.com'; // Your verified admin email
+          const verifiedEmail = process.env.ADMIN_EMAIL || 'admin@magnoos.com';
           const recipients = [new Recipient(verifiedEmail)];
 
           // Add original recipient info to email content for trial mode
@@ -184,7 +224,7 @@ class RealEmailService {
 
               const retryResult = await this.resend.emails.send({
                 from: 'Magnoos Travel <onboarding@resend.dev>',
-                to: ['e.radi@magnoos.com'], // Verified address
+                to: [process.env.ADMIN_EMAIL || 'admin@magnoos.com'], // Verified address from env
                 subject: `[FOR: ${emailData.to}] ${emailData.subject}`,
                 html: trialModeHtml,
               });
@@ -194,7 +234,7 @@ class RealEmailService {
                 return false;
               }
 
-              console.log(`✅ Email routed to verified address: e.radi@magnoos.com`);
+              console.log(`✅ Email routed to verified address: ${process.env.ADMIN_EMAIL || 'admin@magnoos.com'}`);
               console.log(`📧 Original recipient: ${emailData.to}`);
               console.log(`📧 Message ID: ${retryResult.data?.id}`);
               return true;
@@ -214,16 +254,31 @@ class RealEmailService {
       }
       
       if (this.emailMethod === 'smtp' && this.transporter) {
-        // Use SMTP for real email delivery
-        await this.transporter.sendMail({
-          from: fromAddress,
-          to: emailData.to,
-          subject: emailData.subject,
-          html: emailData.html,
-        });
-        
-        console.log(`✅ Real email sent via SMTP to: ${emailData.to}`);
-        return true;
+        // Use SMTP for real email delivery with enhanced error handling
+        try {
+          await this.transporter.sendMail({
+            from: fromAddress,
+            to: emailData.to,
+            subject: emailData.subject,
+            html: emailData.html,
+          });
+          
+          console.log(`✅ Real email sent via SMTP to: ${emailData.to}`);
+          return true;
+        } catch (smtpError: any) {
+          console.error(`❌ SMTP delivery failed to ${emailData.to}:`, smtpError.message);
+          
+          // Provide specific error guidance
+          if (smtpError.code === 'EAUTH') {
+            console.error('   Authentication failed - check EMAIL_USER and EMAIL_PASS');
+          } else if (smtpError.code === 'ESOCKET') {
+            console.error('   Connection failed - check internet connection and SMTP settings');
+          } else if (smtpError.responseCode === 550) {
+            console.error('   Recipient rejected - email address may not exist');
+          }
+          
+          return false;
+        }
         
       } else if (this.emailMethod === 'ethereal' && this.transporter) {
         // Ethereal - preview only, not delivered
