@@ -58,9 +58,9 @@ export default function DocumentManagement() {
     queryKey: ["/api/employee-documents"],
   });
 
-  // Fetch users for dropdown
+  // Fetch users for dropdown (aligned with operations dashboard)
   const { data: users = [] } = useQuery<any[]>({
-    queryKey: ["/api/users"],
+    queryKey: ["/api/zoho/users"],
   });
 
   // Auto-select employee from URL parameter and set filtering

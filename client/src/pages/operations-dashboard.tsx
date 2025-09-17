@@ -324,19 +324,6 @@ export default function OperationsDashboard() {
   };
   
   const [activeTab, setActiveTab] = useState(getActiveView());
-  
-  // Update activeTab when search parameters change
-  useEffect(() => {
-    const newActiveView = getActiveView();
-    setActiveTab(newActiveView);
-    
-    // Handle employee parameter from URL
-    const params = new URLSearchParams(search);
-    const employee = params.get('employee');
-    if (employee) {
-      setSelectedEmployeeId(employee);
-    }
-  }, [search]);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<TravelRequestWithDetails | null>(null);
@@ -345,6 +332,21 @@ export default function OperationsDashboard() {
   const [selectedDocumentType, setSelectedDocumentType] = useState<'passport' | 'visa' | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  
+  // Update activeTab when search parameters change
+  useEffect(() => {
+    const newActiveView = getActiveView();
+    setActiveTab(newActiveView);
+    
+    // Handle employee parameter from URL for document filtering
+    const params = new URLSearchParams(search);
+    const employee = params.get('employee');
+    if (employee) {
+      setSelectedEmployeeId(employee);
+    } else {
+      setSelectedEmployeeId(null);
+    }
+  }, [search]);
   const [bookingEntries, setBookingEntries] = useState([{
     type: "",
     provider: "",
