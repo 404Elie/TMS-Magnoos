@@ -171,6 +171,10 @@ export default function DocumentManagement() {
       return;
     }
 
+    // FIXED: Timezone-safe date validation using string comparison
+    const toLocalISO = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    const todayStr = toLocalISO(new Date());
+    
     // Validate dates - CRITICAL VALIDATION BEFORE SAVE
     const issueDate = new Date(formData.issueDate);
     const expiryDate = new Date(formData.expiryDate);
@@ -188,8 +192,8 @@ export default function DocumentManagement() {
       timeDiff: expiryDate.getTime() - issueDate.getTime()
     });
 
-    // Check if expiry date is in the past
-    if (expiryDate <= today) {
+    // Check if expiry date is in the past (string comparison)
+    if (formData.expiryDate <= todayStr) {
       console.log('❌ VALIDATION FAILED: Expiry date is in the past');
       toast({
         title: "Validation Error",
@@ -199,8 +203,8 @@ export default function DocumentManagement() {
       return;
     }
 
-    // Check if expiry date is before or same as issue date
-    if (expiryDate <= issueDate) {
+    // Check if expiry date is before or same as issue date (string comparison)
+    if (formData.issueDate && formData.expiryDate <= formData.issueDate) {
       console.log('❌ VALIDATION FAILED: Expiry date is before or same as issue date');
       toast({
         title: "Validation Error",
@@ -381,7 +385,10 @@ export default function DocumentManagement() {
                     id="expiryDate"
                     type="date"
                     value={formData.expiryDate}
-                    min={formData.issueDate ? new Date(new Date(formData.issueDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined}
+                    min={formData.issueDate ? (() => {
+                      const toLocalISO = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+                      return toLocalISO(new Date(new Date(formData.issueDate).getTime() + 24 * 60 * 60 * 1000));
+                    })() : undefined}
                     onChange={(e) => {
                       // Always update the form state first
                       setFormData(prev => ({ ...prev, expiryDate: e.target.value }));
