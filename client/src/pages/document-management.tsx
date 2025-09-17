@@ -28,9 +28,11 @@ interface EmployeeDocument {
   createdAt: string;
   updatedAt: string;
   user?: {
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
+    zohoUserId?: string | number;
   };
 }
 
@@ -267,12 +269,17 @@ export default function DocumentManagement() {
   });
 
   // Filter documents by selected employee if one is selected
+  // Handle both Zoho user IDs and local user IDs for filtering
   const filteredDocuments = selectedEmployeeId 
-    ? documents.filter(doc => doc.userId === selectedEmployeeId)
+    ? documents.filter(doc => {
+        // Check both local user ID and Zoho user ID for matches
+        return doc.userId === selectedEmployeeId || 
+               (doc.user?.zohoUserId && doc.user.zohoUserId.toString() === selectedEmployeeId);
+      })
     : documents;
 
   const selectedEmployee = selectedEmployeeId && users.length > 0 
-    ? users.find((user: any) => user.id === selectedEmployeeId)
+    ? users.find((user: any) => user.id === selectedEmployeeId || user.id.toString() === selectedEmployeeId)
     : null;
 
   return (

@@ -827,7 +827,6 @@ export default function OperationsDashboard() {
             ) : filteredDocuments.length > 0 ? (
               <div className="grid gap-6">
                 {filteredDocuments.map((document) => {
-                  const employee = users?.find(user => user.id === document.userId);
                   const isExpiringSoon = new Date(document.expiryDate) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
                   const isExpired = new Date(document.expiryDate) <= new Date();
                   
@@ -843,7 +842,7 @@ export default function OperationsDashboard() {
                             </div>
                             <div>
                               <h3 className="font-semibold text-gray-900 dark:text-white">
-                                {document.documentType === 'passport' ? 'Passport' : 'Visa'} - {employee?.firstName} {employee?.lastName}
+                                {document.documentType === 'passport' ? 'Passport' : 'Visa'} - {document.user?.firstName} {document.user?.lastName}
                               </h3>
                               <p className="text-sm text-gray-600 dark:text-gray-300">
                                 Document #: {document.documentNumber}

@@ -894,7 +894,25 @@ export function registerRoutes(app: Express): Server {
       }
 
       const documents = await storage.getAllEmployeeDocuments();
-      res.json(documents);
+      
+      // Enhance documents with user information
+      const documentsWithUsers = await Promise.all(
+        documents.map(async (doc) => {
+          const docUser = await storage.getUser(doc.userId);
+          return {
+            ...doc,
+            user: docUser ? {
+              id: docUser.id,
+              firstName: docUser.firstName,
+              lastName: docUser.lastName,
+              email: docUser.email,
+              zohoUserId: docUser.zohoUserId
+            } : null
+          };
+        })
+      );
+      
+      res.json(documentsWithUsers);
     } catch (error) {
       console.error("Error fetching employee documents:", error);
       res.status(500).json({ message: "Failed to fetch employee documents" });
