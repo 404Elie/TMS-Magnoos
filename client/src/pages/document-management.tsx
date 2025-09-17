@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -34,8 +35,10 @@ interface EmployeeDocument {
 }
 
 export default function DocumentManagement() {
+  console.log('🔄 DocumentManagement component mounted');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const searchParams = useSearch();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingDocument, setEditingDocument] = useState<EmployeeDocument | null>(null);
   const [selectedUserId, setSelectedUserId] = useState("");
@@ -58,6 +61,26 @@ export default function DocumentManagement() {
   const { data: users = [] } = useQuery<any[]>({
     queryKey: ["/api/users"],
   });
+
+  // Auto-select employee from URL parameter
+  useEffect(() => {
+    if (searchParams && users.length > 0) {
+      const urlParams = new URLSearchParams(searchParams);
+      const employeeId = urlParams.get('employee');
+      
+      if (employeeId && !formData.userId && !editingDocument) {
+        // Check if the employee exists in the users list
+        const employee = users.find((user: any) => user.id === employeeId);
+        if (employee) {
+          setFormData(prev => ({ ...prev, userId: employeeId }));
+          toast({
+            title: "Employee Selected",
+            description: `Auto-selected ${employee.firstName} ${employee.lastName}`,
+          });
+        }
+      }
+    }
+  }, [searchParams, users, formData.userId, editingDocument, toast]);
 
   // Create/Update document mutation
   const saveDocumentMutation = useMutation({
@@ -134,8 +157,12 @@ export default function DocumentManagement() {
     setIsAddDialogOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    console.log('🚀 handleSave called with form data:', formData);
+    
     if (!formData.userId || !formData.documentType || !formData.documentNumber || !formData.issuingCountry || !formData.issueDate || !formData.expiryDate) {
+      console.log('❌ Missing required fields');
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -144,6 +171,46 @@ export default function DocumentManagement() {
       return;
     }
 
+    // Validate dates - CRITICAL VALIDATION BEFORE SAVE
+    const issueDate = new Date(formData.issueDate);
+    const expiryDate = new Date(formData.expiryDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    console.log('🔍 Date validation check:', {
+      issueDate: formData.issueDate,
+      expiryDate: formData.expiryDate,
+      issueDateParsed: issueDate,
+      expiryDateParsed: expiryDate,
+      today: today,
+      isExpiryPast: expiryDate <= today,
+      isExpiryBeforeIssue: expiryDate <= issueDate,
+      timeDiff: expiryDate.getTime() - issueDate.getTime()
+    });
+
+    // Check if expiry date is in the past
+    if (expiryDate <= today) {
+      console.log('❌ VALIDATION FAILED: Expiry date is in the past');
+      toast({
+        title: "Validation Error",
+        description: "Expiry date cannot be in the past. Please select a future date.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if expiry date is before or same as issue date
+    if (expiryDate <= issueDate) {
+      console.log('❌ VALIDATION FAILED: Expiry date is before or same as issue date');
+      toast({
+        title: "Validation Error",
+        description: "Expiry date must be after the issue date. Please adjust the dates.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log('✅ Validation passed, calling mutation');
     saveDocumentMutation.mutate(formData);
   };
 
@@ -203,6 +270,7 @@ export default function DocumentManagement() {
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button 
+              onClick={() => console.log('🔴 Add Document button clicked')}
               className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
               data-testid="button-add-document"
             >
@@ -220,14 +288,17 @@ export default function DocumentManagement() {
               </DialogDescription>
             </DialogHeader>
             
-            <div className="grid gap-4 py-4">
+            <form onSubmit={(e) => {
+              console.log('🚪 Form onSubmit triggered!', e);
+              handleSave(e);
+            }} className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label htmlFor="user">Employee *</Label>
                 <Select 
                   value={formData.userId} 
                   onValueChange={(value) => setFormData(prev => ({ ...prev, userId: value }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger data-testid="select-employee">
                     <SelectValue placeholder="Select employee" />
                   </SelectTrigger>
                   <SelectContent>
@@ -280,35 +351,66 @@ export default function DocumentManagement() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="issueDate">Start Date *</Label>
+                  <Label htmlFor="issueDate">Issue Date *</Label>
                   <Input
                     id="issueDate"
                     type="date"
                     value={formData.issueDate}
-                    onChange={(e) => setFormData(prev => ({ ...prev, issueDate: e.target.value }))}
+                    onChange={(e) => {
+                      const issueDate = new Date(e.target.value);
+                      const expiryDate = new Date(formData.expiryDate);
+                      
+                      // If expiry date is already set and is before new issue date, clear it
+                      if (formData.expiryDate && expiryDate <= issueDate) {
+                        setFormData(prev => ({ ...prev, issueDate: e.target.value, expiryDate: "" }));
+                        toast({
+                          title: "Date Updated",
+                          description: "Expiry date cleared - please select a date after the issue date",
+                        });
+                      } else {
+                        setFormData(prev => ({ ...prev, issueDate: e.target.value }));
+                      }
+                    }}
+                    data-testid="input-issue-date"
                   />
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="expiryDate">End Date *</Label>
+                  <Label htmlFor="expiryDate">Expiry Date *</Label>
                   <Input
                     id="expiryDate"
                     type="date"
                     value={formData.expiryDate}
+                    min={formData.issueDate ? new Date(new Date(formData.issueDate).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined}
                     onChange={(e) => {
+                      // Always update the form state first
+                      setFormData(prev => ({ ...prev, expiryDate: e.target.value }));
+                      
+                      // Show warnings but don't prevent state updates
                       const expiryDate = new Date(e.target.value);
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
+                      
                       if (expiryDate <= today) {
                         toast({
-                          title: "Invalid Date",
-                          description: "Cannot add expired passport - end date must be in the future",
+                          title: "Warning",
+                          description: "Expiry date appears to be in the past",
                           variant: "destructive",
                         });
-                        return;
                       }
-                      setFormData(prev => ({ ...prev, expiryDate: e.target.value }));
+                      
+                      if (formData.issueDate) {
+                        const issueDate = new Date(formData.issueDate);
+                        if (expiryDate <= issueDate) {
+                          toast({
+                            title: "Warning",
+                            description: "Expiry date should be after issue date",
+                            variant: "destructive",
+                          });
+                        }
+                      }
                     }}
+                    data-testid="input-expiry-date"
                   />
                 </div>
               </div>
@@ -323,20 +425,22 @@ export default function DocumentManagement() {
                   rows={3}
                 />
               </div>
-            </div>
+            
 
             <DialogFooter>
               <Button variant="outline" onClick={resetForm}>
                 Cancel
               </Button>
               <Button 
-                onClick={handleSave} 
+                type="submit"
                 disabled={saveDocumentMutation.isPending}
                 className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
+                data-testid="button-save-document"
               >
                 {saveDocumentMutation.isPending ? "Saving..." : "Save Document"}
               </Button>
             </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
