@@ -55,9 +55,17 @@ export default function DocumentManagement() {
     notes: "",
   });
 
-  // Fetch documents
+  // Fetch documents with employee filtering
   const { data: documents = [], isLoading } = useQuery<EmployeeDocument[]>({
-    queryKey: ["/api/employee-documents"],
+    queryKey: selectedEmployeeId 
+      ? ["/api/employee-documents", selectedEmployeeId]
+      : ["/api/employee-documents"],
+    queryFn: () => {
+      const url = selectedEmployeeId 
+        ? `/api/employee-documents?employee=${selectedEmployeeId}`
+        : "/api/employee-documents";
+      return fetch(url).then(res => res.json());
+    }
   });
 
   // Fetch users for dropdown (aligned with operations dashboard)
@@ -71,25 +79,45 @@ export default function DocumentManagement() {
       const urlParams = new URLSearchParams(searchParams);
       const employeeId = urlParams.get('employee');
       
+      console.log('🔍 URL employee parameter:', employeeId);
+      console.log('🔍 Available users:', users.length, users.map(u => ({ id: u.id, name: u.name })));
+      
       // Set selected employee for filtering (when "View Documents" is clicked)
       setSelectedEmployeeId(employeeId);
       
-      if (employeeId && users.length > 0 && !formData.userId && !editingDocument) {
-        // Check if the employee exists in the users list
-        const employee = users.find((user: any) => user.id === employeeId);
+      // Auto-select employee in form when adding new document (not editing)
+      if (employeeId && users.length > 0 && !editingDocument) {
+        // Find employee by ID (Zoho ID)
+        const employee = users.find((user: any) => 
+          user.id === employeeId || user.id.toString() === employeeId
+        );
+        
+        console.log('🔍 Found employee for auto-select:', employee);
+        
         if (employee) {
-          setFormData(prev => ({ ...prev, userId: employeeId }));
-          toast({
-            title: "Employee Selected",
-            description: `Viewing documents for ${employee.firstName} ${employee.lastName}`,
-          });
+          // Only update if current userId is different to avoid infinite loops
+          if (formData.userId !== employeeId) {
+            console.log('✅ Auto-selecting employee:', employee.name);
+            setFormData(prev => ({ ...prev, userId: employeeId }));
+            toast({
+              title: "Employee Auto-Selected",
+              description: `Auto-selected ${employee.name} for new document`,
+              duration: 2000,
+            });
+          }
+        } else {
+          console.log('❌ Employee not found in users list for ID:', employeeId);
         }
       }
     } else {
       // No URL parameters - show all documents
       setSelectedEmployeeId(null);
+      // Clear form userId when no employee selected
+      if (formData.userId && !editingDocument) {
+        setFormData(prev => ({ ...prev, userId: "" }));
+      }
     }
-  }, [searchParams, users, formData.userId, editingDocument, toast]);
+  }, [searchParams, users, editingDocument, toast]);
 
   // Create/Update document mutation
   const saveDocumentMutation = useMutation({
@@ -101,7 +129,8 @@ export default function DocumentManagement() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/employee-documents"] });
+      // Invalidate both filtered and unfiltered document queries
+      queryClient.invalidateQueries({ queryKey: ["/api/employee-documents"], exact: false });
       toast({
         title: "Success",
         description: editingDocument ? "Document updated successfully" : "Document created successfully",
@@ -268,15 +297,8 @@ export default function DocumentManagement() {
     return daysUntilExpiry < 0;
   });
 
-  // Filter documents by selected employee if one is selected
-  // Handle both Zoho user IDs and local user IDs for filtering
-  const filteredDocuments = selectedEmployeeId 
-    ? documents.filter(doc => {
-        // Check both local user ID and Zoho user ID for matches
-        return doc.userId === selectedEmployeeId || 
-               (doc.user?.zohoUserId && doc.user.zohoUserId.toString() === selectedEmployeeId);
-      })
-    : documents;
+  // API now handles filtering, so use all documents returned
+  const filteredDocuments = documents;
 
   const selectedEmployee = selectedEmployeeId && users.length > 0 
     ? users.find((user: any) => user.id === selectedEmployeeId || user.id.toString() === selectedEmployeeId)
