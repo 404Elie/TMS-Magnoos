@@ -42,6 +42,7 @@ export default function DocumentManagement() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingDocument, setEditingDocument] = useState<EmployeeDocument | null>(null);
   const [selectedUserId, setSelectedUserId] = useState("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     userId: "",
     documentType: "",
@@ -62,20 +63,23 @@ export default function DocumentManagement() {
     queryKey: ["/api/users"],
   });
 
-  // Auto-select employee from URL parameter
+  // Auto-select employee from URL parameter and set filtering
   useEffect(() => {
-    if (searchParams && users.length > 0) {
+    if (searchParams) {
       const urlParams = new URLSearchParams(searchParams);
       const employeeId = urlParams.get('employee');
       
-      if (employeeId && !formData.userId && !editingDocument) {
+      // Set selected employee for filtering
+      setSelectedEmployeeId(employeeId);
+      
+      if (employeeId && users.length > 0 && !formData.userId && !editingDocument) {
         // Check if the employee exists in the users list
         const employee = users.find((user: any) => user.id === employeeId);
         if (employee) {
           setFormData(prev => ({ ...prev, userId: employeeId }));
           toast({
             title: "Employee Selected",
-            description: `Auto-selected ${employee.firstName} ${employee.lastName}`,
+            description: `Auto-selected ${employee.firstName} ${employee.lastName} - Viewing their documents`,
           });
         }
       }
@@ -259,16 +263,41 @@ export default function DocumentManagement() {
     return daysUntilExpiry < 0;
   });
 
+  // Filter documents by selected employee if one is selected
+  const filteredDocuments = selectedEmployeeId 
+    ? documents.filter(doc => doc.userId === selectedEmployeeId)
+    : documents;
+
+  const selectedEmployee = selectedEmployeeId && users.length > 0 
+    ? users.find((user: any) => user.id === selectedEmployeeId)
+    : null;
+
   return (
     <div className="p-6 space-y-6 bg-gradient-to-br from-white via-teal-50 to-yellow-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 min-h-screen">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Visa & Passport Management
+            {selectedEmployee ? `${selectedEmployee.firstName} ${selectedEmployee.lastName} - Documents` : 'Visa & Passport Management'}
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Track employee documents and expiry dates
+            {selectedEmployee 
+              ? `Viewing documents for ${selectedEmployee.firstName} ${selectedEmployee.lastName} (${selectedEmployee.email})`
+              : 'Track employee documents and expiry dates'
+            }
           </p>
+          {selectedEmployee && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-2"
+              onClick={() => {
+                setSelectedEmployeeId(null);
+                window.history.pushState({}, '', '/operations-dashboard?tab=documents');
+              }}
+            >
+              ← Back to All Documents
+            </Button>
+          )}
         </div>
         
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -515,15 +544,21 @@ export default function DocumentManagement() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            All Documents ({documents.length})
+            {selectedEmployee 
+              ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}'s Documents (${filteredDocuments.length})`
+              : `All Documents (${documents.length})`
+            }
           </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="text-center py-8 text-gray-500">Loading documents...</div>
-          ) : documents.length === 0 ? (
+          ) : filteredDocuments.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No documents found. Add the first document to get started.
+              {selectedEmployee 
+                ? `No documents found for ${selectedEmployee.firstName} ${selectedEmployee.lastName}.`
+                : 'No documents found. Add the first document to get started.'
+              }
             </div>
           ) : (
             <Table>
@@ -540,7 +575,7 @@ export default function DocumentManagement() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {documents.map((document) => {
+                {filteredDocuments.map((document) => {
                   const expiryStatus = getExpiryStatus(document.expiryDate);
                   return (
                     <TableRow key={document.id}>
