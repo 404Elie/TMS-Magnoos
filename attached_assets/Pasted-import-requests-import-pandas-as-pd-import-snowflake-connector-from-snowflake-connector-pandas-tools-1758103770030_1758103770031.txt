@@ -1,0 +1,127 @@
+import requests
+import pandas as pd
+import snowflake.connector
+from snowflake.connector.pandas_tools import write_pandas
+from io import StringIO
+import os
+
+if 'data_loader' not in globals():
+    from mage_ai.data_preparation.decorators import data_loader
+
+from my_project.utils.snowflake_config import snowflake_connection
+
+# === Zoho Auth ===
+CLIENT_ID     = '1000.EV2XW602GRO71WVSNWY5YV1E4MI8DA'
+CLIENT_SECRET = '930067a07dbf865dcfd278719fd1f3b32e3f962b9a'
+REFRESH_TOKEN = '1000.2a14d2cbb8d440c298289825557a396e.5099ef57a7a82b8ce5e3a00187209bca'
+AUTH_URL      = 'https://accounts.zoho.com/oauth/v2/token'
+ZOHO_API_URL  = 'https://projectsapi.zoho.com/restapi/portal/maaloomatiia/projects/'
+
+# Snowflake table name
+SNOWFLAKE_TABLE = 'PROJECTS'
+
+def get_access_token():
+    resp = requests.post(
+        AUTH_URL,
+        data={
+            'refresh_token': REFRESH_TOKEN,
+            'client_id':     CLIENT_ID,
+            'client_secret': CLIENT_SECRET,
+            'grant_type':    'refresh_token',
+        },
+    )
+    resp.raise_for_status()
+    return resp.json()['access_token']
+
+@data_loader
+def load_projects_incremental(*args, **kwargs) -> str:
+    # --- 1) Fetch all pages from Zoho API ---
+    token   = get_access_token()
+    headers = {'Authorization': f'Bearer {token}'}
+
+    all_projects = []
+    seen_ids     = set()
+    page = 1
+
+    while True:
+        r = requests.get(f"{ZOHO_API_URL}?page={page}", headers=headers)
+        r.raise_for_status()
+        data = r.json()
+        projs = data.get('projects', [])
+        # stop if no more
+        if not projs:
+            break
+
+        # only dedupe within this run
+        new_items = [p for p in projs if p['id'] not in seen_ids]
+        if not new_items:
+            break
+
+        all_projects.extend(new_items)
+        seen_ids.update(p['id'] for p in new_items)
+        page += 1
+
+    if not all_projects:
+        return "✅ No projects fetched from Zoho."
+
+    df = pd.json_normalize(all_projects)
+    df['PROJECT_ID'] = df['id'].astype(str)
+    df['PROJECT_CODE'] = df['key']
+    df.rename(columns={
+        'name':            'PROJECT_NAME',
+        'updated_date':    'LAST_MODIFIED_TIME',
+        'owner_name':      'OWNER',
+        'custom_status_name': 'STATUS',
+        'start_date':      'START_DATE',
+        'end_date':        'END_DATE',
+        'completed_on':    'COMPLETION_TIME',
+        'group_name':      'PROJECT_GROUP',
+        'created_date':    'CREATED_TIME',
+        'created_by':      'CREATED_BY',
+        'updated_by':      'LAST_MODIFIED_BY',
+    }, inplace=True)
+
+    def extract_custom(field, lst):
+        if not isinstance(lst, list):
+            return None
+        for o in lst:
+            if field in o:
+                return o[field]
+        return None
+
+    df['LOCATION']      = df['custom_fields'].apply(lambda x: extract_custom('Location', x))
+    df['BUSINESS_UNIT'] = df['custom_fields'].apply(lambda x: extract_custom('Business Unit', x))
+    df.drop(columns=['id','key','custom_fields'], inplace=True)
+
+    cols = [
+        'PROJECT_ID','PROJECT_NAME','LAST_MODIFIED_TIME','PROJECT_CODE',
+        'OWNER','STATUS','START_DATE','END_DATE','COMPLETION_TIME',
+        'PROJECT_GROUP','CREATED_TIME','CREATED_BY','LAST_MODIFIED_BY',
+        'LOCATION','BUSINESS_UNIT'
+    ]
+    df = df[cols]
+
+    # --- 2) Connect to Snowflake and fetch existing PROJECT_IDs ---
+    cfg  = snowflake_connection()
+    conn = snowflake.connector.connect(**cfg)
+    try:
+        cur = conn.cursor()
+        cur.execute(f'USE WAREHOUSE {cfg["warehouse"]}')
+        cur.execute(f'USE DATABASE  {cfg["database"]}')
+        cur.execute(f'USE SCHEMA    {cfg["schema"]}')
+        cur.execute(f"SELECT PROJECT_ID FROM {SNOWFLAKE_TABLE}")
+        existing = {r[0] for r in cur.fetchall()}
+
+        # 3) Filter out those already present
+        df_new = df[~df['PROJECT_ID'].isin(existing)]
+        count_new = len(df_new)
+
+        if count_new == 0:
+            return "✅ No new projects to append."
+
+        # 4) Append new rows
+        write_pandas(conn, df_new.astype(str), SNOWFLAKE_TABLE, overwrite=False)
+        return f"✅ Appended {count_new} new projects."
+
+    finally:
+        conn.close()
