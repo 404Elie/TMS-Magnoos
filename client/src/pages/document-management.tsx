@@ -63,32 +63,29 @@ export default function DocumentManagement() {
     queryKey: ["/api/users"],
   });
 
-  // Handle URL parameters for employee selection (optional filtering)
+  // Auto-select employee from URL parameter and set filtering
   useEffect(() => {
     if (searchParams) {
       const urlParams = new URLSearchParams(searchParams);
       const employeeId = urlParams.get('employee');
-      const filterMode = urlParams.get('filter');
       
-      // Only filter if explicitly requested or if filter=true parameter is present
-      if (employeeId && filterMode === 'true') {
-        setSelectedEmployeeId(employeeId);
-        
-        if (users.length > 0 && !formData.userId && !editingDocument) {
-          // Check if the employee exists in the users list
-          const employee = users.find((user: any) => user.id === employeeId);
-          if (employee) {
-            setFormData(prev => ({ ...prev, userId: employeeId }));
-            toast({
-              title: "Employee Filter Applied",
-              description: `Viewing documents for ${employee.firstName} ${employee.lastName}`,
-            });
-          }
+      // Set selected employee for filtering (when "View Documents" is clicked)
+      setSelectedEmployeeId(employeeId);
+      
+      if (employeeId && users.length > 0 && !formData.userId && !editingDocument) {
+        // Check if the employee exists in the users list
+        const employee = users.find((user: any) => user.id === employeeId);
+        if (employee) {
+          setFormData(prev => ({ ...prev, userId: employeeId }));
+          toast({
+            title: "Employee Selected",
+            description: `Viewing documents for ${employee.firstName} ${employee.lastName}`,
+          });
         }
-      } else {
-        // Default: Show all documents for operations users
-        setSelectedEmployeeId(null);
       }
+    } else {
+      // No URL parameters - show all documents
+      setSelectedEmployeeId(null);
     }
   }, [searchParams, users, formData.userId, editingDocument, toast]);
 

@@ -1184,7 +1184,7 @@ export default function OperationsDashboard() {
                           variant="outline" 
                           className="mt-2"
                           onClick={() => {
-                            // Navigate to employee documents view
+                            // Navigate to employee documents view with proper filtering
                             const currentUrl = new URL(window.location.href);
                             currentUrl.searchParams.set('tab', 'documents');
                             currentUrl.searchParams.set('employee', user.id);
