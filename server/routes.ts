@@ -893,7 +893,32 @@ export function registerRoutes(app: Express): Server {
         return res.status(403).json({ message: "Access denied. Operations role required." });
       }
 
-      const documents = await storage.getAllEmployeeDocuments();
+      const { employee } = req.query; // Optional employee filter parameter
+      let documents = await storage.getAllEmployeeDocuments();
+      
+      // If employee parameter is provided, filter by that employee
+      if (employee) {
+        console.log(`Filtering documents for employee: ${employee}`);
+        
+        // Find the app user that matches the employee ID (could be Zoho ID, app UUID, or email)
+        const allUsers = await storage.getAllUsers();
+        const targetUser = allUsers.find(user => 
+          user.zohoUserId === employee || 
+          user.id === employee || 
+          user.email === employee
+        );
+        
+        if (targetUser) {
+          console.log(`Found target user: ${targetUser.firstName} ${targetUser.lastName} (${targetUser.id})`);
+          // Filter documents to only include those belonging to this user
+          documents = documents.filter(doc => doc.userId === targetUser.id);
+          console.log(`Filtered to ${documents.length} documents for user ${targetUser.id}`);
+        } else {
+          console.log(`No user found matching employee ID: ${employee}`);
+          // If no matching user found, return empty array
+          documents = [];
+        }
+      }
       
       // Enhance documents with user information
       const documentsWithUsers = await Promise.all(

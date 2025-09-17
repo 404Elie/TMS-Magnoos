@@ -386,9 +386,17 @@ export default function OperationsDashboard() {
     retry: false,
   });
 
-  // Fetch employee documents
+  // Fetch employee documents with optional employee filter
   const { data: employeeDocuments, isLoading: documentsLoading } = useQuery<any[]>({
-    queryKey: ["/api/employee-documents"],
+    queryKey: selectedEmployeeId ? ["/api/employee-documents", selectedEmployeeId] : ["/api/employee-documents"],
+    queryFn: async () => {
+      const url = selectedEmployeeId 
+        ? `/api/employee-documents?employee=${encodeURIComponent(selectedEmployeeId)}`
+        : '/api/employee-documents';
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch documents');
+      return response.json();
+    },
     retry: false,
   });
 
@@ -766,14 +774,22 @@ export default function OperationsDashboard() {
   }
 
   if (activeTab === "documents") {
-    // Filter documents by selected employee if specified
-    const filteredDocuments = employeeDocuments?.filter(doc => 
-      selectedEmployeeId ? doc.userId === selectedEmployeeId : true
-    ) || [];
+    // API now handles filtering, so we use all documents returned
+    const filteredDocuments = employeeDocuments || [];
 
-    // Get employee name for filtered view
+    // Get employee info for display (find the Zoho user for header)
     const selectedEmployee = selectedEmployeeId ? 
-      users?.find(user => user.id === selectedEmployeeId) : null;
+      users?.find(user => 
+        user.id === selectedEmployeeId ||         // Direct Zoho ID match
+        user.email === selectedEmployeeId         // Email fallback
+      ) : null;
+    
+    // Debug logging
+    if (selectedEmployeeId) {
+      console.log('Selected Employee ID:', selectedEmployeeId);
+      console.log('Selected Employee:', selectedEmployee);
+      console.log('Documents from API:', filteredDocuments.length);
+    }
 
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
@@ -804,6 +820,7 @@ export default function OperationsDashboard() {
                       url.searchParams.delete('employee');
                       window.history.pushState({}, '', url.toString());
                     }}
+                    data-testid="view-all-documents"
                   >
                     View All Documents
                   </Button>
