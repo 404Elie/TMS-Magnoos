@@ -11,6 +11,7 @@ import ManagerDashboard from "@/pages/manager-dashboard";
 import PMDashboard from "@/pages/pm-dashboard";
 import OperationsDashboard from "@/pages/operations-dashboard";
 import DocumentManagement from "@/pages/document-management";
+import ProjectsPage from "@/pages/projects";
 import AdminUsers from "@/pages/admin-users";
 import AdminPanel from "@/pages/admin-panel";
 // Business Unit Manager Pages
@@ -149,6 +150,11 @@ function Router() {
       
       <Route path="/pm-my-requests">
         {(currentRole === 'manager' || typedUser?.role === 'admin') ? <PMMyRequests /> : <NotFound />}
+      </Route>
+      
+      {/* Projects Management Route */}
+      <Route path="/projects">
+        {(currentRole === 'pm' || currentRole === 'manager' || typedUser?.role === 'admin') ? <ProjectsPage /> : <NotFound />}
       </Route>
       
       <Route path="/pm">

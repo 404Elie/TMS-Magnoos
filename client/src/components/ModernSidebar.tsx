@@ -11,7 +11,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Globe2
+  Globe2,
+  FolderOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -74,6 +75,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
         { icon: CheckSquare, label: "Approvals", href: "/manager/approvals", section: "main" },
         { icon: Calendar, label: "My Requests", href: "/manager/my-requests", section: "main" },
         { icon: Globe2, label: "Operations Progress", href: "/manager/operations-progress", section: "main" },
+        { icon: FolderOpen, label: "Projects", href: "/projects", section: "main" },
         { icon: DollarSign, label: "Budget", href: "/manager/budget", section: "reports" },
         { icon: FileText, label: "Reports", href: "/manager/reports", section: "reports" },
       ];
@@ -82,6 +84,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
         { icon: LayoutDashboard, label: "Dashboard", href: "/pm-dashboard", section: "main" },
         { icon: PlusCircle, label: "New Request", href: "/pm-new-request", section: "main" },
         { icon: Calendar, label: "My Requests", href: "/pm-my-requests", section: "main" },
+        { icon: FolderOpen, label: "Projects", href: "/projects", section: "main" },
       ];
     } else if (userRole === 'operations_ksa' || userRole === 'operations_uae') {
       return [

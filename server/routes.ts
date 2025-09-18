@@ -210,7 +210,7 @@ export function registerRoutes(app: Express): Server {
   });
 
   // Excel Project Import endpoint
-  app.post('/api/projects/import-excel', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
+  app.post('/api/projects/import-excel', isAuthenticated, requireRole(['pm', 'manager', 'admin']), async (req: any, res) => {
     try {
       const user = req.user;
       console.log('Excel project import initiated by:', user?.email);
@@ -316,7 +316,7 @@ export function registerRoutes(app: Express): Server {
   });
 
   // Manual project sync from Zoho API
-  app.post('/api/projects/sync-zoho', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
+  app.post('/api/projects/sync-zoho', isAuthenticated, requireRole(['pm', 'manager', 'admin']), async (req: any, res) => {
     try {
       const user = req.user;
       console.log('Manual Zoho project sync initiated by:', user?.email);
