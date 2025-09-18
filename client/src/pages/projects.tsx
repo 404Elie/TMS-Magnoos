@@ -26,9 +26,9 @@ export default function ProjectsPage() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch all projects
+  // Fetch all projects from local database
   const { data: projects, isLoading: projectsLoading, error } = useQuery<any[]>({
-    queryKey: ["/api/zoho/projects"],
+    queryKey: ["/api/projects"],
     retry: false,
   });
 
@@ -43,7 +43,7 @@ export default function ProjectsPage() {
         title: "Excel Import Complete",
         description: `Added ${data.projectsAdded} new projects from Excel file. ${data.errors && data.errors.length > 0 ? `Found ${data.errors.length} errors.` : ''}`,
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/zoho/projects"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
     },
     onError: (error: any) => {
       toast({
@@ -65,7 +65,7 @@ export default function ProjectsPage() {
         title: "Zoho Sync Complete",
         description: `Added ${data.projectsAdded} new projects from Zoho API.`,
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/zoho/projects"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/projects"] });
     },
     onError: (error: any) => {
       toast({

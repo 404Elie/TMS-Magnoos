@@ -209,6 +209,27 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
+  // Fetch all projects from local database (for Projects page)
+  app.get('/api/projects', isAuthenticated, async (req: any, res) => {
+    try {
+      const allProjects = await storage.getProjects();
+      // Transform to include all project details for the Projects page
+      const transformedProjects = allProjects.map(project => ({
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        status: project.status,
+        created_date: project.createdAt?.toISOString(),
+        end_date: null, // Add if needed in future
+        zoho_project_id: project.zohoProjectId
+      }));
+      res.json(transformedProjects);
+    } catch (error) {
+      console.error("Error fetching projects from database:", error);
+      res.status(500).json({ message: "Failed to fetch projects from database" });
+    }
+  });
+
   // Excel Project Import endpoint
   app.post('/api/projects/import-excel', isAuthenticated, requireRole(['pm', 'manager', 'admin']), async (req: any, res) => {
     try {
