@@ -22,7 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { 
@@ -177,7 +177,7 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
                     <Command>
                       <CommandInput placeholder="Search employees..." />
                       <CommandEmpty>No employee found.</CommandEmpty>
-                      <CommandGroup className="max-h-64 overflow-auto">
+                      <CommandList>
                         {users?.map((user) => (
                           <CommandItem
                             key={user.id}
@@ -201,7 +201,7 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
                             </span>
                           </CommandItem>
                         ))}
-                      </CommandGroup>
+                      </CommandList>
                     </Command>
                   </PopoverContent>
                 </Popover>
