@@ -1251,7 +1251,7 @@ export default function OperationsDashboard() {
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                     Track project-based travel expenses and spending
                   </p>
-                  <Button asChild className="w-full" variant="outline">
+                  <Button asChild className="w-full">
                     <Link href="/operations-dashboard?tab=expenses-project">
                       View Project Expenses
                     </Link>
@@ -1305,7 +1305,7 @@ export default function OperationsDashboard() {
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                     Track project-based travel expenses and spending
                   </p>
-                  <Button asChild className="w-full" variant="outline">
+                  <Button asChild className="w-full">
                     <Link href="/operations-dashboard?tab=expenses-project">
                       View Project Expenses
                     </Link>
