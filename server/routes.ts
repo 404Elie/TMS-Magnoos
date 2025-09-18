@@ -836,6 +836,55 @@ export function registerRoutes(app: Express): Server {
   });
 
   // Test email route (admin only)
+  app.post('/api/admin/test-email', async (req, res) => {
+    try {
+      console.log('🧪 Testing email notifications...');
+      
+      // Get business unit managers (role: 'pm')
+      const recipients = await getRoleBasedRecipients('request_submitted');
+      console.log('📧 Found recipients:', recipients);
+      
+      // Test travel request data
+      const testRequest = {
+        travelerName: 'Karim Fleifel',
+        requesterName: 'Test User',
+        destination: 'Riyadh, KSA',
+        origin: 'Dubai, UAE',
+        departureDate: '2024-09-25T10:00:00.000Z',
+        returnDate: '2024-09-26T18:00:00.000Z',
+        purpose: 'delivery',
+        projectName: 'BAJ - Anti-Fraud Analytics'
+      };
+      
+      if (recipients.length > 0) {
+        console.log('📤 Sending test email notification...');
+        const success = await simpleEmailService.sendTravelRequestNotification(testRequest, recipients);
+        
+        if (success) {
+          console.log('✅ Test email sent successfully!');
+          res.json({ 
+            message: 'Test email sent successfully', 
+            recipients: recipients.map(r => r.email),
+            success: true
+          });
+        } else {
+          console.log('❌ Test email failed to send');
+          res.status(500).json({ message: 'Failed to send test email', success: false });
+        }
+      } else {
+        console.log('⚠️  No business unit managers found');
+        res.json({ 
+          message: 'No business unit managers found (no users with role: pm)', 
+          recipients: [],
+          success: false
+        });
+      }
+      
+    } catch (error) {
+      console.error('❌ Email test error:', error);
+      res.status(500).json({ message: 'Email test failed', error: String(error) });
+    }
+  });
 
   // Delete all test data (admin only) - nuclear option for complete cleanup
   app.delete('/api/admin/cleanup-test-data', isAuthenticated, requireAdmin, async (req: any, res) => {
