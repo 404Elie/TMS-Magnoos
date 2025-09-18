@@ -43,6 +43,8 @@ import {
   Search,
   Edit2,
   Trash2,
+  RefreshCw,
+  Database,
   Calendar as CalendarIcon,
   Eye
 } from "lucide-react";
@@ -462,6 +464,50 @@ export default function OperationsDashboard() {
       toast({
         title: "Error",
         description: "Failed to complete request. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Excel project import mutation
+  const importExcelMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/projects/import-excel");
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Excel Import Complete",
+        description: `Added ${data.projectsAdded} new projects from Excel file. ${data.errors ? `Found ${data.errors.length} errors.` : ''}`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/zoho/projects"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Excel Import Failed",
+        description: error.message || "Failed to import projects from Excel",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Zoho project sync mutation
+  const syncZohoMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/projects/sync-zoho");
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Zoho Sync Complete",
+        description: `Added ${data.projectsAdded} new projects from Zoho API.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/zoho/projects"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Zoho Sync Failed",
+        description: error.message || "Failed to sync projects from Zoho",
         variant: "destructive",
       });
     },
@@ -1510,6 +1556,39 @@ export default function OperationsDashboard() {
                     Expenses by Project
                   </Link>
                 </Button>
+                
+                {/* Project Sync Section */}
+                <div className="border-t border-gray-200 dark:border-gray-600 pt-4 mt-4">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Project Management</p>
+                  <div className="space-y-2">
+                    <Button 
+                      className="w-full justify-start bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700" 
+                      onClick={() => importExcelMutation.mutate()}
+                      disabled={importExcelMutation.isPending}
+                      data-testid="button-import-excel"
+                    >
+                      {importExcelMutation.isPending ? (
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <FileText className="w-4 h-4 mr-2" />
+                      )}
+                      {importExcelMutation.isPending ? "Importing..." : "Import from Excel"}
+                    </Button>
+                    <Button 
+                      className="w-full justify-start bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700" 
+                      onClick={() => syncZohoMutation.mutate()}
+                      disabled={syncZohoMutation.isPending}
+                      data-testid="button-sync-zoho"
+                    >
+                      {syncZohoMutation.isPending ? (
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Database className="w-4 h-4 mr-2" />
+                      )}
+                      {syncZohoMutation.isPending ? "Syncing..." : "Sync from Zoho API"}
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>

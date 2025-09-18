@@ -344,7 +344,7 @@ export function registerRoutes(app: Express): Server {
             description: project.description || `Synced from Zoho - ${project.name}`,
             budget: null,
             travelBudget: null,
-            status: project.status?.toLowerCase() === 'active' ? 'active' : 'active' // Default to active
+            status: project.status?.toLowerCase() === 'active' ? 'active' : 'inactive'
           });
           addedProjects.push(newProject);
         } catch (error) {
