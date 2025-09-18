@@ -541,28 +541,23 @@ export default function OperationsDashboard() {
     req.status === 'pm_approved' || req.status === 'operations_completed'
   ) || [];
 
-  // Calculate user budget summaries
-  const userBudgetSummaries = users?.map(user => {
-    const userRequests = requests?.filter(req => req.travelerId === user.id) || [];
+  // Calculate user expense summaries
+  const userExpenseSummaries = users?.map(user => {
+    const userRequests = requests?.filter(req => req.travelerId === user.id && req.status === 'operations_completed') || [];
     const totalSpent = userRequests.reduce((sum, req) => {
       return sum + (parseFloat(req.actualTotalCost || "0"));
     }, 0);
-    const annualBudget = parseFloat(user.annualTravelBudget || "15000");
-    const utilization = (totalSpent / annualBudget) * 100;
     const tripCount = userRequests.length;
 
     return {
       ...user,
       totalSpent,
-      annualBudget,
-      remaining: annualBudget - totalSpent,
-      utilization,
       tripCount,
     };
   }) || [];
 
-  // Calculate project budget summaries
-  const projectBudgetSummaries = projects?.map(project => {
+  // Calculate project expense summaries
+  const projectExpenseSummaries = projects?.map(project => {
     const projectRequests = requests?.filter(req => {
       const projectIdMatch = String(req.projectId) === String(project.id);
       const zohoIdMatch = String(req.projectId) === String(project.zohoProjectId);
@@ -575,17 +570,12 @@ export default function OperationsDashboard() {
     const totalSpent = projectRequests.reduce((sum, req) => {
       return sum + (parseFloat(req.actualTotalCost || "0"));
     }, 0);
-    const allocatedBudget = parseFloat(project.travelBudget || "50000");
-    const utilization = (totalSpent / allocatedBudget) * 100;
     const tripCount = projectRequests.length;
     const avgCostPerTrip = tripCount > 0 ? totalSpent / tripCount : 0;
 
     return {
       ...project,
       totalSpent,
-      allocatedBudget,
-      remaining: allocatedBudget - totalSpent,
-      utilization,
       tripCount,
       avgCostPerTrip,
     };
@@ -976,22 +966,22 @@ export default function OperationsDashboard() {
     );
   }
 
-  if (activeTab === "budget-person") {
+  if (activeTab === "expenses-person") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
         <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Budget by Person
+                Expenses by Person
               </h1>
               <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Track individual employee travel spending and budget utilization
+                Track individual employee travel expenses and spending
               </p>
             </div>
             
             <div className="grid gap-4">
-              {userBudgetSummaries.map(user => (
+              {userExpenseSummaries.map(user => (
                 <Card key={user.id} className="bg-white dark:bg-gray-800">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
@@ -1003,15 +993,12 @@ export default function OperationsDashboard() {
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-gray-900 dark:text-white">
-                          {formatCurrency(user.totalSpent)} / {formatCurrency(user.annualBudget)}
+                          {formatCurrency(user.totalSpent)}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-300">
-                          {user.utilization.toFixed(1)}% utilized
+                          {user.tripCount} trip{user.tripCount !== 1 ? 's' : ''}
                         </p>
                       </div>
-                    </div>
-                    <div className="mt-4">
-                      <Progress value={user.utilization} className="h-2" />
                     </div>
                   </CardContent>
                 </Card>
@@ -1023,22 +1010,22 @@ export default function OperationsDashboard() {
     );
   }
 
-  if (activeTab === "budget-project") {
+  if (activeTab === "expenses-project") {
     return (
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
         <ModernLayout currentRole="operations">
           <div className="p-8 space-y-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Budget by Project
+                Expenses by Project
               </h1>
               <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Track project-based travel spending and budget allocation
+                Track project-based travel expenses and spending
               </p>
             </div>
             
             <div className="grid gap-4">
-              {projectBudgetSummaries.map(project => (
+              {projectExpenseSummaries.map(project => (
                 <Card key={project.id} className="bg-white dark:bg-gray-800">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
@@ -1046,19 +1033,16 @@ export default function OperationsDashboard() {
                         <h3 className="font-semibold text-gray-900 dark:text-white">
                           {project.name}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">{project.tripCount} trips</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{project.tripCount} trip{project.tripCount !== 1 ? 's' : ''}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-gray-900 dark:text-white">
-                          {formatCurrency(project.totalSpent)} / {formatCurrency(project.allocatedBudget)}
+                          {formatCurrency(project.totalSpent)}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-300">
-                          {project.utilization.toFixed(1)}% utilized
+                          Avg: {formatCurrency(project.avgCostPerTrip)}/trip
                         </p>
                       </div>
-                    </div>
-                    <div className="mt-4">
-                      <Progress value={project.utilization} className="h-2" />
                     </div>
                   </CardContent>
                 </Card>
@@ -1248,13 +1232,13 @@ export default function OperationsDashboard() {
               <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                 <CardContent className="p-6 text-center">
                   <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Employee Budgets</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Employee Expenses</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Track individual employee travel spending and budget utilization
+                    Track individual employee travel expenses and spending
                   </p>
                   <Button asChild className="w-full">
-                    <Link href="/operations-dashboard?tab=budget-person">
-                      View Employee Budgets
+                    <Link href="/operations-dashboard?tab=expenses-person">
+                      View Employee Expenses
                     </Link>
                   </Button>
                 </CardContent>
@@ -1263,13 +1247,13 @@ export default function OperationsDashboard() {
               <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                 <CardContent className="p-6 text-center">
                   <BarChart3 className="w-12 h-12 mx-auto mb-4 text-purple-600" />
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Project Budgets</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Project Expenses</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Track project-based travel spending and budget allocation
+                    Track project-based travel expenses and spending
                   </p>
                   <Button asChild className="w-full" variant="outline">
-                    <Link href="/operations-dashboard?tab=budget-project">
-                      View Project Budgets
+                    <Link href="/operations-dashboard?tab=expenses-project">
+                      View Project Expenses
                     </Link>
                   </Button>
                 </CardContent>
@@ -1461,15 +1445,15 @@ export default function OperationsDashboard() {
                   </Link>
                 </Button>
                 <Button className="w-full justify-start bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600" asChild>
-                  <Link href="/operations-dashboard?tab=budget-person">
+                  <Link href="/operations-dashboard?tab=expenses-person">
                     <Users className="w-4 h-4 mr-2" />
-                    Budget by Person
+                    Expenses by Person
                   </Link>
                 </Button>
                 <Button className="w-full justify-start bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-600" asChild>
-                  <Link href="/operations-dashboard?tab=budget-project">
+                  <Link href="/operations-dashboard?tab=expenses-project">
                     <BarChart3 className="w-4 h-4 mr-2" />
-                    Budget by Project
+                    Expenses by Project
                   </Link>
                 </Button>
               </CardContent>
