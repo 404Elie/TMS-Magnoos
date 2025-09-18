@@ -137,7 +137,7 @@ export class DatabaseStorage implements IStorage {
 
   async getUsersByRole(role: string): Promise<User[]> {
     try {
-      const roleUsers = await db.select().from(users).where(eq(users.role, role));
+      const roleUsers = await db.select().from(users).where(eq(users.role, role as any));
       return roleUsers;
     } catch (error) {
       console.error('Database error in getUsersByRole:', error);

@@ -20,7 +20,7 @@ class SimpleEmailService {
     console.log('🔧 Setting up email service...');
     
     // Create transporter with your settings
-    this.transporter = nodemailer.createTransporter({
+    this.transporter = nodemailer.createTransport({
       host: EMAIL_CONFIG.host,
       port: EMAIL_CONFIG.port,
       secure: false, // true for port 465, false for other ports

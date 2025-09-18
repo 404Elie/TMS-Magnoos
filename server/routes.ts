@@ -5,7 +5,7 @@ import { setupAuth, isAuthenticated } from "./auth";
 import { insertTravelRequestSchema, insertBookingSchema, insertBudgetTrackingSchema } from "@shared/schema";
 import { sql } from "drizzle-orm";
 import { zohoService } from "./zohoService";
-import { realEmailService } from "./realEmailService";
+import { simpleEmailService } from "./simpleEmailService";
 import { z } from "zod";
 
 // Validate email domain for company restriction
@@ -519,7 +519,7 @@ export function registerRoutes(app: Express): Server {
             projectName: validatedData.projectId ? 'Project specified' : undefined
           };
 
-          const emailResult = await realEmailService.sendTravelRequestNotification(emailData, recipients);
+          const emailResult = await simpleEmailService.sendTravelRequestNotification(emailData, recipients);
           console.log(`Email notification result: ${emailResult ? 'SUCCESS' : 'FAILED'}`);
         } else {
           console.log("No email recipients found or missing user data");
@@ -579,7 +579,7 @@ export function registerRoutes(app: Express): Server {
               pmApproverName: `${approver.firstName || ''} ${approver.lastName || ''}`.trim() || approver.email || 'Unknown'
             };
 
-            await realEmailService.sendTravelRequestApprovalNotification(emailData, recipients);
+            await simpleEmailService.sendTravelApprovalNotification(emailData, recipients);
           }
         }
       } catch (emailError) {
@@ -706,7 +706,7 @@ export function registerRoutes(app: Express): Server {
               operationsCompletedByName: `${operationsUser.firstName || ''} ${operationsUser.lastName || ''}`.trim() || operationsUser.email || 'Unknown'
             };
 
-            await realEmailService.sendBookingCompletionNotification(emailData, validRecipients);
+            await simpleEmailService.sendBookingCompletionNotification(emailData, validRecipients);
           }
         }
       } catch (emailError) {
@@ -836,37 +836,6 @@ export function registerRoutes(app: Express): Server {
   });
 
   // Test email route (admin only)
-  app.post('/api/test-email', isAuthenticated, requireAdmin, async (req: any, res) => {
-    try {
-      console.log('\n🧪 TESTING EMAIL DELIVERY');
-      const success = await realEmailService.sendEmail({
-        to: 'e.radi@magnoos.com',
-        subject: 'Test Email from Magnoos Travel System',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #0032FF;">🧪 Email Test</h2>
-            <p>This is a test email to verify email delivery is working.</p>
-            <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-            <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #0032FF;">
-              <p style="margin: 0; color: #0032FF; font-weight: bold;">✅ If you receive this, email delivery is working!</p>
-            </div>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
-                 style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                Access Travel Management System
-              </a>
-            </div>
-          </div>
-        `
-      });
-
-      res.json({ success, message: success ? 'Test email sent successfully' : 'Test email failed' });
-    } catch (error) {
-      console.error('Test email error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      res.status(500).json({ message: 'Test email failed', error: errorMessage });
-    }
-  });
 
   // Delete all test data (admin only) - nuclear option for complete cleanup
   app.delete('/api/admin/cleanup-test-data', isAuthenticated, requireAdmin, async (req: any, res) => {
