@@ -66,7 +66,7 @@ import {
 import type { TravelRequestWithDetails, Booking, BudgetTracking, UserWithBudget, ProjectWithBudget, InsertEmployeeDocument } from "@shared/schema";
 
 // Document Form Component
-function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'visa' | null, onClose: () => void }) {
+function DocumentForm({ documentType, selectedEmployeeId, onClose }: { documentType: 'passport' | 'visa' | null, selectedEmployeeId: string | null, onClose: () => void }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEmployeeDropdownOpen, setIsEmployeeDropdownOpen] = useState(false);
@@ -93,7 +93,7 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
     })),
     defaultValues: {
       documentType: documentType || 'passport',
-      userId: '',
+      userId: selectedEmployeeId || '', // Auto-select employee if viewing specific employee
       documentNumber: '',
       issuingCountry: '',
       issueDate: '',
@@ -162,6 +162,7 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
                     <Button
                       variant="outline"
                       role="combobox"
+                      disabled={!!selectedEmployeeId} // Disable when viewing specific employee
                       className={cn(
                         "w-full justify-between",
                         !field.value && "text-muted-foreground"
@@ -169,7 +170,7 @@ function DocumentForm({ documentType, onClose }: { documentType: 'passport' | 'v
                     >
                       {field.value
                         ? users?.find((user) => user.id === field.value)?.firstName + " " + users?.find((user) => user.id === field.value)?.lastName
-                        : "Search and select employee..."}
+                        : selectedEmployeeId ? "Employee auto-selected" : "Search and select employee..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -958,6 +959,7 @@ export default function OperationsDashboard() {
               </DialogHeader>
               <DocumentForm 
                 documentType={selectedDocumentType}
+                selectedEmployeeId={selectedEmployeeId}
                 onClose={() => setDocumentFormOpen(false)}
               />
             </DialogContent>
