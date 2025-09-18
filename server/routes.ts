@@ -7,6 +7,10 @@ import { sql } from "drizzle-orm";
 import { zohoService } from "./zohoService";
 import { simpleEmailService } from "./simpleEmailService";
 import { z } from "zod";
+import * as XLSX from 'xlsx';
+import fs from 'fs';
+import path from 'path';
+import { fromZodError } from 'zod-validation-error';
 
 // Validate email domain for company restriction
 function validateCompanyEmail(email: string): boolean {
@@ -202,6 +206,164 @@ export function registerRoutes(app: Express): Server {
     } catch (error) {
       console.error("Error fetching Zoho projects:", error);
       res.status(500).json({ message: "Failed to fetch projects from Zoho" });
+    }
+  });
+
+  // Excel Project Import endpoint
+  app.post('/api/projects/import-excel', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
+    try {
+      const user = req.user;
+      console.log('Excel project import initiated by:', user?.email);
+
+      const filePath = path.join(process.cwd(), 'attached_assets', 'project_export_1520578000016496178_1758186486687.xlsx');
+      
+      // Check if file exists
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ message: 'Excel file not found' });
+      }
+
+      // Read and parse Excel file securely
+      const workbook = XLSX.readFile(filePath);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      // Validate and sanitize Excel data
+      const projectSchema = z.object({
+        'Project Name': z.string().min(1).max(500),
+        'Project ID': z.union([z.string(), z.number()]).transform(val => String(val)),
+        'Status': z.string().optional().default('Active'),
+        'Description': z.string().optional().default(''),
+        'Owner': z.string().optional().default(''),
+        'Created Time': z.string().optional().default(''),
+      });
+
+      const validProjects = [];
+      const errors = [];
+
+      for (let i = 0; i < jsonData.length; i++) {
+        try {
+          const row = jsonData[i] as any;
+          const validatedProject = projectSchema.parse(row);
+          const projectId = parseInt(validatedProject['Project ID']);
+          
+          // Skip invalid project IDs
+          if (isNaN(projectId)) {
+            errors.push(`Row ${i + 2}: Invalid Project ID`);
+            continue;
+          }
+          
+          validProjects.push({
+            id: projectId,
+            name: validatedProject['Project Name'].trim(),
+            status: validatedProject.Status || 'Active',
+            description: validatedProject.Description?.trim() || '',
+            owner: validatedProject.Owner?.trim() || '',
+            createdTime: validatedProject['Created Time'] || ''
+          });
+        } catch (error) {
+          errors.push(`Row ${i + 2}: ${error instanceof z.ZodError ? fromZodError(error).toString() : 'Invalid data format'}`);
+        }
+      }
+
+      if (errors.length > 0) {
+        console.log('Excel parsing errors:', errors.slice(0, 10)); // Log first 10 errors
+      }
+
+      // Get existing projects from database
+      const existingProjects = await storage.getProjects();
+      const existingProjectIds = new Set(existingProjects.map(p => Number(p.zohoProjectId) || 0));
+
+      // Find missing projects
+      const missingProjects = validProjects.filter(project => !existingProjectIds.has(project.id));
+
+      console.log(`Found ${validProjects.length} valid projects in Excel file`);
+      console.log(`Found ${missingProjects.length} missing projects to add`);
+
+      // Add missing projects to database
+      const addedProjects = [];
+      for (const project of missingProjects) {
+        try {
+          const newProject = await storage.createProject({
+            zohoProjectId: String(project.id),
+            name: project.name,
+            description: project.description || `Imported from Excel - ${project.name}`,
+            budget: null,
+            travelBudget: null,
+            status: project.status === 'Active' ? 'active' : 'inactive'
+          });
+          addedProjects.push(newProject);
+        } catch (error) {
+          console.error(`Error adding project ${project.id}:`, error);
+          errors.push(`Failed to add project "${project.name}": ${error}`);
+        }
+      }
+
+      res.json({
+        success: true,
+        totalProjectsInExcel: validProjects.length,
+        existingProjects: existingProjects.length,
+        missingProjectsFound: missingProjects.length,
+        projectsAdded: addedProjects.length,
+        addedProjects: addedProjects.map(p => ({ id: p.zohoProjectId, name: p.name })),
+        errors: errors.length > 0 ? errors.slice(0, 20) : undefined // Limit error display
+      });
+
+    } catch (error) {
+      console.error('Error importing projects from Excel:', error);
+      res.status(500).json({ message: 'Failed to import projects from Excel file' });
+    }
+  });
+
+  // Manual project sync from Zoho API
+  app.post('/api/projects/sync-zoho', isAuthenticated, requireRole(['operations_ksa', 'operations_uae', 'admin']), async (req: any, res) => {
+    try {
+      const user = req.user;
+      console.log('Manual Zoho project sync initiated by:', user?.email);
+
+      // Fetch projects from Zoho API using the existing zohoService
+      const zohoProjects = await zohoService.getProjects();
+      
+      // Get existing projects from database
+      const existingProjects = await storage.getProjects();
+      const existingProjectIds = new Set(existingProjects.map(p => Number(p.zohoProjectId) || 0));
+      
+      // Find missing projects
+      const missingProjects = zohoProjects.filter(project => !existingProjectIds.has(Number(project.id)));
+      
+      console.log(`Found ${zohoProjects.length} projects from Zoho API`);
+      console.log(`Found ${missingProjects.length} missing projects to add`);
+      
+      // Add missing projects to database
+      const addedProjects = [];
+      for (const project of missingProjects) {
+        try {
+          const newProject = await storage.createProject({
+            zohoProjectId: String(project.id),
+            name: project.name,
+            description: project.description || `Synced from Zoho - ${project.name}`,
+            budget: null,
+            travelBudget: null,
+            status: project.status?.toLowerCase() === 'active' ? 'active' : 'active' // Default to active
+          });
+          addedProjects.push(newProject);
+        } catch (error) {
+          console.error(`Error adding project ${project.id}:`, error);
+        }
+      }
+      
+      res.json({
+        success: true,
+        totalZohoProjects: zohoProjects.length,
+        existingProjects: existingProjects.length,
+        missingProjectsFound: missingProjects.length,
+        projectsAdded: addedProjects.length,
+        addedProjects: addedProjects.map(p => ({ id: p.zohoProjectId, name: p.name }))
+      });
+      
+    } catch (error) {
+      console.error('Error syncing projects from Zoho:', error);
+      res.status(500).json({ message: 'Failed to sync projects from Zoho API' });
     }
   });
 
