@@ -169,7 +169,7 @@ export default function DocumentManagement() {
 
   const resetForm = () => {
     setFormData({
-      userId: "",
+      userId: selectedEmployeeId || "", // Keep employee selected if viewing specific employee
       documentType: "",
       documentNumber: "",
       issuingCountry: "",
@@ -335,7 +335,13 @@ export default function DocumentManagement() {
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button 
-              onClick={() => console.log('🔴 Add Document button clicked')}
+              onClick={() => {
+                console.log('🔴 Add Document button clicked');
+                // Ensure employee is pre-selected when adding document for specific employee
+                if (selectedEmployeeId) {
+                  setFormData(prev => ({ ...prev, userId: selectedEmployeeId }));
+                }
+              }}
               className="bg-gradient-to-r from-electric-blue to-purple hover:from-electric-blue/90 hover:to-purple/90 text-white"
               data-testid="button-add-document"
             >
@@ -362,9 +368,10 @@ export default function DocumentManagement() {
                 <Select 
                   value={formData.userId} 
                   onValueChange={(value) => setFormData(prev => ({ ...prev, userId: value }))}
+                  disabled={!!selectedEmployeeId} // Disable when viewing specific employee
                 >
                   <SelectTrigger data-testid="select-employee">
-                    <SelectValue placeholder="Select employee" />
+                    <SelectValue placeholder={selectedEmployeeId ? "Employee auto-selected" : "Select employee"} />
                   </SelectTrigger>
                   <SelectContent>
                     {users.map((user: any) => (
