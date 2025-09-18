@@ -5,10 +5,10 @@ import nodemailer from 'nodemailer';
 // ================================
 const EMAIL_CONFIG = {
   // Replace these with your actual email settings:
-  email: 'your-email@gmail.com',        // Your email address
-  password: 'your-app-password',        // Your email password (or app password for Gmail)
-  host: 'smtp.gmail.com',               // SMTP host (smtp.gmail.com for Gmail)
-  port: 587,                            // SMTP port (587 for most providers)
+  email: 'noreply@magnoos.com',         // Your @magnoos.com email address
+  password: 'your-email-password',      // Your email password
+  host: 'smtp-mail.outlook.com',        // Outlook/Office365 SMTP host
+  port: 587,                            // SMTP port for Outlook
   fromName: 'Magnoos Travel System'     // Display name in emails
 };
 // ================================
