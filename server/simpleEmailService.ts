@@ -1,15 +1,14 @@
 import nodemailer from 'nodemailer';
 
 // ================================
-// QUICK EMAIL SETUP - EDIT THESE LINES:
+// EMAIL CONFIG - USING SECURE ENVIRONMENT VARIABLES
 // ================================
 const EMAIL_CONFIG = {
-  // Replace these with your actual email settings:
-  email: 'noreply@magnoos.com',         // Your @magnoos.com email address
-  password: 'your-email-password',      // Your email password
-  host: 'smtp-mail.outlook.com',        // Outlook/Office365 SMTP host
-  port: 587,                            // SMTP port for Outlook
-  fromName: 'Magnoos Travel System'     // Display name in emails
+  email: process.env.SMTP_EMAIL || 'admin@magnoos.com',         // From environment variables
+  password: process.env.SMTP_PASSWORD || '',                   // From environment variables  
+  host: 'smtp-mail.outlook.com',                               // Outlook/Office365 SMTP host
+  port: 587,                                                   // SMTP port for Outlook
+  fromName: 'Magnoos Travel System'                           // Display name in emails
 };
 // ================================
 
