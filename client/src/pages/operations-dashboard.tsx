@@ -1260,6 +1260,60 @@ export default function OperationsDashboard() {
               </Card>
             </div>
             
+          </div>
+        </ModernLayout>
+      </ProtectedRoute>
+    );
+  }
+
+  // Handle main expenses tab - Show both expense options
+  if (activeTab === "expenses") {
+    return (
+      <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
+        <ModernLayout currentRole="operations">
+          <div className="p-8 space-y-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Expenses Overview
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
+                Complete expense tracking for employees and projects
+              </p>
+            </div>
+            
+            {/* Quick Navigation */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <CardContent className="p-6 text-center">
+                  <Users className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Employee Expenses</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Track individual employee travel expenses and spending
+                  </p>
+                  <Button asChild className="w-full">
+                    <Link href="/operations-dashboard?tab=expenses-person">
+                      View Employee Expenses
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <CardContent className="p-6 text-center">
+                  <BarChart3 className="w-12 h-12 mx-auto mb-4 text-purple-600" />
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Project Expenses</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Track project-based travel expenses and spending
+                  </p>
+                  <Button asChild className="w-full" variant="outline">
+                    <Link href="/operations-dashboard?tab=expenses-project">
+                      View Project Expenses
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+            
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="bg-white dark:bg-gray-800">
@@ -1273,18 +1327,18 @@ export default function OperationsDashboard() {
               
               <Card className="bg-white dark:bg-gray-800">
                 <CardContent className="p-6 text-center">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Budget Remaining</h4>
-                  <p className="text-2xl font-bold text-green-600 mt-2">
-                    {formatCurrency(stats?.budgetRemaining || 0)}
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Active Projects</h4>
+                  <p className="text-2xl font-bold text-purple-600 mt-2">
+                    {projects?.length || 0}
                   </p>
                 </CardContent>
               </Card>
               
               <Card className="bg-white dark:bg-gray-800">
                 <CardContent className="p-6 text-center">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Active Projects</h4>
-                  <p className="text-2xl font-bold text-purple-600 mt-2">
-                    {projects?.length || 0}
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Total Employees</h4>
+                  <p className="text-2xl font-bold text-green-600 mt-2">
+                    {users?.length || 0}
                   </p>
                 </CardContent>
               </Card>

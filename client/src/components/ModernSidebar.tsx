@@ -88,7 +88,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
         { icon: LayoutDashboard, label: "Dashboard", href: "/operations-dashboard", section: "main" },
         { icon: Calendar, label: "Bookings", href: "/operations-dashboard?tab=bookings", section: "main" },
         { icon: CheckSquare, label: "Requests", href: "/operations-dashboard?tab=requests", section: "main" },
-        { icon: DollarSign, label: "Expenses", href: "/operations-dashboard?tab=expenses-person", section: "main" },
+        { icon: DollarSign, label: "Expenses", href: "/operations-dashboard?tab=expenses", section: "main" },
         { icon: FileText, label: "Documents", href: "/operations-dashboard?tab=documents", section: "documents" },
         { icon: Users, label: "Employees", href: "/operations-dashboard?tab=employees", section: "documents" },
       ];
