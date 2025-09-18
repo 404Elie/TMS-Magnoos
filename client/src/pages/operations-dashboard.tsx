@@ -169,8 +169,13 @@ function DocumentForm({ documentType, selectedEmployeeId, onClose }: { documentT
                       )}
                     >
                       {field.value
-                        ? users?.find((user) => user.id === field.value)?.firstName + " " + users?.find((user) => user.id === field.value)?.lastName
-                        : selectedEmployeeId ? "Employee auto-selected" : "Search and select employee..."}
+                        ? (() => {
+                            const selectedUser = users?.find((user) => user.id === field.value);
+                            return selectedUser 
+                              ? `${selectedUser.firstName} ${selectedUser.lastName}${selectedEmployeeId ? " (auto-selected)" : ""}` 
+                              : "Select employee...";
+                          })()
+                        : "Search and select employee..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
