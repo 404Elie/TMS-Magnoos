@@ -1025,8 +1025,8 @@ export default function OperationsDashboard() {
             </div>
             
             <div className="grid gap-4">
-              {projectExpenseSummaries.map(project => (
-                <Card key={project.id} className="bg-white dark:bg-gray-800">
+              {projectExpenseSummaries.map((project, index) => (
+                <Card key={`${project.zohoProjectId || project.id}-${index}`} className="bg-white dark:bg-gray-800">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
