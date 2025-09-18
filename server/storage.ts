@@ -30,6 +30,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByZohoId(zohoUserId: string): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
+  getUsersByRole(role: string): Promise<User[]>;
   createUser(userData: UpsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
@@ -132,6 +133,16 @@ export class DatabaseStorage implements IStorage {
   async getAllUsers(): Promise<User[]> {
     const allUsers = await db.select().from(users);
     return allUsers;
+  }
+
+  async getUsersByRole(role: string): Promise<User[]> {
+    try {
+      const roleUsers = await db.select().from(users).where(eq(users.role, role));
+      return roleUsers;
+    } catch (error) {
+      console.error('Database error in getUsersByRole:', error);
+      return [];
+    }
   }
 
   async createUser(userData: UpsertUser): Promise<User> {
