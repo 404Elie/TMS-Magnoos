@@ -16,71 +16,32 @@ class RealEmailService {
 
   private async setupEmailService() {
     try {
-      // Option 1: Use SMTP with provided credentials (HIGHEST PRIORITY - Direct email delivery)
-      if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-        // Auto-detect email service based on email domain
-        let service = 'gmail'; // Default to Gmail
-        const emailDomain = process.env.EMAIL_USER.split('@')[1]?.toLowerCase();
-        
-        if (emailDomain?.includes('outlook') || emailDomain?.includes('hotmail') || emailDomain?.includes('live')) {
-          service = 'hotmail';
-        } else if (emailDomain?.includes('yahoo')) {
-          service = 'yahoo';
-        } else if (emailDomain?.includes('icloud')) {
-          service = 'icloud';
-        }
-
-        // Enhanced SMTP configuration with robust settings
-        this.transporter = nodemailer.createTransport({
-          service: service,
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-          // Enhanced settings for better reliability
-          pool: true, // Use connection pooling
-          maxConnections: 5, // Limit concurrent connections
-          maxMessages: 100, // Limit messages per connection
-          timeout: 60000, // 60 second timeout
-          connectionTimeout: 60000, // 60 second connection timeout
-          greetingTimeout: 30000, // 30 second greeting timeout
-          socketTimeout: 60000, // 60 second socket timeout
-          debug: process.env.NODE_ENV === 'development', // Enable debug in development
-          logger: process.env.NODE_ENV === 'development', // Enable logging in development
-        });
-        
-        // Verify SMTP connection at startup
-        console.log("🔄 Verifying SMTP connection...");
-        try {
-          await this.transporter.verify();
-          console.log("✅ SMTP connection verified successfully");
-        } catch (verifyError: any) {
-          console.error("❌ SMTP verification failed:", verifyError.message);
-          console.error("   Check your EMAIL_USER and EMAIL_PASS credentials");
-          throw new Error(`SMTP verification failed: ${verifyError.message}`);
-        }
-        
-        this.emailMethod = 'smtp';
-        this.initialized = true;
-        console.log("✅ Email service initialized with Direct SMTP");
-        console.log(`- From Address: ${process.env.EMAIL_USER}`);
-        console.log(`- Service: ${service.toUpperCase()} SMTP (your email account)`);
-        console.log("- ✅ DIRECT DELIVERY: Emails sent from your account to real users");
-        console.log("- ✅ NO LIMITATIONS: Send to any email address");
-        return;
-      }
-      // Option 2: Use Resend API (fallback - has trial restrictions)
+      // Option 1: Use Resend API with verified domain (HIGHEST PRIORITY - Production ready)
       if (process.env.RESEND_API_KEY) {
-        this.resend = new Resend(process.env.RESEND_API_KEY);
-        this.emailMethod = 'resend';
-        this.initialized = true;
-        console.log("✅ Email service initialized with Resend API");
-        console.log("- Service: Resend (resend.com)");
-        console.log("- Limit: 100 emails/day (free tier)");
-        console.log("- ⚠️  TRIAL LIMITATION: May route emails to verified address");
-        return;
+        try {
+          const apiKey = process.env.RESEND_API_KEY.trim();
+          console.log("🔧 Initializing Resend with API key...");
+          this.resend = new Resend(apiKey);
+          this.emailMethod = 'resend';
+          this.initialized = true;
+          console.log("✅ Email service initialized with Resend API");
+          console.log("- Service: Resend (resend.com)");
+          console.log("- Domain: magnoos.com (verified)");
+          console.log("- From: noreply@magnoos.com");
+          console.log("- ✅ PRODUCTION MODE: Direct delivery to recipients");
+          return;
+        } catch (resendError: any) {
+          console.error("❌ Failed to initialize Resend:", resendError.message);
+          console.log("🔄 Falling back to next available email service...");
+          // Continue to next option
+        }
       }
 
+      // Option 2: Use SMTP with provided credentials (fallback) - DISABLED due to auth issues
+      if (false && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        // SMTP configuration disabled until proper credentials are provided
+        console.log("⚠️  SMTP configuration disabled due to authentication issues");
+      }
       // Option 3: Use MailerSend API (fallback - has trial limitations)
       if (process.env.MAILERSEND_API_KEY) {
         this.mailerSend = new MailerSend({
@@ -197,8 +158,8 @@ class RealEmailService {
         // Use Resend API 
         try {
           const result = await this.resend.emails.send({
-            from: 'Magnoos Travel <onboarding@resend.dev>', // Resend verified domain
-            to: [emailData.to], // Try sending to actual recipient first
+            from: 'Magnoos Travel <noreply@magnoos.com>', // Use verified magnoos.com domain
+            to: [emailData.to], // Send to actual recipient
             subject: emailData.subject,
             html: emailData.html,
           });
@@ -223,7 +184,7 @@ class RealEmailService {
               `;
 
               const retryResult = await this.resend.emails.send({
-                from: 'Magnoos Travel <onboarding@resend.dev>',
+                from: 'Magnoos Travel <noreply@magnoos.com>',
                 to: [process.env.ADMIN_EMAIL || 'admin@magnoos.com'], // Verified address from env
                 subject: `[FOR: ${emailData.to}] ${emailData.subject}`,
                 html: trialModeHtml,

@@ -21,6 +21,7 @@ export default function Landing() {
             <Button 
               onClick={() => window.location.href = '/api/login'}
               className="bg-magnoos-blue hover:bg-magnoos-dark-blue text-white"
+              data-testid="login-btn"
             >
               Sign In
             </Button>

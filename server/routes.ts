@@ -5,7 +5,7 @@ import { setupAuth, isAuthenticated } from "./auth";
 import { insertTravelRequestSchema, insertBookingSchema, insertBudgetTrackingSchema } from "@shared/schema";
 import { sql } from "drizzle-orm";
 import { zohoService } from "./zohoService";
-import { simpleEmailService } from "./simpleEmailService";
+import { realEmailService } from "./realEmailService";
 import { z } from "zod";
 import * as XLSX from 'xlsx';
 import fs from 'fs';
@@ -702,7 +702,7 @@ export function registerRoutes(app: Express): Server {
             projectName: validatedData.projectId ? 'Project specified' : undefined
           };
 
-          const emailResult = await simpleEmailService.sendTravelRequestNotification(emailData, recipients);
+          const emailResult = await realEmailService.sendTravelRequestNotification(emailData, recipients);
           console.log(`Email notification result: ${emailResult ? 'SUCCESS' : 'FAILED'}`);
         } else {
           console.log("No email recipients found or missing user data");
@@ -762,7 +762,7 @@ export function registerRoutes(app: Express): Server {
               pmApproverName: `${approver.firstName || ''} ${approver.lastName || ''}`.trim() || approver.email || 'Unknown'
             };
 
-            await simpleEmailService.sendTravelApprovalNotification(emailData, recipients);
+            await realEmailService.sendTravelRequestApprovalNotification(emailData, recipients);
           }
         }
       } catch (emailError) {
@@ -889,7 +889,7 @@ export function registerRoutes(app: Express): Server {
               operationsCompletedByName: `${operationsUser.firstName || ''} ${operationsUser.lastName || ''}`.trim() || operationsUser.email || 'Unknown'
             };
 
-            await simpleEmailService.sendBookingCompletionNotification(emailData, validRecipients);
+            await realEmailService.sendBookingCompletionNotification(emailData, validRecipients);
           }
         }
       } catch (emailError) {
@@ -1041,7 +1041,7 @@ export function registerRoutes(app: Express): Server {
       
       if (recipients.length > 0) {
         console.log('📤 Sending test email notification...');
-        const success = await simpleEmailService.sendTravelRequestNotification(testRequest, recipients);
+        const success = await realEmailService.sendTravelRequestNotification(testRequest, recipients);
         
         if (success) {
           console.log('✅ Test email sent successfully!');
