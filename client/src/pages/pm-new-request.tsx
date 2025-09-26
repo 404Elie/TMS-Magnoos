@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useLocation } from "wouter";
 import ModernLayout from "@/components/ModernLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +39,7 @@ export default function PMNewRequest() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   const [travelerSearchOpen, setTravelerSearchOpen] = useState(false);
   const [projectSearchOpen, setProjectSearchOpen] = useState(false);
   const [showCustomPurpose, setShowCustomPurpose] = useState(false);
@@ -86,6 +88,24 @@ export default function PMNewRequest() {
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      
+      // Redirect to appropriate dashboard based on user role
+      if (user) {
+        // Determine current effective role (same logic as App.tsx)
+        const typedUser = user as User;
+        const currentRole = typedUser.role === 'admin' ? (typedUser.activeRole || 'manager') : typedUser.role;
+        
+        if (currentRole === 'manager') {
+          // Project Manager dashboard
+          setLocation('/pm-dashboard');
+        } else if (currentRole === 'pm') {
+          // Business Unit Manager dashboard
+          setLocation('/manager/dashboard');
+        } else {
+          // Fallback to home
+          setLocation('/');
+        }
+      }
     },
     onError: (error: any) => {
       toast({
@@ -148,7 +168,7 @@ export default function PMNewRequest() {
                                 >
                                   {field.value
                                     ? (() => {
-                                        const selectedUser = users?.find((user: any) => user.id === field.value);
+                                        const selectedUser = (users as any[])?.find((user: any) => user.id === field.value);
                                         if (!selectedUser) return "Select traveler...";
                                         return `${selectedUser.firstName || ''} ${selectedUser.lastName || ''}`.trim() || selectedUser.email || 'Unknown User';
                                       })()
@@ -163,7 +183,7 @@ export default function PMNewRequest() {
                                 <CommandList>
                                   <CommandEmpty>No traveler found.</CommandEmpty>
                                   <CommandGroup>
-                                    {users?.map((travelerUser: any) => (
+                                    {(users as any[])?.map((travelerUser: any) => (
                                       <CommandItem
                                         key={travelerUser.id}
                                         value={`${travelerUser.firstName || ''} ${travelerUser.lastName || ''} ${travelerUser.email || ''}`}
@@ -340,7 +360,7 @@ export default function PMNewRequest() {
                                   >
                                     {field.value
                                       ? (() => {
-                                          const selectedProject = projects?.find((project: any) => String(project.id) === field.value);
+                                          const selectedProject = (projects as any[])?.find((project: any) => String(project.id) === field.value);
                                           return selectedProject?.name || "Select project...";
                                         })()
                                       : "Select project..."}
@@ -354,7 +374,7 @@ export default function PMNewRequest() {
                                   <CommandList>
                                     <CommandEmpty>No project found.</CommandEmpty>
                                     <CommandGroup>
-                                      {projects?.map((project: any) => (
+                                      {(projects as any[])?.map((project: any) => (
                                         <CommandItem
                                           key={project.id}
                                           value={project.name}
