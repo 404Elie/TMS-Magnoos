@@ -59,12 +59,12 @@ export default function NewRequest() {
   const purposeValue = form.watch("purpose");
 
   // Fetch users for traveler selection
-  const { data: users } = useQuery({
+  const { data: users = [] } = useQuery({
     queryKey: ["/api/zoho/users"],
   });
 
   // Fetch projects
-  const { data: projects } = useQuery({
+  const { data: projects = [] } = useQuery({
     queryKey: ["/api/zoho/projects"],
   });
 
@@ -141,7 +141,7 @@ export default function NewRequest() {
                               >
                                 {field.value
                                   ? (() => {
-                                      const selectedUser = users?.find((user: any) => user.id === field.value);
+                                      const selectedUser = (users as any[])?.find((user: any) => user.id === field.value);
                                       if (!selectedUser) return "Select traveler...";
                                       return `${selectedUser.firstName || ''} ${selectedUser.lastName || ''}`.trim() || selectedUser.email || 'Unknown User';
                                     })()
@@ -156,7 +156,7 @@ export default function NewRequest() {
                               <CommandList>
                                 <CommandEmpty>No traveler found.</CommandEmpty>
                                 <CommandGroup>
-                                  {users?.map((travelerUser: any) => (
+                                  {(users as any[])?.map((travelerUser: any) => (
                                     <CommandItem
                                       key={travelerUser.id}
                                       value={`${travelerUser.firstName || ''} ${travelerUser.lastName || ''} ${travelerUser.email || ''}`}
@@ -333,7 +333,7 @@ export default function NewRequest() {
                                 >
                                   {field.value
                                     ? (() => {
-                                        const selectedProject = projects?.find((project: any) => String(project.id) === field.value);
+                                        const selectedProject = (projects as any[])?.find((project: any) => String(project.id) === field.value);
                                         return selectedProject?.name || "Select project...";
                                       })()
                                     : "Select project..."}
@@ -347,7 +347,7 @@ export default function NewRequest() {
                                 <CommandList>
                                   <CommandEmpty>No project found.</CommandEmpty>
                                   <CommandGroup>
-                                    {projects?.map((project: any) => (
+                                    {(projects as any[])?.map((project: any) => (
                                       <CommandItem
                                         key={project.id}
                                         value={project.name}

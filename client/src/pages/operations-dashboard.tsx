@@ -381,13 +381,13 @@ export default function OperationsDashboard() {
   });
 
   // Fetch users for budget tracking
-  const { data: users } = useQuery<any[]>({
+  const { data: users = [] } = useQuery<any[]>({
     queryKey: ["/api/zoho/users"],
     retry: false,
   });
 
   // Fetch projects for budget tracking
-  const { data: projects } = useQuery<any[]>({
+  const { data: projects = [] } = useQuery<any[]>({
     queryKey: ["/api/zoho/projects"],
     retry: false,
   });
