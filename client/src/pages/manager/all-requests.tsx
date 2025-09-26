@@ -4,19 +4,19 @@ import ModernLayout from "@/components/ModernLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, DollarSign, User, FileText, PlusCircle } from "lucide-react";
+import { Calendar, MapPin, DollarSign, User, FileText, Eye } from "lucide-react";
 import { Link } from "wouter";
 import type { User as UserType } from "@shared/schema";
 
-export default function MyRequests() {
+export default function AllRequests() {
   const { user } = useAuth();
   const typedUser = user as UserType | undefined;
 
-  // Fetch user's own requests only
+  // Fetch all requests in the system
   const { data: requests, isLoading } = useQuery<any[]>({
-    queryKey: ["/api/travel-requests", { myRequestsOnly: true }],
+    queryKey: ["/api/travel-requests", { allRequests: true }],
     queryFn: async () => {
-      const response = await fetch("/api/travel-requests?myRequestsOnly=true");
+      const response = await fetch("/api/travel-requests");
       if (!response.ok) {
         throw new Error("Failed to fetch requests");
       }
@@ -73,7 +73,7 @@ export default function MyRequests() {
     );
   };
 
-  // Separate requests by status
+  // Separate requests by status for summary cards
   const pendingRequests = requests?.filter((r: any) => r.status === 'submitted') || [];
   const approvedRequests = requests?.filter((r: any) => r.status === 'pm_approved') || [];
   const completedRequests = requests?.filter((r: any) => r.status === 'operations_completed') || [];
@@ -87,24 +87,32 @@ export default function MyRequests() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <FileText className="w-8 h-8 text-blue-600" />
-              My Travel Requests
+              All Travel Requests
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Track all your travel requests and their current status
+              View and manage all travel requests across the organization
             </p>
           </div>
-          <Link href="/manager/new-request">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              New Request
-            </Button>
-          </Link>
+          <div className="flex gap-3">
+            <Link href="/manager/approvals">
+              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+                <Eye className="w-4 h-4 mr-2" />
+                Pending Approvals
+              </Button>
+            </Link>
+            <Link href="/manager/new-request">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Calendar className="w-4 h-4 mr-2" />
+                New Request
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#7c3aed] via-[#8b5cf6] to-[#6d28d9] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#f59e0b] via-[#f97316] to-[#ea580c] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
@@ -113,7 +121,7 @@ export default function MyRequests() {
                   <p className="text-3xl font-bold text-white mt-1">{pendingRequests.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <Calendar className="w-6 h-6 text-[#7c3aed]" />
+                  <Calendar className="w-6 h-6 text-[#f59e0b]" />
                 </div>
               </div>
             </CardContent>
@@ -136,7 +144,7 @@ export default function MyRequests() {
           </Card>
 
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0ea5e9] via-[#0284c7] to-[#0369a1] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#059669] via-[#10b981] to-[#047857] opacity-95"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
@@ -145,15 +153,15 @@ export default function MyRequests() {
                   <p className="text-3xl font-bold text-white mt-1">{completedRequests.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <FileText className="w-6 h-6 text-[#0ea5e9]" />
+                  <FileText className="w-6 h-6 text-[#059669]" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="relative overflow-hidden border-none shadow-xl gradient-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1f2937] via-[#374151] to-[#111827] opacity-95"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#dc2626] via-[#ef4444] to-[#b91c1c] opacity-95"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             <CardContent className="relative p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -161,19 +169,19 @@ export default function MyRequests() {
                   <p className="text-3xl font-bold text-white mt-1">{rejectedRequests.length}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white/90 backdrop-blur-sm">
-                  <User className="w-6 h-6 text-[#ef4444]" />
+                  <User className="w-6 h-6 text-[#dc2626]" />
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* All Requests */}
+        {/* All Requests Table */}
         <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
           <CardHeader>
             <CardTitle>All Travel Requests</CardTitle>
             <CardDescription>
-              {isLoading ? "Loading..." : `${requests?.length || 0} total request(s)`}
+              {isLoading ? "Loading..." : `${requests?.length || 0} total request(s) across all users`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -187,6 +195,12 @@ export default function MyRequests() {
                 <table className="min-w-full divide-y divide-border">
                   <thead className="bg-transparent">
                     <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Requester
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Traveler
+                      </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Route
                       </th>
@@ -210,6 +224,17 @@ export default function MyRequests() {
                   <tbody className="bg-transparent divide-y divide-border">
                     {requests.map((request: any) => (
                       <tr key={request.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <User className="w-4 h-4 text-gray-500 mr-2" />
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">
+                              {request.requester?.firstName} {request.requester?.lastName}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                          {request.traveler?.firstName} {request.traveler?.lastName}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <MapPin className="w-4 h-4 text-gray-500 mr-2" />
@@ -252,12 +277,12 @@ export default function MyRequests() {
                   No travel requests found
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  You haven't submitted any travel requests yet
+                  No travel requests have been submitted yet
                 </p>
                 <Link href="/manager/new-request">
                   <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <PlusCircle className="w-4 h-4 mr-2" />
-                    Submit Your First Request
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Submit First Request
                   </Button>
                 </Link>
               </div>

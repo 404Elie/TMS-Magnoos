@@ -19,6 +19,7 @@ import BUManagerDashboard from "@/pages/manager/dashboard";
 import NewRequest from "@/pages/manager/new-request";
 import Approvals from "@/pages/manager/approvals";
 import MyRequests from "@/pages/manager/my-requests";
+import AllRequests from "@/pages/manager/all-requests";
 import Budget from "@/pages/manager/budget";
 import Reports from "@/pages/manager/reports";
 import OperationsProgress from "@/pages/manager/operations-progress";
@@ -126,6 +127,10 @@ function Router() {
       
       <Route path="/manager/my-requests">
         {(currentRole === 'pm' || typedUser?.role === 'admin') ? <MyRequests /> : <NotFound />}
+      </Route>
+      
+      <Route path="/manager/all-requests">
+        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <AllRequests /> : <NotFound />}
       </Route>
       
       <Route path="/manager/budget">

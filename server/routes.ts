@@ -509,7 +509,7 @@ export function registerRoutes(app: Express): Server {
       const userId = req.user.id;
       const user = await storage.getUser(userId);
       
-      console.log(`Travel requests query - User: ${user?.email}, Role: ${user?.role}, needsApproval: ${req.query.needsApproval}`);
+      console.log(`Travel requests query - User: ${user?.email}, Role: ${user?.role}, needsApproval: ${req.query.needsApproval}, myRequestsOnly: ${req.query.myRequestsOnly}`);
       
       let filters: any = {};
       
@@ -517,11 +517,15 @@ export function registerRoutes(app: Express): Server {
       if (user?.role === 'manager') {
         filters.requesterId = userId; // Managers see only their requests
       } else if (user?.role === 'pm' || user?.role === 'admin') {
-        // PMs and admins see all requests but can filter by status
-        if (req.query.needsApproval === 'true') {
+        // PMs and admins can see all requests OR only their own requests
+        if (req.query.myRequestsOnly === 'true') {
+          filters.requesterId = userId; // Show only their own requests
+          console.log(`${user?.role.toUpperCase()} filtering for own requests only (requesterId=${userId})`);
+        } else if (req.query.needsApproval === 'true') {
           console.log(`${user?.role.toUpperCase()} filtering for pending approvals only (status=submitted)`);
           filters.status = 'submitted'; // Filter for submitted status only
         }
+        // If neither myRequestsOnly nor needsApproval is specified, show all requests
       } else if (user?.role === 'operations_ksa' || user?.role === 'operations_uae') {
         // Operations teams see only requests assigned to their team
         filters.assignedOperationsTeam = user.role;
