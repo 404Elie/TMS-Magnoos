@@ -408,12 +408,12 @@ export default function OperationsDashboard() {
 
   // Get completed and rejected requests for this operations team
   const { data: completedAndRejectedRequests, isLoading: completedRequestsLoading } = useQuery<TravelRequestWithDetails[]>({
-    queryKey: ["/api/travel-requests", "completed-rejected", (user as any)?.role, activeTab],
+    queryKey: ["/api/travel-requests", "completed-rejected", (user as any)?.activeRole || (user as any)?.role, activeTab],
     queryFn: async () => {
-      const response = await apiRequest("GET", `/api/travel-requests?status=completed-rejected&team=${(user as any)?.role}`);
+      const response = await apiRequest("GET", `/api/travel-requests?status=completed-rejected`);
       return await response.json();
     },
-    enabled: !!(user as any)?.role && activeTab === "requests",
+    enabled: !!((user as any)?.activeRole || (user as any)?.role) && activeTab === "requests",
   });
 
   // Complete travel request mutation (enhanced with bookings)

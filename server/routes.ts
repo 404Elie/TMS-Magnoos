@@ -537,32 +537,35 @@ export function registerRoutes(app: Express): Server {
       
       let filters: any = {};
       
+      // Get effective role (activeRole for admin users, role for others)
+      const effectiveRole = user?.activeRole || user?.role;
+      
       // Role-based filtering
-      if (user?.role === 'manager') {
+      if (effectiveRole === 'manager') {
         filters.requesterId = userId; // Managers see only their requests
-      } else if (user?.role === 'pm' || user?.role === 'admin') {
+      } else if (effectiveRole === 'pm' || user?.role === 'admin') {
         // PMs and admins can see all requests OR only their own requests
         if (req.query.myRequestsOnly === 'true') {
           filters.requesterId = userId; // Show only their own requests
-          console.log(`${user?.role.toUpperCase()} filtering for own requests only (requesterId=${userId})`);
+          console.log(`${effectiveRole?.toUpperCase()} filtering for own requests only (requesterId=${userId})`);
         } else if (req.query.needsApproval === 'true') {
-          console.log(`${user?.role.toUpperCase()} filtering for pending approvals only (status=submitted)`);
+          console.log(`${effectiveRole?.toUpperCase()} filtering for pending approvals only (status=submitted)`);
           filters.status = 'submitted'; // Filter for submitted status only
         }
         // If neither myRequestsOnly nor needsApproval is specified, show all requests
-      } else if (user?.role === 'operations_ksa' || user?.role === 'operations_uae') {
+      } else if (effectiveRole === 'operations_ksa' || effectiveRole === 'operations_uae') {
         // Operations teams see only requests assigned to their team
-        filters.assignedOperationsTeam = user.role;
+        filters.assignedOperationsTeam = effectiveRole;
         
         // Special handling for completed-rejected status query
         if (req.query.status === 'completed-rejected') {
           // Show both completed and rejected requests
           filters.status = 'completed-rejected';
-          console.log(`${user?.role.toUpperCase()} filtering for completed/rejected requests (assignedOperationsTeam=${user.role})`);
+          console.log(`${effectiveRole?.toUpperCase()} filtering for completed/rejected requests (assignedOperationsTeam=${effectiveRole})`);
         } else {
           // Default: show only approved requests waiting for operations
           filters.status = 'pm_approved';
-          console.log(`${user?.role.toUpperCase()} filtering for assigned requests (assignedOperationsTeam=${user.role}, status=pm_approved)`);
+          console.log(`${effectiveRole?.toUpperCase()} filtering for assigned requests (assignedOperationsTeam=${effectiveRole}, status=pm_approved)`);
         }
       }
 
