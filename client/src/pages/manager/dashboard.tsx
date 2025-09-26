@@ -221,62 +221,6 @@ export default function ManagerDashboard() {
           </Card>
         </div>
 
-        {/* Department Spending */}
-        <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg mb-8">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
-              <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">Department Spending</CardTitle>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-300">Travel spending breakdown by department</p>
-          </CardHeader>
-          <CardContent className="p-6 pt-0">
-            <div className="space-y-4">
-              {statsLoading ? (
-                <div className="text-center py-8">
-                  <div className="text-gray-600 dark:text-gray-400">Loading department spending...</div>
-                </div>
-              ) : stats?.departmentSpending && stats.departmentSpending.length > 0 ? (
-                stats.departmentSpending.map((dept: { department: string; total: number; percentage: number }, index: number) => {
-                  // Define colors for each department
-                  const colors = [
-                    { bg: "bg-blue-50 dark:bg-blue-900/20", dot: "bg-blue-500" },
-                    { bg: "bg-purple-50 dark:bg-purple-900/20", dot: "bg-purple-500" },
-                    { bg: "bg-green-50 dark:bg-green-900/20", dot: "bg-green-500" },
-                    { bg: "bg-lime-50 dark:bg-lime-900/20", dot: "bg-lime-500" },
-                    { bg: "bg-orange-50 dark:bg-orange-900/20", dot: "bg-orange-500" },
-                    { bg: "bg-red-50 dark:bg-red-900/20", dot: "bg-red-500" },
-                  ];
-                  const colorSet = colors[index % colors.length];
-                  
-                  return (
-                    <div key={dept.department} className={`flex items-center justify-between p-4 ${colorSet.bg} rounded-lg`} data-testid={`department-${dept.department.toLowerCase().replace(/\s+/g, '-')}`}>
-                      <div className="flex items-center gap-3">
-                        <div className={`w-4 h-4 ${colorSet.dot} rounded-full`}></div>
-                        <span className="font-medium text-gray-900 dark:text-white">{dept.department}</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-gray-900 dark:text-white" data-testid={`amount-${dept.department.toLowerCase().replace(/\s+/g, '-')}`}>
-                          ${dept.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400" data-testid={`percentage-${dept.department.toLowerCase().replace(/\s+/g, '-')}`}>
-                          {dept.percentage.toFixed(1)}% of total
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-8" data-testid="empty-department-spending">
-                  <div className="text-gray-600 dark:text-gray-400 mb-2">No department spending data available</div>
-                  <div className="text-sm text-gray-500 dark:text-gray-500">Complete some travel requests to see analytics</div>
-                  <div className="text-xs text-gray-400 dark:text-gray-600 mt-2">Analytics will show once operations teams complete bookings with actual costs</div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Bottom Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Avg. Trip Cost */}
