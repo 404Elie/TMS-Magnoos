@@ -8,8 +8,9 @@ import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-if (!process.env.REPLIT_DOMAINS) {
-  throw new Error("Environment variable REPLIT_DOMAINS not provided");
+// Only require REPLIT_DOMAINS in published environments
+if ((process.env.REPLIT_DEPLOYMENT === "1" || process.env.NODE_ENV === "production") && !process.env.REPLIT_DOMAINS) {
+  throw new Error("Environment variable REPLIT_DOMAINS not provided for published app");
 }
 
 const getOidcConfig = memoize(

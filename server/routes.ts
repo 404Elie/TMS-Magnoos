@@ -1,7 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./auth";
+// Import both auth systems - we'll choose which one to use based on environment
+import { setupAuth as setupLocalAuth, isAuthenticated as isLocalAuthenticated } from "./auth";
+import { setupAuth as setupReplitAuth, isAuthenticated as isReplitAuthenticated } from "./replitAuth";
 import { insertTravelRequestSchema, insertBookingSchema, insertBudgetTrackingSchema } from "@shared/schema";
 import { sql } from "drizzle-orm";
 import { zohoService } from "./zohoService";
@@ -131,8 +133,31 @@ const requireRole = (allowedRoles: string[]) => {
 };
 
 export function registerRoutes(app: Express): Server {
-  // Auth middleware
-  setupAuth(app);
+  // Choose authentication system based on environment
+  // Use Replit Auth for published apps (.replit.app domains)
+  // Use local auth for development (.replit.dev domains or localhost)
+  const isPublishedApp = process.env.REPLIT_DEPLOYMENT === "1" || 
+                        process.env.NODE_ENV === "production" ||
+                        process.env.REPLIT_DOMAINS;
+  
+  console.log(`🔧 Environment check:`, {
+    REPLIT_DEPLOYMENT: process.env.REPLIT_DEPLOYMENT,
+    NODE_ENV: process.env.NODE_ENV,
+    REPLIT_DOMAINS: !!process.env.REPLIT_DOMAINS,
+    isPublishedApp
+  });
+
+  // Set up authentication and get the appropriate middleware
+  let isAuthenticated: any;
+  if (isPublishedApp) {
+    console.log("🚀 Using Replit Auth for published app");
+    setupReplitAuth(app);
+    isAuthenticated = isReplitAuthenticated;
+  } else {
+    console.log("🔧 Using Local Auth for development");
+    setupLocalAuth(app);
+    isAuthenticated = isLocalAuthenticated;
+  }
 
   // Auth routes are now handled in setupAuth function
 
