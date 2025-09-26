@@ -102,7 +102,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
       }
       
       return baseItems;
-    } else if (userRole === 'operations_ksa' || userRole === 'operations_uae') {
+    } else if (activeRole === 'operations_ksa' || activeRole === 'operations_uae') {
       const baseItems = [
         { icon: LayoutDashboard, label: "Dashboard", href: "/operations-dashboard", section: "main" },
         { icon: Calendar, label: "Bookings", href: "/operations-dashboard?tab=bookings", section: "main" },
