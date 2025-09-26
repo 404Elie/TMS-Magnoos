@@ -26,8 +26,8 @@ export default function AdminRoleSwitcher() {
         description: "Successfully switched to the selected role.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      // Refresh the page to update the UI
-      window.location.reload();
+      // Clear the selection after successful switch
+      setSelectedRole("");
     },
     onError: () => {
       toast({
