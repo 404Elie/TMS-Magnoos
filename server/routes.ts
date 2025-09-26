@@ -137,8 +137,7 @@ export function registerRoutes(app: Express): Server {
   // Use Replit Auth for published apps (.replit.app domains)
   // Use local auth for development (.replit.dev domains or localhost)
   const isPublishedApp = process.env.REPLIT_DEPLOYMENT === "1" || 
-                        process.env.NODE_ENV === "production" ||
-                        process.env.REPLIT_DOMAINS;
+                        process.env.NODE_ENV === "production";
   
   console.log(`🔧 Environment check:`, {
     REPLIT_DEPLOYMENT: process.env.REPLIT_DEPLOYMENT,

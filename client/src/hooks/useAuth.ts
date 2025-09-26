@@ -1,30 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
-import { useState, useEffect } from "react";
 
 export function useAuth() {
-  // TEMPORARY FIX: Create a mock user to break the infinite loop
-  const [mockUser] = useState({
-    id: "temp-user-123",
-    email: "admin@magnoos.com",
-    firstName: "Admin",
-    lastName: "User",
-    role: "admin",
-    activeRole: "admin",
-    annualTravelBudget: null,
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ["/api/user"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity, // Never refetch automatically
+    gcTime: Infinity, // Keep in cache forever
+    networkMode: "online",
+    enabled: true, // Only run once
   });
 
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    // Simulate loading time and then set as ready
-    const timer = setTimeout(() => setIsReady(true), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  // If we get a 401, redirect to login immediately
+  if (error || (!isLoading && !user)) {
+    window.location.href = "/api/login";
+    return {
+      user: null,
+      isLoading: true, // Keep loading to prevent further renders
+      isAuthenticated: false,
+    };
+  }
 
   return {
-    user: isReady ? mockUser : null,
-    isLoading: !isReady,
-    isAuthenticated: isReady,
+    user,
+    isLoading,
+    isAuthenticated: !!user,
   };
 }
