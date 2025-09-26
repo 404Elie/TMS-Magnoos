@@ -676,29 +676,35 @@ export function registerRoutes(app: Express): Server {
       // Handle project mapping and creation (if projectId is provided)
       let localProjectId = null;
       if (validatedData.projectId) {
-        // First try to find project by Zoho ID
-        let project = await storage.getProjectByZohoId(validatedData.projectId);
+        // First try to find project by local ID (for default projects like "default-events")
+        let project = await storage.getProject(validatedData.projectId);
+        
         if (!project) {
-          // Try to find the project in Zoho projects and create local record
-          try {
-            const zohoProjects = await zohoService.getProjects();
-            const zohoProject = zohoProjects.find(p => String(p.id) === validatedData.projectId);
-            if (zohoProject) {
-              // Create the project in our local database
-              project = await storage.createProject({
-                zohoProjectId: String(zohoProject.id),
-                name: zohoProject.name,
-                description: zohoProject.description || '',
-                budget: null,
-                travelBudget: null,
-                status: 'active'
-              });
-            } else {
-              return res.status(400).json({ message: "Selected project not found" });
+          // Then try to find project by Zoho ID
+          project = await storage.getProjectByZohoId(validatedData.projectId);
+          
+          if (!project) {
+            // Try to find the project in Zoho projects and create local record
+            try {
+              const zohoProjects = await zohoService.getProjects();
+              const zohoProject = zohoProjects.find(p => String(p.id) === validatedData.projectId);
+              if (zohoProject) {
+                // Create the project in our local database
+                project = await storage.createProject({
+                  zohoProjectId: String(zohoProject.id),
+                  name: zohoProject.name,
+                  description: zohoProject.description || '',
+                  budget: null,
+                  travelBudget: null,
+                  status: 'active'
+                });
+              } else {
+                return res.status(400).json({ message: "Selected project not found" });
+              }
+            } catch (zohoError) {
+              console.error("Error fetching Zoho project:", zohoError);
+              return res.status(400).json({ message: "Unable to verify project" });
             }
-          } catch (zohoError) {
-            console.error("Error fetching Zoho project:", zohoError);
-            return res.status(400).json({ message: "Unable to verify project" });
           }
         }
         localProjectId = project.id; // Use the local project ID
