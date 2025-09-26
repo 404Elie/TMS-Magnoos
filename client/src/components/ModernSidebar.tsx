@@ -73,7 +73,7 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
       const baseItems = [
         { icon: LayoutDashboard, label: "Dashboard", href: "/manager/dashboard", section: "main" },
         { icon: PlusCircle, label: "New Request", href: "/manager/new-request", section: "main" },
-        { icon: CheckSquare, label: "Approvals", href: "/manager/approvals", section: "main" },
+        { icon: CheckSquare, label: "Pending Approvals", href: "/manager/approvals", section: "main" },
         { icon: Calendar, label: "My Requests", href: "/manager/my-requests", section: "main" },
         { icon: Users, label: "All Requests", href: "/manager/all-requests", section: "main" },
         { icon: Globe2, label: "Operations Progress", href: "/manager/operations-progress", section: "main" },
