@@ -309,20 +309,6 @@ export default function ManagerDashboard() {
             </CardContent>
           </Card>
 
-          {/* Budget Variance */}
-          <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Budget Variance</div>
-                  <div className="text-3xl font-bold text-green-600">-8.2%</div>
-                </div>
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-green-100 dark:bg-green-900/30">
-                  <TrendingDown className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </ModernLayout>
