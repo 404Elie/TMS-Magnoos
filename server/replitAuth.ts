@@ -131,6 +131,24 @@ export async function setupAuth(app: Express) {
       );
     });
   });
+
+  // Add the missing /api/user endpoint for Replit Auth
+  app.get("/api/user", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const user = req.user as any;
+    res.json({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      activeRole: user.activeRole,
+      annualTravelBudget: user.annualTravelBudget,
+    });
+  });
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
