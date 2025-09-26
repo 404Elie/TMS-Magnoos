@@ -17,6 +17,7 @@ import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 import type { User } from "@shared/schema";
 
 const requestSchema = z.object({
@@ -37,6 +38,7 @@ export default function NewRequest() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   const [travelerSearchOpen, setTravelerSearchOpen] = useState(false);
   const [projectSearchOpen, setProjectSearchOpen] = useState(false);
   const [showCustomPurpose, setShowCustomPurpose] = useState(false);
@@ -80,6 +82,16 @@ export default function NewRequest() {
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      
+      // Redirect to dashboard based on user role
+      const effectiveRole = (user as any)?.activeRole || (user as any)?.role;
+      if (effectiveRole === 'manager') {
+        setLocation('/pm-dashboard');
+      } else if (effectiveRole === 'pm') {
+        setLocation('/manager/dashboard');
+      } else {
+        setLocation('/');
+      }
     },
     onError: (error: any) => {
       toast({

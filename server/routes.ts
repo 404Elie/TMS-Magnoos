@@ -1060,6 +1060,7 @@ export function registerRoutes(app: Express): Server {
       
       // Test travel request data
       const testRequest = {
+        id: 'test-request-123',
         travelerName: 'Karim Fleifel',
         requesterName: 'Test User',
         destination: 'Riyadh, KSA',
