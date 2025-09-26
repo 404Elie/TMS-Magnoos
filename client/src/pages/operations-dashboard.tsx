@@ -565,11 +565,24 @@ export default function OperationsDashboard() {
 
   // Calculate user expense summaries
   const userExpenseSummaries = users?.map(user => {
-    const userRequests = requests?.filter(req => req.travelerId === user.id && req.status === 'operations_completed') || [];
-    const totalSpent = userRequests.reduce((sum, req) => {
+    // Count all requests for this user (pending and completed)
+    const allUserRequests = requests?.filter(req => 
+      req.travelerId === user.id && 
+      (req.status === 'operations_completed' || req.status === 'pm_approved')
+    ) || [];
+    
+    // Calculate costs only from completed requests with actual costs
+    const completedRequestsWithCosts = allUserRequests.filter(req => 
+      req.status === 'operations_completed' && 
+      req.actualTotalCost && 
+      parseFloat(req.actualTotalCost) > 0
+    );
+    
+    const totalSpent = completedRequestsWithCosts.reduce((sum, req) => {
       return sum + (parseFloat(req.actualTotalCost || "0"));
     }, 0);
-    const tripCount = userRequests.length;
+    
+    const tripCount = allUserRequests.length; // Count all trips (pending + completed)
 
     return {
       ...user,
@@ -583,17 +596,29 @@ export default function OperationsDashboard() {
     const projectRequests = requests?.filter(req => {
       const projectIdMatch = String(req.projectId) === String(project.id);
       const zohoIdMatch = String(req.projectId) === String(project.zohoProjectId);
-      return (projectIdMatch || zohoIdMatch) && 
-             req.status === 'operations_completed' && 
-             req.actualTotalCost && 
-             parseFloat(req.actualTotalCost) > 0;
+      const isProjectMatch = projectIdMatch || zohoIdMatch;
+      const hasValidCost = req.actualTotalCost && parseFloat(req.actualTotalCost) > 0;
+      
+      // Include completed requests with costs, or any approved/completed requests for trip counting
+      return isProjectMatch && (
+        (req.status === 'operations_completed' && hasValidCost) ||
+        (req.status === 'pm_approved') // Count pending bookings as trips
+      );
     }) || [];
     
-    const totalSpent = projectRequests.reduce((sum, req) => {
+    // Calculate costs only from completed requests with actual costs
+    const completedRequests = projectRequests.filter(req => 
+      req.status === 'operations_completed' && 
+      req.actualTotalCost && 
+      parseFloat(req.actualTotalCost) > 0
+    );
+    
+    const totalSpent = completedRequests.reduce((sum, req) => {
       return sum + (parseFloat(req.actualTotalCost || "0"));
     }, 0);
-    const tripCount = projectRequests.length;
-    const avgCostPerTrip = tripCount > 0 ? totalSpent / tripCount : 0;
+    
+    const tripCount = projectRequests.length; // Count all project-related requests
+    const avgCostPerTrip = completedRequests.length > 0 ? totalSpent / completedRequests.length : 0;
 
     return {
       ...project,
