@@ -85,7 +85,6 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
       }
       
       baseItems.push(
-        { icon: DollarSign, label: "Budget", href: "/manager/budget", section: "reports" },
         { icon: FileText, label: "Reports", href: "/manager/reports", section: "reports" }
       );
       

@@ -20,7 +20,6 @@ import NewRequest from "@/pages/manager/new-request";
 import Approvals from "@/pages/manager/approvals";
 import MyRequests from "@/pages/manager/my-requests";
 import AllRequests from "@/pages/manager/all-requests";
-import Budget from "@/pages/manager/budget";
 import Reports from "@/pages/manager/reports";
 import OperationsProgress from "@/pages/manager/operations-progress";
 // Project Manager Pages  
@@ -131,10 +130,6 @@ function Router() {
       
       <Route path="/manager/all-requests">
         {(currentRole === 'pm' || typedUser?.role === 'admin') ? <AllRequests /> : <NotFound />}
-      </Route>
-      
-      <Route path="/manager/budget">
-        {(currentRole === 'pm' || typedUser?.role === 'admin') ? <Budget /> : <NotFound />}
       </Route>
       
       <Route path="/manager/reports">
