@@ -67,28 +67,44 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
   const getNavigationItems = () => {
     const activeRole = typedUser?.activeRole || typedUser?.role;
     const userRole = typedUser?.role; // Use actual role for operations teams
+    const isActualAdmin = userRole === 'admin'; // Only show Projects to actual admin users
     
     if (activeRole === 'pm' || activeRole === 'admin') {
-      return [
+      const baseItems = [
         { icon: LayoutDashboard, label: "Dashboard", href: "/manager/dashboard", section: "main" },
         { icon: PlusCircle, label: "New Request", href: "/manager/new-request", section: "main" },
         { icon: CheckSquare, label: "Approvals", href: "/manager/approvals", section: "main" },
         { icon: Calendar, label: "My Requests", href: "/manager/my-requests", section: "main" },
         { icon: Users, label: "All Requests", href: "/manager/all-requests", section: "main" },
         { icon: Globe2, label: "Operations Progress", href: "/manager/operations-progress", section: "main" },
-        { icon: FolderOpen, label: "Projects", href: "/projects", section: "main" },
-        { icon: DollarSign, label: "Budget", href: "/manager/budget", section: "reports" },
-        { icon: FileText, label: "Reports", href: "/manager/reports", section: "reports" },
       ];
+      
+      // Add Projects only for actual admin users
+      if (isActualAdmin) {
+        baseItems.push({ icon: FolderOpen, label: "Projects", href: "/projects", section: "main" });
+      }
+      
+      baseItems.push(
+        { icon: DollarSign, label: "Budget", href: "/manager/budget", section: "reports" },
+        { icon: FileText, label: "Reports", href: "/manager/reports", section: "reports" }
+      );
+      
+      return baseItems;
     } else if (activeRole === 'manager') {
-      return [
+      const baseItems = [
         { icon: LayoutDashboard, label: "Dashboard", href: "/pm-dashboard", section: "main" },
         { icon: PlusCircle, label: "New Request", href: "/pm-new-request", section: "main" },
         { icon: Calendar, label: "My Requests", href: "/pm-my-requests", section: "main" },
-        { icon: FolderOpen, label: "Projects", href: "/projects", section: "main" },
       ];
+      
+      // Add Projects only for actual admin users
+      if (isActualAdmin) {
+        baseItems.push({ icon: FolderOpen, label: "Projects", href: "/projects", section: "main" });
+      }
+      
+      return baseItems;
     } else if (userRole === 'operations_ksa' || userRole === 'operations_uae') {
-      return [
+      const baseItems = [
         { icon: LayoutDashboard, label: "Dashboard", href: "/operations-dashboard", section: "main" },
         { icon: Calendar, label: "Bookings", href: "/operations-dashboard?tab=bookings", section: "main" },
         { icon: CheckSquare, label: "Requests", href: "/operations-dashboard?tab=requests", section: "main" },
@@ -96,6 +112,13 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
         { icon: FileText, label: "Documents", href: "/operations-dashboard?tab=documents", section: "documents" },
         { icon: Users, label: "Employees", href: "/operations-dashboard?tab=employees", section: "documents" },
       ];
+      
+      // Add Projects only for actual admin users
+      if (isActualAdmin) {
+        baseItems.push({ icon: FolderOpen, label: "Projects", href: "/projects", section: "main" });
+      }
+      
+      return baseItems;
     }
     return [];
   };
