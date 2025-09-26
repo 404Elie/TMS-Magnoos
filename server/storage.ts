@@ -526,6 +526,9 @@ export class DatabaseStorage implements IStorage {
         .from(projects)
         .where(eq(projects.status, "active"));
 
+      // Add department spending for PM role (they see the department analytics)
+      const departmentSpending = await this.getDepartmentSpending();
+
       return {
         totalRequests: totalRequests[0]?.count || 0,
         pendingRequests: pendingRequests[0]?.count || 0,
@@ -535,6 +538,7 @@ export class DatabaseStorage implements IStorage {
         approvedMonth: approvedMonth[0]?.count || 0,
         activeProjects: activeProjects[0]?.count || 0,
         avgApprovalTime: "2.3h", // This would need more complex calculation
+        departmentSpending: departmentSpending,
       };
     }
 
@@ -590,6 +594,94 @@ export class DatabaseStorage implements IStorage {
     }
 
     return {};
+  }
+
+  async getDepartmentSpending(): Promise<{ department: string; total: number; percentage: number }[]> {
+    try {
+      // Get all completed travel requests with requester details
+      const completedRequests = await db
+        .select({
+          requesterId: travelRequests.requesterId,
+          actualTotalCost: travelRequests.actualTotalCost,
+          requesterEmail: users.email,
+          zohoUserId: users.zohoUserId
+        })
+        .from(travelRequests)
+        .innerJoin(users, eq(travelRequests.requesterId, users.id))
+        .where(and(
+          eq(travelRequests.status, "operations_completed"),
+          sql`${travelRequests.actualTotalCost} IS NOT NULL`,
+          sql`${travelRequests.actualTotalCost} > 0`
+        ));
+
+      if (completedRequests.length === 0) {
+        return [];
+      }
+
+      // Get Zoho users data to map departments (with basic caching)
+      const { zohoService } = await import('./zohoService');
+      const zohoUsers = await zohoService.getUsers();
+
+      // Create a map of email -> department (role field from Zoho)
+      const emailToDepartment = new Map<string, string>();
+      
+      zohoUsers.forEach((zohoUser: any) => {
+        if (zohoUser && zohoUser.email && zohoUser.role) {
+          // Map Zoho roles to department names  
+          let department = "Unknown";
+          
+          if (zohoUser.role === "Employee") {
+            const emailDomain = zohoUser.email.split('@')[1];
+            if (emailDomain === 'magnoos.com') {
+              department = "Engineering"; // Magnoos employees -> Engineering
+            } else if (emailDomain === 'maaloomatiia.com') {
+              department = "Operations"; // Maaloomatiia employees -> Operations
+            } else {
+              department = "External"; // External partners
+            }
+          } else if (zohoUser.role === "Admin") {
+            department = "Management";
+          } else if (zohoUser.role === "Read Only") {
+            department = "External";
+          } else {
+            department = zohoUser.role; // Use role as department name
+          }
+          
+          emailToDepartment.set(zohoUser.email.toLowerCase(), department);
+        }
+      });
+
+      // Group spending by department
+      const departmentSpending = new Map<string, number>();
+      let totalSpending = 0;
+
+      completedRequests.forEach(request => {
+        const cost = parseFloat(request.actualTotalCost || "0");
+        const userEmail = request.requesterEmail.toLowerCase();
+        const department = emailToDepartment.get(userEmail) || "Unknown";
+        
+        departmentSpending.set(
+          department, 
+          (departmentSpending.get(department) || 0) + cost
+        );
+        totalSpending += cost;
+      });
+
+      // Convert to array with percentages
+      const result = Array.from(departmentSpending.entries())
+        .map(([department, total]) => ({
+          department,
+          total,
+          percentage: totalSpending > 0 ? (total / totalSpending) * 100 : 0
+        }))
+        .sort((a, b) => b.total - a.total); // Sort by spending descending
+
+      return result;
+
+    } catch (error) {
+      console.error("❌ Error calculating department spending:", error);
+      return [];
+    }
   }
 
   // Admin delete operations for testing

@@ -232,49 +232,47 @@ export default function ManagerDashboard() {
           </CardHeader>
           <CardContent className="p-6 pt-0">
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                  <span className="font-medium text-gray-900 dark:text-white">Sales</span>
+              {statsLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-gray-600 dark:text-gray-400">Loading department spending...</div>
                 </div>
-                <div className="text-right">
-                  <div className="font-bold text-gray-900 dark:text-white">$45,200.00</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">37.1% of total</div>
+              ) : stats?.departmentSpending && stats.departmentSpending.length > 0 ? (
+                stats.departmentSpending.map((dept: { department: string; total: number; percentage: number }, index: number) => {
+                  // Define colors for each department
+                  const colors = [
+                    { bg: "bg-blue-50 dark:bg-blue-900/20", dot: "bg-blue-500" },
+                    { bg: "bg-purple-50 dark:bg-purple-900/20", dot: "bg-purple-500" },
+                    { bg: "bg-green-50 dark:bg-green-900/20", dot: "bg-green-500" },
+                    { bg: "bg-lime-50 dark:bg-lime-900/20", dot: "bg-lime-500" },
+                    { bg: "bg-orange-50 dark:bg-orange-900/20", dot: "bg-orange-500" },
+                    { bg: "bg-red-50 dark:bg-red-900/20", dot: "bg-red-500" },
+                  ];
+                  const colorSet = colors[index % colors.length];
+                  
+                  return (
+                    <div key={dept.department} className={`flex items-center justify-between p-4 ${colorSet.bg} rounded-lg`} data-testid={`department-${dept.department.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-4 h-4 ${colorSet.dot} rounded-full`}></div>
+                        <span className="font-medium text-gray-900 dark:text-white">{dept.department}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-gray-900 dark:text-white" data-testid={`amount-${dept.department.toLowerCase().replace(/\s+/g, '-')}`}>
+                          ${dept.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400" data-testid={`percentage-${dept.department.toLowerCase().replace(/\s+/g, '-')}`}>
+                          {dept.percentage.toFixed(1)}% of total
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-8" data-testid="empty-department-spending">
+                  <div className="text-gray-600 dark:text-gray-400 mb-2">No department spending data available</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-500">Complete some travel requests to see analytics</div>
+                  <div className="text-xs text-gray-400 dark:text-gray-600 mt-2">Analytics will show once operations teams complete bookings with actual costs</div>
                 </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-purple-500 rounded-full"></div>
-                  <span className="font-medium text-gray-900 dark:text-white">Engineering</span>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-gray-900 dark:text-white">$32,100.00</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">26.4% of total</div>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                  <span className="font-medium text-gray-900 dark:text-white">Marketing</span>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-gray-900 dark:text-white">$28,900.00</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">23.7% of total</div>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 bg-lime-50 dark:bg-lime-900/20 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-lime-500 rounded-full"></div>
-                  <span className="font-medium text-gray-900 dark:text-white">Operations</span>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-gray-900 dark:text-white">$15,600.00</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">12.8% of total</div>
-                </div>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
