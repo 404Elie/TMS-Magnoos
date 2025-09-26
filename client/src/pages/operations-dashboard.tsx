@@ -543,10 +543,25 @@ export default function OperationsDashboard() {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
   };
 
-  // Filter requests that operations needs to handle
+  // Filter and sort requests that operations needs to handle
+  // Priority: uncompleted bookings first, then completed bookings (newest first)
   const operationsRequests = requests?.filter(req => 
     req.status === 'pm_approved' || req.status === 'operations_completed'
-  ) || [];
+  ).sort((a, b) => {
+    // First sort by status: uncompleted ('pm_approved') before completed ('operations_completed')
+    if (a.status === 'pm_approved' && b.status === 'operations_completed') return -1;
+    if (a.status === 'operations_completed' && b.status === 'pm_approved') return 1;
+    
+    // Within same status, sort by departure date (newest first for completed, nearest first for pending)
+    const dateA = new Date(a.departureDate).getTime();
+    const dateB = new Date(b.departureDate).getTime();
+    
+    if (a.status === 'operations_completed') {
+      return dateB - dateA; // Newest completed first
+    } else {
+      return dateA - dateB; // Nearest departure first for pending
+    }
+  }) || [];
 
   // Calculate user expense summaries
   const userExpenseSummaries = users?.map(user => {
