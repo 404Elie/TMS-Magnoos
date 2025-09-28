@@ -931,10 +931,10 @@
     color: hsl(220, 45%, 20%) !important;
   }
 
-/* Auth page tab orange fill */
+/* Auth page tab blue fill */
 .auth-page [role="tab"][data-state="active"],
 .auth-page [data-state="active"] {
-  background-color: #FF6F00 !important;
+  background-color: #0032FF !important;
   color: white !important;
 }
 
@@ -943,16 +943,26 @@
   color: #464646 !important;
 }
 
-/* Auth page tab hover states */
-.auth-page [role="tab"]:hover:not([data-state="active"]) {
-  background-color: rgba(255, 111, 0, 0.1) !important;
-  color: #FF6F00 !important;
+/* Auth page tab hover states - Override Tailwind defaults */
+.auth-page [role="tab"]:hover:not([data-state="active"]),
+.auth-page .inline-flex:hover:not([data-state="active"]),
+.auth-page button[role="tab"]:hover:not([data-state="active"]),
+.auth-page .inline-flex.items-center.justify-center:hover:not([data-state="active"]),
+.auth-page button.inline-flex:hover:not([data-state="active"]) {
+  background-color: rgba(0, 50, 255, 0.1) !important;
+  background: rgba(0, 50, 255, 0.1) !important;
+  color: #0032FF !important;
 }
 
 /* Dark mode hover states for auth page tabs */
-.dark .auth-page [role="tab"]:hover:not([data-state="active"]) {
-  background-color: rgba(255, 111, 0, 0.2) !important;
-  color: #FF6F00 !important;
+.dark .auth-page [role="tab"]:hover:not([data-state="active"]),
+.dark .auth-page .inline-flex:hover:not([data-state="active"]),
+.dark .auth-page button[role="tab"]:hover:not([data-state="active"]),
+.dark .auth-page .inline-flex.items-center.justify-center:hover:not([data-state="active"]),
+.dark .auth-page button.inline-flex:hover:not([data-state="active"]) {
+  background-color: rgba(0, 50, 255, 0.2) !important;
+  background: rgba(0, 50, 255, 0.2) !important;
+  color: #0032FF !important;
 }
 
 /* Dropdown hover states - matching manager dashboard traveler button */

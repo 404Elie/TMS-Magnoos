@@ -136,7 +136,7 @@ export default function AuthPage() {
             className="auth-page shadow-2xl border-2 backdrop-blur-lg"
             style={{ 
               background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85))',
-              borderColor: '#FF6F00',
+              borderColor: '#0032FF',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6)'
             }}
           >
@@ -158,15 +158,15 @@ export default function AuthPage() {
                   style={{ 
                     background: 'rgba(255, 255, 255, 0.1)',
                     backdropFilter: 'blur(8px)',
-                    border: '1px solid rgba(255, 111, 0, 0.2)'
+                    border: '1px solid rgba(0, 50, 255, 0.2)'
                   }}
                 >
                   <TabsTrigger 
                     value="login" 
-                    className="transition-all font-medium rounded-md px-6 py-2"
+                    className="transition-all font-medium rounded-md px-6 py-2 hover:bg-transparent"
                     style={{
                       color: activeTab === 'login' ? 'white' : '#464646',
-                      backgroundColor: activeTab === 'login' ? '#FF6F00' : 'transparent',
+                      backgroundColor: activeTab === 'login' ? '#0032FF' : 'transparent',
                       fontWeight: activeTab === 'login' ? '600' : '500',
                       border: 'none'
                     }}
@@ -175,10 +175,10 @@ export default function AuthPage() {
                   </TabsTrigger>
                   <TabsTrigger 
                     value="register"
-                    className="transition-all font-medium rounded-md px-6 py-2"
+                    className="transition-all font-medium rounded-md px-6 py-2 hover:bg-transparent"
                     style={{
                       color: activeTab === 'register' ? 'white' : '#464646',
-                      backgroundColor: activeTab === 'register' ? '#FF6F00' : 'transparent',
+                      backgroundColor: activeTab === 'register' ? '#0032FF' : 'transparent',
                       fontWeight: activeTab === 'register' ? '600' : '500',
                       border: 'none'
                     }}
