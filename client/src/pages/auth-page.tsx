@@ -131,52 +131,8 @@ export default function AuthPage() {
         background: 'linear-gradient(135deg, #0032FF, #8A2BE2)'
       }}
     >
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        {/* Left side - Hero section */}
-        <div className="text-center lg:text-left space-y-6">
-          <div className="flex items-center justify-center lg:justify-start space-x-3">
-            <div className="w-12 h-12 magnoos-gradient rounded-lg flex items-center justify-center">
-              <Building className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold text-white">Magnoos Travel</h1>
-          </div>
-          
-          <div className="space-y-4">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white">
-              Connect Great Minds
-              <span className="text-magnoos-secondary block">Through Travel</span>
-            </h2>
-            <p className="text-lg text-gray-200 max-w-lg">
-              Manage travel requests, approvals, and bookings all in one place. 
-              Built specifically for enterprise teams with role-based workflows.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                <Plane className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-sm text-gray-200">Easy Requests</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                <ArrowRight className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-sm text-gray-200">Quick Approvals</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                <Building className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-sm text-gray-200">Smart Budgets</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Right side - Auth forms */}
-        <div className="w-full max-w-md mx-auto">
-          <Card 
+      <div className="w-full max-w-md mx-auto">
+        <Card 
             className="auth-page shadow-2xl border-2 backdrop-blur-lg"
             style={{ 
               background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85))',
@@ -430,7 +386,6 @@ export default function AuthPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
     </div>
   );
 }
