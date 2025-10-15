@@ -10,6 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Email & Password Improvements (October 15, 2025)
+- **Email Lowercase Conversion**: 
+  - Frontend: All email inputs automatically convert to lowercase using Zod transform to prevent mobile auto-capitalization conflicts
+  - Backend: Email normalization (.toLowerCase().trim()) in register and login endpoints prevents duplicate accounts from case variations
+  - Ensures consistent login experience across desktop and mobile devices
+- **Forgot Password Feature**:
+  - Added "Forgot Password?" button and dialog on login page
+  - Secure password reset flow via email using Resend API
+  - Generates random temporary password, hashes with scrypt before storage
+  - Security: Always returns success message (prevents email enumeration attacks)
+  - Email template includes temporary password and instructions to change it after login
+  - API endpoint: POST /api/forgot-password
+- **Testing Verified**: E2E tests confirm email normalization works correctly and forgot password flow successfully sends reset emails
+
 ### Approval System and UI Fixes (August 20, 2025)
 - **Approval Functionality Fully Working**: 
   - Fixed critical JSON parsing error preventing Business Unit Manager approvals
