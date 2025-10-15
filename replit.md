@@ -22,7 +22,14 @@ Preferred communication style: Simple, everyday language.
   - Security: Always returns success message (prevents email enumeration attacks)
   - Email template includes temporary password and instructions to change it after login
   - API endpoint: POST /api/forgot-password
-- **Testing Verified**: E2E tests confirm email normalization works correctly and forgot password flow successfully sends reset emails
+- **Change Password Feature**:
+  - Added "Change Password" button in sidebar footer (all dashboards)
+  - Dialog-based interface for changing password while logged in
+  - Validates current password before allowing change
+  - Requires minimum 8 characters for new password with confirmation
+  - API endpoint: POST /api/change-password (authenticated)
+  - Security: Verifies current password with timing-safe comparison, hashes new password with scrypt
+- **Testing Verified**: E2E tests confirm email normalization, forgot password flow, and change password functionality all work correctly
 
 ### Approval System and UI Fixes (August 20, 2025)
 - **Approval Functionality Fully Working**: 
