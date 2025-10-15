@@ -14,17 +14,16 @@ async function fixAdminPassword() {
   try {
     const adminEmail = "admin@magnoos.com";
     const adminPassword = "admin123";
-    
+
     console.log("Setting admin password...");
     const hashedPassword = await hashPassword(adminPassword);
-    
+
     // Update admin password
     await storage.updateUserPassword(adminEmail, hashedPassword);
-    
+
     console.log("✓ Admin password updated successfully!");
     console.log("Email:", adminEmail);
     console.log("Password:", adminPassword);
-    
   } catch (error) {
     console.error("Error updating admin password:", error);
   }
