@@ -11,17 +11,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plane, ArrowRight, Building, Eye, EyeOff } from "lucide-react";
+import { Plane, ArrowRight, Building, Eye, EyeOff, Mail } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Redirect } from "wouter";
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().email("Please enter a valid email address").transform(val => val.toLowerCase()),
   password: z.string().min(1, "Password is required"),
 });
 
 const registerSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().email("Please enter a valid email address").transform(val => val.toLowerCase()),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(1, "Please confirm your password"),
   firstName: z.string().min(1, "First name is required"),
@@ -34,8 +34,13 @@ const registerSchema = z.object({
   path: ["confirmPassword"],
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Please enter a valid email address").transform(val => val.toLowerCase()),
+});
+
 type LoginForm = z.infer<typeof loginSchema>;
 type RegisterForm = z.infer<typeof registerSchema>;
+type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 
 export default function AuthPage() {
   const { toast } = useToast();
@@ -45,6 +50,7 @@ export default function AuthPage() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
   // Redirect if already authenticated
   if (user) {
@@ -68,6 +74,13 @@ export default function AuthPage() {
       firstName: "",
       lastName: "",
       role: "manager",
+    },
+  });
+
+  const forgotPasswordForm = useForm<ForgotPasswordForm>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
     },
   });
 
@@ -122,6 +135,32 @@ export default function AuthPage() {
 
   const onRegister = (data: RegisterForm) => {
     registerMutation.mutate(data);
+  };
+
+  const forgotPasswordMutation = useMutation({
+    mutationFn: async (data: ForgotPasswordForm) => {
+      const response = await apiRequest("POST", "/api/forgot-password", data);
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Email sent!",
+        description: "Check your email for password reset instructions.",
+      });
+      setForgotPasswordOpen(false);
+      forgotPasswordForm.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send reset email. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onForgotPassword = (data: ForgotPasswordForm) => {
+    forgotPasswordMutation.mutate(data);
   };
 
   return (
@@ -239,9 +278,20 @@ export default function AuthPage() {
                         type="submit" 
                         className="w-full text-white border-0"
                         disabled={loginMutation.isPending}
+                        data-testid="button-login"
                       >
                         {loginMutation.isPending ? "Signing in..." : "Sign In"}
                       </Button>
+                      <div className="text-center mt-3">
+                        <button
+                          type="button"
+                          onClick={() => setForgotPasswordOpen(true)}
+                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                          data-testid="button-forgot-password"
+                        >
+                          Forgot Password?
+                        </button>
+                      </div>
                     </form>
                   </Form>
                 </TabsContent>
@@ -386,6 +436,62 @@ export default function AuthPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Forgot Password Dialog */}
+        <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
+          <DialogContent className="bg-white dark:bg-gray-800">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-gray-900 dark:text-white">
+                <Mail className="w-5 h-5 text-blue-600" />
+                Reset Password
+              </DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-300">
+                Enter your email address and we'll send you instructions to reset your password.
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...forgotPasswordForm}>
+              <form onSubmit={forgotPasswordForm.handleSubmit(onForgotPassword)} className="space-y-4">
+                <FormField
+                  control={forgotPasswordForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-900 dark:text-white">Email</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your email" 
+                          type="email"
+                          className="text-black dark:text-white"
+                          data-testid="input-forgot-password-email"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex justify-end gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setForgotPasswordOpen(false)}
+                    data-testid="button-cancel-forgot-password"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    disabled={forgotPasswordMutation.isPending}
+                    data-testid="button-send-reset-email"
+                  >
+                    {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Email"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
     </div>
   );
 }
