@@ -650,7 +650,7 @@ export default function OperationsDashboard() {
                 onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] })}
                 disabled={requestsLoading}
                 data-testid="refresh-active-bookings"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-300 dark:hover:border-blue-700"
               >
                 <RefreshCw className={`w-4 h-4 ${requestsLoading ? 'animate-spin' : ''}`} />
                 Refresh
