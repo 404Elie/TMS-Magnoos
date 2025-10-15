@@ -24,6 +24,7 @@ import AdminRoleSwitcher from "@/components/AdminRoleSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { apiRequest } from "@/lib/queryClient";
 import logoPath from "@assets/Magnoos-Logo (3)_1756107685181.png";
+import ChangePasswordDialog from "@/components/ChangePasswordDialog";
 
 interface SidebarProps {
   currentRole?: string;
@@ -288,10 +289,13 @@ export default function ModernSidebar({ currentRole }: SidebarProps) {
           {!isCollapsed && <span className="text-xs text-gray-500 dark:text-gray-400">Theme</span>}
         </div>
         
+        <ChangePasswordDialog isCollapsed={isCollapsed} />
+        
         <Button
           variant="ghost"
           onClick={handleLogout}
           className={`w-full justify-start ${isCollapsed ? 'p-2' : 'p-3'} text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20`}
+          data-testid="button-logout"
         >
           <LogOut className={`h-4 w-4 ${isCollapsed ? '' : 'mr-3'}`} />
           {!isCollapsed && 'Logout'}

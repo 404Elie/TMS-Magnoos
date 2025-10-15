@@ -256,6 +256,33 @@ export function setupAuth(app: Express) {
       res.status(500).json({ message: "Failed to process password reset request" });
     }
   });
+
+  app.post("/api/change-password", isAuthenticated, async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const user = req.user as SelectUser;
+      
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Current password and new password are required" });
+      }
+
+      // Verify current password
+      if (!user.password || !(await comparePasswords(currentPassword, user.password))) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+
+      // Hash new password
+      const hashedNewPassword = await hashPassword(newPassword);
+      
+      // Update password in database
+      await storage.updateUserPassword(user.email, hashedNewPassword);
+
+      res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+      console.error("Change password error:", error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  });
 }
 
 export const isAuthenticated = (req: any, res: any, next: any) => {
