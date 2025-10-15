@@ -116,12 +116,7 @@
   
   /* Beautiful Card Animations */
   .gradient-card {
-    @apply transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
-  }
-  
-  .gradient-card:hover {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
-                0 0 0 1px rgba(255, 255, 255, 0.1);
+    @apply transform transition-all duration-300;
   }
   
   /* Dialog Override - Ensure clean white/dark backgrounds */

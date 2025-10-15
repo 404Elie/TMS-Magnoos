@@ -1190,7 +1190,7 @@ export default function ManagerDashboard() {
 
               {/* KSA Operations Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -1209,7 +1209,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -1228,7 +1228,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -1247,7 +1247,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -1301,7 +1301,7 @@ export default function ManagerDashboard() {
 
               {/* UAE Operations Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -1320,7 +1320,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -1339,7 +1339,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -1358,7 +1358,7 @@ export default function ManagerDashboard() {
                   </CardContent>
                 </Card>
 
-                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group hover:scale-105 transition-all duration-300">
+                <Card className="relative overflow-hidden border-none shadow-2xl gradient-card group transition-all duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0032FF] to-[#8A2BE2] opacity-90"></div>
                   <CardContent className="relative p-6 text-white">
                     <div className="flex items-center justify-between">
