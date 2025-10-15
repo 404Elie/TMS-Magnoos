@@ -84,6 +84,11 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   }
 
   if (allowedRoles && typedUser) {
+    // Admin always has access to everything
+    if (typedUser.role === 'admin') {
+      return <>{children}</>;
+    }
+    
     const currentRole = getCurrentRole(typedUser);
     if (currentRole && !allowedRoles.includes(currentRole)) {
       return null; // Will redirect in useEffect

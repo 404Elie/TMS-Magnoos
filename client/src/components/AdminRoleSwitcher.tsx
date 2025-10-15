@@ -20,14 +20,23 @@ export default function AdminRoleSwitcher() {
     mutationFn: async (role: string) => {
       return await apiRequest("POST", "/api/admin/switch-role", { role });
     },
-    onSuccess: () => {
+    onSuccess: (data, role) => {
       toast({
         title: "Role Switched",
         description: "Successfully switched to the selected role.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      // Clear the selection after successful switch
-      setSelectedRole("");
+      
+      // Navigate to appropriate dashboard based on switched role
+      const dashboardRoutes: Record<string, string> = {
+        'pm': '/manager/dashboard', // Business Unit Manager
+        'manager': '/pm-dashboard', // Project Manager  
+        'operations_ksa': '/operations-dashboard',
+        'operations_uae': '/operations-dashboard',
+      };
+      
+      const targetRoute = dashboardRoutes[role] || '/';
+      window.location.href = targetRoute;
     },
     onError: () => {
       toast({
