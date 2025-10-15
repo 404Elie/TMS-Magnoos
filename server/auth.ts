@@ -62,7 +62,9 @@ export function setupAuth(app: Express) {
       { usernameField: "email" },
       async (email, password, done) => {
         try {
-          const user = await storage.getUserByEmail(email);
+          // Convert email to lowercase to prevent login issues
+          const lowercaseEmail = email.toLowerCase().trim();
+          const user = await storage.getUserByEmail(lowercaseEmail);
           if (!user || !user.password || !(await comparePasswords(password, user.password))) {
             return done(null, false, { message: "Invalid email or password" });
           }
@@ -98,8 +100,11 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "All fields are required" });
       }
 
+      // Convert email to lowercase to prevent login issues from auto-capitalization
+      const lowercaseEmail = email.toLowerCase().trim();
+
       // Validate company email domain - TEMPORARILY DISABLED FOR TESTING
-      // if (!validateCompanyEmail(email)) {
+      // if (!validateCompanyEmail(lowercaseEmail)) {
       //   return res.status(400).json({ message: "Registration is restricted to company email addresses only" });
       // }
 
@@ -109,14 +114,14 @@ export function setupAuth(app: Express) {
         return res.status(400).json({ message: "Invalid role specified" });
       }
 
-      const existingUser = await storage.getUserByEmail(email);
+      const existingUser = await storage.getUserByEmail(lowercaseEmail);
       if (existingUser) {
         return res.status(400).json({ message: "Email already registered" });
       }
 
       const hashedPassword = await hashPassword(password);
       const user = await storage.createUser({
-        email,
+        email: lowercaseEmail,
         password: hashedPassword,
         firstName,
         lastName,
@@ -181,6 +186,75 @@ export function setupAuth(app: Express) {
       role: user.role,
       activeRole: user.activeRole
     });
+  });
+
+  app.post("/api/forgot-password", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      // Convert email to lowercase for consistency
+      const lowercaseEmail = email.toLowerCase().trim();
+      
+      // Check if user exists
+      const user = await storage.getUserByEmail(lowercaseEmail);
+      
+      // For security, always return success even if user doesn't exist
+      // This prevents email enumeration attacks
+      if (!user) {
+        return res.status(200).json({ 
+          message: "If an account exists with this email, password reset instructions have been sent." 
+        });
+      }
+
+      // Generate a random temporary password
+      const tempPassword = randomBytes(16).toString('hex');
+      const hashedTempPassword = await hashPassword(tempPassword);
+      
+      // Update user's password in database
+      await storage.updateUserPassword(user.email, hashedTempPassword);
+
+      // Import email service
+      const { realEmailService } = await import('./realEmailService');
+      
+      // Send password reset email
+      const emailSent = await realEmailService.sendEmail({
+        to: user.email,
+        subject: "Password Reset - Magnoos Travel System",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #0032FF;">🔐 Password Reset Request</h2>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p>Hello ${user.firstName},</p>
+              <p>We received a request to reset your password for the Magnoos Travel Management System.</p>
+              <p>Your new temporary password is:</p>
+              <div style="background: white; padding: 15px; border-left: 4px solid #0032FF; margin: 15px 0;">
+                <code style="font-size: 16px; font-weight: bold; color: #0032FF;">${tempPassword}</code>
+              </div>
+              <p><strong>Important:</strong> Please log in using this temporary password and change it immediately in your account settings.</p>
+            </div>
+            
+            <p style="color: #666; font-size: 14px;">If you did not request this password reset, please contact your administrator immediately.</p>
+            <p style="color: #666; font-size: 12px; margin-top: 30px;">This is an automated message from the Magnoos Travel Management System.</p>
+          </div>
+        `
+      });
+
+      if (!emailSent) {
+        console.error('Failed to send password reset email to:', user.email);
+      }
+
+      res.status(200).json({ 
+        message: "If an account exists with this email, password reset instructions have been sent." 
+      });
+    } catch (error) {
+      console.error("Password reset error:", error);
+      res.status(500).json({ message: "Failed to process password reset request" });
+    }
   });
 }
 
