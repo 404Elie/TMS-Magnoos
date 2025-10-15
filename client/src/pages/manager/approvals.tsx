@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CheckSquare, Clock, MapPin, Calendar, DollarSign, User, MessageSquare } from "lucide-react";
+import { CheckSquare, Clock, MapPin, Calendar, DollarSign, User, MessageSquare, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -109,13 +109,28 @@ export default function Approvals() {
         {/* Pending Requests */}
         <Card className="bg-transparent border-border/20 shadow-lg backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-orange-600" />
-              Pending Approvals
-            </CardTitle>
-            <CardDescription>
-              {isLoading ? "Loading..." : `${requestsArray.length || 0} request(s) awaiting your approval`}
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-orange-600" />
+                  Pending Approvals
+                </CardTitle>
+                <CardDescription>
+                  {isLoading ? "Loading..." : `${requestsArray.length || 0} request(s) awaiting your approval`}
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] })}
+                disabled={isLoading}
+                data-testid="refresh-pending-approvals"
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (

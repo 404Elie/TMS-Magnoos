@@ -44,7 +44,8 @@ import {
   Edit2,
   Trash2,
   Calendar as CalendarIcon,
-  Eye
+  Eye,
+  RefreshCw
 } from "lucide-react";
 import { 
   LineChart, 
@@ -634,13 +635,26 @@ export default function OperationsDashboard() {
       <ProtectedRoute allowedRoles={["operations_ksa", "operations_uae"]}>
         <ModernLayout currentRole={(user as any)?.activeRole || (user as any)?.role}>
           <div className="p-8 space-y-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Active Bookings
-              </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">
-                Manage and track active travel bookings for approved requests
-              </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  Active Bookings
+                </h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">
+                  Manage and track active travel bookings for approved requests
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/travel-requests"] })}
+                disabled={requestsLoading}
+                data-testid="refresh-active-bookings"
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className={`w-4 h-4 ${requestsLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
             </div>
             
             <div className="grid gap-6">
