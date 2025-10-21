@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { CheckSquare, Clock, MapPin, Calendar, DollarSign, User, MessageSquare, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { formatRoute } from "@/lib/destinationUtils";
 
 export default function Approvals() {
   const { toast } = useToast();
@@ -164,7 +165,7 @@ export default function Approvals() {
                         <div>
                           <p className="text-sm text-gray-600 dark:text-gray-300">Route</p>
                           <p className="font-medium text-gray-900 dark:text-white">
-                            {request.origin} → {request.destination}
+                            {formatRoute(request)}
                           </p>
                         </div>
                       </div>
