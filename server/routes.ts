@@ -623,12 +623,21 @@ export function registerRoutes(app: Express): Server {
         projectId = await getOrCreateDefaultProject("events", "Events & Conferences", "All event and conference-related travel expenses");
       }
       
+      // Handle multiple destinations
+      const allDestinations: string[] = [req.body.destination];
+      if (req.body.additionalDestinations && Array.isArray(req.body.additionalDestinations)) {
+        // Filter out empty strings and add non-empty additional destinations
+        const validAdditionalDests = req.body.additionalDestinations.filter((d: string) => d && d.trim());
+        allDestinations.push(...validAdditionalDests);
+      }
+
       const transformedData = {
         ...req.body,
         requesterId: req.user.id,
         departureDate: new Date(req.body.departureDate),
         returnDate: new Date(req.body.returnDate),
         projectId: projectId,
+        destinations: allDestinations.length > 0 ? allDestinations : null,
       };
       
       const validatedData = insertTravelRequestSchema.parse(transformedData);
