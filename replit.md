@@ -10,6 +10,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Request Visibility Enhancement (October 21, 2025)
+- **User Names on My Requests Pages**:
+  - **Project Manager My Requests**: Now displays "Approved by:" and "Completed by:" names below each request for easy follow-up
+  - **Business Unit Manager My Requests**: Added table columns "Approved By" and "Completed By" showing who handled each request
+  - **Operations Requests Tab**: Shows "Created by:" (requester) and "Approved by:" names for all completed/rejected requests
+  - All changes display existing backend data (requester, pmApprover, operationsCompleter) without any logic modifications
+  - Names appear only when applicable (e.g., "Approved by:" only shows for approved requests)
+  - Maintains identical look/feel and functionality - zero breaking changes
+  - Purpose: Enables face-to-face follow-up between roles without adding contact features
+
 ### Multi-Destination Travel Support (October 21, 2025)
 - **Multiple Destinations for Travel Requests**:
   - Added "Add Destination" button in new request forms (both PM and Manager dashboards)
