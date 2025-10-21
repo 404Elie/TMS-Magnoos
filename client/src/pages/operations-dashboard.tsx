@@ -1158,6 +1158,16 @@ export default function OperationsDashboard() {
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             Project: {request.project?.name || 'No project assigned'}
                           </p>
+                          {request.requester && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Created by: {request.requester.firstName} {request.requester.lastName}
+                            </p>
+                          )}
+                          {request.pmApprover && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Approved by: {request.pmApprover.firstName} {request.pmApprover.lastName}
+                            </p>
+                          )}
                           {request.actualTotalCost && (
                             <p className="text-sm font-medium text-green-600">
                               Final Cost: ${Number(request.actualTotalCost).toLocaleString()}
