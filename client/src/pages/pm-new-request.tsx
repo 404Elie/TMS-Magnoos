@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
+import { Check, ChevronsUpDown, PlusCircle, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -25,6 +25,7 @@ const requestSchema = z.object({
   travelerId: z.string().min(1, "Please select a traveler"),
   origin: z.string().min(1, "Origin is required"),
   destination: z.string().min(1, "Destination is required"),
+  additionalDestinations: z.array(z.string()).optional(),
   departureDate: z.string().min(1, "Departure date is required"),
   returnDate: z.string().min(1, "Return date is required"),
   purpose: z.enum(["delivery", "sales", "event", "other"]),
@@ -43,6 +44,7 @@ export default function PMNewRequest() {
   const [travelerSearchOpen, setTravelerSearchOpen] = useState(false);
   const [projectSearchOpen, setProjectSearchOpen] = useState(false);
   const [showCustomPurpose, setShowCustomPurpose] = useState(false);
+  const [additionalDestinations, setAdditionalDestinations] = useState<string[]>([]);
 
   const form = useForm<RequestForm>({
     resolver: zodResolver(requestSchema),
@@ -50,6 +52,7 @@ export default function PMNewRequest() {
       travelerId: "",
       origin: "",
       destination: "",
+      additionalDestinations: [],
       departureDate: "",
       returnDate: "",
       purpose: "delivery",
@@ -243,13 +246,69 @@ export default function PMNewRequest() {
                           <FormItem>
                             <FormLabel>Destination *</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter destination city" {...field} />
+                              <Input placeholder="Enter destination city" {...field} data-testid="input-destination" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+                    </div>
 
+                    {/* Additional Destinations */}
+                    {additionalDestinations.length > 0 && (
+                      <div className="space-y-4">
+                        <FormLabel>Additional Destinations</FormLabel>
+                        {additionalDestinations.map((_, index) => (
+                          <div key={index} className="flex gap-2">
+                            <Input
+                              placeholder={`Destination ${index + 2}`}
+                              value={additionalDestinations[index]}
+                              onChange={(e) => {
+                                const newDestinations = [...additionalDestinations];
+                                newDestinations[index] = e.target.value;
+                                setAdditionalDestinations(newDestinations);
+                                form.setValue('additionalDestinations', newDestinations);
+                              }}
+                              data-testid={`input-additional-destination-${index}`}
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              onClick={() => {
+                                const newDestinations = additionalDestinations.filter((_, i) => i !== index);
+                                setAdditionalDestinations(newDestinations);
+                                form.setValue('additionalDestinations', newDestinations);
+                              }}
+                              data-testid={`button-remove-destination-${index}`}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Add Destination Button */}
+                    <div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          const newDestinations = [...additionalDestinations, ''];
+                          setAdditionalDestinations(newDestinations);
+                          form.setValue('additionalDestinations', newDestinations);
+                        }}
+                        className="w-full md:w-auto"
+                        data-testid="button-add-destination"
+                      >
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Add Destination
+                      </Button>
+                    </div>
+
+                    {/* Date Fields */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
                         name="departureDate"
