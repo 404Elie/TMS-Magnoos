@@ -10,6 +10,18 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Multi-Destination Travel Support (October 21, 2025)
+- **Multiple Destinations for Travel Requests**:
+  - Added "Add Destination" button in new request forms (both PM and Manager dashboards)
+  - Users can now add multiple destinations for a single travel request (e.g., Dubai → Abu Dhabi → Sharjah)
+  - Backend stores destinations in array format while maintaining backward compatibility with single-destination field
+  - All display components updated to show complete multi-destination routes
+  - Helper functions formatDestinations() and formatRoute() provide consistent formatting across the app
+  - Database Schema: Added `destinations` text array field, keeping `destination` field for backward compatibility
+  - Insert Schema: Extended with `additionalDestinations` array to accept multiple destinations from frontend
+  - UI: Clean add/remove functionality for destination inputs with proper react-hook-form integration
+  - Architect-reviewed and verified production-ready
+
 ### Email & Password Improvements (October 15, 2025)
 - **Email Lowercase Conversion**: 
   - Frontend: All email inputs automatically convert to lowercase using Zod transform to prevent mobile auto-capitalization conflicts
