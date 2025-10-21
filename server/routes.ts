@@ -543,7 +543,7 @@ export function registerRoutes(app: Express): Server {
       // Role-based filtering
       if (effectiveRole === 'manager') {
         filters.requesterId = userId; // Managers see only their requests
-      } else if (effectiveRole === 'pm' || user?.role === 'admin') {
+      } else if (effectiveRole === 'pm' || effectiveRole === 'admin') {
         // PMs and admins can see all requests OR only their own requests
         if (req.query.myRequestsOnly === 'true') {
           filters.requesterId = userId; // Show only their own requests
