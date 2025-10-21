@@ -75,6 +75,16 @@ export default function PMMyRequests() {
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           Project: {request.project?.name || 'No project assigned'}
                         </p>
+                        {request.pmApprover && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Approved by: {request.pmApprover.firstName} {request.pmApprover.lastName}
+                          </p>
+                        )}
+                        {request.operationsCompleter && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Completed by: {request.operationsCompleter.firstName} {request.operationsCompleter.lastName}
+                          </p>
+                        )}
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
