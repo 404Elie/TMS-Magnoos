@@ -206,6 +206,12 @@ export default function MyRequests() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Submitted
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Approved By
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Completed By
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-transparent divide-y divide-border">
@@ -240,6 +246,12 @@ export default function MyRequests() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {new Date(request.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                          {request.pmApprover ? `${request.pmApprover.firstName} ${request.pmApprover.lastName}` : '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                          {request.operationsCompleter ? `${request.operationsCompleter.firstName} ${request.operationsCompleter.lastName}` : '-'}
                         </td>
                       </tr>
                     ))}
