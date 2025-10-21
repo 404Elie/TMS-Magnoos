@@ -252,6 +252,9 @@ export const insertTravelRequestSchema = createInsertSchema(travelRequests).omit
   actualTotalCost: true,
   createdAt: true,
   updatedAt: true,
+  destinations: true, // Omit destinations from insert schema as it's computed from destination + additionalDestinations
+}).extend({
+  additionalDestinations: z.array(z.string()).optional(), // Allow sending additional destinations from frontend
 });
 
 export const insertBookingSchema = createInsertSchema(bookings).omit({

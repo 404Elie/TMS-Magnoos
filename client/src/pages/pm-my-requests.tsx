@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, PlusCircle } from "lucide-react";
 import type { TravelRequestWithDetails, User } from "@shared/schema";
 import { format } from "date-fns";
+import { formatDestinations } from "@/lib/destinationUtils";
 
 export default function PMMyRequests() {
   const { user } = useAuth();
@@ -64,7 +65,7 @@ export default function PMMyRequests() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <h3 className="font-semibold text-gray-900 dark:text-white">
-                            {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                            {request.traveler?.firstName} {request.traveler?.lastName} - {formatDestinations(request)}
                           </h3>
                           {getStatusBadge(request.status)}
                         </div>

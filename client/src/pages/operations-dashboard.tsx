@@ -25,6 +25,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatDestinations } from "@/lib/destinationUtils";
 import { 
   Calendar, 
   DollarSign, 
@@ -671,7 +672,7 @@ export default function OperationsDashboard() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <h3 className="font-semibold text-gray-900 dark:text-white">
-                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {formatDestinations(request)}
                             </h3>
                             {getTravelStatusBadge(request.status)}
                           </div>
@@ -1147,7 +1148,7 @@ export default function OperationsDashboard() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <h3 className="font-semibold text-gray-900 dark:text-white">
-                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {formatDestinations(request)}
                             </h3>
                             {getTravelStatusBadge(request.status)}
                           </div>
@@ -1527,7 +1528,7 @@ export default function OperationsDashboard() {
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-gray-900 dark:text-white text-sm">
-                              {request.traveler?.firstName} {request.traveler?.lastName} - {request.destination}
+                              {request.traveler?.firstName} {request.traveler?.lastName} - {formatDestinations(request)}
                             </p>
                             <p className="text-xs text-gray-600 dark:text-gray-300">
                               {request.purpose} • Departure: {new Date(request.departureDate).toLocaleDateString()}

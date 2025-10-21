@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, DollarSign, User, FileText, PlusCircle } from "lucide-react";
 import { Link } from "wouter";
 import type { User as UserType } from "@shared/schema";
+import { formatRoute } from "@/lib/destinationUtils";
 
 export default function MyRequests() {
   const { user } = useAuth();
@@ -214,7 +215,7 @@ export default function MyRequests() {
                           <div className="flex items-center">
                             <MapPin className="w-4 h-4 text-gray-500 mr-2" />
                             <span className="text-sm font-medium text-gray-900 dark:text-white">
-                              {request.origin} → {request.destination}
+                              {formatRoute(request)}
                             </span>
                           </div>
                         </td>

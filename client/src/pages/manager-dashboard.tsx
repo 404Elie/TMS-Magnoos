@@ -24,6 +24,7 @@ import { z } from "zod";
 import { Plane, Clock, Check, Flag, MapPin, Calendar, DollarSign, ChevronsUpDown } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { TravelRequestWithDetails, Project, User } from "@shared/schema";
+import { formatRoute } from "@/lib/destinationUtils";
 
 const travelRequestFormSchema = z.object({
   travelerId: z.string().min(1, "Please select a traveler"),
@@ -564,7 +565,7 @@ export default function ManagerDashboard() {
                                 <div className="flex items-center">
                                   <MapPin className="w-4 h-4 text-muted-foreground mr-2" />
                                   <span className="text-sm font-medium text-foreground">
-                                    {request.origin} → {request.destination}
+                                    {formatRoute(request)}
                                   </span>
                                 </div>
                               </td>
@@ -1098,7 +1099,7 @@ export default function ManagerDashboard() {
                                 </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                                {request.destination}
+                                {formatRoute(request)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                 <span className="capitalize">
