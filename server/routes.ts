@@ -741,6 +741,9 @@ export function registerRoutes(app: Express): Server {
             travelerName: `${traveler.firstName || ''} ${traveler.lastName || ''}`.trim() || traveler.email || 'Unknown',
             requesterName: `${requester.firstName || ''} ${requester.lastName || ''}`.trim() || requester.email || 'Unknown',
             destination: validatedData.destination,
+            destinations: validatedData.additionalDestinations && validatedData.additionalDestinations.length > 0
+              ? [validatedData.destination, ...validatedData.additionalDestinations.filter(d => d && d.trim() !== '')]
+              : undefined,
             origin: validatedData.origin || 'Not specified',
             departureDate: new Date(validatedData.departureDate).toISOString(),
             returnDate: new Date(validatedData.returnDate).toISOString(),
@@ -800,6 +803,7 @@ export function registerRoutes(app: Express): Server {
               travelerName: `${request.traveler.firstName || ''} ${request.traveler.lastName || ''}`.trim() || request.traveler.email || 'Unknown',
               requesterName: `${request.requester.firstName || ''} ${request.requester.lastName || ''}`.trim() || request.requester.email || 'Unknown',
               destination: request.destination,
+              destinations: request.destinations,
               origin: request.origin || 'Not specified',
               departureDate: new Date(request.departureDate).toISOString(),
               returnDate: new Date(request.returnDate).toISOString(),

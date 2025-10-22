@@ -275,6 +275,7 @@ class RealEmailService {
       travelerName: string;
       requesterName: string;
       destination: string;
+      destinations?: string[];
       origin: string;
       departureDate: string;
       returnDate: string;
@@ -288,12 +289,19 @@ class RealEmailService {
       return false;
     }
     
+    // Format destinations for display
+    const formattedDestinations = request.destinations && request.destinations.length > 0
+      ? request.destinations.join(' → ')
+      : request.destination;
+    
+    const fullRoute = `${request.origin} → ${formattedDestinations}`;
+    
     console.log('\n' + '='.repeat(80));
     console.log('📧 NEW TRAVEL REQUEST NOTIFICATION');
     console.log('='.repeat(80));
     console.log(`Traveler: ${request.travelerName}`);
     console.log(`Requested by: ${request.requesterName}`);
-    console.log(`Route: ${request.origin} → ${request.destination}`);
+    console.log(`Route: ${fullRoute}`);
     console.log(`Dates: ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}`);
     console.log(`Purpose: ${request.purpose}`);
     if (request.projectName) console.log(`Project: ${request.projectName}`);
@@ -309,7 +317,7 @@ class RealEmailService {
           <h3 style="margin-top: 0; color: #8A2BE2;">Travel Details</h3>
           <p><strong>Traveler:</strong> ${request.travelerName}</p>
           <p><strong>Requested by:</strong> ${request.requesterName}</p>
-          <p><strong>Route:</strong> ${request.origin} → ${request.destination}</p>
+          <p><strong>Route:</strong> ${fullRoute}</p>
           <p><strong>Departure:</strong> ${new Date(request.departureDate).toLocaleDateString()}</p>
           <p><strong>Return:</strong> ${new Date(request.returnDate).toLocaleDateString()}</p>
           <p><strong>Purpose:</strong> ${request.purpose}</p>
@@ -338,7 +346,7 @@ class RealEmailService {
     for (const recipient of recipients) {
       const success = await this.sendEmail({
         to: recipient.email,
-        subject: `Travel Request Submitted - ${request.travelerName} to ${request.destination}`,
+        subject: `Travel Request Submitted - ${request.travelerName} to ${formattedDestinations}`,
         html: emailContent
       });
       if (!success) {
@@ -357,6 +365,7 @@ class RealEmailService {
       travelerName: string;
       requesterName: string;
       destination: string;
+      destinations?: string[];
       origin: string;
       departureDate: string;
       returnDate: string;
@@ -371,12 +380,19 @@ class RealEmailService {
       return false;
     }
     
+    // Format destinations for display
+    const formattedDestinations = request.destinations && request.destinations.length > 0
+      ? request.destinations.join(' → ')
+      : request.destination;
+    
+    const fullRoute = `${request.origin} → ${formattedDestinations}`;
+    
     console.log('\n' + '='.repeat(80));
     console.log('✅ TRAVEL REQUEST APPROVED NOTIFICATION');
     console.log('='.repeat(80));
     console.log(`Approved by: ${request.pmApproverName}`);
     console.log(`Traveler: ${request.travelerName}`);
-    console.log(`Route: ${request.origin} → ${request.destination}`);
+    console.log(`Route: ${fullRoute}`);
     console.log(`Dates: ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}`);
     if (request.projectName) console.log(`Project: ${request.projectName}`);
     console.log('\nRecipients:');
@@ -391,7 +407,7 @@ class RealEmailService {
           <h3 style="margin-top: 0; color: #8A2BE2;">Approval Details</h3>
           <p><strong>Approved by:</strong> ${request.pmApproverName}</p>
           <p><strong>Traveler:</strong> ${request.travelerName}</p>
-          <p><strong>Route:</strong> ${request.origin} → ${request.destination}</p>
+          <p><strong>Route:</strong> ${fullRoute}</p>
           <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
           ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
         </div>
@@ -418,7 +434,7 @@ class RealEmailService {
     for (const recipient of recipients) {
       const success = await this.sendEmail({
         to: recipient.email,
-        subject: `Travel Approved - ${request.travelerName} to ${request.destination}`,
+        subject: `Travel Approved - ${request.travelerName} to ${formattedDestinations}`,
         html: emailContent
       });
       if (!success) {
