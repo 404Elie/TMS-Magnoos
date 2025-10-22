@@ -182,12 +182,12 @@ class ZohoService {
 
   async getProjects(): Promise<ZohoProject[]> {
     try {
-      console.log("Fetching ALL projects (including archived) from Zoho Projects API...");
+      console.log("Fetching ALL projects from Zoho Projects API with complete pagination...");
       
-      const allProjects: ZohoProject[] = [];
+      const allProjects: ZohoProject[]  = [];
       const seenIds = new Set<string>();
-      let index = 1; // Start index for Zoho Search API (1-based)
-      const range = 200; // Page size - Zoho's standard maximum
+      let page = 1;
+      const range = 200; // Max allowed by Zoho API
       
       // Continue pagination until no more projects
       while (true) {
@@ -197,64 +197,48 @@ class ZohoService {
           'Accept': 'application/json'
         };
         
-        // Use Search API with module_status=all to get both active and archived projects
-        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/maaloomatiia/search/?module=projects&module_status=all&index=${index}&range=${range}`;
-        console.log(`Fetching projects from index ${index} (${range} per page, including archived)`);
+        const apiUrl = `https://projectsapi.zoho.com/restapi/portal/maaloomatiia/projects/?page=${page}&range=${range}`;
+        console.log(`Fetching projects from page ${page} (${range} per page): ${apiUrl}`);
 
         const response = await fetch(apiUrl, { headers });
 
         if (!response.ok) {
-          console.log(`API error at index ${index}: ${response.status}`);
+          console.log(`API error on page ${page}: ${response.status}`);
           break;
         }
 
         const data = await response.json() as any;
         
-        // Check response structure
         if (!data.projects || !Array.isArray(data.projects)) {
-          console.log(`Invalid response structure at index ${index}:`, data);
+          console.log(`Invalid response on page ${page}`);
           break;
         }
         
         const projects = data.projects;
-        console.log(`Found ${projects.length} projects at index ${index}`);
+        console.log(`Found ${projects.length} projects on page ${page}`);
         
-        // Stop if no more projects
-        if (projects.length === 0) {
-          console.log(`No more projects found at index ${index}. Stopping pagination.`);
-          break;
-        }
-        
-        // Only add new projects that we haven't seen before (deduplication)
+        // Only add new projects (deduplication)
         const newProjects = projects.filter((p: any) => !seenIds.has(p.id.toString()));
         
-        if (newProjects.length === 0) {
-          console.log(`No new projects found at index ${index}. All were duplicates. Stopping.`);
-          break;
-        }
-        
-        // Add new projects and track IDs
         allProjects.push(...newProjects);
         newProjects.forEach((p: any) => seenIds.add(p.id.toString()));
         
         console.log(`Added ${newProjects.length} new projects. Total: ${allProjects.length}`);
         
-        // Log first and last project IDs for debugging
         if (projects.length > 0) {
           console.log(`First project ID: ${projects[0].id}, Last project ID: ${projects[projects.length - 1].id}`);
         }
         
-        // If we got less than the range, this is the last batch
+        // If we got less than range, this is the last page
         if (projects.length < range) {
           console.log(`Got ${projects.length} projects (less than ${range}). This is the last page.`);
           break;
         }
         
-        index += range; // Move to next batch
+        page++;
       }
       
-      console.log(`Successfully retrieved ${allProjects.length} unique project records (active + archived) from Zoho API.`);
-      
+      console.log(`Successfully retrieved ${allProjects.length} unique project records from Zoho API.`);
       return allProjects;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
