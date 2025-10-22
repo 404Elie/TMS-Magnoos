@@ -429,8 +429,7 @@ export default function NewRequest() {
                                     {uniqueProjects.map((project: any) => (
                                       <CommandItem
                                         key={project.id}
-                                        value={String(project.id)}
-                                        keywords={[project.name, project.description || '']}
+                                        value={`${project.name} ${project.description || ''}`}
                                         onSelect={() => {
                                           field.onChange(String(project.id));
                                           setProjectSearchOpen(false);
