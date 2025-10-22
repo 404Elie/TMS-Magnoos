@@ -454,7 +454,7 @@ function TravelRequestForm() {
 }
 
 export default function PMDashboard() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user } = useAuth();
   const typedUser = user as User | undefined;
   
@@ -732,7 +732,12 @@ export default function PMDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <p className="text-gray-500 dark:text-gray-300 mb-3">No travel requests yet</p>
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <Button 
+                      size="sm" 
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={() => setLocation('/pm-new-request')}
+                      data-testid="button-submit-first-request"
+                    >
                       Submit First Request
                     </Button>
                   </div>
