@@ -421,7 +421,8 @@ export default function NewRequest() {
                                     {(projects as any[])?.map((project: any) => (
                                       <CommandItem
                                         key={project.id}
-                                        value={project.name}
+                                        value={String(project.id)}
+                                        keywords={[project.name, project.description || '']}
                                         onSelect={() => {
                                           field.onChange(String(project.id));
                                           setProjectSearchOpen(false);
