@@ -444,20 +444,13 @@ export default function PMNewRequest() {
                                       {uniqueProjects.map((project: any) => (
                                         <CommandItem
                                           key={project.id}
-                                          value={`${project.name} ${project.description || ''}`}
+                                          value={project.name}
                                           onSelect={() => {
                                             field.onChange(String(project.id));
                                             setProjectSearchOpen(false);
                                           }}
                                         >
-                                          <div className="flex flex-col">
-                                            <span className="font-medium">{project.name}</span>
-                                            {project.description && (
-                                              <span className="text-sm text-muted-foreground">
-                                                {project.description}
-                                              </span>
-                                            )}
-                                          </div>
+                                          {project.name}
                                           <Check
                                             className={cn(
                                               "ml-auto h-4 w-4",
