@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -72,6 +72,14 @@ export default function NewRequest() {
   const { data: projects = [] } = useQuery({
     queryKey: ["/api/zoho/projects"],
   });
+
+  // Deduplicate projects by ID to prevent duplicate keys in dropdown
+  const uniqueProjects = useMemo(() => {
+    if (!projects || !Array.isArray(projects)) return [];
+    return (projects as any[]).filter((project: any, index: number, self: any[]) => 
+      index === self.findIndex((p: any) => String(p.id) === String(project.id))
+    );
+  }, [projects]);
 
   const submitRequestMutation = useMutation({
     mutationFn: async (data: RequestForm) => {
@@ -418,7 +426,7 @@ export default function NewRequest() {
                                 <CommandList>
                                   <CommandEmpty>No project found.</CommandEmpty>
                                   <CommandGroup>
-                                    {(projects as any[])?.map((project: any) => (
+                                    {uniqueProjects.map((project: any) => (
                                       <CommandItem
                                         key={project.id}
                                         value={String(project.id)}
