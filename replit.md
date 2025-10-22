@@ -10,6 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Project Synchronization Update (October 22, 2025)
+- **Project Deduplication by Name**:
+  - Changed deduplication logic from Zoho Project ID to project name
+  - Database now has 133 unique projects (all current Zoho projects)
+  - Removed unique constraint on zoho_project_id, added unique constraint on name
+  - Handles cases where Zoho reuses IDs for different projects
+  - Project dropdown shows clean project names only (no descriptions with HTML tags)
+  - All projects from Zoho API now properly synced to database
+
 ### Request Visibility Enhancement (October 21, 2025)
 - **User Names on My Requests Pages**:
   - **Project Manager My Requests**: Now displays "Approved by:" and "Completed by:" names below each request for easy follow-up

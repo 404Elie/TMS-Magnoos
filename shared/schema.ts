@@ -87,8 +87,8 @@ export const employeeDocuments = pgTable("employee_documents", {
 // Projects table (synced from Zoho)
 export const projects = pgTable("projects", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  zohoProjectId: varchar("zoho_project_id").unique().notNull(),
-  name: varchar("name").notNull(),
+  zohoProjectId: varchar("zoho_project_id").notNull(),
+  name: varchar("name").unique().notNull(),
   description: text("description"),
   budget: decimal("budget", { precision: 12, scale: 2 }),
   travelBudget: decimal("travel_budget", { precision: 10, scale: 2 }),

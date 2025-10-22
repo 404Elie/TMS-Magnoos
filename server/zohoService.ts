@@ -185,7 +185,7 @@ class ZohoService {
       console.log("Fetching ALL projects from Zoho Projects API with complete pagination...");
       
       const allProjects: ZohoProject[]  = [];
-      const seenIds = new Set<string>();
+      const seenNames = new Set<string>();
       let page = 1;
       const range = 200; // Max allowed by Zoho API
       
@@ -217,16 +217,16 @@ class ZohoService {
         const projects = data.projects;
         console.log(`Found ${projects.length} projects on page ${page}`);
         
-        // Only add new projects (deduplication)
-        const newProjects = projects.filter((p: any) => !seenIds.has(p.id.toString()));
+        // Deduplicate by project name instead of ID
+        const newProjects = projects.filter((p: any) => !seenNames.has(p.name));
         
         allProjects.push(...newProjects);
-        newProjects.forEach((p: any) => seenIds.add(p.id.toString()));
+        newProjects.forEach((p: any) => seenNames.add(p.name));
         
         console.log(`Added ${newProjects.length} new projects. Total: ${allProjects.length}`);
         
         if (projects.length > 0) {
-          console.log(`First project ID: ${projects[0].id}, Last project ID: ${projects[projects.length - 1].id}`);
+          console.log(`First project: ${projects[0].name}, Last project: ${projects[projects.length - 1].name}`);
         }
         
         // If we got less than range, this is the last page
@@ -238,7 +238,7 @@ class ZohoService {
         page++;
       }
       
-      console.log(`Successfully retrieved ${allProjects.length} unique project records from Zoho API.`);
+      console.log(`Successfully retrieved ${allProjects.length} unique projects (by name) from Zoho API.`);
       return allProjects;
     } catch (error) {
       console.error('Error fetching projects from Zoho:', error);
