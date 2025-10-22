@@ -68,9 +68,9 @@ export default function NewRequest() {
     queryKey: ["/api/zoho/users"],
   });
 
-  // Fetch projects
+  // Fetch projects from database (includes all 244 historical projects)
   const { data: projects = [] } = useQuery({
-    queryKey: ["/api/zoho/projects"],
+    queryKey: ["/api/projects"],
   });
 
   // Deduplicate projects by ID to prevent duplicate keys in dropdown

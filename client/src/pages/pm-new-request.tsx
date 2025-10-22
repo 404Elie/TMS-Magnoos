@@ -69,9 +69,9 @@ export default function PMNewRequest() {
     queryKey: ["/api/zoho/users"],
   });
 
-  // Fetch projects
+  // Fetch projects from database (includes all 244 historical projects)
   const { data: projects, refetch: refetchProjects } = useQuery({
-    queryKey: ["/api/zoho/projects"],
+    queryKey: ["/api/projects"],
   });
 
   // Force refresh projects data on component mount to get latest changes
