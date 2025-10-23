@@ -388,9 +388,9 @@ export default function OperationsDashboard() {
     retry: false,
   });
 
-  // Fetch projects for budget tracking
+  // Fetch local projects for expense tracking (needed to match project IDs in requests)
   const { data: projects = [] } = useQuery<any[]>({
-    queryKey: ["/api/zoho/projects"],
+    queryKey: ["/api/projects"],
     retry: false,
   });
 
@@ -605,7 +605,7 @@ export default function OperationsDashboard() {
   const projectExpenseSummaries = (projects?.map(project => {
     const projectRequests = allRequestsForExpenses.filter(req => {
       const projectIdMatch = String(req.projectId) === String(project.id);
-      const zohoIdMatch = String(req.projectId) === String(project.zohoProjectId);
+      const zohoIdMatch = String(req.projectId) === String(project.zoho_project_id);
       const isProjectMatch = projectIdMatch || zohoIdMatch;
       const hasValidCost = req.actualTotalCost && parseFloat(req.actualTotalCost) > 0;
       
