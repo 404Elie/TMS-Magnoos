@@ -14,6 +14,17 @@ class RealEmailService {
     this.initPromise = this.setupEmailService();
   }
 
+  private getFriendlyRoleName(role: string): string {
+    const roleMap: Record<string, string> = {
+      'manager': 'Project Manager',
+      'pm': 'Business Unit Manager',
+      'operations_ksa': 'Operations - KSA',
+      'operations_uae': 'Operations - UAE',
+      'admin': 'Administrator'
+    };
+    return roleMap[role] || role;
+  }
+
   private async setupEmailService() {
     try {
       // Option 1: Use Resend API with verified domain (HIGHEST PRIORITY - Production ready)
@@ -306,7 +317,7 @@ class RealEmailService {
     console.log(`Purpose: ${request.purpose}`);
     if (request.projectName) console.log(`Project: ${request.projectName}`);
     console.log('\nRecipients:');
-    recipients.forEach(r => console.log(`  • ${r.email} (${r.role})`));
+    recipients.forEach(r => console.log(`  • ${r.email} (${this.getFriendlyRoleName(r.role)})`));
     console.log('='.repeat(80) + '\n');
 
     const emailContent = `
@@ -336,7 +347,7 @@ class RealEmailService {
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          This email was sent to: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}
+          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
         </p>
       </div>
     `;
@@ -353,7 +364,7 @@ class RealEmailService {
         allSuccessful = false;
         console.error(`Failed to send email to ${recipient.email}`);
       } else {
-        console.log(`✅ Email sent successfully to ${recipient.email} (${recipient.role})`);
+        console.log(`✅ Email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
       }
     }
     return allSuccessful;
@@ -396,7 +407,7 @@ class RealEmailService {
     console.log(`Dates: ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}`);
     if (request.projectName) console.log(`Project: ${request.projectName}`);
     console.log('\nRecipients:');
-    recipients.forEach(r => console.log(`  • ${r.email} (${r.role})`));
+    recipients.forEach(r => console.log(`  • ${r.email} (${this.getFriendlyRoleName(r.role)})`));
     console.log('='.repeat(80) + '\n');
 
     const emailContent = `
@@ -424,7 +435,7 @@ class RealEmailService {
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          This email was sent to: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}
+          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
         </p>
       </div>
     `;
@@ -441,7 +452,7 @@ class RealEmailService {
         allSuccessful = false;
         console.error(`Failed to send approval email to ${recipient.email}`);
       } else {
-        console.log(`✅ Approval email sent successfully to ${recipient.email} (${recipient.role})`);
+        console.log(`✅ Approval email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
       }
     }
     return allSuccessful;
@@ -490,7 +501,7 @@ class RealEmailService {
       if (booking.bookingReference) console.log(`    Reference: ${booking.bookingReference}`);
     });
     console.log('\nRecipients:');
-    recipients.forEach(r => console.log(`  • ${r.email} (${r.role})`));
+    recipients.forEach(r => console.log(`  • ${r.email} (${this.getFriendlyRoleName(r.role)})`));
     console.log('='.repeat(80) + '\n');
 
     const bookingDetailsHtml = request.bookingDetails.map(booking => {
@@ -545,7 +556,7 @@ class RealEmailService {
         </div>
         
         <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          This email was sent to: ${recipients.map(r => `${r.email} (${r.role})`).join(', ')}
+          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
         </p>
       </div>
     `;
@@ -562,7 +573,7 @@ class RealEmailService {
         allSuccessful = false;
         console.error(`Failed to send completion email to ${recipient.email}`);
       } else {
-        console.log(`✅ Completion email sent successfully to ${recipient.email} (${recipient.role})`);
+        console.log(`✅ Completion email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
       }
     }
     return allSuccessful;
