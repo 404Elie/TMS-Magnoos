@@ -65,7 +65,12 @@ async function getRoleBasedRecipients(eventType: 'request_submitted' | 'request_
       break;
 
     case 'request_approved':
-      // When BUSINESS UNIT MANAGER approves request: ASSIGNED OPERATIONS TEAM gets notified
+      // When BUSINESS UNIT MANAGER approves request: BOTH Project Manager (requester) AND Operations team get notified
+      // 1. Notify the Project Manager who created the request
+      if (request?.requester?.email) {
+        recipients.push({ email: request.requester.email, role: 'requester' });
+      }
+      // 2. Notify the assigned operations team
       if (request?.assignedOperationsTeam) {
         recipients.push(
           ...allUsers

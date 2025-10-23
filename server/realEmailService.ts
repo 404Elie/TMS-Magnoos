@@ -458,6 +458,102 @@ class RealEmailService {
     return allSuccessful;
   }
 
+  async sendTravelRequestRejectionNotification(
+    request: {
+      id: string;
+      travelerName: string;
+      requesterName: string;
+      destination: string;
+      destinations?: string[];
+      origin: string;
+      departureDate: string;
+      returnDate: string;
+      purpose: string;
+      projectName?: string;
+      pmRejecterName: string;
+      rejectionReason?: string;
+    },
+    recipients: { email: string; role: string }[]
+  ): Promise<boolean> {
+    if (recipients.length === 0) {
+      console.log('No recipients found for travel request rejection notification');
+      return false;
+    }
+    
+    // Format destinations for display
+    const formattedDestinations = request.destinations && request.destinations.length > 0
+      ? request.destinations.join(' → ')
+      : request.destination;
+    
+    const fullRoute = `${request.origin} → ${formattedDestinations}`;
+    
+    console.log('\n' + '='.repeat(80));
+    console.log('❌ TRAVEL REQUEST REJECTED NOTIFICATION');
+    console.log('='.repeat(80));
+    console.log(`Rejected by: ${request.pmRejecterName}`);
+    console.log(`Traveler: ${request.travelerName}`);
+    console.log(`Route: ${fullRoute}`);
+    console.log(`Dates: ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}`);
+    if (request.rejectionReason) console.log(`Reason: ${request.rejectionReason}`);
+    if (request.projectName) console.log(`Project: ${request.projectName}`);
+    console.log('\nRecipients:');
+    recipients.forEach(r => console.log(`  • ${r.email} (${this.getFriendlyRoleName(r.role)})`));
+    console.log('='.repeat(80) + '\n');
+
+    const emailContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #DC2626;">❌ Travel Request Rejected</h2>
+        
+        <div style="background: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #DC2626;">
+          <h3 style="margin-top: 0; color: #8A2BE2;">Request Details</h3>
+          <p><strong>Rejected by:</strong> ${request.pmRejecterName}</p>
+          <p><strong>Traveler:</strong> ${request.travelerName}</p>
+          <p><strong>Route:</strong> ${fullRoute}</p>
+          <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
+          ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
+          ${request.rejectionReason ? `
+            <div style="background: white; padding: 15px; border-radius: 6px; margin-top: 15px;">
+              <p style="margin: 0; color: #DC2626;"><strong>Reason for Rejection:</strong></p>
+              <p style="margin: 10px 0 0 0;">${request.rejectionReason}</p>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; border-left: 4px solid #6B7280;">
+          <p style="margin: 0; color: #374151;">If you have questions about this decision, please contact ${request.pmRejecterName} for more information.</p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
+             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Access Travel Management System
+          </a>
+        </div>
+        
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">
+          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
+        </p>
+      </div>
+    `;
+
+    // Send email to each recipient
+    let allSuccessful = true;
+    for (const recipient of recipients) {
+      const success = await this.sendEmail({
+        to: recipient.email,
+        subject: `Travel Request Rejected - ${request.travelerName} to ${formattedDestinations}`,
+        html: emailContent
+      });
+      if (!success) {
+        allSuccessful = false;
+        console.error(`Failed to send rejection email to ${recipient.email}`);
+      } else {
+        console.log(`✅ Rejection email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
+      }
+    }
+    return allSuccessful;
+  }
+
   async sendBookingCompletionNotification(
     request: {
       id: string;
