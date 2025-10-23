@@ -18,9 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Needed so devDependencies (vite, esbuild, etc.) are installed
+      # install devDependencies (vite, etc.)
       NPM_CONFIG_PRODUCTION: "false"
-      # Frontend needs to know where your API is
+      # Frontend needs your API URL
       VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
@@ -37,18 +37,10 @@ jobs:
       - name: Build (root)
         run: npm run build
 
-      - name: Show build output (debug)
-        run: |
-          echo "::group::tree dist"
-          ls -la dist || true
-          echo
-          ls -la dist/public || true
-          echo "::endgroup::"
-
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      # IMPORTANT: your Vite outDir is dist/public (repo root)
+      # Vite wrote files to dist/public at the repo root
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
