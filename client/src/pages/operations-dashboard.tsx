@@ -572,7 +572,7 @@ export default function OperationsDashboard() {
     ...(completedAndRejectedRequests || [])
   ];
   
-  const userExpenseSummaries = users?.map(user => {
+  const userExpenseSummaries = (users?.map(user => {
     // Count all requests for this user (pending and completed)
     const allUserRequests = allRequestsForExpenses.filter(req => 
       req.travelerId === user.id && 
@@ -597,10 +597,12 @@ export default function OperationsDashboard() {
       totalSpent,
       tripCount,
     };
-  }) || [];
+  }) || [])
+    .filter(user => user.tripCount > 0) // Only show employees who have traveled
+    .sort((a, b) => b.totalSpent - a.totalSpent); // Sort by highest cost first
 
   // Calculate project expense summaries
-  const projectExpenseSummaries = projects?.map(project => {
+  const projectExpenseSummaries = (projects?.map(project => {
     const projectRequests = allRequestsForExpenses.filter(req => {
       const projectIdMatch = String(req.projectId) === String(project.id);
       const zohoIdMatch = String(req.projectId) === String(project.zohoProjectId);
@@ -634,7 +636,9 @@ export default function OperationsDashboard() {
       tripCount,
       avgCostPerTrip,
     };
-  }) || [];
+  }) || [])
+    .filter(project => project.tripCount > 0) // Only show projects with travel activity
+    .sort((a, b) => b.totalSpent - a.totalSpent); // Sort by highest cost first
 
   // Handle different tab views
   if (activeTab === "bookings") {
