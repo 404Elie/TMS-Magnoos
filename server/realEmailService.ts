@@ -464,6 +464,7 @@ class RealEmailService {
       travelerName: string;
       requesterName: string;
       destination: string;
+      destinations?: string[];
       origin: string;
       departureDate: string;
       returnDate: string;
@@ -486,12 +487,19 @@ class RealEmailService {
       return false;
     }
     
+    // Format destinations for display
+    const formattedDestinations = request.destinations && request.destinations.length > 0
+      ? request.destinations.join(' → ')
+      : request.destination;
+    
+    const fullRoute = `${request.origin} → ${formattedDestinations}`;
+    
     console.log('\n' + '='.repeat(80));
     console.log('🎯 TRAVEL BOOKINGS COMPLETED NOTIFICATION');
     console.log('='.repeat(80));
     console.log(`Completed by: ${request.operationsCompletedByName}`);
     console.log(`Traveler: ${request.travelerName}`);
-    console.log(`Route: ${request.origin} → ${request.destination}`);
+    console.log(`Route: ${fullRoute}`);
     console.log(`Dates: ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}`);
     console.log(`Total Cost: $${request.totalCost.toLocaleString()}`);
     console.log('\nBooking Details:');
@@ -524,7 +532,7 @@ class RealEmailService {
           <h3 style="margin-top: 0; color: #8A2BE2;">Trip Summary</h3>
           <p><strong>Completed by:</strong> ${request.operationsCompletedByName}</p>
           <p><strong>Traveler:</strong> ${request.travelerName}</p>
-          <p><strong>Route:</strong> ${request.origin} → ${request.destination}</p>
+          <p><strong>Route:</strong> ${fullRoute}</p>
           <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
           <p><strong>Total Cost:</strong> <span style="color: #FF6F00; font-weight: bold;">$${request.totalCost.toLocaleString()}</span></p>
         </div>
@@ -566,7 +574,7 @@ class RealEmailService {
     for (const recipient of recipients) {
       const success = await this.sendEmail({
         to: recipient.email,
-        subject: `Travel Arrangements Confirmed - ${request.travelerName} to ${request.destination}`,
+        subject: `Travel Arrangements Confirmed - ${request.travelerName} to ${formattedDestinations}`,
         html: emailContent
       });
       if (!success) {

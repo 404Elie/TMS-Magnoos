@@ -929,6 +929,7 @@ export function registerRoutes(app: Express): Server {
               travelerName: `${request.traveler.firstName || ''} ${request.traveler.lastName || ''}`.trim() || request.traveler.email || 'Unknown',
               requesterName: `${request.requester.firstName || ''} ${request.requester.lastName || ''}`.trim() || request.requester.email || 'Unknown',
               destination: request.destination,
+              destinations: request.destinations,
               origin: request.origin || 'Not specified',
               departureDate: new Date(request.departureDate).toISOString(),
               returnDate: new Date(request.returnDate).toISOString(),
