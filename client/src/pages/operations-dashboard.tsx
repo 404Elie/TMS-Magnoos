@@ -388,6 +388,12 @@ export default function OperationsDashboard() {
     retry: false,
   });
 
+  // Fetch Zoho users for total company employee count
+  const { data: zohoUsers = [] } = useQuery<any[]>({
+    queryKey: ["/api/zoho/users"],
+    retry: false,
+  });
+
   // Fetch local projects for expense tracking (needed to match project IDs in requests)
   const { data: projects = [] } = useQuery<any[]>({
     queryKey: ["/api/projects"],
@@ -1421,7 +1427,7 @@ export default function OperationsDashboard() {
                 <CardContent className="p-6 text-center">
                   <h4 className="font-semibold text-gray-900 dark:text-white">Total Employees</h4>
                   <p className="text-2xl font-bold text-green-600 mt-2">
-                    {users?.length || 0}
+                    {zohoUsers?.length || 0}
                   </p>
                 </CardContent>
               </Card>
