@@ -441,8 +441,8 @@ export function registerRoutes(app: Express): Server {
     }
   });
 
-  // User Management Routes (Admin only)
-  app.get('/api/users', isAuthenticated, requireRole(['admin']), async (req: any, res) => {
+  // User Management Routes (Admin and Operations for expense tracking)
+  app.get('/api/users', isAuthenticated, requireRole(['admin', 'operations_ksa', 'operations_uae']), async (req: any, res) => {
     try {
       const users = await storage.getAllUsers();
       res.json(users);

@@ -382,9 +382,9 @@ export default function OperationsDashboard() {
     retry: false,
   });
 
-  // Fetch users for budget tracking
+  // Fetch local users for expense tracking (needed to match traveler IDs in requests)
   const { data: users = [] } = useQuery<any[]>({
-    queryKey: ["/api/zoho/users"],
+    queryKey: ["/api/users"],
     retry: false,
   });
 
