@@ -720,16 +720,24 @@ export function registerRoutes(app: Express): Server {
       }
 
       // Update the travel request data to use local IDs instead of Zoho IDs
-      // Build destinations array from destination + additionalDestinations
-      const destinations = validatedData.additionalDestinations && validatedData.additionalDestinations.length > 0
-        ? [validatedData.destination, ...validatedData.additionalDestinations.filter(d => d && d.trim() !== '')]
-        : null;
+      // Build destinations array ONLY if additional destinations are provided
+      // Filter out empty/whitespace-only strings and remove duplicates
+      const cleanedAdditionalDests = (validatedData.additionalDestinations || [])
+        .map(d => d?.trim())
+        .filter(d => d && d !== '');
+      
+      // Build destinations array with deduplication (preserve order, use Set to ensure uniqueness)
+      let destinations = null;
+      if (cleanedAdditionalDests.length > 0) {
+        const allDestinations = [validatedData.destination, ...cleanedAdditionalDests];
+        destinations = Array.from(new Set(allDestinations)); // Remove duplicates while preserving order
+      }
       
       const requestData = {
         ...validatedData,
         travelerId: traveler.id,  // Use the local database user ID
         projectId: localProjectId,  // Use the local database project ID
-        destinations: destinations,  // Save the full destinations array
+        destinations: destinations,  // Save array only for multi-destination, null otherwise
         additionalDestinations: undefined  // Remove additionalDestinations as it's just for transport
       };
       const newRequest = await storage.createTravelRequest(requestData);
