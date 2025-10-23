@@ -410,12 +410,12 @@ export default function OperationsDashboard() {
 
   // Get completed and rejected requests for this operations team
   const { data: completedAndRejectedRequests, isLoading: completedRequestsLoading } = useQuery<TravelRequestWithDetails[]>({
-    queryKey: ["/api/travel-requests", "completed-rejected", (user as any)?.activeRole || (user as any)?.role, activeTab],
+    queryKey: ["/api/travel-requests", "completed-rejected", (user as any)?.activeRole || (user as any)?.role],
     queryFn: async () => {
       const response = await apiRequest("GET", `/api/travel-requests?status=completed-rejected`);
       return await response.json();
     },
-    enabled: !!((user as any)?.activeRole || (user as any)?.role) && activeTab === "requests",
+    enabled: !!((user as any)?.activeRole || (user as any)?.role),
   });
 
   // Complete travel request mutation (enhanced with bookings)
@@ -566,12 +566,18 @@ export default function OperationsDashboard() {
   }) || [];
 
   // Calculate user expense summaries
+  // Combine both approved requests and completed/rejected requests for complete expense tracking
+  const allRequestsForExpenses = [
+    ...(requests || []),
+    ...(completedAndRejectedRequests || [])
+  ];
+  
   const userExpenseSummaries = users?.map(user => {
     // Count all requests for this user (pending and completed)
-    const allUserRequests = requests?.filter(req => 
+    const allUserRequests = allRequestsForExpenses.filter(req => 
       req.travelerId === user.id && 
       (req.status === 'operations_completed' || req.status === 'pm_approved')
-    ) || [];
+    );
     
     // Calculate costs only from completed requests with actual costs
     const completedRequestsWithCosts = allUserRequests.filter(req => 
@@ -595,7 +601,7 @@ export default function OperationsDashboard() {
 
   // Calculate project expense summaries
   const projectExpenseSummaries = projects?.map(project => {
-    const projectRequests = requests?.filter(req => {
+    const projectRequests = allRequestsForExpenses.filter(req => {
       const projectIdMatch = String(req.projectId) === String(project.id);
       const zohoIdMatch = String(req.projectId) === String(project.zohoProjectId);
       const isProjectMatch = projectIdMatch || zohoIdMatch;
