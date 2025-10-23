@@ -598,7 +598,7 @@ export default function OperationsDashboard() {
       tripCount,
     };
   }) || [])
-    .filter(user => user.tripCount > 0) // Only show employees who have traveled
+    .filter(user => user.totalSpent > 0) // Only show employees with actual expenses
     .sort((a, b) => b.totalSpent - a.totalSpent); // Sort by highest cost first
 
   // Calculate project expense summaries
@@ -637,7 +637,7 @@ export default function OperationsDashboard() {
       avgCostPerTrip,
     };
   }) || [])
-    .filter(project => project.tripCount > 0) // Only show projects with travel activity
+    .filter(project => project.totalSpent > 0) // Only show projects with actual expenses
     .sort((a, b) => b.totalSpent - a.totalSpent); // Sort by highest cost first
 
   // Handle different tab views
