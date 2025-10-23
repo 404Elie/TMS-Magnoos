@@ -860,6 +860,43 @@ export function registerRoutes(app: Express): Server {
       };
 
       const updatedRequest = await storage.updateTravelRequest(id, updates);
+      
+      // Send rejection email notification
+      try {
+        const request = await storage.getTravelRequest(id);
+        if (request && request.traveler && request.requester) {
+          const rejecter = await storage.getUser(req.user.id);
+          
+          // Notify the Project Manager (requester) about the rejection
+          const recipients = [];
+          if (request.requester.email) {
+            recipients.push({ email: request.requester.email, role: 'requester' });
+          }
+
+          if (recipients.length > 0 && rejecter) {
+            const emailData = {
+              id: request.id,
+              travelerName: `${request.traveler.firstName || ''} ${request.traveler.lastName || ''}`.trim() || request.traveler.email || 'Unknown',
+              requesterName: `${request.requester.firstName || ''} ${request.requester.lastName || ''}`.trim() || request.requester.email || 'Unknown',
+              destination: request.destination,
+              destinations: request.destinations || undefined,
+              origin: request.origin || 'Not specified',
+              departureDate: new Date(request.departureDate).toISOString(),
+              returnDate: new Date(request.returnDate).toISOString(),
+              purpose: request.purpose,
+              projectName: request.project?.name,
+              pmRejecterName: `${rejecter.firstName || ''} ${rejecter.lastName || ''}`.trim() || rejecter.email || 'Unknown',
+              rejectionReason: reason
+            };
+
+            await realEmailService.sendTravelRequestRejectionNotification(emailData, recipients);
+          }
+        }
+      } catch (emailError) {
+        console.error("Failed to send rejection email notification:", emailError);
+        // Don't fail the rejection if email fails
+      }
+      
       res.json(updatedRequest);
     } catch (error) {
       console.error("Error rejecting travel request:", error);
