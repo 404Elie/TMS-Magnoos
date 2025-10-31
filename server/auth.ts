@@ -240,8 +240,8 @@ export function setupAuth(app: Express) {
             
             <div style="text-align: center; margin: 30px 0;">
               <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
-                 style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: #0032FF; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                Access Travel Management System
+                 style="display: inline-block; background: #0032FF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 50, 255, 0.3);">
+                Login to Travel System
               </a>
             </div>
             

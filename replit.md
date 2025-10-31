@@ -18,6 +18,14 @@ Preferred communication style: Simple, everyday language.
   - Prevents hitting email service rate limits when sending to multiple Business Unit Managers
   - Applied to all 4 email notification types (Request Submitted, Approved, Rejected, Booking Completion)
   - Ensures reliable email delivery without service disruption
+- **Improved Button Design**: Changed email buttons from blue text to white text on solid blue background
+  - More visually clear as a clickable button (solid blue with white text and shadow)
+  - Better accessibility and visibility in all email clients
+- **Role-Specific Smart Links**: Email buttons now direct users to role-appropriate pages
+  - Business Unit Managers → `/manager/approvals` (approve/reject page)
+  - Operations Teams → `/operations` (complete bookings dashboard)
+  - Project Managers → `/` (home dashboard)
+  - Button text adapts to recipient: "Review & Approve Request", "Complete Booking", "View Request Details", etc.
 
 ### Email Access Button Implementation (October 23, 2025)
 - **"Access Travel Management System" Button in All Emails**:

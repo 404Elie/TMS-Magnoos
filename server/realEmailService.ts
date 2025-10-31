@@ -19,6 +19,18 @@ class RealEmailService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Helper function to get role-specific URL path
+  private getRoleSpecificPath(role: string): string {
+    const rolePathMap: Record<string, string> = {
+      'pm': '/manager/approvals', // Business Unit Managers go to approvals page
+      'operations_ksa': '/operations', // Operations teams go to their dashboard
+      'operations_uae': '/operations',
+      'manager': '/', // Project Managers go to home
+      'admin': '/'
+    };
+    return rolePathMap[role] || '/';
+  }
+
   private getFriendlyRoleName(role: string): string {
     const roleMap: Record<string, string> = {
       'manager': 'Project Manager',
@@ -325,42 +337,49 @@ class RealEmailService {
     recipients.forEach(r => console.log(`  • ${r.email} (${this.getFriendlyRoleName(r.role)})`));
     console.log('='.repeat(80) + '\n');
 
-    const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #0032FF;">🧳 New Travel Request Submitted</h2>
-        
-        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #8A2BE2;">Travel Details</h3>
-          <p><strong>Traveler:</strong> ${request.travelerName}</p>
-          <p><strong>Requested by:</strong> ${request.requesterName}</p>
-          <p><strong>Route:</strong> ${fullRoute}</p>
-          <p><strong>Departure:</strong> ${new Date(request.departureDate).toLocaleDateString()}</p>
-          <p><strong>Return:</strong> ${new Date(request.returnDate).toLocaleDateString()}</p>
-          <p><strong>Purpose:</strong> ${request.purpose}</p>
-          ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
-        </div>
-        
-        <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #0032FF;">
-          <p style="margin: 0; color: #0032FF; font-weight: bold;">✅ This is a REAL email from the Magnoos Travel Management System</p>
-        </div>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
-             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: #0032FF; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-            Access Travel Management System
-          </a>
-        </div>
-        
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
-        </p>
-      </div>
-    `;
-
     // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
     for (let i = 0; i < recipients.length; i++) {
       const recipient = recipients[i];
+      
+      // Get role-specific URL for this recipient
+      const baseUrl = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app';
+      const rolePath = this.getRoleSpecificPath(recipient.role);
+      const roleSpecificUrl = `${baseUrl}${rolePath}`;
+      
+      // Generate email content with role-specific link
+      const emailContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #0032FF;">🧳 New Travel Request Submitted</h2>
+          
+          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #8A2BE2;">Travel Details</h3>
+            <p><strong>Traveler:</strong> ${request.travelerName}</p>
+            <p><strong>Requested by:</strong> ${request.requesterName}</p>
+            <p><strong>Route:</strong> ${fullRoute}</p>
+            <p><strong>Departure:</strong> ${new Date(request.departureDate).toLocaleDateString()}</p>
+            <p><strong>Return:</strong> ${new Date(request.returnDate).toLocaleDateString()}</p>
+            <p><strong>Purpose:</strong> ${request.purpose}</p>
+            ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
+          </div>
+          
+          <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #0032FF;">
+            <p style="margin: 0; color: #0032FF; font-weight: bold;">✅ This is a REAL email from the Magnoos Travel Management System</p>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${roleSpecificUrl}" 
+               style="display: inline-block; background: #0032FF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 50, 255, 0.3);">
+              ${recipient.role === 'pm' ? 'Review & Approve Request' : 'View Request Details'}
+            </a>
+          </div>
+          
+          <p style="color: #666; font-size: 12px; margin-top: 20px;">
+            This email was sent to: ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})
+          </p>
+        </div>
+      `;
+      
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Request Submitted - ${request.travelerName} to ${formattedDestinations}`,
@@ -421,40 +440,47 @@ class RealEmailService {
     recipients.forEach(r => console.log(`  • ${r.email} (${this.getFriendlyRoleName(r.role)})`));
     console.log('='.repeat(80) + '\n');
 
-    const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1ABC3C;">✅ Travel Request Approved</h2>
-        
-        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1ABC3C;">
-          <h3 style="margin-top: 0; color: #8A2BE2;">Approval Details</h3>
-          <p><strong>Approved by:</strong> ${request.pmApproverName}</p>
-          <p><strong>Traveler:</strong> ${request.travelerName}</p>
-          <p><strong>Route:</strong> ${fullRoute}</p>
-          <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
-          ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
-        </div>
-        
-        <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #1ABC3C;">
-          <p style="margin: 0; color: #1ABC3C; font-weight: bold;">🎯 Next Steps: Operations team will now handle your booking arrangements.</p>
-        </div>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
-             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: #0032FF; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-            Access Travel Management System
-          </a>
-        </div>
-        
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
-        </p>
-      </div>
-    `;
-
     // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
     for (let i = 0; i < recipients.length; i++) {
       const recipient = recipients[i];
+      
+      // Get role-specific URL for this recipient
+      const baseUrl = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app';
+      const rolePath = this.getRoleSpecificPath(recipient.role);
+      const roleSpecificUrl = `${baseUrl}${rolePath}`;
+      
+      // Generate email content with role-specific link
+      const emailContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1ABC3C;">✅ Travel Request Approved</h2>
+          
+          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1ABC3C;">
+            <h3 style="margin-top: 0; color: #8A2BE2;">Approval Details</h3>
+            <p><strong>Approved by:</strong> ${request.pmApproverName}</p>
+            <p><strong>Traveler:</strong> ${request.travelerName}</p>
+            <p><strong>Route:</strong> ${fullRoute}</p>
+            <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
+            ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
+          </div>
+          
+          <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #1ABC3C;">
+            <p style="margin: 0; color: #1ABC3C; font-weight: bold;">🎯 Next Steps: Operations team will now handle your booking arrangements.</p>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${roleSpecificUrl}" 
+               style="display: inline-block; background: #0032FF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 50, 255, 0.3);">
+              ${recipient.role.startsWith('operations') ? 'Complete Booking' : 'View Request Details'}
+            </a>
+          </div>
+          
+          <p style="color: #666; font-size: 12px; margin-top: 20px;">
+            This email was sent to: ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})
+          </p>
+        </div>
+      `;
+      
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Approved - ${request.travelerName} to ${formattedDestinations}`,
@@ -517,46 +543,53 @@ class RealEmailService {
     recipients.forEach(r => console.log(`  • ${r.email} (${this.getFriendlyRoleName(r.role)})`));
     console.log('='.repeat(80) + '\n');
 
-    const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #DC2626;">❌ Travel Request Rejected</h2>
-        
-        <div style="background: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #DC2626;">
-          <h3 style="margin-top: 0; color: #8A2BE2;">Request Details</h3>
-          <p><strong>Rejected by:</strong> ${request.pmRejecterName}</p>
-          <p><strong>Traveler:</strong> ${request.travelerName}</p>
-          <p><strong>Route:</strong> ${fullRoute}</p>
-          <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
-          ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
-          ${request.rejectionReason ? `
-            <div style="background: white; padding: 15px; border-radius: 6px; margin-top: 15px;">
-              <p style="margin: 0; color: #DC2626;"><strong>Reason for Rejection:</strong></p>
-              <p style="margin: 10px 0 0 0;">${request.rejectionReason}</p>
-            </div>
-          ` : ''}
-        </div>
-        
-        <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; border-left: 4px solid #6B7280;">
-          <p style="margin: 0; color: #374151;">If you have questions about this decision, please contact ${request.pmRejecterName} for more information.</p>
-        </div>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
-             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: #0032FF; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-            Access Travel Management System
-          </a>
-        </div>
-        
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
-        </p>
-      </div>
-    `;
-
     // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
     for (let i = 0; i < recipients.length; i++) {
       const recipient = recipients[i];
+      
+      // Get role-specific URL for this recipient
+      const baseUrl = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app';
+      const rolePath = this.getRoleSpecificPath(recipient.role);
+      const roleSpecificUrl = `${baseUrl}${rolePath}`;
+      
+      // Generate email content with role-specific link
+      const emailContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #DC2626;">❌ Travel Request Rejected</h2>
+          
+          <div style="background: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #DC2626;">
+            <h3 style="margin-top: 0; color: #8A2BE2;">Request Details</h3>
+            <p><strong>Rejected by:</strong> ${request.pmRejecterName}</p>
+            <p><strong>Traveler:</strong> ${request.travelerName}</p>
+            <p><strong>Route:</strong> ${fullRoute}</p>
+            <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
+            ${request.projectName ? `<p><strong>Project:</strong> ${request.projectName}</p>` : ''}
+            ${request.rejectionReason ? `
+              <div style="background: white; padding: 15px; border-radius: 6px; margin-top: 15px;">
+                <p style="margin: 0; color: #DC2626;"><strong>Reason for Rejection:</strong></p>
+                <p style="margin: 10px 0 0 0;">${request.rejectionReason}</p>
+              </div>
+            ` : ''}
+          </div>
+          
+          <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; border-left: 4px solid #6B7280;">
+            <p style="margin: 0; color: #374151;">If you have questions about this decision, please contact ${request.pmRejecterName} for more information.</p>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${roleSpecificUrl}" 
+               style="display: inline-block; background: #0032FF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 50, 255, 0.3);">
+              View My Requests
+            </a>
+          </div>
+          
+          <p style="color: #666; font-size: 12px; margin-top: 20px;">
+            This email was sent to: ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})
+          </p>
+        </div>
+      `;
+      
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Request Rejected - ${request.travelerName} to ${formattedDestinations}`,
@@ -643,55 +676,62 @@ class RealEmailService {
       `;
     }).join('');
 
-    const emailContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #0032FF;">🎯 Travel Arrangements Complete</h2>
-        
-        <div style="background: #fff7ed; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FF6F00;">
-          <h3 style="margin-top: 0; color: #8A2BE2;">Trip Summary</h3>
-          <p><strong>Completed by:</strong> ${request.operationsCompletedByName}</p>
-          <p><strong>Traveler:</strong> ${request.travelerName}</p>
-          <p><strong>Route:</strong> ${fullRoute}</p>
-          <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
-          <p><strong>Total Cost:</strong> <span style="color: #FF6F00; font-weight: bold;">$${request.totalCost.toLocaleString()}</span></p>
-        </div>
-        
-        <h3 style="color: #8A2BE2;">Booking Details</h3>
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-          <thead>
-            <tr style="background: #f8fafc;">
-              <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Type</th>
-              <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Provider</th>
-              <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Cost</th>
-              <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Reference</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${bookingDetailsHtml}
-          </tbody>
-        </table>
-        
-        <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #1ABC3C;">
-          <p style="margin: 0; color: #1ABC3C; font-weight: bold;">✅ All travel arrangements are now complete and confirmed!</p>
-        </div>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app'}" 
-             style="display: inline-block; background: linear-gradient(135deg, #0032FF, #8A2BE2); color: #0032FF; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-            Access Travel Management System
-          </a>
-        </div>
-        
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          This email was sent to: ${recipients.map(r => `${r.email} (${this.getFriendlyRoleName(r.role)})`).join(', ')}
-        </p>
-      </div>
-    `;
-
     // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
     for (let i = 0; i < recipients.length; i++) {
       const recipient = recipients[i];
+      
+      // Get role-specific URL for this recipient
+      const baseUrl = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(',')[0]}` : 'https://your-app.replit.app';
+      const rolePath = this.getRoleSpecificPath(recipient.role);
+      const roleSpecificUrl = `${baseUrl}${rolePath}`;
+      
+      // Generate email content with role-specific link
+      const emailContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #0032FF;">🎯 Travel Arrangements Complete</h2>
+          
+          <div style="background: #fff7ed; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FF6F00;">
+            <h3 style="margin-top: 0; color: #8A2BE2;">Trip Summary</h3>
+            <p><strong>Completed by:</strong> ${request.operationsCompletedByName}</p>
+            <p><strong>Traveler:</strong> ${request.travelerName}</p>
+            <p><strong>Route:</strong> ${fullRoute}</p>
+            <p><strong>Dates:</strong> ${new Date(request.departureDate).toLocaleDateString()} - ${new Date(request.returnDate).toLocaleDateString()}</p>
+            <p><strong>Total Cost:</strong> <span style="color: #FF6F00; font-weight: bold;">$${request.totalCost.toLocaleString()}</span></p>
+          </div>
+          
+          <h3 style="color: #8A2BE2;">Booking Details</h3>
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <thead>
+              <tr style="background: #f8fafc;">
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Type</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Provider</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Cost</th>
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0;">Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bookingDetailsHtml}
+            </tbody>
+          </table>
+          
+          <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border-left: 4px solid #1ABC3C;">
+            <p style="margin: 0; color: #1ABC3C; font-weight: bold;">✅ All travel arrangements are now complete and confirmed!</p>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${roleSpecificUrl}" 
+               style="display: inline-block; background: #0032FF; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 6px rgba(0, 50, 255, 0.3);">
+              View Trip Details
+            </a>
+          </div>
+          
+          <p style="color: #666; font-size: 12px; margin-top: 20px;">
+            This email was sent to: ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})
+          </p>
+        </div>
+      `;
+      
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Arrangements Confirmed - ${request.travelerName} to ${formattedDestinations}`,
