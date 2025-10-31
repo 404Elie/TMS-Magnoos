@@ -10,10 +10,20 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### Email Fixes & Rate Limiting (October 31, 2025)
+- **Project Name Display in Emails**: Fixed bug where emails showed "Project specified" instead of actual project name
+  - Now correctly fetches and displays the actual project name selected by the user
+  - Applied to all travel request notification emails
+- **Email Rate Limiting**: Added 1.5 second delay between sending emails to multiple recipients
+  - Prevents hitting email service rate limits when sending to multiple Business Unit Managers
+  - Applied to all 4 email notification types (Request Submitted, Approved, Rejected, Booking Completion)
+  - Ensures reliable email delivery without service disruption
+
 ### Email Access Button Implementation (October 23, 2025)
 - **"Access Travel Management System" Button in All Emails**:
-  - All email notifications now include a prominent button directing users to the published app
+  - All email notifications include a prominent button directing users to the published app
   - Button uses `REPLIT_DOMAINS` environment variable to automatically link to published app URL (not preview)
+  - Button text color changed to blue (#0032FF) for visibility in both light and dark modes (Outlook compatibility)
   - Consistent styling across all 5 email types: gradient button (Electric Blue → Purple) matching brand colors
   - Email types covered:
     - Travel Request Submitted → Business Unit Managers

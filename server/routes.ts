@@ -689,6 +689,7 @@ export function registerRoutes(app: Express): Server {
 
       // Handle project mapping and creation (if projectId is provided)
       let localProjectId = null;
+      let projectForEmail = null;
       if (validatedData.projectId) {
         // First try to find project by local ID (for default projects like "default-events")
         let project = await storage.getProject(validatedData.projectId);
@@ -722,6 +723,7 @@ export function registerRoutes(app: Express): Server {
           }
         }
         localProjectId = project.id; // Use the local project ID
+        projectForEmail = project; // Store project for email notification
       }
 
       // Update the travel request data to use local IDs instead of Zoho IDs
@@ -768,7 +770,7 @@ export function registerRoutes(app: Express): Server {
             departureDate: new Date(validatedData.departureDate).toISOString(),
             returnDate: new Date(validatedData.returnDate).toISOString(),
             purpose: validatedData.purpose,
-            projectName: validatedData.projectId ? 'Project specified' : undefined
+            projectName: projectForEmail?.name || undefined
           };
 
           const emailResult = await realEmailService.sendTravelRequestNotification(emailData, recipients);

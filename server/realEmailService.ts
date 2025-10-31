@@ -14,6 +14,11 @@ class RealEmailService {
     this.initPromise = this.setupEmailService();
   }
 
+  // Helper function to add delay between emails to avoid rate limits
+  private async delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   private getFriendlyRoleName(role: string): string {
     const roleMap: Record<string, string> = {
       'manager': 'Project Manager',
@@ -352,9 +357,10 @@ class RealEmailService {
       </div>
     `;
 
-    // Send email to each recipient
+    // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
-    for (const recipient of recipients) {
+    for (let i = 0; i < recipients.length; i++) {
+      const recipient = recipients[i];
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Request Submitted - ${request.travelerName} to ${formattedDestinations}`,
@@ -365,6 +371,11 @@ class RealEmailService {
         console.error(`Failed to send email to ${recipient.email}`);
       } else {
         console.log(`✅ Email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
+      }
+      
+      // Add delay between emails (except after the last one)
+      if (i < recipients.length - 1) {
+        await this.delay(1500); // 1.5 second delay to avoid rate limits
       }
     }
     return allSuccessful;
@@ -440,9 +451,10 @@ class RealEmailService {
       </div>
     `;
 
-    // Send email to each recipient
+    // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
-    for (const recipient of recipients) {
+    for (let i = 0; i < recipients.length; i++) {
+      const recipient = recipients[i];
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Approved - ${request.travelerName} to ${formattedDestinations}`,
@@ -453,6 +465,11 @@ class RealEmailService {
         console.error(`Failed to send approval email to ${recipient.email}`);
       } else {
         console.log(`✅ Approval email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
+      }
+      
+      // Add delay between emails (except after the last one)
+      if (i < recipients.length - 1) {
+        await this.delay(1500); // 1.5 second delay to avoid rate limits
       }
     }
     return allSuccessful;
@@ -536,9 +553,10 @@ class RealEmailService {
       </div>
     `;
 
-    // Send email to each recipient
+    // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
-    for (const recipient of recipients) {
+    for (let i = 0; i < recipients.length; i++) {
+      const recipient = recipients[i];
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Request Rejected - ${request.travelerName} to ${formattedDestinations}`,
@@ -549,6 +567,11 @@ class RealEmailService {
         console.error(`Failed to send rejection email to ${recipient.email}`);
       } else {
         console.log(`✅ Rejection email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
+      }
+      
+      // Add delay between emails (except after the last one)
+      if (i < recipients.length - 1) {
+        await this.delay(1500); // 1.5 second delay to avoid rate limits
       }
     }
     return allSuccessful;
@@ -665,9 +688,10 @@ class RealEmailService {
       </div>
     `;
 
-    // Send email to each recipient
+    // Send email to each recipient with delay to avoid rate limits
     let allSuccessful = true;
-    for (const recipient of recipients) {
+    for (let i = 0; i < recipients.length; i++) {
+      const recipient = recipients[i];
       const success = await this.sendEmail({
         to: recipient.email,
         subject: `Travel Arrangements Confirmed - ${request.travelerName} to ${formattedDestinations}`,
@@ -678,6 +702,11 @@ class RealEmailService {
         console.error(`Failed to send completion email to ${recipient.email}`);
       } else {
         console.log(`✅ Completion email sent successfully to ${recipient.email} (${this.getFriendlyRoleName(recipient.role)})`);
+      }
+      
+      // Add delay between emails (except after the last one)
+      if (i < recipients.length - 1) {
+        await this.delay(1500); // 1.5 second delay to avoid rate limits
       }
     }
     return allSuccessful;
